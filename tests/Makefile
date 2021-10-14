@@ -1,7 +1,7 @@
 CXX = clang
 CUDACXX = nvcc
 INCLUDES = -I../ -I/usr/local/cuda/include
-CCFLAGS = -std=c++14 -Wall -Werror -ferror-limit=3 $(INCLUDES) -Wno-mismatched-tags
+CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_35 -Xcompiler "$(CCFLAGS)"
 CUDACXXFLAGS = $(NVCCFLAGS)
 
