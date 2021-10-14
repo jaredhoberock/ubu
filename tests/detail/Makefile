@@ -1,7 +1,7 @@
 CXX = clang
 CUDACXX = /home/jhoberock/Desktop/circle/circle
 INCLUDES = -I../../ -I/usr/local/cuda/include
-CCFLAGS = -std=c++14 -Wall -Werror -ferror-limit=3 $(INCLUDES)
+CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_60 -Xcompiler "$(CCFLAGS)"
 CUDACXXFLAGS = --cuda-path=/usr/local/cuda $(CCFLAGS) -sm_60
 
