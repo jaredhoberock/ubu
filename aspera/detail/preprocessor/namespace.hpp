@@ -8,8 +8,8 @@
 #    error "Either all of ASPERA_NAMESPACE, ASPERA_NAMESPACE_OPEN_BRACE, and ASPERA_NAMESPACE_CLOSE_BRACE must be defined, or none of them."
 #  endif
 
-#  define ASPERA_NAMESPACE repo
-#  define ASPERA_NAMESPACE_OPEN_BRACE namespace repo {
+#  define ASPERA_NAMESPACE aspera
+#  define ASPERA_NAMESPACE_OPEN_BRACE namespace aspera {
 #  define ASPERA_NAMESPACE_CLOSE_BRACE }
 #  define ASPERA_NAMESPACE_NEEDS_UNDEF
 
