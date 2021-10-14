@@ -28,5 +28,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "executor.hpp"
+
 #include "detail/epilogue.hpp"
 
