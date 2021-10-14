@@ -7,10 +7,6 @@
 // header file with one containing custom definitions for all macros defined beneath the
 // detail/config directory.
 
-#include "preprocessor/annotation.hpp"
-#include "preprocessor/exec_check_disable.hpp"
 #include "preprocessor/has_cudart.hpp"
-#include "preprocessor/has_exceptions.hpp"
 #include "preprocessor/namespace.hpp"
-#include "preprocessor/requires.hpp"
 
