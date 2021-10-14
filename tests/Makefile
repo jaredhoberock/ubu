@@ -1,8 +1,9 @@
 CXX = clang
-NVCC = nvcc
+CUDACXX = nvcc
 INCLUDES = -I../ -I/usr/local/cuda/include
 CCFLAGS = -std=c++14 -Wall -Werror -ferror-limit=3 $(INCLUDES) -Wno-mismatched-tags
 NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_35 -Xcompiler "$(CCFLAGS)"
+CUDACXXFLAGS = $(NVCCFLAGS)
 
 # this gets a list of all directories in this directory
 DIRECTORIES = $(sort $(wildcard */))
@@ -24,7 +25,7 @@ test : all-test-sources all-cpp-test-programs all-cuda-test-programs all-test-re
 
 # this compiles a .cpp file into a CUDA executable file (without a file extension)
 %-cuda : %.cpp
-	$(NVCC) $(NVCCFLAGS) -x cu $< -o $@
+	$(CUDACXX) $(CUDACXXFLAGS) -x cu $< -o $@
 
 # this runs an executable silently
 test.% : %

@@ -1,75 +1,75 @@
-#include <repo/repo.hpp>
+#include <aspera/aspera.hpp>
 
-#ifdef REPO_INCLUDE_LEVEL
-#error REPO_INCLUDE_LEVEL defined in client code.
+#ifdef ASPERA_INCLUDE_LEVEL
+#error ASPERA_INCLUDE_LEVEL defined in client code.
 #endif
 
-#ifdef REPO_ANNOTATION
-#error REPO_ANNOTATION defined in client code.
+#ifdef ASPERA_ANNOTATION
+#error ASPERA_ANNOTATION defined in client code.
 #endif
 
-#ifdef REPO_CONCATENATE
-#error REPO_CONCATENATE defined in client code.
+#ifdef ASPERA_CONCATENATE
+#error ASPERA_CONCATENATE defined in client code.
 #endif
 
-#ifdef REPO_CONCATENATE_IMPL
-#error REPO_CONCATENATE_IMPL defined in client code.
+#ifdef ASPERA_CONCATENATE_IMPL
+#error ASPERA_CONCATENATE_IMPL defined in client code.
 #endif
 
-#ifdef REPO_DETAIL_NAMESPACE
-#error REPO_DETAIL_NAMESPACE defined in client code.
+#ifdef ASPERA_DETAIL_NAMESPACE
+#error ASPERA_DETAIL_NAMESPACE defined in client code.
 #endif
 
-#ifdef REPO_DETAIL_NAMESPACE_NEEDS_UNDEF
-#error REPO_DETAIL_NAMESPACE_NEEDS_UNDEF defined in client code.
+#ifdef ASPERA_DETAIL_NAMESPACE_NEEDS_UNDEF
+#error ASPERA_DETAIL_NAMESPACE_NEEDS_UNDEF defined in client code.
 #endif
 
-#ifdef REPO_EXEC_CHECK_DISABLE
-#error REPO_EXEC_CHECK_DISABLE defined in client code.
+#ifdef ASPERA_EXEC_CHECK_DISABLE
+#error ASPERA_EXEC_CHECK_DISABLE defined in client code.
 #endif
 
-#ifdef REPO_HAS_CUDART
-#error REPO_HAS_CUDART defined in client code.
+#ifdef ASPERA_HAS_CUDART
+#error ASPERA_HAS_CUDART defined in client code.
 #endif
 
-#ifdef REPO_HAS_EXCEPTIONS
-#error REPO_HAS_EXCEPTIONS defined in client code.
+#ifdef ASPERA_HAS_EXCEPTIONS
+#error ASPERA_HAS_EXCEPTIONS defined in client code.
 #endif
 
-#ifdef REPO_MAKE_UNIQUE
-#error REPO_MAKE_UNIQUE defined in client code.
+#ifdef ASPERA_MAKE_UNIQUE
+#error ASPERA_MAKE_UNIQUE defined in client code.
 #endif
 
-#ifdef REPO_NAMESPACE
-#error REPO_NAMESPACE defined in client code.
+#ifdef ASPERA_NAMESPACE
+#error ASPERA_NAMESPACE defined in client code.
 #endif
 
-#ifdef REPO_NAMESPACE_CLOSE_BRACE
-#error REPO_NAMESPACE_CLOSE_BRACE defined in client code.
+#ifdef ASPERA_NAMESPACE_CLOSE_BRACE
+#error ASPERA_NAMESPACE_CLOSE_BRACE defined in client code.
 #endif
 
-#ifdef REPO_NAMESPACE_OPEN_BRACE
-#error REPO_NAMESPACE_OPEN_BRACE defined in client code.
+#ifdef ASPERA_NAMESPACE_OPEN_BRACE
+#error ASPERA_NAMESPACE_OPEN_BRACE defined in client code.
 #endif
 
-#ifdef REPO_NAMESPACE_NEEDS_UNDEF
-#error REPO_NAMESPACE_NEEDS_UNDEF defined in client code.
+#ifdef ASPERA_NAMESPACE_NEEDS_UNDEF
+#error ASPERA_NAMESPACE_NEEDS_UNDEF defined in client code.
 #endif
 
-#ifdef REPO_REQUIRES
-#error REPO_REQUIRES defined in client code.
+#ifdef ASPERA_REQUIRES
+#error ASPERA_REQUIRES defined in client code.
 #endif
 
-#ifdef REPO_REQUIRES_IMPL
-#error REPO_REQUIRES_IMPL defined in client code.
+#ifdef ASPERA_REQUIRES_IMPL
+#error ASPERA_REQUIRES_IMPL defined in client code.
 #endif
 
-#ifdef REPO_REQUIRES_DEF
-#error REPO_REQUIRES_DEF defined in client code.
+#ifdef ASPERA_REQUIRES_DEF
+#error ASPERA_REQUIRES_DEF defined in client code.
 #endif
 
-#ifdef REPO_REQUIRES_DEF_IMPL
-#error REPO_REQUIRES_DEF_IMPL defined in client code.
+#ifdef ASPERA_REQUIRES_DEF_IMPL
+#error ASPERA_REQUIRES_DEF_IMPL defined in client code.
 #endif
 
 
