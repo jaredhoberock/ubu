@@ -25,7 +25,7 @@ test : all-test-sources all-cpp-test-programs all-cuda-test-programs all-test-re
 
 # this compiles a .cpp file into a CUDA executable file (without a file extension)
 %-cuda : %.cpp
-	$(CUDACXX) $(CUDACXXFLAGS) $< -o $@
+	$(CUDACXX) $(CUDACXXFLAGS) $< -lstdc++ -lpthread -o $@
 
 # this runs an executable silently
 test.% : %
