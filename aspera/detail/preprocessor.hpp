@@ -7,6 +7,6 @@
 // header file with one containing custom definitions for all macros defined beneath the
 // detail/config directory.
 
-#include "preprocessor/has_cudart.hpp"
 #include "preprocessor/namespace.hpp"
+#include "preprocessor/target.hpp"
 
