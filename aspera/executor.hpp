@@ -2,6 +2,8 @@
 
 #include "detail/prologue.hpp"
 
+#include "executor/callback_executor.hpp"
+#include "executor/complete_event.hpp"
 #include "executor/event.hpp"
 #include "executor/event_executor.hpp"
 #include "executor/execute.hpp"
