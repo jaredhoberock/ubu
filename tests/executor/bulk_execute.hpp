@@ -1,7 +1,7 @@
 #include <cassert>
+#include <aspera/event/complete_event.hpp>
+#include <aspera/event/wait.hpp>
 #include <aspera/executor/bulk_execute.hpp>
-#include <aspera/executor/complete_event.hpp>
-#include <aspera/executor/wait.hpp>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>

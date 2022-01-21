@@ -1,5 +1,5 @@
-#include <aspera/executor/complete_event.hpp>
-#include <aspera/executor/wait.hpp>
+#include <aspera/event/complete_event.hpp>
+#include <aspera/event/wait.hpp>
 #include <cassert>
 
 #ifdef __CUDACC__

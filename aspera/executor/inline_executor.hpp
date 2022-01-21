@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "complete_event.hpp"
+#include "../event/complete_event.hpp"
 #include <compare>
 #include <concepts>
 #include <functional>

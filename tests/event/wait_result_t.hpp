@@ -1,5 +1,5 @@
+#include <aspera/event/wait.hpp>
 #include <cassert>
-#include <aspera/executor/wait.hpp>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>
@@ -24,30 +24,24 @@ struct has_wait_member
 
 struct has_wait_free_function {};
 
-int wait(const has_wait_free_function&)
+double wait(const has_wait_free_function&)
 {
-  return 13;
+  return 13.;
 }
 
 
 void test()
 {
   {
-    has_wait_member e;
-
-    auto result = ns::wait(e);
-    assert(13 == result);
+    static_assert(std::is_same_v<int, ns::wait_result_t<has_wait_member>>, "Expected int.");
   }
 
   {
-    has_wait_free_function e;
-
-    auto result = ns::wait(e);
-    assert(13 == result);
+    static_assert(std::is_same_v<double, ns::wait_result_t<has_wait_free_function>>, "Expected double.");
   }
 }
 
-void test_wait()
+void test_wait_result_t()
 {
   test();
 
