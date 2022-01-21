@@ -2,24 +2,11 @@
 
 #include "../detail/prologue.hpp"
 
+#include "detail/invocable_archetype.hpp"
 #include "executor_of.hpp"
 
 
 ASPERA_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
-{
-
-
-struct invocable_archetype
-{
-  template<class... Types>
-  void operator()(Types&&...) const {}
-};
-
-
-} // end detail
 
 
 template<class E>
