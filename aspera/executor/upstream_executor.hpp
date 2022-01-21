@@ -10,7 +10,7 @@
 ASPERA_NAMESPACE_OPEN_BRACE
 
 template<class E>
-concept event_executor =
+concept upstream_executor =
   executor<E> and
   requires(E e)
   {

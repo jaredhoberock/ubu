@@ -1,7 +1,7 @@
-#include <aspera/executor/event_executor.hpp>
 #include <aspera/executor/executor.hpp>
 #include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/inline_executor.hpp>
+#include <aspera/executor/upstream_executor.hpp>
 #include <cassert>
 
 #ifdef __CUDACC__
@@ -25,7 +25,7 @@ void test()
   }
 
   {
-    static_assert(ns::event_executor<ns::inline_executor>);
+    static_assert(ns::upstream_executor<ns::inline_executor>);
   }
 
   {
