@@ -1,4 +1,4 @@
-#include <aspera/coord/size.hpp>
+#include <aspera/coordinate/size.hpp>
 #include <tuple>
 #include <utility>
 

@@ -1,6 +1,6 @@
 #include <array>
-#include <aspera/coord/element.hpp>
-//#include <aspera/coord/point.hpp>
+#include <aspera/coordinate/element.hpp>
+//#include <aspera/coordinate/point.hpp>
 #include <cassert>
 #include <tuple>
 #include <utility>

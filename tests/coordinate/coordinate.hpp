@@ -1,5 +1,5 @@
 #include <array>
-#include <aspera/coord/coordinate.hpp>
+#include <aspera/coordinate/coordinate.hpp>
 #include <tuple>
 #include <utility>
 

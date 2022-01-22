@@ -28,7 +28,7 @@
 
 #include "detail/prologue.hpp"
 
-#include "coord.hpp"
+#include "coordinate.hpp"
 #include "event.hpp"
 #include "executor.hpp"
 
