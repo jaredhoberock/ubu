@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "detail/number.hpp"
+#include <array>
 #include <concepts>
 #include <tuple>
 #include <type_traits>
@@ -109,7 +110,22 @@ template<class T>
 using size_t = decltype(ASPERA_NAMESPACE::size(std::declval<T>()));
 
 
+namespace detail
+{
+
+
 template<class T>
+concept has_static_size = requires
+{ 
+  size.operator()<T>();
+};
+
+
+} // end detail
+
+
+template<class T>
+  requires detail::has_static_size<T>
 static constexpr auto size_v = size.operator()<T>();
 
 
@@ -117,7 +133,7 @@ namespace detail
 {
 
 
-// XXX this needs to be generalize to all tuple-like types beyond std::tuple and std::pair
+// XXX this needs to be generalize to all tuple-like types beyond std::tuple and std::pair and std::array
 template<class T>
 struct is_tuple_of_types_each_with_static_size
 {
@@ -136,14 +152,21 @@ template<class... Types>
 struct is_tuple_of_types_each_with_static_size<std::tuple<Types...>>
 {
   // check that each of Types... may be used with the size CPO
-  static constexpr bool value = (... && detected<size_t, Types>);
+  static constexpr bool value = (... && detected<ASPERA_NAMESPACE::size_t, Types>);
 };
 
 template<class T1, class T2>
 struct is_tuple_of_types_each_with_static_size<std::pair<T1,T2>>
 {
   // check that T1 & T1 may be used with the size CPO
-  static constexpr bool value = detected<size_t,T1> and detected<size_t,T2>;
+  static constexpr bool value = detected<ASPERA_NAMESPACE::size_t,T1> and detected<ASPERA_NAMESPACE::size_t,T2>;
+};
+
+template<class T, std::size_t N>
+struct is_tuple_of_types_each_with_static_size<std::array<T,N>>
+{
+  // check that T may be used with the size CPO
+  static constexpr bool value = detected<ASPERA_NAMESPACE::size_t,T>;
 };
 
 
