@@ -28,6 +28,8 @@
 
 #include "detail/prologue.hpp"
 
+#include "coord.hpp"
+#include "event.hpp"
 #include "executor.hpp"
 
 #include "detail/epilogue.hpp"
