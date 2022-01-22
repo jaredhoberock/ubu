@@ -31,16 +31,21 @@ void test_coordinate()
 
   // test some integer coordinates
   static_assert(ns::coordinate<int>);
-  static_assert(ns::coordinate<int>);
+  static_assert(ns::coordinate<int&>);
   static_assert(ns::coordinate<unsigned int>);
+  static_assert(ns::coordinate<const unsigned int&>);
   static_assert(ns::coordinate<std::size_t>);
+  static_assert(ns::coordinate<volatile std::size_t&>);
   static_assert(ns::coordinate<std::tuple<char>>);
+  static_assert(ns::coordinate<std::tuple<char&>>);
+  static_assert(ns::coordinate<std::tuple<int, char&>>);
 
   // test some floating point coordinates
   static_assert(ns::coordinate<float>);
   static_assert(ns::coordinate<double>);
   static_assert(ns::coordinate<std::tuple<float>>);
   static_assert(ns::coordinate<std::tuple<double>>);
+  static_assert(ns::coordinate<std::tuple<float&,float>>);
 
   // test some multidimensional coordinates
   static_assert(ns::coordinate<std::pair<int,int>>);

@@ -18,6 +18,8 @@ void test_index()
   //static_assert(ns::index<ns::point<int,1>>);
   static_assert(ns::are_indices<int, unsigned int, std::size_t, std::tuple<char>>);
   //static_assert(ns::are_indices<int, unsigned int, std::size_t, std::tuple<char>, ns::point<int,1>>);
+  static_assert(ns::are_indices<int, unsigned int&, const std::size_t&, std::tuple<char&>>);
+  //static_assert(ns::are_indices<int, unsigned int&, const std::size_t&, std::tuple<char&>, ns::point<int,1>&&>);
 
   using int2 = std::pair<int,int>;
   using uint3 = std::tuple<unsigned int, unsigned int, unsigned int>;
@@ -51,5 +53,6 @@ void test_index()
   //static_assert(!ns::index<ns::double3>, "Error.");
   static_assert(!ns::index<int*>);
   static_assert(!ns::are_indices<int,float>);
+  static_assert(!ns::are_indices<int&,float>);
 }
 
