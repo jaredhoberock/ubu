@@ -2,6 +2,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "coord/element.hpp"
 #include "coord/size.hpp"
 
 #include "detail/epilogue.hpp"
