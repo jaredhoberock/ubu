@@ -17,40 +17,40 @@ namespace detail
 
 
 template<class T>
-concept has_rank_static_member_function = requires
+concept has_size_static_member_function = requires
 {
-  {T::rank()} -> std::convertible_to<std::size_t>;
+  {T::size()} -> std::convertible_to<std::size_t>;
 };
 
 template<class T>
-concept has_rank_member_function = requires(T obj)
+concept has_size_member_function = requires(T obj)
 {
-  {obj.rank()} -> std::convertible_to<std::size_t>;
+  {obj.size()} -> std::convertible_to<std::size_t>;
 };
 
 template<class T>
-concept has_rank_free_function = requires(T obj)
+concept has_size_free_function = requires(T obj)
 {
-  {rank(obj)} -> std::convertible_to<std::size_t>;
+  {size(obj)} -> std::convertible_to<std::size_t>;
 };
 
 
 template<class T>
-struct is_tuple_of_types_each_with_static_rank;
+struct is_tuple_of_types_each_with_static_size;
 
 
-struct dispatch_rank
+struct dispatch_size
 {
   // static cases do not take a parameter
   template<class T>
-    requires has_rank_static_member_function<std::remove_cvref_t<T>>
+    requires has_size_static_member_function<std::remove_cvref_t<T>>
   constexpr std::size_t operator()() const
   {
-    return std::remove_cvref_t<T>::rank();
+    return std::remove_cvref_t<T>::size();
   }
 
   template<class T>
-    requires (!has_rank_static_member_function<std::remove_cvref_t<T>> and
+    requires (!has_size_static_member_function<std::remove_cvref_t<T>> and
               number<std::remove_cvref_t<T>>)
   constexpr std::size_t operator()() const
   {
@@ -58,9 +58,9 @@ struct dispatch_rank
   }
 
   template<class T>
-    requires (!has_rank_static_member_function<std::remove_cvref_t<T>> and
+    requires (!has_size_static_member_function<std::remove_cvref_t<T>> and
               !number<T> and
-              is_tuple_of_types_each_with_static_rank<std::remove_cvref_t<T>>::value)
+              is_tuple_of_types_each_with_static_size<std::remove_cvref_t<T>>::value)
   constexpr std::size_t operator()() const
   {
     return std::tuple_size<std::remove_cvref_t<T>>::value;
@@ -69,23 +69,23 @@ struct dispatch_rank
 
   // dynamic cases do take a parameter
   template<class T>
-    requires has_rank_member_function<T&&>
+    requires has_size_member_function<T&&>
   constexpr std::size_t operator()(T&& arg) const
   {
-    return std::forward<T>(arg).rank();
+    return std::forward<T>(arg).size();
   }
 
   template<class T>
-    requires (!has_rank_member_function<T&&> and
-               has_rank_free_function<T&&>)
+    requires (!has_size_member_function<T&&> and
+               has_size_free_function<T&&>)
   constexpr std::size_t operator()(T&& arg) const
   {
-    return rank(std::forward<T>(arg));
+    return size(std::forward<T>(arg));
   }
 
   template<class T>
-    requires (!has_rank_member_function<T&&> and
-              !has_rank_free_function<T&&>)
+    requires (!has_size_member_function<T&&> and
+              !has_size_free_function<T&&>)
   constexpr auto operator()(T&&) const
     -> decltype(operator()<std::remove_cvref_t<T&&>>())
   {
@@ -100,17 +100,17 @@ struct dispatch_rank
 namespace
 {
 
-constexpr detail::dispatch_rank rank;
+constexpr detail::dispatch_size size;
 
 } // end anonymous namespace
 
 
 template<class T>
-using rank_t = decltype(ASPERA_NAMESPACE::rank(std::declval<T>()));
+using size_t = decltype(ASPERA_NAMESPACE::size(std::declval<T>()));
 
 
 template<class T>
-static constexpr auto rank_v = rank.operator()<T>();
+static constexpr auto size_v = size.operator()<T>();
 
 
 namespace detail
@@ -119,7 +119,7 @@ namespace detail
 
 // XXX this needs to be generalize to all tuple-like types beyond std::tuple and std::pair
 template<class T>
-struct is_tuple_of_types_each_with_static_rank
+struct is_tuple_of_types_each_with_static_size
 {
   static constexpr bool value = false;
 };
@@ -133,17 +133,17 @@ concept detected = requires
 
 
 template<class... Types>
-struct is_tuple_of_types_each_with_static_rank<std::tuple<Types...>>
+struct is_tuple_of_types_each_with_static_size<std::tuple<Types...>>
 {
-  // check that each of Types... may be used with the rank CPO
-  static constexpr bool value = (... && detected<rank_t, Types>);
+  // check that each of Types... may be used with the size CPO
+  static constexpr bool value = (... && detected<size_t, Types>);
 };
 
 template<class T1, class T2>
-struct is_tuple_of_types_each_with_static_rank<std::pair<T1,T2>>
+struct is_tuple_of_types_each_with_static_size<std::pair<T1,T2>>
 {
-  // check that T1 & T1 may be used with the rank CPO
-  static constexpr bool value = detected<rank_t,T1> and detected<rank_t,T2>;
+  // check that T1 & T1 may be used with the size CPO
+  static constexpr bool value = detected<size_t,T1> and detected<size_t,T2>;
 };
 
 

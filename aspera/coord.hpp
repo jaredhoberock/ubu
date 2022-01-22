@@ -2,7 +2,7 @@
 
 #include "detail/prologue.hpp"
 
-#include "coord/rank.hpp"
+#include "coord/size.hpp"
 
 #include "detail/epilogue.hpp"
 
