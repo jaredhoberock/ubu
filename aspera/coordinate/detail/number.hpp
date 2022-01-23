@@ -16,6 +16,10 @@ template<class T>
 concept number = (std::floating_point<T> or std::integral<T>);
 
 
+template<class T>
+concept not_a_number = !(number<T>);
+
+
 } // end detail
 
 

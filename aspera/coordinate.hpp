@@ -2,6 +2,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "coordinate/congruent.hpp"
 #include "coordinate/coordinate.hpp"
 #include "coordinate/element.hpp"
 #include "coordinate/index.hpp"
