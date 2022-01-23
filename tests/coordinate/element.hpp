@@ -1,6 +1,6 @@
 #include <array>
 #include <aspera/coordinate/element.hpp>
-//#include <aspera/coordinate/point.hpp>
+#include <aspera/coordinate/point.hpp>
 #include <cassert>
 #include <tuple>
 #include <utility>
@@ -97,13 +97,13 @@ void test_element_t()
   static_assert(std::is_same<int, ns::element_t<3, has_operator_bracket>>::value);
 
   // test point
-  //static_assert(std::is_same<int, ns::element_t<0, ns::point<int,3>>>::value, "Error.");
-  //static_assert(std::is_same<int, ns::element_t<1, ns::point<int,3>>>::value, "Error.");
-  //static_assert(std::is_same<int, ns::element_t<2, ns::point<int,3>>>::value, "Error.");
+  static_assert(std::is_same<int, ns::element_t<0, ns::point<int,3>>>::value, "Error.");
+  static_assert(std::is_same<int, ns::element_t<1, ns::point<int,3>>>::value, "Error.");
+  static_assert(std::is_same<int, ns::element_t<2, ns::point<int,3>>>::value, "Error.");
 
   // test typedefs
-  //static_assert(std::is_same<int, coord::element_t<0, coord::int2>>::value, "Error.");
-  //static_assert(std::is_same<int, coord::element_t<1, coord::int2>>::value, "Error.");
+  static_assert(std::is_same<int, ns::element_t<0, ns::int2>>::value, "Error.");
+  static_assert(std::is_same<int, ns::element_t<1, ns::int2>>::value, "Error.");
 }
 
 
@@ -189,19 +189,19 @@ void test_cpo()
   }
 
   // test point
-  //{
-  //  ns::point<int,3> x{13, 7, 42};
-  //  assert(13 == ns::element<0>(x));
-  //  assert( 7 == ns::element<1>(x));
-  //  assert(42 == ns::element<2>(x));
-  //}
+  {
+    ns::point<int,3> x{13, 7, 42};
+    assert(13 == ns::element<0>(x));
+    assert( 7 == ns::element<1>(x));
+    assert(42 == ns::element<2>(x));
+  }
 
   // test typedefs
-  //{
-  //  ns::int2 x{13, 7};
-  //  assert(13 == ns::element<0>(x));
-  //  assert( 7 == ns::element<1>(x));
-  //}
+  {
+    ns::int2 x{13, 7};
+    assert(13 == ns::element<0>(x));
+    assert( 7 == ns::element<1>(x));
+  }
 }
 
 

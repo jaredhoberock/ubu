@@ -1,5 +1,5 @@
 #include <aspera/coordinate/index.hpp>
-//#include <aspera/coordinate/point.hpp>
+#include <aspera/coordinate/point.hpp>
 #include <utility>
 #include <tuple>
 #include <array>
@@ -15,19 +15,19 @@ void test_index()
   static_assert(ns::index<unsigned int>);
   static_assert(ns::index<std::size_t>);
   static_assert(ns::index<std::tuple<char>>);
-  //static_assert(ns::index<ns::point<int,1>>);
+  static_assert(ns::index<ns::point<int,1>>);
   static_assert(ns::are_indices<int, unsigned int, std::size_t, std::tuple<char>>);
-  //static_assert(ns::are_indices<int, unsigned int, std::size_t, std::tuple<char>, ns::point<int,1>>);
+  static_assert(ns::are_indices<int, unsigned int, std::size_t, std::tuple<char>, ns::point<int,1>>);
   static_assert(ns::are_indices<int, unsigned int&, const std::size_t&, std::tuple<char&>>);
-  //static_assert(ns::are_indices<int, unsigned int&, const std::size_t&, std::tuple<char&>, ns::point<int,1>&&>);
+  static_assert(ns::are_indices<int, unsigned int&, const std::size_t&, std::tuple<char&>, ns::point<int,1>&&>);
 
   using int2 = std::pair<int,int>;
   using uint3 = std::tuple<unsigned int, unsigned int, unsigned int>;
 
   static_assert(ns::index<int2>);
-  //static_assert(ns::index<ns::int2>);
+  static_assert(ns::index<ns::int2>);
   static_assert(ns::index<uint3>);
-  //static_assert(ns::index<ns::uint3>);
+  static_assert(ns::index<ns::uint3>);
   static_assert(ns::index<std::tuple<int>>);
   static_assert(ns::index<std::tuple<int,unsigned int>>);
   static_assert(ns::index<std::tuple<int,unsigned int,std::size_t>>);
@@ -48,9 +48,9 @@ void test_index()
   static_assert(!ns::index<void>);
   static_assert(!ns::index<std::pair<float,int>>);
   static_assert(!ns::index<float2>);
-  //static_assert(!ns::index<ns::float2>);
+  static_assert(!ns::index<ns::float2>);
   static_assert(!ns::index<double3>);
-  //static_assert(!ns::index<ns::double3>, "Error.");
+  static_assert(!ns::index<ns::double3>, "Error.");
   static_assert(!ns::index<int*>);
   static_assert(!ns::are_indices<int,float>);
   static_assert(!ns::are_indices<int&,float>);

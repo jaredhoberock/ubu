@@ -1,5 +1,6 @@
 #include <array>
 #include <aspera/coordinate/coordinate.hpp>
+#include <aspera/coordinate/point.hpp>
 #include <tuple>
 #include <utility>
 
@@ -53,8 +54,8 @@ void test_coordinate()
   static_assert(ns::coordinate<std::tuple<int,unsigned int>>);
   static_assert(ns::coordinate<std::tuple<int,unsigned int,std::size_t>>);
   static_assert(ns::coordinate<std::array<std::size_t,3>>);
-  //static_assert(ns::coordinate<ns::float2>);
-  //static_assert(ns::coordinate<ns::uint3>);
+  static_assert(ns::coordinate<ns::float2>);
+  static_assert(ns::coordinate<ns::uint3>);
 
   using int2 = std::pair<int,int>;
   using uint3 = std::tuple<unsigned int, unsigned int, unsigned int>;

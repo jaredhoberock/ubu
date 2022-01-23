@@ -1,3 +1,4 @@
+#include <aspera/coordinate/point.hpp>
 #include <aspera/coordinate/size.hpp>
 #include <tuple>
 #include <utility>
@@ -44,8 +45,8 @@ void test_size()
   static_assert(0 == ns::size(std::size_t{13}));
   static_assert(1 == ns::size_v<std::tuple<char>>);
   static_assert(1 == ns::size(std::make_tuple('a')));
-  //static_assert(1 == ns::size_v<ns::point<int,1>>);
-  //static_assert(1 == ns::size(ns::point<int,1>{13}));
+  static_assert(1 == ns::size_v<ns::point<int,1>>);
+  static_assert(1 == ns::size(ns::point<int,1>{13}));
 
   static_assert(0 == ns::size_v<int&>);
   static_assert(0 == ns::size_v<const unsigned int&>);
