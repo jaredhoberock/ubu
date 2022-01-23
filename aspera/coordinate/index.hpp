@@ -78,6 +78,10 @@ template<class T>
 concept index = (coordinate<T> and detail::is_index<T>::value);
 
 
+template<class T, std::size_t N>
+concept index_of_size = index<T> and (size_v<T> == N);
+
+
 template<class... Types>
 concept are_indices = (... and index<Types>);
 
