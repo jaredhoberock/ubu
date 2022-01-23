@@ -12,7 +12,7 @@ void test(Args... args)
 
   T expected = (... + args);
 
-  assert(expected == x.product());
+  assert(expected == x.sum());
 }
 
 template<class T>
