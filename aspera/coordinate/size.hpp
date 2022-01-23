@@ -107,7 +107,7 @@ constexpr detail::dispatch_size size;
 
 
 template<class T>
-using size_t = decltype(ASPERA_NAMESPACE::size(std::declval<T>()));
+using size_result_t = decltype(ASPERA_NAMESPACE::size(std::declval<T>()));
 
 
 namespace detail
@@ -152,21 +152,21 @@ template<class... Types>
 struct is_tuple_of_types_each_with_static_size<std::tuple<Types...>>
 {
   // check that each of Types... may be used with the size CPO
-  static constexpr bool value = (... && detected<ASPERA_NAMESPACE::size_t, Types>);
+  static constexpr bool value = (... && detected<size_result_t, Types>);
 };
 
 template<class T1, class T2>
 struct is_tuple_of_types_each_with_static_size<std::pair<T1,T2>>
 {
   // check that T1 & T1 may be used with the size CPO
-  static constexpr bool value = detected<ASPERA_NAMESPACE::size_t,T1> and detected<ASPERA_NAMESPACE::size_t,T2>;
+  static constexpr bool value = detected<size_result_t,T1> and detected<size_result_t,T2>;
 };
 
 template<class T, std::size_t N>
 struct is_tuple_of_types_each_with_static_size<std::array<T,N>>
 {
   // check that T may be used with the size CPO
-  static constexpr bool value = detected<ASPERA_NAMESPACE::size_t,T>;
+  static constexpr bool value = detected<size_result_t,T>;
 };
 
 
