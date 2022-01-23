@@ -298,6 +298,10 @@ class point
       return product_impl(*this, std::make_index_sequence<N>{});
     }
 
+    constexpr T sum() const
+    {
+      return sum_impl(*this, std::make_index_sequence<N>{});
+    }
 
 
     friend std::ostream& operator<<(std::ostream& os, const point& self)
@@ -310,6 +314,9 @@ class point
     }
 
   private:
+    std::array<T,N> elements_;
+
+
     // point unpacking constructor
     template<class OtherT, std::size_t... Indices>
       requires std::convertible_to<OtherT,T>
@@ -382,6 +389,7 @@ class point
     }
 
 
+    // XXX these reduction implementations deserve to be generalized and live somewhere common
     template<class... Args>
     constexpr static T product_impl(const T& arg1, const Args&... args)
     {
@@ -394,7 +402,18 @@ class point
       return product_impl(p[Indices]...);
     }
 
-    std::array<T,N> elements_;
+
+    template<class... Args>
+    constexpr static T sum_impl(const T& arg1, const Args&... args)
+    {
+      return (arg1 + ... + args);
+    }
+
+    template<std::size_t... Indices>
+    constexpr static T sum_impl(const point& p, std::index_sequence<Indices...>)
+    {
+      return sum_impl(p[Indices]...);
+    }
 };
 
 
