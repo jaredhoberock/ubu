@@ -65,6 +65,9 @@ struct is_coordinate
 template<class T>
 concept coordinate = detail::is_coordinate<T>::value;
 
+template<class T, std::size_t N>
+concept coordinate_of_size = coordinate<T> and (size_v<T> == N);
+
 
 ASPERA_NAMESPACE_CLOSE_BRACE
 
