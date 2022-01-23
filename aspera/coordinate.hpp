@@ -7,6 +7,7 @@
 #include "coordinate/index.hpp"
 #include "coordinate/point.hpp"
 #include "coordinate/size.hpp"
+#include "coordinate/size_of_index_space.hpp"
 
 #include "detail/epilogue.hpp"
 
