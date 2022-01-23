@@ -2,10 +2,11 @@
 
 #include "detail/prologue.hpp"
 
-#include "coord/coordinate.hpp"
-#include "coord/element.hpp"
-#include "coord/index.hpp"
-#include "coord/size.hpp"
+#include "coordinate/coordinate.hpp"
+#include "coordinate/element.hpp"
+#include "coordinate/index.hpp"
+#include "coordinate/point.hpp"
+#include "coordinate/size.hpp"
 
 #include "detail/epilogue.hpp"
 
