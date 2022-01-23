@@ -3,8 +3,8 @@
 #include "../detail/prologue.hpp"
 
 #include "coordinate.hpp"
-#include "discrete_coordinate.hpp"
 #include "element.hpp"
+#include "grid_coordinate.hpp"
 #include "size.hpp"
 #include <array>
 #include <cassert>
@@ -221,7 +221,7 @@ class point
       return *this;
     }
 
-    template<discrete_coordinate_of_size<N> Other>
+    template<grid_coordinate_of_size<N> Other>
       requires std::integral<T>
     constexpr point& operator%=(const Other& rhs)
     {
@@ -281,7 +281,7 @@ class point
       return result;
     }
 
-    template<discrete_coordinate_of_size<N> Other>
+    template<grid_coordinate_of_size<N> Other>
       requires std::integral<T>
     constexpr point operator%(const Other& rhs) const
     {
