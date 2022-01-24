@@ -17,10 +17,128 @@
 ASPERA_NAMESPACE_OPEN_BRACE
 
 
+namespace detail
+{
+
+
+template<class T, std::size_t N>
+class point_base
+{
+  private:
+    std::array<T,N> elements_;
+
+  protected:
+    template<class... OtherT>
+      requires (sizeof...(OtherT) == N) and (... and std::convertible_to<OtherT,T>)
+    constexpr point_base(OtherT... args)
+      : elements_{static_cast<T>(args)...}
+    {}
+
+    constexpr T* data()
+    {
+      return elements_.data();
+    }
+
+    constexpr const T* data() const
+    {
+      return elements_.data();
+    }
+};
+
+
+// small points get named elements
+template<class T>
+class point_base<T,1>
+{
+  public:
+    T x;
+
+  protected:
+    constexpr T* data()
+    {
+      return &x;
+    }
+
+    constexpr const T* data() const
+    {
+      return &x;
+    }
+};
+
+
+template<class T>
+class point_base<T,2>
+{
+  public:
+    T x;
+    T y;
+
+  protected:
+    constexpr T* data()
+    {
+      return &x;
+    }
+
+    constexpr const T* data() const
+    {
+      return &x;
+    }
+};
+
+
+template<class T>
+class point_base<T,3>
+{
+  public:
+    T x;
+    T y;
+    T z;
+
+  protected:
+    constexpr T* data()
+    {
+      return &x;
+    }
+
+    constexpr const T* data() const
+    {
+      return &x;
+    }
+};
+
+
+template<class T>
+class point_base<T,4>
+{
+  public:
+    T x;
+    T y;
+    T z;
+    T w;
+
+  protected:
+    constexpr T* data()
+    {
+      return &x;
+    }
+
+    constexpr const T* data() const
+    {
+      return &x;
+    }
+};
+
+
+} // end detail
+
+
 template<class T, std::size_t N>
   requires (N > 0)
-class point
+class point : public detail::point_base<T,N>
 {
+  private:
+    using super_t = detail::point_base<T,N>;
+
   public:
     using value_type = T;
     using size_type = std::size_t;
@@ -42,7 +160,7 @@ class point
     template<class... OtherT>
       requires (sizeof...(OtherT) == N) and (... and std::convertible_to<OtherT,T>)
     constexpr point(OtherT... args)
-      : elements_{static_cast<T>(args)...}
+      : super_t{static_cast<T>(args)...}
     {}
 
     // converting constructor
@@ -64,12 +182,12 @@ class point
 
     constexpr pointer data()
     {
-      return elements_.data();
+      return super_t::data();
     }
 
     constexpr const_pointer data() const
     {
-      return elements_.data();
+      return super_t::data();
     }
 
     constexpr static size_type size()
@@ -314,9 +432,6 @@ class point
     }
 
   private:
-    std::array<T,N> elements_;
-
-
     // point unpacking constructor
     template<class OtherT, std::size_t... Indices>
       requires std::convertible_to<OtherT,T>
