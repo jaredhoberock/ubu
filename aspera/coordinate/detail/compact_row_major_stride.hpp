@@ -7,6 +7,7 @@
 #include "../size.hpp"
 #include "make_ascending_index_range.hpp"
 #include "make_coordinate.hpp"
+#include "subgrid_size.hpp"
 #include <concepts>
 #include <utility>
 
