@@ -37,26 +37,26 @@ void test_size()
   static_assert(1 == ns::size(has_size_member_function{}));
   static_assert(1 == ns::size(has_size_free_function{}));
 
-  static_assert(0 == ns::size_v<int>);
-  static_assert(0 == ns::size(13));
-  static_assert(0 == ns::size_v<unsigned int>);
-  static_assert(0 == ns::size(13u));
-  static_assert(0 == ns::size_v<std::size_t>);
-  static_assert(0 == ns::size(std::size_t{13}));
+  static_assert(1 == ns::size_v<int>);
+  static_assert(1 == ns::size(13));
+  static_assert(1 == ns::size_v<unsigned int>);
+  static_assert(1 == ns::size(13u));
+  static_assert(1 == ns::size_v<std::size_t>);
+  static_assert(1 == ns::size(std::size_t{13}));
   static_assert(1 == ns::size_v<std::tuple<char>>);
   static_assert(1 == ns::size(std::make_tuple('a')));
   static_assert(1 == ns::size_v<ns::point<int,1>>);
   static_assert(1 == ns::size(ns::point<int,1>{13}));
 
-  static_assert(0 == ns::size_v<int&>);
-  static_assert(0 == ns::size_v<const unsigned int&>);
-  static_assert(0 == ns::size_v<std::size_t&&>);
+  static_assert(1 == ns::size_v<int&>);
+  static_assert(1 == ns::size_v<const unsigned int&>);
+  static_assert(1 == ns::size_v<std::size_t&&>);
   static_assert(1 == ns::size_v<const std::tuple<char>&>);
 
-  static_assert(0 == ns::size_v<float>);
-  static_assert(0 == ns::size(3.14f));
-  static_assert(0 == ns::size_v<double>);
-  static_assert(0 == ns::size(3.14));
+  static_assert(1 == ns::size_v<float>);
+  static_assert(1 == ns::size(3.14f));
+  static_assert(1 == ns::size_v<double>);
+  static_assert(1 == ns::size(3.14));
   static_assert(1 == ns::size_v<std::tuple<float>>);
   static_assert(1 == ns::size(std::make_tuple(3.14f)));
   static_assert(1 == ns::size_v<std::tuple<double>>);

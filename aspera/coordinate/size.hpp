@@ -55,7 +55,7 @@ struct dispatch_size
               number<std::remove_cvref_t<T>>)
   constexpr std::size_t operator()() const
   {
-    return 0;
+    return 1;
   }
 
   template<class T>
