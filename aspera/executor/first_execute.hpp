@@ -54,6 +54,7 @@ struct dispatch_first_execute
     requires (!has_first_execute_member_function<E&&,F&&> and !has_first_execute_free_function<E&&,F&&>)
   std::future<void> operator()(E&& e, F&& f) const
   {
+    // XXX should ask the executor for a promise instead of using std::promise
     std::promise<void> p;
     std::future<void> result = p.get_future();
 
