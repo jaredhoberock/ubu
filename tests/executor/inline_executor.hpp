@@ -1,7 +1,6 @@
 #include <aspera/executor/executor.hpp>
 #include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/inline_executor.hpp>
-#include <aspera/executor/upstream_executor.hpp>
 #include <cassert>
 
 #ifdef __CUDACC__
@@ -22,10 +21,6 @@ void test()
   {
     auto lambda = []{};
     static_assert(ns::executor_of<ns::inline_executor, decltype(lambda)>);
-  }
-
-  {
-    static_assert(ns::upstream_executor<ns::inline_executor>);
   }
 
   {

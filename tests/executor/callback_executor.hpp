@@ -1,5 +1,5 @@
 #include <aspera/executor/callback_executor.hpp>
-#include <aspera/executor/upstream_executor.hpp>
+#include <aspera/executor/executor.hpp>
 #include <cassert>
 
 
@@ -10,10 +10,6 @@ void test(cudaStream_t s)
   {
     auto lambda = []{};
     static_assert(ns::executor_of<ns::callback_executor, decltype(lambda)>);
-  }
-
-  {
-    static_assert(ns::upstream_executor<ns::callback_executor>);
   }
 
   ns::callback_executor ex1{s};

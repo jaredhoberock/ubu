@@ -16,9 +16,15 @@ struct inline_executor
   auto operator<=>(const inline_executor&) const = default;
 
   template<std::invocable F>
-  complete_event execute(F&& f) const
+  constexpr void execute(F&& f) const
   {
     std::invoke(std::forward<F>(f));
+  }
+
+  template<std::invocable F>
+  constexpr complete_event first_execute(F&& f) const
+  {
+    this->execute(std::forward<F>(f));
     return {};
   }
 };
