@@ -2,11 +2,15 @@
 
 #include "../detail/prologue.hpp"
 
-#include "detail/cuda_event.hpp"
+#include "event.hpp"
 #include <cuda_runtime_api.h>
 
 
 ASPERA_NAMESPACE_OPEN_BRACE
+
+
+namespace cuda
+{
 
 
 class callback_executor
@@ -43,7 +47,7 @@ class callback_executor
     callback_executor(const callback_executor&) = default;
 
     template<std::invocable F>
-    detail::cuda_event execute(F&& f) const noexcept
+    void execute(F&& f) const noexcept
     {
       using T = std::decay_t<F>;
 
@@ -54,9 +58,36 @@ class callback_executor
 
       // enqueue the callback
       detail::throw_on_error(cudaStreamAddCallback(stream_, &callback<T>, ptr_to_f, 0), "callback_executor::execute: CUDA error after cudaStreamAddCallback");
+    }
+
+    template<std::invocable F>
+    event first_execute(F&& f) const noexcept
+    {
+      // execute f
+      execute(std::forward<F>(f));
 
       // return a new event recorded on our stream
-      return detail::cuda_event{0, stream_};
+      return event{0, stream_};
+    }
+
+    template<std::invocable F>
+    event then_execute(const event& before, F&& f) const noexcept
+    {
+      // make the stream wait for the before event
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::then_execute: CUDA error after cudaStreamWaitEvent");
+
+      // execute f and return the event
+      return first_execute(std::forward<F>(f));
+    }
+
+    template<std::invocable F>
+    void finally_execute(const event& before, F&& f) const noexcept
+    {
+      // make the stream wait for the before event
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::then_execute: CUDA error after cudaStreamWaitEvent");
+
+      // execute f
+      execute(std::forward<F>(f));
     }
 
     auto operator<=>(const callback_executor&) const = default;
@@ -71,6 +102,10 @@ class callback_executor
     //  return blocking.possibly;
     //}
 };
+
+
+} // end namespace cuda
+
 
 ASPERA_NAMESPACE_CLOSE_BRACE
 
