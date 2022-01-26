@@ -2,6 +2,7 @@
 #include <aspera/event/complete_event.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/executor/bulk_execute.hpp>
+#include <aspera/executor/inline_executor.hpp>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>
@@ -56,12 +57,12 @@ void test()
     int counter = 0;
 
     ns::complete_event before;
-    int n = 10;
+    int expected = 10;
 
-    auto done = ns::bulk_execute(e, before, n, [&](int){ ++counter; });
+    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
-    assert(n == counter);
+    assert(expected == counter);
   }
 
   {
@@ -70,12 +71,26 @@ void test()
     int counter = 0;
 
     ns::complete_event before;
-    int n = 10;
+    int expected = 10;
 
-    auto done = ns::bulk_execute(e, before, n, [&](int){ ++counter; });
+    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
-    assert(n == counter);
+    assert(expected == counter);
+  }
+
+  {
+    ns::inline_executor e;
+
+    int counter = 0;
+
+    ns::complete_event before;
+    int expected = 10;
+
+    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
+    ns::wait(done);
+
+    assert(expected == counter);
   }
 }
 
@@ -91,5 +106,4 @@ void test_bulk_execute()
   assert(cudaDeviceSynchronize() == cudaSuccess);
 #endif
 }
-
 
