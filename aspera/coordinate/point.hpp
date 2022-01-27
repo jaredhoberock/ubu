@@ -7,7 +7,6 @@
 #include "grid_coordinate.hpp"
 #include "size.hpp"
 #include <array>
-#include <cassert>
 #include <concepts>
 #include <functional>
 #include <iostream>
