@@ -2,6 +2,8 @@
 #include <aspera/coordinate/detail/compact_row_major_stride.hpp>
 #include <aspera/coordinate/point.hpp>
 #include <aspera/coordinate/to_index.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 

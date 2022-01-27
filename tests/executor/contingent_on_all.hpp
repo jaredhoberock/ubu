@@ -2,7 +2,10 @@
 #include <aspera/executor/contingent_on_all.hpp>
 #include <aspera/executor/first_execute.hpp>
 #include <aspera/executor/inline_executor.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <vector>
 
 #ifdef __CUDACC__

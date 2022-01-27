@@ -1,19 +1,21 @@
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 void test_default_constructor()
 {
-  using namespace aspera;
+  namespace ns = aspera;
 
-  assert(lattice<int>{}.empty());
-  assert(lattice<int2>{}.empty());
-  assert(lattice<int3>{}.empty());
-  assert(lattice<int4>{}.empty());
+  assert(ns::lattice<int>{}.empty());
+  assert(ns::lattice<ns::int2>{}.empty());
+  assert(ns::lattice<ns::int3>{}.empty());
+  assert(ns::lattice<ns::int4>{}.empty());
 
-  assert(lattice<unsigned int>{}.empty());
-  assert(lattice<uint2>{}.empty());
-  assert(lattice<uint3>{}.empty());
-  assert(lattice<uint4>{}.empty());
+  assert(ns::lattice<unsigned int>{}.empty());
+  assert(ns::lattice<ns::uint2>{}.empty());
+  assert(ns::lattice<ns::uint3>{}.empty());
+  assert(ns::lattice<ns::uint4>{}.empty());
 }
 

@@ -2,7 +2,6 @@
 
 #include "detail/prologue.hpp"
 
-#include "executor/callback_executor.hpp"
 #include "executor/contingent_on_all.hpp"
 #include "executor/execute.hpp"
 #include "executor/executor.hpp"

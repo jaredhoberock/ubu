@@ -1,4 +1,6 @@
 #include <aspera/event/wait.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 #ifdef __CUDACC__

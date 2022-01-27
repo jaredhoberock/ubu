@@ -1,6 +1,8 @@
 #include <aspera/executor/executor.hpp>
 #include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/inline_executor.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 #ifdef __CUDACC__

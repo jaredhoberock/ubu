@@ -4,7 +4,10 @@
 #include <aspera/executor/then_execute.hpp>
 #include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/new_thread_executor.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <future>
 
 namespace ns = aspera;

@@ -1,5 +1,8 @@
 #include <aspera/event/event.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <future>
 
 #ifdef __CUDACC__

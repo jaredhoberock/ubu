@@ -1,6 +1,8 @@
-#include <cassert>
 #include <aspera/event/complete_event.hpp>
 #include <aspera/executor/then_execute.hpp>
+
+#undef NDEBUG
+#include <cassert>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>

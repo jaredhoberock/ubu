@@ -1,6 +1,9 @@
 #include <aspera/coordinate/colexicographic_index.hpp>
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <cstdio>
 
 void test_colexicographic_index()

@@ -1,7 +1,10 @@
 #include <array>
 #include <aspera/coordinate/element.hpp>
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <tuple>
 #include <utility>
 

@@ -1,5 +1,8 @@
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <sstream>
 #include <string>
 

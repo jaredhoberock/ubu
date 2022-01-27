@@ -1,7 +1,10 @@
 #include <aspera/event/complete_event.hpp>
 #include <aspera/executor/first_execute.hpp>
 #include <aspera/executor/inline_executor.hpp>
+
+#undef NDEBUG
 #include <cassert>
+
 #include <thread>
 
 #ifdef __CUDACC__

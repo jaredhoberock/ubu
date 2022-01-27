@@ -1,5 +1,7 @@
 #include <aspera/coordinate/colexicographic_index_to_grid_coordinate.hpp>
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 

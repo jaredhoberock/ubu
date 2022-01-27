@@ -1,5 +1,7 @@
 #include <aspera/coordinate/point.hpp>
 #include <aspera/coordinate/lattice.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 void test_variadic_constructor()

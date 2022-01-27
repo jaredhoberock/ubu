@@ -1,4 +1,6 @@
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 template<class T, class... Types>

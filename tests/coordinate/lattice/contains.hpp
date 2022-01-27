@@ -1,5 +1,7 @@
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/coordinate/point.hpp>
+
+#undef NDEBUG
 #include <cassert>
 
 void test_contains()

@@ -1,5 +1,7 @@
-#include <cassert>
 #include <aspera/event/wait.hpp>
+
+#undef NDEBUG
+#include <cassert>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>
