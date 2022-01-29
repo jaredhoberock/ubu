@@ -42,7 +42,7 @@ class managed_memory_resource
     {
       detail::temporarily_with_current_device(device(), [=]
       {
-        detail::throw_on_error(cudaFree(ptr), "cuda::managed_resource::deallocate: CUDA error after cudaFree");
+        detail::throw_on_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: CUDA error after cudaFree");
       });
     }
 
