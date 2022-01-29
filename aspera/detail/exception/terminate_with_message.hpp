@@ -3,6 +3,7 @@
 #include "../prologue.hpp"
 
 #include "terminate.hpp"
+#include <cstdio>
 
 
 ASPERA_NAMESPACE_OPEN_BRACE
