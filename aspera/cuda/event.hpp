@@ -39,6 +39,8 @@ class event
 
     inline ~event() noexcept
     {
+      // XXX should make sure the event is valid before doing any of this
+
       if(origin_target_ == current_target())
       {
         if ASPERA_TARGET(has_cuda_runtime())
