@@ -59,11 +59,9 @@ class kernel_executor
       : kernel_executor{stream, 0, device}
     {}
 
-    constexpr explicit kernel_executor(cudaStream_t stream)
-      : kernel_executor{stream, 0, 0}
+    constexpr kernel_executor()
+      : kernel_executor{0, 0}
     {}
-
-    kernel_executor() = default;
 
     kernel_executor(const kernel_executor&) = default;
 
@@ -130,6 +128,15 @@ class kernel_executor
 
     auto operator<=>(const kernel_executor&) const = default;
 
+    constexpr cudaStream_t stream() const
+    {
+      return stream_;
+    }
+
+    constexpr int device() const
+    {
+      return device_;
+    }
 
   private:
     cudaStream_t stream_;
