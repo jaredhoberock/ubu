@@ -169,7 +169,7 @@ class event
       return result;
     }
 
-    int device_;
+    int device_; // XXX this member is never used, so why is it here?
     cudaEvent_t native_handle_;
     from origin_target_;
 };
