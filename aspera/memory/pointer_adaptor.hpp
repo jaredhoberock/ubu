@@ -134,15 +134,35 @@ class pointer_adaptor_reference : private C
     }
 
     // equality
-    bool operator==(const value_type& value) const
+    friend bool operator==(const pointer_adaptor_reference& self, const value_type& value)
     {
-      return operator value_type () == value;
+      return self.operator value_type () == value;
+    }
+
+    friend bool operator==(const value_type& value, const pointer_adaptor_reference& self)
+    {
+      return self.operator value_type () == value;
+    }
+
+    friend bool operator==(const pointer_adaptor_reference& lhs, const pointer_adaptor_reference& rhs)
+    {
+      return lhs.operator value_type () == rhs.operator value_type ();
     }
 
     // inequality
-    bool operator!=(const value_type& value) const
+    friend bool operator!=(const pointer_adaptor_reference& self, const value_type& value)
     {
-      return !operator==(value);
+      return !(self == value);
+    }
+
+    friend bool operator!=(const value_type& value, const pointer_adaptor_reference& self)
+    {
+      return !(self == value);
+    }
+
+    friend bool operator!=(const pointer_adaptor_reference& lhs, const pointer_adaptor_reference& rhs)
+    {
+      return !(lhs == rhs);
     }
 
   private:
@@ -202,6 +222,12 @@ class pointer_adaptor : private C
 
     constexpr pointer_adaptor(const handle_type& h, C&& c) noexcept
       : super_t{std::move(c)}, handle_{h}
+    {}
+
+    template<class... Args>
+      requires std::constructible_from<C,Args&&...>
+    constexpr pointer_adaptor(const handle_type& h, Args&&... copier_args)
+      : pointer_adaptor{h, C{std::forward<Args&&>(copier_args)...}}
     {}
 
     template<class U, copier OtherC>
