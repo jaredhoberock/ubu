@@ -7,6 +7,7 @@
 #include "detail/launch_as_cuda_kernel.hpp"
 #include "event.hpp"
 #include "thread_id.hpp"
+#include <concepts>
 #include <functional>
 
 
@@ -136,6 +137,29 @@ class kernel_executor
     constexpr int device() const
     {
       return device_;
+    }
+
+    // when it's possible to move the incoming dependency, just do that
+    event contingent_on(event&& dependency) const
+    {
+      return std::move(dependency);
+    }
+
+  private:
+    template<class... Args>
+    constexpr static void swallow(Args... &&) {}
+
+  public:
+    template<std::same_as<event>... Events>
+    event contingent_on(const Events&... dependencies) const
+    {
+      // make our stream wait on all the dependencies
+      swallow(
+        detail::throw_on_error(cudaStreamWaitEvent(stream_, dependencies.native_handle()), "kernel_executor::contingent_on: CUDA error after cudaStreamWaitEvent")...
+      );
+
+      // return a new event recorded on our stream
+      return {device_, stream_};
     }
 
   private:
