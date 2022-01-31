@@ -4,7 +4,9 @@
 
 #include "../detail/exception.hpp"
 #include "detail/temporarily_with_current_device.hpp"
+#include "event.hpp"
 #include <cuda_runtime_api.h>
+#include <utility>
 
 ASPERA_NAMESPACE_OPEN_BRACE
 
@@ -16,12 +18,13 @@ namespace cuda
 class device_memory_resource
 {
   public:
-    inline explicit device_memory_resource(int device)
-      : device_{device}
+    explicit device_memory_resource(int device, cudaStream_t stream)
+      : device_{device},
+        stream_{stream}
     {}
 
     inline device_memory_resource()
-      : device_memory_resource{0}
+      : device_memory_resource{0,0}
     {}
 
     device_memory_resource(const device_memory_resource&) = default;
@@ -46,14 +49,51 @@ class device_memory_resource
       });
     }
 
+    inline std::pair<event,void*> allocate_after(const event& before, std::size_t num_bytes) const
+    {
+      return detail::temporarily_with_current_device(device(), [&]
+      {
+        detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()),
+          "cuda::device_memory_resource::allocate_after: CUDA error after cudaStreamWaitEvent"
+        );
+
+        void* ptr{};
+        detail::throw_on_error(cudaMallocAsync(reinterpret_cast<void**>(&ptr), num_bytes, stream()),
+          "cuda::device_memory_resource::allocate_after: CUDA error after cudaMallocAsync"
+        );
+
+        event after{device(), stream()};
+
+        return std::pair<event,void*>(std::move(after), ptr);
+      });
+    }
+
+    inline event deallocate_after(const event& before, void* ptr, std::size_t) const
+    {
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
+        "cuda::device_memory_resource::deallocate_after: CUDA error after cudaStreamWaitEvent"
+      );
+
+      detail::throw_on_error(cudaFreeAsync(ptr, stream()),
+        "cuda::device_memory_resource::deallocate_after: CUDA error after cudaFreeAsync"
+      );
+
+      return {device(), stream()};
+    }
+
     inline int device() const
     {
       return device_;
     }
 
+    inline cudaStream_t stream() const
+    {
+      return stream_;
+    }
+
     inline bool is_equal(const device_memory_resource& other) const
     {
-      return device() == other.device();
+      return device() == other.device() and stream() == other.stream();
     }
 
     inline bool operator==(const device_memory_resource& other) const
@@ -68,6 +108,7 @@ class device_memory_resource
 
   private:
     int device_;
+    cudaStream_t stream_;
 };
 
 

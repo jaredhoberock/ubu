@@ -13,8 +13,9 @@ namespace ns = aspera;
 void test_copy_n_after()
 {
   using namespace ns::cuda;
+  cudaStream_t s = 0;
 
-  device_memory_resource mem0{0}, mem1{1};
+  device_memory_resource mem0{0,s}, mem1{1,s};
 
   // allocate an int on each of two devices
   device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
@@ -228,7 +229,8 @@ void test_copy_n_after_between_devices()
 {
   using namespace ns::cuda;
 
-  device_memory_resource mem0{0}, mem1{1};
+  cudaStream_t s = 0;
+  device_memory_resource mem0{0,s}, mem1{1,s};
 
   // allocate an int on each of two devices
   device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
