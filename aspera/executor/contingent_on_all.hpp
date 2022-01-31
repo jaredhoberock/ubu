@@ -21,7 +21,7 @@ concept has_contingent_on_all_member_function = requires(E executor, C events)
 template<class E, class C>
 concept has_contingent_on_all_free_function = requires(E executor, C events)
 {
-  contingent_on_all_free_function(executor, events);
+  contingent_on_all(executor, events);
 };
 
 
