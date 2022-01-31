@@ -15,7 +15,8 @@ namespace detail
 {
 
 
-inline void throw_on_error(cudaError_t e, const char* message)
+// this function returns a value so that it can be called on parameter packs
+inline int throw_on_error(cudaError_t e, const char* message)
 {
   if(e)
   {
@@ -40,6 +41,8 @@ inline void throw_on_error(cudaError_t e, const char* message)
       terminate();
     }
   }
+
+  return 0;
 }
 
 
