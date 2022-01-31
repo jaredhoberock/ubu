@@ -19,7 +19,7 @@ namespace cuda
 
 
 template<class T>
-  requires std::is_pod_v<T>
+  requires (std::is_standard_layout_v<T> and std::is_trivial_v<T>)
 class device_memory_copier
 {
   public:
