@@ -109,7 +109,7 @@ class event
       return result;
     }
 
-    inline void wait() const
+    inline void wait()
     {
       if ASPERA_TARGET(has_cuda_runtime())
       {
