@@ -71,10 +71,10 @@ class callback_executor
     }
 
     template<std::invocable F>
-    event then_execute(const event& before, F&& f) const noexcept
+    event execute_after(const event& before, F&& f) const noexcept
     {
       // make the stream wait for the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::then_execute: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
 
       // execute f and return the event
       return first_execute(std::forward<F>(f));
@@ -84,7 +84,7 @@ class callback_executor
     void finally_execute(const event& before, F&& f) const noexcept
     {
       // make the stream wait for the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::then_execute: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
 
       // execute f
       execute(std::forward<F>(f));

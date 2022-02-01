@@ -5,7 +5,7 @@
 #include "../event/event.hpp"
 #include "../event/wait.hpp"
 #include "executor.hpp"
-#include "then_execute.hpp"
+#include "execute_after.hpp"
 #include <concepts>
 #include <functional>
 #include <future>
@@ -50,13 +50,13 @@ struct dispatch_finally_execute
     return finally_execute(std::forward<Ex>(ex), std::forward<Ev>(ev), std::forward<F>(f));
   }
 
-  // this dispatch path adapts then_execute
+  // this dispatch path adapts execute_after
   template<executor Ex, event Ev, std::invocable F>
     requires (!has_finally_execute_member_function<Ex&&,Ev&&,F&&> and !has_finally_execute_free_function<Ex&&,Ev&&,F&&>)
   void operator()(Ex&& ex, Ev&& ev, F&& f) const
   {
-    // the event returned by then_execute is discarded
-    then_execute(std::forward<Ex>(ex), std::forward<Ev>(ev), std::forward<F>(f));
+    // the event returned by execute_after is discarded
+    execute_after(std::forward<Ex>(ex), std::forward<Ev>(ev), std::forward<F>(f));
   }
 };
 

@@ -1,8 +1,8 @@
 #include <aspera/executor/execute.hpp>
+#include <aspera/executor/execute_after.hpp>
+#include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/finally_execute.hpp>
 #include <aspera/executor/first_execute.hpp>
-#include <aspera/executor/then_execute.hpp>
-#include <aspera/executor/executor_of.hpp>
 #include <aspera/executor/new_thread_executor.hpp>
 
 #undef NDEBUG
@@ -62,7 +62,7 @@ void test_new_thread_executor()
       invoked1 = true;
     });
 
-    auto e2 = ns::then_execute(ex, e1, [&invoked1, &invoked2]
+    auto e2 = ns::execute_after(ex, e1, [&invoked1, &invoked2]
     {
       assert(invoked1);
       invoked2 = true;

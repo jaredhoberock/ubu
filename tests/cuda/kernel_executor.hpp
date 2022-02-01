@@ -2,10 +2,10 @@
 #include <aspera/event/wait.hpp>
 #include <aspera/executor/bulk_execute.hpp>
 #include <aspera/executor/execute.hpp>
+#include <aspera/executor/execute_after.hpp>
 #include <aspera/executor/executor.hpp>
 #include <aspera/executor/finally_execute.hpp>
 #include <aspera/executor/first_execute.hpp>
-#include <aspera/executor/then_execute.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -106,7 +106,7 @@ void test_first_execute(cudaStream_t s, int d)
 }
 
 
-void test_then_execute(cudaStream_t s, int d)
+void test_execute_after(cudaStream_t s, int d)
 {
   using namespace ns;
 
@@ -124,7 +124,7 @@ void test_then_execute(cudaStream_t s, int d)
 
     result2 = 0;
     int expected2 = 7;
-    auto e2 = ns::then_execute(ex, e1, [expected1,expected2]
+    auto e2 = ns::execute_after(ex, e1, [expected1,expected2]
     {
       assert(expected1 == result1);
       result2 = expected2;
@@ -250,7 +250,7 @@ void test_on_stream(cudaStream_t s)
   test_execute(s, 0);
   test_finally_execute(s, 0);
   test_first_execute(s, 0);
-  test_then_execute(s, 0);
+  test_execute_after(s, 0);
 }
 
 

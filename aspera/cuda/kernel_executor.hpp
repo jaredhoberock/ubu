@@ -91,7 +91,7 @@ class kernel_executor
 
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline event then_execute(const event& before, F f) const
+    inline event execute_after(const event& before, F f) const
     {
       return bulk_execute(before, coordinate_type{::int3{1,1,1}, ::int3{1,1,1}}, [f](coordinate_type)
       {
@@ -105,7 +105,7 @@ class kernel_executor
       requires std::is_trivially_copyable_v<F>
     inline event first_execute(F f) const
     {
-      return then_execute(event{device_}, f);
+      return execute_after(event{device_}, f);
     }
 
 
@@ -122,8 +122,8 @@ class kernel_executor
       requires std::is_trivially_copyable_v<F>
     inline void finally_execute(const event& before, F f) const
     {
-      // just discard the result of then_execute
-      then_execute(before, f);
+      // just discard the result of execute_after
+      execute_after(before, f);
     }
 
 

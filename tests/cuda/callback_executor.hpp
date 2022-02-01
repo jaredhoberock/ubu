@@ -59,7 +59,7 @@ void test(cudaStream_t s)
 
     int result2 = 0;
     int expected2 = 7;
-    auto e2 = ex1.then_execute(e1, [&result1,expected1,&result2,expected2]
+    auto e2 = ex1.execute_after(e1, [&result1,expected1,&result2,expected2]
     {
       assert(expected1 == result1);
       result2 = expected2;
@@ -80,7 +80,7 @@ void test(cudaStream_t s)
 
     int result2 = 0;
     int expected2 = 7;
-    auto e2 = ex1.then_execute(e1, [&result1,expected1,&result2,expected2]
+    auto e2 = ex1.execute_after(e1, [&result1,expected1,&result2,expected2]
     {
       assert(expected1 == result1);
       result2 = expected2;

@@ -1,6 +1,6 @@
 #include <aspera/event/complete_event.hpp>
+#include <aspera/executor/execute_after.hpp>
 #include <aspera/executor/inline_executor.hpp>
-#include <aspera/executor/then_execute.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -19,10 +19,10 @@ __global__ void device_invoke(F f)
 
 namespace ns = aspera;
 
-struct has_then_execute_member_function
+struct has_execute_after_member_function
 {
   template<ns::event E, class F>
-  ns::complete_event then_execute(E&& before, F&& f) const
+  ns::complete_event execute_after(E&& before, F&& f) const
   {
     ns::wait(std::move(before));
     f();
@@ -31,10 +31,10 @@ struct has_then_execute_member_function
 };
 
 
-struct has_then_execute_free_function {};
+struct has_execute_after_free_function {};
 
 template<ns::event E, class F>
-ns::complete_event then_execute(const has_then_execute_free_function&, E&& before, F&& f)
+ns::complete_event execute_after(const has_execute_after_free_function&, E&& before, F&& f)
 {
   ns::wait(std::move(before));
   f();
@@ -45,21 +45,21 @@ ns::complete_event then_execute(const has_then_execute_free_function&, E&& befor
 void test()
 {
   {
-    has_then_execute_member_function ex;
+    has_execute_after_member_function ex;
     ns::complete_event before;
 
     bool invoked = false;
-    auto e = ns::then_execute(ex, before, [&]{ invoked = true; });
+    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
     ns::wait(e);
     assert(invoked);
   }
 
   {
-    has_then_execute_free_function ex;
+    has_execute_after_free_function ex;
     ns::complete_event before;
 
     bool invoked = false;
-    auto e = ns::then_execute(ex, before, [&]{ invoked = true; });
+    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
     ns::wait(e);
     assert(invoked);
   }
@@ -69,13 +69,13 @@ void test()
     ns::complete_event before;
 
     bool invoked = false;
-    auto e = ns::then_execute(ex, before, [&]{ invoked = true; });
+    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
     ns::wait(e);
     assert(invoked);
   }
 }
 
-void test_then_execute()
+void test_execute_after()
 {
   test();
 

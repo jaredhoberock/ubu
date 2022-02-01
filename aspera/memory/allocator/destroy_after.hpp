@@ -4,8 +4,8 @@
 
 #include "../../event/event.hpp"
 #include "../../executor/contingent_on.hpp"
+#include "../../executor/execute_after.hpp"
 #include "../../executor/executor_associate.hpp"
-#include "../../executor/then_execute.hpp"
 #include "destroy.hpp"
 #include <memory>
 #include <utility>
@@ -69,7 +69,7 @@ struct dispatch_destroy_after
     {
       // execute destructors
       // XXX this needs to be a bulk_execute call
-      return ASPERA_NAMESPACE::then_execute(ex, std::forward<E>(before), [=]
+      return ASPERA_NAMESPACE::execute_after(ex, std::forward<E>(before), [=]
       {
         for(N i = 0; i < n; ++i)
         {

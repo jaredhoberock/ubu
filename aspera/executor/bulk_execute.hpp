@@ -7,7 +7,7 @@
 #include "contingent_on_all.hpp"
 #include "executor.hpp"
 #include "executor_event.hpp"
-#include "then_execute.hpp"
+#include "execute_after.hpp"
 
 #include <utility>
 #include <vector>
@@ -54,13 +54,13 @@ struct dispatch_bulk_execute
     requires (!has_bulk_execute_member_function<Ex&&,Ev&&,S&&,F&&> and !has_bulk_execute_free_function<Ex&&,Ev&&,S&&,F&&>)
   auto operator()(const Ex& ex, Ev&& before, S&& grid_shape, F function) const
   {
-    // XXX this should maybe be vector<then_execute_result_t<lambda>>
+    // XXX this should maybe be vector<execute_after_result_t<lambda>>
     //     should maybe get an allocator out of the executor or something
     std::vector<executor_event_t<Ex>> events;
 
     for(auto coord : lattice{std::forward<S>(grid_shape)})
     {
-      events.push_back(then_execute(ex, before, [function,coord]
+      events.push_back(execute_after(ex, before, [function,coord]
       {
         std::invoke(function, coord);
       }));
