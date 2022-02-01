@@ -45,6 +45,10 @@ struct dispatch_bulk_execute
     return bulk_execute(std::forward<Ex>(executor), std::forward<Ev>(event), std::forward<S>(grid_shape), std::forward<F>(function));
   }
 
+  // XXX another default path with higher priority than below should call bulk_execute
+  //     with the executor's coordinate_type and map indicies from the native executor coordinate
+  //     to our requested space
+
 
   template<executor Ex, event Ev, grid_coordinate S, std::regular_invocable<S> F>
     requires (!has_bulk_execute_member_function<Ex&&,Ev&&,S&&,F&&> and !has_bulk_execute_free_function<Ex&&,Ev&&,S&&,F&&>)
