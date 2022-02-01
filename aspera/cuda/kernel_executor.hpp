@@ -147,7 +147,7 @@ class kernel_executor
 
   private:
     template<class... Args>
-    constexpr static void swallow(Args... &&) {}
+    constexpr static void swallow(Args&&...) {}
 
   public:
     template<std::same_as<event>... Events>
