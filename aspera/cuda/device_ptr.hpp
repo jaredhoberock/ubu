@@ -3,11 +3,14 @@
 #include "../detail/prologue.hpp"
 
 #include "../detail/exception.hpp"
+#include "../detail/reflection.hpp"
 #include "../memory/pointer_adaptor.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "event.hpp"
 #include "kernel_executor.hpp"
+#include <cassert>
 #include <concepts>
+#include <cstring>
 #include <type_traits>
 
 
@@ -39,12 +42,33 @@ class device_memory_copier
 
     value_type* copy_n(const value_type* from, std::size_t count, value_type* to) const
     {
+#if defined(__CUDACC__)
+      if ASPERA_TARGET(detail::is_host())
+      {
+        detail::temporarily_with_current_device(device_, [=]
+        {
+          detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
+            "device_memory_copier: CUDA error after cudaMemcpy"
+          );
+        });
+      }
+      else if ASPERA_TARGET(detail::is_device())
+      {
+        std::memcpy(to, from, sizeof(value_type) * count);
+      }
+      else
+      {
+        // this should never be reached
+        assert(0);
+      }
+#else
       detail::temporarily_with_current_device(device_, [=]
       {
-        detail::throw_on_error(cudaMemcpy(to, from, sizeof(T), cudaMemcpyDefault),
+        detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
           "device_memory_copier: CUDA error after cudaMemcpy"
         );
       });
+#endif
 
       return to + count;
     }

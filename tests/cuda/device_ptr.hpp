@@ -335,11 +335,35 @@ void test_copy_n_after_between_devices()
 }
 
 
+void test_construct_at()
+{
+  using namespace ns::cuda;
+
+  int* d_array{};
+  assert(cudaMalloc(reinterpret_cast<void**>(&d_array), 4 * sizeof(int)) == cudaSuccess);
+  
+  device_ptr<int> ptr{d_array};
+
+  for(int i = 0; i < 4; ++i)
+  {
+    (ptr + i).construct_at(i);
+  }
+
+  for(int i = 0; i < 4; ++i)
+  {
+    assert(i == *(ptr + i));
+  }
+
+  assert(cudaFree(d_array) == cudaSuccess);
+}
+
+
 void test_device_ptr()
 {
   test_constructors();
   test_writeable_device_ptr();
   test_readable_device_ptr();
+  test_construct_at();
 
   int num_devices{};
   assert(cudaGetDeviceCount(&num_devices) == cudaSuccess);

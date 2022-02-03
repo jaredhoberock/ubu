@@ -43,7 +43,7 @@ class event
 
       if(origin_target_ == current_target())
       {
-        if ASPERA_TARGET(has_cuda_runtime())
+        if ASPERA_TARGET(detail::has_cuda_runtime())
         {
           detail::throw_on_error(cudaEventDestroy(native_handle()), "cuda::event::~event: CUDA error after cudaEventDestroy");
         }
@@ -76,7 +76,7 @@ class event
 
     void record_on(cudaStream_t s)
     {
-      if ASPERA_TARGET(has_cuda_runtime())
+      if ASPERA_TARGET(detail::has_cuda_runtime())
       {
         detail::throw_on_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: CUDA error after cudaEventRecord");
       }
@@ -90,7 +90,7 @@ class event
     {
       bool result = false;
 
-      if ASPERA_TARGET(has_cuda_runtime())
+      if ASPERA_TARGET(detail::has_cuda_runtime())
       {
         cudaError_t status = cudaEventQuery(native_handle());
 
@@ -111,9 +111,9 @@ class event
 
     inline void wait()
     {
-      if ASPERA_TARGET(has_cuda_runtime())
+      if ASPERA_TARGET(detail::has_cuda_runtime())
       {
-        if ASPERA_TARGET(is_device())
+        if ASPERA_TARGET(detail::is_device())
         {
           detail::throw_on_error(cudaDeviceSynchronize(), "cuda::event::wait: CUDA error after cudaDeviceSynchronize");
         }
@@ -126,6 +126,11 @@ class event
       {
         detail::throw_runtime_error("cuda::event::wait: Unsupported operation.");
       }
+    }
+
+    inline static event make_complete_event()
+    {
+      return {0};
     }
 
     inline void swap(event& other)
@@ -142,7 +147,7 @@ class event
     {
       from result{from::host};
 
-      if ASPERA_TARGET(is_device())
+      if ASPERA_TARGET(detail::is_device())
       {
         result = from::device;
       }
@@ -156,7 +161,7 @@ class event
 
       detail::temporarily_with_current_device(device, [&result]
       {
-        if ASPERA_TARGET(has_cuda_runtime())
+        if ASPERA_TARGET(detail::has_cuda_runtime())
         {
           detail::throw_on_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: CUDA error after cudaEventCreateWithFlags");
         }

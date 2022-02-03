@@ -4,6 +4,12 @@
 
 #include "is_host.hpp"
 
+ASPERA_NAMESPACE_OPEN_BRACE
+
+namespace detail
+{
+
+
 constexpr bool has_cuda_runtime()
 {
   bool result = false;
@@ -28,6 +34,11 @@ constexpr bool has_cuda_runtime()
 
   return result;
 }
+
+
+} // end detail
+
+ASPERA_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

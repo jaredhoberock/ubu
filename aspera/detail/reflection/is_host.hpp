@@ -2,6 +2,12 @@
 
 #include "../prologue.hpp"
 
+ASPERA_NAMESPACE_OPEN_BRACE
+
+namespace detail
+{
+
+
 constexpr bool is_host()
 {
   bool result = true;
@@ -15,6 +21,11 @@ constexpr bool is_host()
 
   return result;
 }
+
+
+} // end detail
+
+ASPERA_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

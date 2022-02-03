@@ -262,6 +262,16 @@ class pointer_adaptor : private C
       return *this;
     }
 
+    // customize construct_at
+    template<class... Args>
+      requires (std::is_trivially_constructible_v<T,Args...> and
+                std::is_trivial_v<T>)
+    void construct_at(Args&&... args)
+    {
+      T copy(std::forward<Args>(args)...);
+      **this = copy;
+    }
+
     // conversion to bool
     explicit operator bool() const noexcept
     {
