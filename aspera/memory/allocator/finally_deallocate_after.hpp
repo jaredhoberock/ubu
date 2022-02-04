@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
+#include "asynchronous_deallocator.hpp"
 #include <memory>
 #include <utility>
 
