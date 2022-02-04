@@ -53,7 +53,7 @@ struct dispatch_finally_delete_after
   constexpr auto operator()(Deleter&& deleter, Event&& before, P&& ptr, N&& n) const
   {
     // discard delete_after's result
-    ASPERA_NAMESPACE::delete_after(std::forward<Deleter>(deleter), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    delete_after(std::forward<Deleter>(deleter), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
 };
