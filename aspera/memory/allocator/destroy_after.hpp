@@ -7,7 +7,9 @@
 #include "../../executor/execute_after.hpp"
 #include "../../executor/executor_associate.hpp"
 #include "destroy.hpp"
-#include <memory>
+#include "traits/allocator_pointer_t.hpp"
+#include "traits/allocator_size_t.hpp"
+#include "traits/allocator_value_t.hpp"
 #include <utility>
 
 
@@ -51,34 +53,42 @@ struct dispatch_destroy_after
     return destroy_after(std::forward<Alloc>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
-  // the default path
-  // XXX A needs to be an allocator
-  // XXX P needs to be allocator_traits<A>::pointer
-  // XXX N should be allocator_traits<A>::size_type
-  //template<allocator A, event E, class P, class N>
-  template<class A, event E, class P, class N>
-    requires (!has_destroy_after_member_function<A&&, E&&, P&&, N&&> and
-              !has_destroy_after_free_function<A&&, E&&, P&&, N&&> and
-              executor_associate<A&&>)
-  constexpr auto operator()(const A& alloc, E&& before, P ptr, N n) const
+  // path for objects with destructors
+  template<allocator A, event E>
+    requires (!has_destroy_after_member_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+              !has_destroy_after_free_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+              executor_associate<A&&> and
+              !std::is_trivially_destructible_v<allocator_value_t<A>>
+             )
+  constexpr auto operator()(A&& alloc, E&& before, allocator_pointer_t<A> ptr, allocator_size_t<A> n) const
   {
     // get an executor
-    auto ex = ASPERA_NAMESPACE::associated_executor(alloc);
+    auto ex = associated_executor(std::forward<A>(alloc));
 
-    if constexpr(not std::is_trivially_destructible_v<typename std::pointer_traits<P>::element_type>)
+    // execute destructors
+    // XXX this needs to be a bulk_execute call
+    return execute_after(ex, std::forward<E>(before), [=]
     {
-      // execute destructors
-      // XXX this needs to be a bulk_execute call
-      return ASPERA_NAMESPACE::execute_after(ex, std::forward<E>(before), [=]
+      for(allocator_size_t<A> i = 0; i < n; ++i)
       {
-        for(N i = 0; i < n; ++i)
-        {
-          ASPERA_NAMESPACE::destroy(alloc, ptr + i);
-        }
-      });
-    }
+        destroy(alloc, ptr + i);
+      }
+    });
+  }
 
-    return ASPERA_NAMESPACE::contingent_on(ex, std::forward<E>(before));
+  // path for objects without destructors
+  template<allocator A, event E>
+    requires (!has_destroy_after_member_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+              !has_destroy_after_free_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+              executor_associate<A&&> and
+              std::is_trivially_destructible_v<allocator_value_t<A>>
+             )
+  constexpr auto operator()(A&& alloc, E&& before, allocator_pointer_t<A> ptr, allocator_size_t<A> n) const
+  {
+    // get an executor
+    auto ex = associated_executor(std::forward<A>(alloc));
+
+    return contingent_on(ex, std::forward<E>(before));
   }
 };
 
