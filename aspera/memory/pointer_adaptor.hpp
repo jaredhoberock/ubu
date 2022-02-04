@@ -266,7 +266,7 @@ class pointer_adaptor : private C
     template<class... Args>
       requires (std::is_trivially_constructible_v<T,Args...> and
                 std::is_trivial_v<T>)
-    void construct_at(Args&&... args)
+    void construct_at(Args&&... args) const
     {
       T copy(std::forward<Args>(args)...);
       **this = copy;
