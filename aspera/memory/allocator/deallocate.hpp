@@ -20,7 +20,7 @@ struct dispatch_deallocate
   constexpr auto operator()(Alloc&& alloc, P&& p, N&& n) const
     -> decltype(std::allocator_traits<std::decay_t<Alloc>>::deallocate(std::forward<Alloc>(alloc), std::forward<P>(p), std::forward<N>(n)))
   {
-    return std::allocator_traits<std::decay_t<Alloc>>::allocate(std::forward<Alloc>(alloc), std::forward<P>(p), std::forward<N>(n));
+    return std::allocator_traits<std::decay_t<Alloc>>::deallocate(std::forward<Alloc>(alloc), std::forward<P>(p), std::forward<N>(n));
   }
 };
 
