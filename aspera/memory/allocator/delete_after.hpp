@@ -65,7 +65,7 @@ struct dispatch_delete_after
     auto after_destructors = ASPERA_NAMESPACE::destroy_after(std::forward<A>(alloc), std::forward<E>(before), ptr, n);
 
     // deallocate
-    return ASPERA_NAMESPACE::deallocate_after(std::forward<A>(alloc), std::move(after_destructors), ptr, n);
+    return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), ptr, n);
   }
 
 };
