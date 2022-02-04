@@ -50,6 +50,9 @@ namespace cuda
 class kernel_executor
 {
   public:
+    using coordinate_type = thread_id;
+    using event_type = cuda::event;
+
     constexpr kernel_executor(cudaStream_t stream, std::size_t dynamic_shared_memory_size, int device)
       : stream_{stream},
         dynamic_shared_memory_size_{dynamic_shared_memory_size},
@@ -66,13 +69,9 @@ class kernel_executor
 
     kernel_executor(const kernel_executor&) = default;
 
-
-    using coordinate_type = thread_id;
-
-
     template<std::regular_invocable<coordinate_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute(const event& before, coordinate_type shape, F f) const
+    inline event_type bulk_execute(const event& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
       detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute: CUDA error after cudaStreamWaitEvent");
@@ -91,7 +90,7 @@ class kernel_executor
 
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline event execute_after(const event& before, F f) const
+    inline event_type execute_after(const event& before, F f) const
     {
       return bulk_execute(before, coordinate_type{::int3{1,1,1}, ::int3{1,1,1}}, [f](coordinate_type)
       {
@@ -103,7 +102,7 @@ class kernel_executor
     
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline event first_execute(F f) const
+    inline event_type first_execute(F f) const
     {
       return execute_after(event{device_}, f);
     }
@@ -140,7 +139,7 @@ class kernel_executor
     }
 
     // when it's possible to move the incoming dependency, just do that
-    event contingent_on(event&& dependency) const
+    event_type contingent_on(event_type&& dependency) const
     {
       return std::move(dependency);
     }
@@ -150,8 +149,8 @@ class kernel_executor
     constexpr static void swallow(Args&&...) {}
 
   public:
-    template<std::same_as<event>... Events>
-    event contingent_on(const Events&... dependencies) const
+    template<std::same_as<event_type>... Events>
+    event_type contingent_on(const Events&... dependencies) const
     {
       // make our stream wait on all the dependencies
       swallow(
