@@ -31,7 +31,7 @@ class event
       record_on(s);
     }
 
-    inline event(event&& other)
+    inline event(event&& other) noexcept
       : event{0}
     {
       swap(other);
