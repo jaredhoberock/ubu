@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
+#include "allocator.hpp"
 #include "deallocate_after.hpp"
 #include <memory>
 #include <type_traits>
@@ -11,7 +12,7 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 template<class A>
 concept asynchronous_deallocator =
-  // allocator<A> and
+  allocator<A> and
 
   requires{typename std::remove_cvref_t<A>::event_type; } and
 
