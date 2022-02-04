@@ -8,7 +8,12 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 struct complete_event
 {
-  void wait() {}
+  constexpr void wait() {}
+
+  constexpr static complete_event make_complete_event()
+  {
+    return {};
+  }
 };
 
 
