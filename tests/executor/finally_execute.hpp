@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor/finally_execute.hpp>
 #include <aspera/executor/inline_executor.hpp>
 
@@ -44,7 +44,7 @@ void test()
 {
   {
     has_finally_execute_member_function ex;
-    ns::complete_event before;
+    ns::always_complete_event before;
 
     bool invoked = false;
     ns::finally_execute(ex, before, [&]{ invoked = true; });
@@ -53,7 +53,7 @@ void test()
 
   {
     has_finally_execute_free_function ex;
-    ns::complete_event before;
+    ns::always_complete_event before;
 
     bool invoked = false;
     ns::finally_execute(ex, before, [&]{ invoked = true; });
@@ -62,7 +62,7 @@ void test()
 
   {
     ns::inline_executor ex;
-    ns::complete_event before;
+    ns::always_complete_event before;
 
     bool invoked = false;
     ns::finally_execute(ex, before, [&]{ invoked = true; });

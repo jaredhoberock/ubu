@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor.hpp>
 #include <aspera/future/basic_future.hpp>
 #include <aspera/memory/allocator.hpp>
@@ -13,7 +13,7 @@ namespace ns = aspera;
 template<class T>
 struct trivial_asynchronous_allocator : public std::allocator<T>
 {
-  using event_type = ns::complete_event;
+  using event_type = ns::always_complete_event;
 
   template<class U = T>
   ns::basic_future<U*, trivial_asynchronous_allocator> allocate_after(const event_type& before, std::size_t n)

@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor/finally_execute.hpp>
 
 #undef NDEBUG
@@ -42,13 +42,13 @@ void test()
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<void, ns::finally_execute_result_t<has_finally_execute_member_function, ns::complete_event, decltype(lambda)>>, "Expected void.");
+    static_assert(std::is_same_v<void, ns::finally_execute_result_t<has_finally_execute_member_function, ns::always_complete_event, decltype(lambda)>>, "Expected void.");
   }
 
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<void, ns::finally_execute_result_t<has_finally_execute_free_function, ns::complete_event, decltype(lambda)>>, "Expected void.");
+    static_assert(std::is_same_v<void, ns::finally_execute_result_t<has_finally_execute_free_function, ns::always_complete_event, decltype(lambda)>>, "Expected void.");
   }
 }
 

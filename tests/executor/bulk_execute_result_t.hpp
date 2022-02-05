@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor/bulk_execute.hpp>
 
 #undef NDEBUG
@@ -19,7 +19,7 @@ namespace ns = aspera;
 struct has_bulk_execute_member
 {
   template<class F>
-  ns::complete_event bulk_execute(ns::complete_event before, int n, F&& f) const
+  ns::always_complete_event bulk_execute(ns::always_complete_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -36,7 +36,7 @@ struct has_bulk_execute_member
 struct has_bulk_execute_free_function {};
 
 template<class F>
-ns::complete_event bulk_execute(const has_bulk_execute_free_function&, ns::complete_event before, int n, F&& f)
+ns::always_complete_event bulk_execute(const has_bulk_execute_free_function&, ns::always_complete_event before, int n, F&& f)
 {
   before.wait();
 
@@ -54,13 +54,13 @@ void test()
   {
     auto lambda = [](int){};
 
-    static_assert(std::is_same_v<ns::complete_event, ns::bulk_execute_result_t<has_bulk_execute_member, ns::complete_event, int, decltype(lambda)>>, "Expected complete_event.");
+    static_assert(std::is_same_v<ns::always_complete_event, ns::bulk_execute_result_t<has_bulk_execute_member, ns::always_complete_event, int, decltype(lambda)>>, "Expected always_complete_event.");
   }
 
   {
     auto lambda = [](int){};
 
-    static_assert(std::is_same_v<ns::complete_event, ns::bulk_execute_result_t<has_bulk_execute_free_function, ns::complete_event, int, decltype(lambda)>>, "Expected complete_event.");
+    static_assert(std::is_same_v<ns::always_complete_event, ns::bulk_execute_result_t<has_bulk_execute_free_function, ns::always_complete_event, int, decltype(lambda)>>, "Expected always_complete_event.");
   }
 }
 

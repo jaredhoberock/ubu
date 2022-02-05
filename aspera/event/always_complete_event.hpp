@@ -8,11 +8,11 @@
 ASPERA_NAMESPACE_OPEN_BRACE
 
 
-struct complete_event
+struct always_complete_event
 {
   constexpr void wait() {}
 
-  constexpr static complete_event make_complete_event()
+  constexpr static always_complete_event make_complete_event()
   {
     return {};
   }
@@ -21,7 +21,7 @@ struct complete_event
   // create a complete_event contingent on all of them
   // this is a friend function to avoid ambiguity with the CPO aspera::contingent_on
   template<class E>
-  constexpr friend complete_event contingent_on(E&&, const complete_event&...)
+  constexpr friend always_complete_event contingent_on(E&&, const always_complete_event&...)
   {
     return {};
   }

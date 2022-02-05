@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/event/event.hpp>
 #include <aspera/event/wait.hpp>
 
@@ -21,14 +21,14 @@ namespace ns = aspera;
 void test()
 {
   {
-    static_assert(ns::event<ns::complete_event>);
-    ns::complete_event e;
+    static_assert(ns::event<ns::always_complete_event>);
+    ns::always_complete_event e;
     ns::wait(e);
   }
 }
 
 
-void test_complete_event()
+void test_always_complete_event()
 {
   test();
 

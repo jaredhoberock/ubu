@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor/first_execute.hpp>
 #include <aspera/executor/inline_executor.hpp>
 
@@ -22,7 +22,7 @@ namespace ns = aspera;
 struct has_first_execute_member_function
 {
   template<class F>
-  ns::complete_event first_execute(F&& f) const
+  ns::always_complete_event first_execute(F&& f) const
   {
     f();
     return {};
@@ -33,7 +33,7 @@ struct has_first_execute_member_function
 struct has_first_execute_free_function {};
 
 template<class F>
-ns::complete_event first_execute(const has_first_execute_free_function&, F&& f)
+ns::always_complete_event first_execute(const has_first_execute_free_function&, F&& f)
 {
   f();
   return {};

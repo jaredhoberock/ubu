@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../event/complete_event.hpp"
+#include "../event/always_complete_event.hpp"
 #include "../event/event.hpp"
 #include <compare>
 #include <concepts>
@@ -26,14 +26,14 @@ struct inline_executor
   }
 
   template<std::invocable F>
-  constexpr complete_event first_execute(F&& f) const
+  constexpr always_complete_event first_execute(F&& f) const
   {
     this->execute(std::forward<F>(f));
     return {};
   }
 
   template<event E, std::invocable F>
-  constexpr complete_event execute_after(E&& before, F&& f) const
+  constexpr always_complete_event execute_after(E&& before, F&& f) const
   {
     wait(std::forward<E>(before));
     return this->first_execute(std::forward<F>(f));

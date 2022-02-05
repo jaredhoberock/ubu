@@ -1,3 +1,4 @@
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/executor/contingent_on.hpp>
 #include <aspera/executor/first_execute.hpp>
@@ -36,7 +37,7 @@ int call_wait(E& e)
 struct has_contingent_on_member_function
 {
   template<class... Events>
-  ns::complete_event contingent_on(Events&&... events) const
+  ns::always_complete_event contingent_on(Events&&... events) const
   {
     swallow(call_wait(events)...);
 
@@ -49,7 +50,7 @@ void test()
 {
   {
     has_contingent_on_member_function ex;
-    auto e = ns::contingent_on(ex, ns::complete_event{}, ns::complete_event{}, ns::complete_event{});
+    auto e = ns::contingent_on(ex, ns::always_complete_event{}, ns::always_complete_event{}, ns::always_complete_event{});
     ns::wait(e);
   }
 
@@ -60,17 +61,17 @@ void test()
     int expected = 3;
     int counter = 0;
 
-    ns::complete_event e1 = ns::first_execute(ex, [&counter]
+    ns::always_complete_event e1 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });
 
-    ns::complete_event e2 = ns::first_execute(ex, [&counter]
+    ns::always_complete_event e2 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });
 
-    ns::complete_event e3 = ns::first_execute(ex, [&counter]
+    ns::always_complete_event e3 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });
@@ -95,5 +96,4 @@ void test_contingent_on()
   assert(cudaDeviceSynchronize() == cudaSuccess);
 #endif
 }
-
 

@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/executor/bulk_execute.hpp>
 #include <aspera/executor/inline_executor.hpp>
@@ -21,7 +21,7 @@ namespace ns = aspera;
 struct has_bulk_execute_member
 {
   template<class F>
-  ns::complete_event bulk_execute(ns::complete_event before, int n, F&& f) const
+  ns::always_complete_event bulk_execute(ns::always_complete_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -38,7 +38,7 @@ struct has_bulk_execute_member
 struct has_bulk_execute_free_function {};
 
 template<class F>
-ns::complete_event bulk_execute(const has_bulk_execute_free_function&, ns::complete_event before, int n, F&& f)
+ns::always_complete_event bulk_execute(const has_bulk_execute_free_function&, ns::always_complete_event before, int n, F&& f)
 {
   before.wait();
 
@@ -58,7 +58,7 @@ void test()
 
     int counter = 0;
 
-    ns::complete_event before;
+    ns::always_complete_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
@@ -72,7 +72,7 @@ void test()
 
     int counter = 0;
 
-    ns::complete_event before;
+    ns::always_complete_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
@@ -86,7 +86,7 @@ void test()
 
     int counter = 0;
 
-    ns::complete_event before;
+    ns::always_complete_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });

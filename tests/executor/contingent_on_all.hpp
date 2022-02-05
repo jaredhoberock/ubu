@@ -24,7 +24,7 @@ namespace ns = aspera;
 struct has_contingent_on_all_member_function
 {
   template<class C>
-  ns::complete_event contingent_on_all(C&& events) const
+  ns::always_complete_event contingent_on_all(C&& events) const
   {
     for(auto& e : events)
     {
@@ -39,7 +39,7 @@ struct has_contingent_on_all_member_function
 struct has_contingent_on_all_free_function {};
 
 template<class C>
-ns::complete_event contingent_on_all(const has_contingent_on_all_free_function &, C&& events)
+ns::always_complete_event contingent_on_all(const has_contingent_on_all_free_function &, C&& events)
 {
   for(auto& e : events)
   {
@@ -54,7 +54,7 @@ void test()
 {
   {
     has_contingent_on_all_member_function ex;
-    std::vector<ns::complete_event> events(10);
+    std::vector<ns::always_complete_event> events(10);
 
     auto e = ns::contingent_on_all(ex, std::move(events));
     ns::wait(e);
@@ -63,7 +63,7 @@ void test()
 
   {
     has_contingent_on_all_free_function ex;
-    std::vector<ns::complete_event> events(10);
+    std::vector<ns::always_complete_event> events(10);
 
     auto e = ns::contingent_on_all(ex, std::move(events));
     ns::wait(e);
@@ -72,7 +72,7 @@ void test()
   {
     ns::inline_executor ex;
 
-    std::vector<ns::complete_event> events;
+    std::vector<ns::always_complete_event> events;
     int expected = 10;
     int counter = 0;
     for(auto i = 0; i < expected; ++i)

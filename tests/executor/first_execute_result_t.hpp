@@ -1,4 +1,4 @@
-#include <aspera/event/complete_event.hpp>
+#include <aspera/event/always_complete_event.hpp>
 #include <aspera/executor/first_execute.hpp>
 
 #undef NDEBUG
@@ -19,7 +19,7 @@ namespace ns = aspera;
 struct has_first_execute_member_function
 {
   template<class F>
-  ns::complete_event first_execute(F&& f) const
+  ns::always_complete_event first_execute(F&& f) const
   {
     f();
     return {};
@@ -30,7 +30,7 @@ struct has_first_execute_member_function
 struct has_first_execute_free_function {};
 
 template<class F>
-ns::complete_event first_execute(const has_first_execute_free_function&, F&& f)
+ns::always_complete_event first_execute(const has_first_execute_free_function&, F&& f)
 {
   f();
   return {};
@@ -42,13 +42,13 @@ void test()
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<ns::complete_event, ns::first_execute_result_t<has_first_execute_member_function, decltype(lambda)>>, "Expected complete_event.");
+    static_assert(std::is_same_v<ns::always_complete_event, ns::first_execute_result_t<has_first_execute_member_function, decltype(lambda)>>, "Expected always_complete_event.");
   }
 
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<ns::complete_event, ns::first_execute_result_t<has_first_execute_free_function, decltype(lambda)>>, "Expected complete_event.");
+    static_assert(std::is_same_v<ns::always_complete_event, ns::first_execute_result_t<has_first_execute_free_function, decltype(lambda)>>, "Expected always_complete_event.");
   }
 }
 
