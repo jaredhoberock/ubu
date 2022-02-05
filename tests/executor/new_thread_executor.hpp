@@ -1,7 +1,7 @@
 #include <aspera/executor/execute.hpp>
 #include <aspera/executor/execute_after.hpp>
 #include <aspera/executor/executor_of.hpp>
-#include <aspera/executor/finally_execute.hpp>
+#include <aspera/executor/finally_execute_after.hpp>
 #include <aspera/executor/first_execute.hpp>
 #include <aspera/executor/new_thread_executor.hpp>
 
@@ -85,7 +85,7 @@ void test_new_thread_executor()
 
     std::promise<void> p;
     auto f = p.get_future();
-    ns::finally_execute(ex, e1, [p = std::move(p), &invoked1, &invoked2]() mutable
+    ns::finally_execute_after(ex, e1, [p = std::move(p), &invoked1, &invoked2]() mutable
     {
       assert(invoked1);
       invoked2 = true;

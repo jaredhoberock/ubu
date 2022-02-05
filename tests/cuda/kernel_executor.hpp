@@ -4,7 +4,7 @@
 #include <aspera/executor/execute.hpp>
 #include <aspera/executor/execute_after.hpp>
 #include <aspera/executor/executor.hpp>
-#include <aspera/executor/finally_execute.hpp>
+#include <aspera/executor/finally_execute_after.hpp>
 #include <aspera/executor/first_execute.hpp>
 
 #undef NDEBUG
@@ -142,7 +142,7 @@ void test_execute_after(cudaStream_t s, int d)
 }
 
 
-void test_finally_execute(cudaStream_t s, int d)
+void test_finally_execute_after(cudaStream_t s, int d)
 {
   using namespace ns;
 
@@ -160,7 +160,7 @@ void test_finally_execute(cudaStream_t s, int d)
 
     result2 = 0;
     int expected2 = 7;
-    ns::finally_execute(ex, e1, [expected1,expected2]
+    ns::finally_execute_after(ex, e1, [expected1,expected2]
     {
       assert(expected1 == result1);
       result2 = expected2;
@@ -248,7 +248,7 @@ void test_on_stream(cudaStream_t s)
   test_bulk_execute(s, 0);
   test_equality(s, 16, 0);
   test_execute(s, 0);
-  test_finally_execute(s, 0);
+  test_finally_execute_after(s, 0);
   test_first_execute(s, 0);
   test_execute_after(s, 0);
 }

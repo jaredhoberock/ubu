@@ -119,7 +119,7 @@ class kernel_executor
 
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline void finally_execute(const event& before, F f) const
+    inline void finally_execute_after(const event& before, F f) const
     {
       // just discard the result of execute_after
       execute_after(before, f);
