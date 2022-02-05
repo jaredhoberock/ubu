@@ -45,17 +45,6 @@ struct has_contingent_on_member_function
 };
 
 
-struct has_contingent_on_free_function {};
-
-template<class... Events>
-ns::complete_event contingent_on(const has_contingent_on_free_function &, Events&&... events)
-{
-  swallow(call_wait(events)...);
-
-  return {};
-}
-
-
 void test()
 {
   {
@@ -64,12 +53,6 @@ void test()
     ns::wait(e);
   }
 
-
-  {
-    has_contingent_on_free_function ex;
-    auto e = ns::contingent_on(ex, ns::complete_event{}, ns::complete_event{}, ns::complete_event{});
-    ns::wait(e);
-  }
 
   {
     ns::inline_executor ex;
