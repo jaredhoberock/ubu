@@ -47,7 +47,7 @@ class device_allocator : private device_memory_resource
 
     const kernel_executor associated_executor() const
     {
-      return {stream(), device()};
+      return {device(), stream()};
     }
 
     pointer allocate(std::size_t n) const

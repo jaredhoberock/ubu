@@ -41,7 +41,7 @@ void test_equality(cudaStream_t s, std::size_t dynamic_shared_memory_size, int d
 {
   using namespace ns;
 
-  cuda::kernel_executor ex1{s, d};
+  cuda::kernel_executor ex1{d, s};
   
   cuda::kernel_executor ex2 = ex1;
 
@@ -54,7 +54,7 @@ void test_execute(cudaStream_t s, int d)
 {
   using namespace ns;
 
-  cuda::kernel_executor ex1{s, d};
+  cuda::kernel_executor ex1{d, s};
 
   result = 0;
   int expected = 13;
@@ -82,7 +82,7 @@ void test_first_execute(cudaStream_t s, int d)
 {
   using namespace ns;
 
-  cuda::kernel_executor ex1{s, d};
+  cuda::kernel_executor ex1{d, s};
 
   result = 0;
   int expected = 13;
@@ -110,7 +110,7 @@ void test_execute_after(cudaStream_t s, int d)
 {
   using namespace ns;
 
-  cuda::kernel_executor ex{s, d};
+  cuda::kernel_executor ex{d, s};
 
   result1 = 0;
   int expected1 = 13;
@@ -146,7 +146,7 @@ void test_finally_execute(cudaStream_t s, int d)
 {
   using namespace ns;
 
-  cuda::kernel_executor ex{s, d};
+  cuda::kernel_executor ex{d, s};
 
   result1 = 0;
   int expected1 = 13;
@@ -193,7 +193,7 @@ void test_bulk_execute(cudaStream_t s, int d)
 {
   using namespace ns;
 
-  cuda::kernel_executor ex1{s, d};
+  cuda::kernel_executor ex1{d, s};
 
   cuda::kernel_executor::coordinate_type shape{{4,4,4}, {4,4,4}};
 

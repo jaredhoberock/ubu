@@ -53,18 +53,18 @@ class kernel_executor
     using coordinate_type = thread_id;
     using event_type = cuda::event;
 
-    constexpr kernel_executor(cudaStream_t stream, std::size_t dynamic_shared_memory_size, int device)
-      : stream_{stream},
-        dynamic_shared_memory_size_{dynamic_shared_memory_size},
-        device_{device}
+    constexpr kernel_executor(int device, cudaStream_t stream, std::size_t dynamic_shared_memory_size)
+      : device_{device},
+        stream_{stream},
+        dynamic_shared_memory_size_{dynamic_shared_memory_size}
     {}
 
-    constexpr kernel_executor(cudaStream_t stream, int device)
-      : kernel_executor{stream, 0, device}
+    constexpr kernel_executor(int device, cudaStream_t stream)
+      : kernel_executor{device, stream, 0}
     {}
 
     constexpr kernel_executor()
-      : kernel_executor{0, 0}
+      : kernel_executor{0, cudaStream_t{}}
     {}
 
     kernel_executor(const kernel_executor&) = default;
@@ -162,9 +162,9 @@ class kernel_executor
     }
 
   private:
+    int device_;
     cudaStream_t stream_;
     std::size_t dynamic_shared_memory_size_;
-    int device_;
 };
 
 

@@ -15,7 +15,7 @@ void test_asynchronous_allocation()
   using namespace ns::cuda;
 
   cudaStream_t stream = 0;
-  kernel_executor ex{stream,0};
+  kernel_executor ex{0,stream};
   device_allocator<T> alloc{ex.device()};
 
   {

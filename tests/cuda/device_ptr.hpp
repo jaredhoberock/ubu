@@ -47,7 +47,7 @@ void test_copy_n_after()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex0{s0,0};
+    kernel_executor ex0{0,s0};
 
     event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
@@ -65,7 +65,7 @@ void test_copy_n_after()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex1{s1,1};
+    kernel_executor ex1{1,s1};
 
     event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
@@ -83,7 +83,7 @@ void test_copy_n_after()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex0{s0,0};
+    kernel_executor ex0{0,s0};
 
     event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
@@ -100,7 +100,7 @@ void test_copy_n_after()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex1{s1,1};
+    kernel_executor ex1{1,s1};
 
     event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
@@ -262,7 +262,7 @@ void test_copy_n_after_between_devices()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex0{s0,0};
+    kernel_executor ex0{0,s0};
 
     event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
@@ -280,7 +280,7 @@ void test_copy_n_after_between_devices()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex1{s1,1};
+    kernel_executor ex1{1,s1};
 
     event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
@@ -298,7 +298,7 @@ void test_copy_n_after_between_devices()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex0{s0,0};
+    kernel_executor ex0{0,s0};
 
     event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
@@ -315,7 +315,7 @@ void test_copy_n_after_between_devices()
     assert(7 == *d_ptr0);
     assert(13 == *d_ptr1);
 
-    kernel_executor ex1{s1,1};
+    kernel_executor ex1{1,s1};
 
     event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
