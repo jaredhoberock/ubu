@@ -23,14 +23,14 @@ void test_asynchronous_allocation()
 
     device_ptr<T> ptr = alloc.allocate(1);
 
-    event ready{ex.device(), stream};
+    event ready{stream};
 
     alloc.deallocate_after(ready, ptr, 1);
   }
 
   {
     // test asynchronous allocation
-    event ready{ex.device(),stream};
+    event ready{stream};
 
     auto future_ptr = alloc.allocate_after(std::move(ready), 1);
 
@@ -40,7 +40,7 @@ void test_asynchronous_allocation()
   {
     // test asynchronous allocation and asynchronous deletion
 
-    event ready{ex.device(),stream};
+    event ready{stream};
 
     auto future_ptr = alloc.allocate_after(std::move(ready), 1);
 
@@ -54,7 +54,7 @@ void test_asynchronous_allocation()
   {
     // test asynchronous allocation and synchronous deletion
 
-    event ready{ex.device(),stream};
+    event ready{stream};
 
     auto future_ptr = alloc.allocate_after(std::move(ready), 1);
 

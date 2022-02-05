@@ -49,7 +49,7 @@ void test_copy_n_after()
 
     kernel_executor ex0{s0,0};
 
-    event before{ex0.device()};
+    event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -67,7 +67,7 @@ void test_copy_n_after()
 
     kernel_executor ex1{s1,1};
 
-    event before{ex1.device()};
+    event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -85,7 +85,7 @@ void test_copy_n_after()
 
     kernel_executor ex0{s0,0};
 
-    event before{ex0.device()};
+    event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -102,7 +102,7 @@ void test_copy_n_after()
 
     kernel_executor ex1{s1,1};
 
-    event before{ex1.device()};
+    event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -264,7 +264,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex0{s0,0};
 
-    event before{ex0.device()};
+    event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -282,7 +282,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex1{s1,1};
 
-    event before{ex1.device()};
+    event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -300,7 +300,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex0{s0,0};
 
-    event before{ex0.device()};
+    event before{ex0.stream()};
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -317,7 +317,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex1{s1,1};
 
-    event before{ex1.device()};
+    event before{ex1.stream()};
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
     after.wait();
 

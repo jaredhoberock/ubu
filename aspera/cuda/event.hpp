@@ -4,7 +4,6 @@
 
 #include "../detail/exception.hpp"
 #include "../detail/reflection.hpp"
-#include "detail/temporarily_with_current_device.hpp"
 #include <cuda_runtime_api.h>
 
 
@@ -19,14 +18,13 @@ namespace cuda
 class event
 {
   public:
-    inline event(int device)
-      : device_{device},
-        native_handle_{make_cuda_event(device)},
+    inline event()
+      : native_handle_{make_cuda_event()},
         origin_target_{current_target()}
     {}
 
-    inline event(int device, cudaStream_t s)
-      : event{device}
+    inline event(cudaStream_t s)
+      : event{}
     {
       record_on(s);
     }
@@ -62,11 +60,6 @@ class event
     {
       swap(other);
       return *this;
-    }
-
-    inline int device() const
-    {
-      return device_;
     }
 
     inline cudaEvent_t native_handle() const
@@ -135,7 +128,6 @@ class event
 
     inline void swap(event& other)
     {
-      std::swap(device_, other.device_);
       std::swap(native_handle_, other.native_handle_);
       std::swap(origin_target_, other.origin_target_);
     }
@@ -155,26 +147,22 @@ class event
       return result;
     }
 
-    inline static cudaEvent_t make_cuda_event(int device)
+    inline static cudaEvent_t make_cuda_event()
     {
       cudaEvent_t result{};
 
-      detail::temporarily_with_current_device(device, [&result]
+      if ASPERA_TARGET(detail::has_cuda_runtime())
       {
-        if ASPERA_TARGET(detail::has_cuda_runtime())
-        {
-          detail::throw_on_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: CUDA error after cudaEventCreateWithFlags");
-        }
-        else
-        {
-          detail::throw_runtime_error("cuda::event::make_cuda_event: cudaEventCreateWithFlags is unavailable.");
-        }
-      });
+        detail::throw_on_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: CUDA error after cudaEventCreateWithFlags");
+      }
+      else
+      {
+        detail::throw_runtime_error("cuda::event::make_cuda_event: cudaEventCreateWithFlags is unavailable.");
+      }
 
       return result;
     }
 
-    int device_; // XXX this member is never used, so why is it here?
     cudaEvent_t native_handle_;
     from origin_target_;
 };

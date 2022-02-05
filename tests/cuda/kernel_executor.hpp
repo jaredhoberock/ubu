@@ -199,7 +199,7 @@ void test_bulk_execute(cudaStream_t s, int d)
 
   try
   {
-    cuda::event before{d};
+    cuda::event before{ex1.stream()};
 
     cuda::event e = ns::bulk_execute(ex1, before, shape, [=](ns::cuda::thread_id coord)
     {

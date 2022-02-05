@@ -62,7 +62,7 @@ class device_memory_resource
           "cuda::device_memory_resource::allocate_after: CUDA error after cudaMallocAsync"
         );
 
-        event after{device(), stream()};
+        event after{stream()};
 
         return std::pair<event,void*>(std::move(after), ptr);
       });
@@ -78,7 +78,7 @@ class device_memory_resource
         "cuda::device_memory_resource::deallocate_after: CUDA error after cudaFreeAsync"
       );
 
-      return {device(), stream()};
+      return {stream()};
     }
 
     inline int device() const
