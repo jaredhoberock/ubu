@@ -15,8 +15,6 @@
 #include "../memory/allocator/rebind_allocator.hpp"
 #include "../memory/allocator/traits.hpp"
 #include "../memory/construct_at.hpp"
-#include "future.hpp"
-#include "future_result_t.hpp"
 #include <cassert>
 #include <concepts>
 #include <future>
@@ -48,7 +46,7 @@ template<class F>
 concept allocation_future = requires
 {
   requires instance_of<F, basic_future>;
-  requires std::same_as<future_result_t<F>,typename F::pointer>;
+  requires std::same_as<typename F::value_type,typename F::pointer>;
 };
 
 
