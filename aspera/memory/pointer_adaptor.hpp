@@ -40,6 +40,18 @@ concept copier = requires
   // a copier must declare a handle_type
   typename T::handle_type;
 
+  // the handle type must be regular
+  requires std::regular<typename T::handle_type>;
+
+  // the handle type must be equality comparable
+  requires std::equality_comparable<typename T::handle_type>;
+
+  // XXX might also require handle_type to be default constructible (and null)
+  //     otherwise, need to require copier.null_handle() function
+  //
+
+  // if handle_type is not a pointer, a copier must be able to advance a handle_type
+  
   // a copier must declare an element_type
   // XXX this could be relaxed if handle_type is a pointer
   typename T::element_type;
@@ -275,7 +287,7 @@ class pointer_adaptor : private C
     // conversion to bool
     explicit operator bool() const noexcept
     {
-      return get() != null_handle(copier());
+      return native_handle() != null_handle(copier());
     }
 
     // dereference
@@ -410,7 +422,7 @@ class pointer_adaptor : private C
         return c.null_handle();
       }
 
-      return nullptr;
+      return handle_type{};
     }
 
     static void advance(const C& c, handle_type& h, difference_type n)
@@ -425,6 +437,31 @@ class pointer_adaptor : private C
       }
     }
 };
+
+
+// copy_n overloads
+
+template<class T, copier C>
+  requires std::is_assignable_v<T,T>
+pointer_adaptor<T,C> copy_n(const std::remove_cv_t<T>* first, std::size_t count, pointer_adaptor<T,C> result)
+{
+  return result.copier().copy_n_from_raw_pointer(first, count, result.native_handle());
+}
+
+template<class T, copier C>
+  requires std::is_assignable_v<T,T>
+std::remove_cv_t<T>* copy_n(pointer_adaptor<T,C> first, std::size_t count, std::remove_cv_t<T>* result)
+{
+  return first.copier().copy_n_to_raw_pointer(first.native_handle(), count, result);
+}
+
+// XXX U needs to be either T or const T
+template<class T, copier C, class U>
+  requires std::is_assignable_v<T&,U>
+pointer_adaptor<T,C> copy_n(pointer_adaptor<U,C> first, std::size_t count, pointer_adaptor<T,C> result)
+{
+  return first.copier().copy_n(first.native_handle(), count, result.native_handle());
+}
 
 
 ASPERA_NAMESPACE_CLOSE_BRACE

@@ -97,29 +97,7 @@ template<class T>
 using device_ptr = pointer_adaptor<T, device_memory_copier<T>>;
 
 
-// copy_n overloads
-
-template<class T>
-  requires std::is_assignable_v<T,T>
-device_ptr<T> copy_n(const std::remove_cv_t<T>* first, std::size_t count, device_ptr<T> result)
-{
-  return result.copier().copy_n_from_raw_pointer(first, count, result.native_handle());
-}
-
-template<class T>
-  requires std::is_assignable_v<T,T>
-std::remove_cv_t<T>* copy_n(device_ptr<T> first, std::size_t count, std::remove_cv_t<T>* result)
-{
-  return first.copier().copy_n_to_raw_pointer(first.native_handle(), count, result);
-}
-
-template<class T, class U>
-  requires std::is_assignable_v<T,U>
-device_ptr<T> copy_n(device_ptr<U> first, std::size_t count, device_ptr<T> result)
-{
-  return first.copier().copy_n(first.native_handle(), count, result.native_handle());
-}
-
+// copy_n_after overloads
 
 template<class T, class U>
   requires (std::is_trivially_assignable_v<T&,U> and std::same_as<U,std::remove_cv_t<T>>)
