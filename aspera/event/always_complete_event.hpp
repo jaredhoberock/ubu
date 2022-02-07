@@ -17,11 +17,7 @@ struct always_complete_event
     return {};
   }
 
-  // for any given executor, and a set of complete_events, we can always
-  // create a complete_event contingent on all of them
-  // this is a friend function to avoid ambiguity with the CPO aspera::contingent_on
-  template<class E>
-  constexpr friend always_complete_event contingent_on(E&&, const always_complete_event&...)
+  always_complete_event make_contingent_event(const always_complete_event&...) const
   {
     return {};
   }

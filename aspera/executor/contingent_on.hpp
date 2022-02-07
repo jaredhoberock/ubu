@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "../event/event.hpp"
+#include "../event/make_contingent_event.hpp"
 #include "../event/wait.hpp"
 #include "executor.hpp"
 #include <type_traits>
@@ -29,36 +30,6 @@ concept has_contingent_on_free_function = requires(Ex executor, Events... events
 };
 
 
-template<event... Events>
-class event_tuple
-{
-  public:
-    event_tuple(const event_tuple&) = delete;
-    event_tuple(event_tuple&&) = default;
-
-    event_tuple(Events&&... events)
-      : events_{std::move(events)...}
-    {}
-
-    void wait()
-    {
-      wait_impl(std::integral_constant<std::size_t,0>{});
-    }
-
-  private:
-    void wait_impl(std::integral_constant<std::size_t, sizeof...(Events)>) {}
-
-    template<std::size_t i>
-    void wait_impl(std::integral_constant<std::size_t,i>)
-    {
-      ASPERA_NAMESPACE::wait(std::get<i>(events_));
-      wait_impl(std::integral_constant<std::size_t,i+1>{});
-    }
-
-    std::tuple<Events...> events_;
-};
-
-
 // this is the type of contingent_on
 struct dispatch_contingent_on
 {
@@ -79,27 +50,13 @@ struct dispatch_contingent_on
     return contingent_on(std::forward<Ex>(executor), std::forward<Events>(events)...);
   }
 
-  // the default path for a single event simply moves the event
-  template<executor Ex, event E>
-    requires (!has_contingent_on_member_function<Ex&&,E&&> and
-              !has_contingent_on_free_function<Ex&&,E&&> and
-              std::is_move_constructible_v<std::remove_reference_t<E>>)
-  constexpr std::remove_cvref_t<E> operator()(Ex&&, E&& event) const
+  // the default path drops the executor and calls make_contingent_event
+  template<executor Ex, event... Events>
+    requires (!has_contingent_on_member_function<Ex&&,Events&&...> and
+              !has_contingent_on_free_function<Ex&&,Events&&...>)
+  constexpr auto operator()(Ex&&, Events&&... events) const
   {
-    return std::move(event);
-  }
-
-  // the default path for many events moves the events into an event_tuple
-  template<executor Ex, event... Es>
-    requires (!has_contingent_on_member_function<Ex&&,Es&&...> and
-              !has_contingent_on_free_function<Ex&&,Es&&...> and
-              std::conjunction_v<
-                std::is_move_constructible<std::remove_reference_t<Es>>...
-              >)
-  constexpr event_tuple<std::remove_cvref_t<Es>...>
-    operator()(Ex&&, Es&&... events) const
-  {
-    return {std::move(events)...};
+    return make_contingent_event(std::forward<Events>(events)...);
   }
 };
 
