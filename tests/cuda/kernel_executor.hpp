@@ -1,3 +1,6 @@
+#include <aspera/coordinate/colexicographic_index.hpp>
+#include <aspera/coordinate/colexicographic_index_to_grid_coordinate.hpp>
+#include <aspera/coordinate/lattice.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/executor/bulk_execute.hpp>
@@ -189,7 +192,7 @@ int hash_coord(ns::cuda::thread_id coord)
 __managed__ int bulk_result[4][4][4][4][4][4] = {};
 
 
-void test_bulk_execute(cudaStream_t s, int d)
+void test_native_bulk_execute(cudaStream_t s, int d)
 {
   using namespace ns;
 
@@ -243,14 +246,59 @@ void test_bulk_execute(cudaStream_t s, int d)
 }
 
 
+template<ns::grid_coordinate C>
+void test_ND_bulk_execute(cudaStream_t s, int d, C shape)
+{
+  using namespace ns;
+
+  cuda::kernel_executor ex1{d, s};
+
+  try
+  {
+    cuda::event before{ex1.stream()};
+
+    ns::int6 bulk_result_shape{4,4,4,4,4,4};
+
+    cuda::event e = ns::bulk_execute(ex1, before, shape, [=](C coord)
+    {
+      int i = colexicographic_index(coord, shape);
+      int6 a = colexicographic_index_to_grid_coordinate(i, bulk_result_shape);
+
+      bulk_result[a[0]][a[1]][a[2]][a[3]][a[4]][a[5]] = i;
+    });
+
+    ns::wait(e);
+
+    for(auto a : ns::lattice{bulk_result_shape})
+    {
+      int coord = colexicographic_index(a, bulk_result_shape);
+
+      assert(coord == bulk_result[a[0]][a[1]][a[2]][a[3]][a[4]][a[5]]);
+    }
+  }
+  catch(std::runtime_error& e)
+  {
+#if defined(__CUDACC__)
+    assert(false);
+#endif
+  }
+}
+
+
 void test_on_stream(cudaStream_t s)
 {
-  test_bulk_execute(s, 0);
   test_equality(s, 16, 0);
   test_execute(s, 0);
   test_finally_execute_after(s, 0);
   test_first_execute(s, 0);
   test_execute_after(s, 0);
+  test_native_bulk_execute(s, 0);
+
+  test_ND_bulk_execute(s, 0, 4*4*4*4*4*4);
+  test_ND_bulk_execute(s, 0, ns::int2{4*4*4, 4*4*4});
+  test_ND_bulk_execute(s, 0, ns::int3{4*4, 4*4, 4*4});
+  test_ND_bulk_execute(s, 0, ns::int4{4*4, 4*4, 4, 4});
+  test_ND_bulk_execute(s, 0, ns::int5{4*4, 4, 4, 4, 4});
 }
 
 

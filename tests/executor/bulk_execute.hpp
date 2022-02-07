@@ -82,6 +82,8 @@ void test()
   }
 
   {
+    // 1D grid space with inline_executor
+
     ns::inline_executor e;
 
     int counter = 0;
@@ -93,6 +95,40 @@ void test()
     ns::wait(done);
 
     assert(expected == counter);
+  }
+
+  {
+    // 2D grid space with inline_executor
+
+    ns::inline_executor e;
+
+    int counter = 0;
+
+    ns::always_complete_event before;
+
+    ns::int2 grid_shape{2,5};
+
+    auto done = ns::bulk_execute(e, before, grid_shape, [&](ns::int2){ ++counter; });
+    ns::wait(done);
+
+    assert(grid_shape.product() == counter);
+  }
+
+  {
+    // 3D grid space with inline_executor
+
+    ns::inline_executor e;
+
+    int counter = 0;
+
+    ns::always_complete_event before;
+
+    ns::int3 grid_shape{2,5,7};
+
+    auto done = ns::bulk_execute(e, before, grid_shape, [&](ns::int3){ ++counter; });
+    ns::wait(done);
+
+    assert(grid_shape.product() == counter);
   }
 }
 

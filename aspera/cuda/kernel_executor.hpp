@@ -69,6 +69,14 @@ class kernel_executor
 
     kernel_executor(const kernel_executor&) = default;
 
+    inline coordinate_type bulk_execution_grid(std::size_t n) const
+    {
+      int block_size = 128;
+      int num_blocks = (n + block_size - 1) / block_size;
+
+      return coordinate_type{{num_blocks, 1, 1}, {block_size, 1, 1}};
+    }
+
     template<std::regular_invocable<coordinate_type> F>
       requires std::is_trivially_copyable_v<F>
     inline event_type bulk_execute(const event& before, coordinate_type shape, F f) const
