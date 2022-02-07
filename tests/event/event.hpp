@@ -20,13 +20,13 @@ namespace ns = aspera;
 
 struct event_with_wait_member
 {
-  void wait() {}
+  void wait() const {}
 };
 
 
 struct event_with_wait_free_function {};
 
-void wait(event_with_wait_free_function&) {}
+void wait(const event_with_wait_free_function&) {}
 
 
 void test()

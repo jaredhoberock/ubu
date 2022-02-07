@@ -10,7 +10,7 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 struct always_complete_event
 {
-  constexpr void wait() {}
+  constexpr void wait() const {}
 
   constexpr static always_complete_event make_complete_event()
   {

@@ -88,7 +88,7 @@ class basic_future
       }
     }
 
-    void wait()
+    void wait() const
     {
       ready().wait();
     }
@@ -265,6 +265,11 @@ class basic_future
     {}
 
     event_type& ready()
+    {
+      return std::get<0>(resources_);
+    }
+
+    const event_type& ready() const
     {
       return std::get<0>(resources_);
     }

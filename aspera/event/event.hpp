@@ -13,9 +13,9 @@ concept event =
   std::constructible_from<std::remove_cvref_t<E>> and
   std::is_nothrow_move_constructible_v<E> and
   std::is_nothrow_destructible_v<E> and
-  requires(std::remove_cvref_t<E>& e)
+  requires(const std::remove_cvref_t<E>& e)
   {
-    // a lvalue ref to e must be able to wait
+    // a const ref to e must be able to wait
     ASPERA_NAMESPACE::wait(e);
   }
 ;
