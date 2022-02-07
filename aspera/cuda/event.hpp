@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "../detail/exception.hpp"
+#include "../detail/for_each_arg.hpp"
 #include "../detail/reflection.hpp"
 #include <cuda_runtime_api.h>
 
@@ -132,6 +133,12 @@ class event
       std::swap(origin_target_, other.origin_target_);
     }
 
+    template<std::same_as<event>... Es>
+    event make_contingent_event(const Es&... es) const
+    {
+      return {0, *this, es...};
+    }
+
   private:
     enum class from {host, device};
 
@@ -161,6 +168,36 @@ class event
       }
 
       return result;
+    }
+
+    // this ctor is available to make_contingent_event
+    // the int parameter is simply there to distinguish this ctor from a copy ctor
+    template<std::same_as<event>... Es>
+    event(int, const event& e, const Es&... es)
+      : event{}
+    {
+      if ASPERA_TARGET(detail::has_cuda_runtime())
+      {
+        // create a cudaStream_t on which to record our event
+        cudaStream_t s{};
+        detail::throw_on_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: CUDA error after cudaStreamCreateWithFlags");
+
+        // make the new stream wait on all the event parameters
+        detail::for_each_arg([s](const event& e)
+        {
+          detail::throw_on_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: CUDA error after cudaStreamWaitEvent");
+        }, e, es...);
+
+        // record our event on the stream
+        record_on(s);
+
+        // immediately destroy the stream
+        detail::throw_on_error(cudaStreamDestroy(s), "cuda::event ctor: CUDA error after cudaStreamDestroy");
+      }
+      else
+      {
+        detail::throw_runtime_error("cuda::event ctor: cudaStreamCreateWithFlags is unavailable.");
+      }
     }
 
     cudaEvent_t native_handle_;

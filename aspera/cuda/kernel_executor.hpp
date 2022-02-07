@@ -146,29 +146,6 @@ class kernel_executor
       return device_;
     }
 
-    // when it's possible to move the incoming dependency, just do that
-    event_type contingent_on(event_type&& dependency) const
-    {
-      return std::move(dependency);
-    }
-
-  private:
-    template<class... Args>
-    constexpr static void swallow(Args&&...) {}
-
-  public:
-    template<std::same_as<event_type>... Events>
-    event_type contingent_on(const Events&... dependencies) const
-    {
-      // make our stream wait on all the dependencies
-      swallow(
-        detail::throw_on_error(cudaStreamWaitEvent(stream_, dependencies.native_handle()), "kernel_executor::contingent_on: CUDA error after cudaStreamWaitEvent")...
-      );
-
-      // return a new event recorded on our stream
-      return {stream_};
-    }
-
   private:
     int device_;
     cudaStream_t stream_;
