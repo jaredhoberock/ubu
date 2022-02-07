@@ -28,6 +28,8 @@ class point_base
     std::array<T,N> elements_;
 
   protected:
+    point_base() = default;
+
     template<class... OtherT>
       requires (sizeof...(OtherT) == N) and (... and std::convertible_to<OtherT,T>)
     constexpr point_base(OtherT... args)
