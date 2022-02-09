@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
-#include "../../executor/contingent_on.hpp"
-#include "../../executor/execute_after.hpp"
-#include "../../executor/executor_associate.hpp"
+#include "../../execution/executor/contingent_on.hpp"
+#include "../../execution/executor/execute_after.hpp"
+#include "../../execution/executor/executor_associate.hpp"
 #include "destroy.hpp"
 #include "traits/allocator_pointer_t.hpp"
 #include "traits/allocator_size_t.hpp"

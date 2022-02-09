@@ -3,8 +3,8 @@
 #include "../detail/prologue.hpp"
 
 #include "../detail/for_each_arg.hpp"
-#include "../executor/associated_executor.hpp"
-#include "../executor/execute_after.hpp"
+#include "../execution/executor/associated_executor.hpp"
+#include "../execution/executor/execute_after.hpp"
 #include "../event/event.hpp"
 #include "../event/make_complete_event.hpp"
 #include "../memory/allocator/asynchronous_allocator.hpp"

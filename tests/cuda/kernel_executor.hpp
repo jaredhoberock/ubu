@@ -3,12 +3,12 @@
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
 #include <aspera/event/wait.hpp>
-#include <aspera/executor/bulk_execute.hpp>
-#include <aspera/executor/execute.hpp>
-#include <aspera/executor/execute_after.hpp>
-#include <aspera/executor/executor.hpp>
-#include <aspera/executor/finally_execute_after.hpp>
-#include <aspera/executor/first_execute.hpp>
+#include <aspera/execution/executor/bulk_execute.hpp>
+#include <aspera/execution/executor/execute.hpp>
+#include <aspera/execution/executor/execute_after.hpp>
+#include <aspera/execution/executor/executor.hpp>
+#include <aspera/execution/executor/finally_execute_after.hpp>
+#include <aspera/execution/executor/first_execute.hpp>
 
 #undef NDEBUG
 #include <cassert>

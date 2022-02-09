@@ -1,6 +1,6 @@
 #include <aspera/cuda/callback_executor.hpp>
 #include <aspera/event/wait.hpp>
-#include <aspera/executor/executor.hpp>
+#include <aspera/execution/executor/executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
