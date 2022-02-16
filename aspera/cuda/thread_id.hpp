@@ -65,6 +65,14 @@ struct thread_id
   ::int3 block;
   ::int3 thread;
 
+  thread_id() = default;
+
+  thread_id(const thread_id&) = default;
+
+  thread_id(::int3 b, ::int3 t)
+    : block{b}, thread{t}
+  {}
+
   constexpr static std::size_t size()
   {
     return 2;
