@@ -3,8 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../coordinate/grid_coordinate.hpp"
-#include "../../event/event.hpp"
 #include "executor.hpp"
+#include "executor_event.hpp"
+#include <concepts>
 #include <cstdint>
 
 ASPERA_NAMESPACE_OPEN_BRACE
@@ -22,22 +23,34 @@ struct bulk_invocable_archetype
 
 
 template<class E, class C>
-concept has_bulk_execute_customization =
-  requires(E ex, C grid_shape)
+concept has_bulk_execute_member_function_customization =
+  requires(E ex, executor_event_t<E> before, C grid_shape)
   {
-    {ex.bulk_execute(grid_shape, bulk_invocable_archetype<C>{})} -> event;
-  } or
-  requires(E ex, C grid_shape)
-  {
-    {bulk_execute(ex, grid_shape, bulk_invocable_archetype<C>{})} -> event;
+    {ex.bulk_execute(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
   }
+;
+
+
+template<class E, class C>
+concept has_bulk_execute_free_function_customization =
+  requires(E ex, executor_event_t<E> before, C grid_shape)
+  {
+    {bulk_execute(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
+  }
+;
+
+
+template<class E, class C>
+concept has_bulk_execute_customization =
+  executor<E> and 
+  (has_bulk_execute_member_function_customization<E, C> or has_bulk_execute_free_function_customization<E, C>)
 ;
 
 
 template<class E>
 concept has_bulk_execution_grid_member_function =
-  executor<E> and
-  requires(E ex, std::size_t n)
+  executor<E>
+  and requires(E ex, std::size_t n)
   {
     {ex.bulk_execution_grid(n)} -> grid_coordinate;
 
