@@ -4,6 +4,7 @@
 
 #include "../../event/make_complete_event.hpp"
 #include "allocate_after.hpp"
+#include "traits/allocator_value_t.hpp"
 #include <memory>
 #include <utility>
 
@@ -54,9 +55,9 @@ struct dispatch_first_allocate
     requires (!has_first_allocate_member_function<Alloc&&, N&&> and
               !has_first_allocate_free_function<Alloc&&, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const ->
-    decltype(allocate_after(std::forward<Alloc>(alloc), make_complete_event(std::forward<Alloc>(alloc)), std::forward<N>(n)))
+    decltype(allocate_after<allocator_value_t<Alloc&&>>(std::forward<Alloc>(alloc), make_complete_event(std::forward<Alloc>(alloc)), std::forward<N>(n)))
   {
-    return allocate_after(std::forward<Alloc>(alloc), make_complete_event(std::forward<Alloc>(alloc)), std::forward<N>(n));
+    return allocate_after<allocator_value_t<Alloc&&>>(std::forward<Alloc>(alloc), make_complete_event(std::forward<Alloc>(alloc)), std::forward<N>(n));
   }
 };
 
