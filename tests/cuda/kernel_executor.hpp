@@ -1,9 +1,11 @@
 #include <aspera/coordinate/colexicographic_index.hpp>
 #include <aspera/coordinate/colexicographic_index_to_grid_coordinate.hpp>
+#include <aspera/coordinate/grid_coordinate.hpp>
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/execution/executor/bulk_execute.hpp>
+#include <aspera/execution/executor/bulk_execution_grid.hpp>
 #include <aspera/execution/executor/execute.hpp>
 #include <aspera/execution/executor/execute_after.hpp>
 #include <aspera/execution/executor/executor.hpp>
@@ -320,9 +322,35 @@ void test_on_new_stream()
 }
 
 
+void test_concepts()
+{
+  static_assert(ns::grid_coordinate<ns::cuda::kernel_executor::coordinate_type>);
+  static_assert(std::same_as<ns::cuda::kernel_executor::coordinate_type, ns::executor_coordinate_t<ns::cuda::kernel_executor>>);
+}
+
+
+void test_bulk_execution_grid()
+{
+  using namespace ns;
+
+  cuda::kernel_executor ex;
+  cuda::thread_id result = bulk_execution_grid(ex, 128);
+
+  assert(1 == result.block.x);
+  assert(1 == result.block.y);
+  assert(1 == result.block.z);
+
+  assert(128 == result.thread.x);
+  assert(  1 == result.thread.y);
+  assert(  1 == result.thread.z);
+}
+
+
 void test_kernel_executor()
 {
+  test_concepts();
   static_assert(ns::executor<ns::cuda::kernel_executor>);
+  test_bulk_execution_grid();
   test_on_default_stream();
   test_on_new_stream();
 }
