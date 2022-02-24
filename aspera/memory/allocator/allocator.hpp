@@ -18,7 +18,7 @@ concept allocator =
 
   requires(std::decay_t<A>& a, typename std::allocator_traits<std::decay_t<A>>::size_type n, typename std::allocator_traits<std::decay_t<A>>::pointer p)
   {
-    ASPERA_NAMESPACE::allocate(a, n);
+    ASPERA_NAMESPACE::allocate<int>(a, n);
     ASPERA_NAMESPACE::deallocate(a, p, n);
   }
 ;
