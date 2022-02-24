@@ -11,7 +11,7 @@ ASPERA_NAMESPACE_OPEN_BRACE
 template<class T>
 concept executor_associate = requires(T arg)
 {
-  ASPERA_NAMESPACE::associated_executor(arg);
+  associated_executor(arg);
 };
 
 
