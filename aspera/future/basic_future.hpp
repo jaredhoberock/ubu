@@ -2,8 +2,10 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../coordinate/grid_coordinate.hpp"
 #include "../detail/for_each_arg.hpp"
 #include "../execution/executor/associated_executor.hpp"
+#include "../execution/executor/bulk_execute.hpp"
 #include "../execution/executor/execute_after.hpp"
 #include "../event/event.hpp"
 #include "../event/make_complete_event.hpp"
@@ -119,6 +121,16 @@ class basic_future
       return result;
     }
 
+    event_type release_event() &&
+    {
+      if(data())
+      {
+        schedule_delete_after(ready());
+      }
+
+      return std::get<0>(std::move(*this).release());
+    }
+
     template<executor E, std::invocable F,
              class R = std::invoke_result_t<F>,
              class Self = basic_future>
@@ -140,7 +152,40 @@ class basic_future
       catch(...)
       {
         // XXX return an exceptional future
-        throw std::runtime_error("future::then_construct_at: execute_after failed");
+        throw std::runtime_error("future::then_construct: execute_after failed");
+      }
+
+      // XXX until we can handle exceptions, just return this to make everything compile
+      return {std::forward_as_tuple(std::move(ready), ptr, n), std::move(deallocator_)};
+    }
+
+
+    // invocable<S, T>
+    // requires copyable<T>
+    template<executor E, grid_coordinate S, std::regular_invocable<S,pointer> F,
+             class Self = basic_future
+            >
+      requires detail::allocation_future<Self>
+    basic_future then_bulk_execute(const E& ex, S grid_shape, F function) &&
+    {
+      auto [ready, ptr, n] = std::move(*this).release();
+
+      try
+      {
+        // XXX should we pass n as well?
+        //     should we pass a const reference to the value or a pointer to the value?
+        auto after_f = bulk_execute(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
+        {
+          std::invoke(f, coord, ptr);
+        });
+
+        // return a new future
+        return {std::forward_as_tuple(std::move(after_f), ptr, n), std::move(deallocator_)};
+      }
+      catch(...)
+      {
+        // XXX return an exceptional future
+        throw std::runtime_error("future::then_bulk_execute: bulk_execute failed");
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile
