@@ -60,7 +60,7 @@ struct dispatch_bulk_execute
     executor_coordinate_t<Ex> native_grid_shape = bulk_execution_grid(executor, num_points);
 
     // call bulk_execute again with a native grid shape
-    return (*this)(std::forward<Ex>(executor), std::forward<Ev>(before), native_grid_shape, [=](auto native_coord)
+    return (*this)(std::forward<Ex>(executor), std::forward<Ev>(before), native_grid_shape, [=](executor_coordinate_t<Ex> native_coord)
     {
       // map the native coordinate to a linear index
       std::size_t i = colexicographic_index(native_coord, native_grid_shape);
