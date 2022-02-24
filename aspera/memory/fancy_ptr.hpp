@@ -431,6 +431,12 @@ class fancy_ptr : private C
       return native_handle() >= other.native_handle();
     }
 
+    // spaceship
+    bool operator<=>(const fancy_ptr& other) const noexcept
+    {
+      return native_handle() <=> other.native_handle();
+    }
+
   private:
     handle_type handle_;
 
