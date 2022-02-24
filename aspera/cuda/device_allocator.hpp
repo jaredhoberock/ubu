@@ -45,6 +45,11 @@ class device_allocator : private device_memory_resource
 
     device_allocator(const device_allocator&) = default;
 
+    template<class OtherU>
+    device_allocator(const device_allocator<OtherU>& other)
+      : device_allocator{other.device()}
+    {}
+
     const kernel_executor associated_executor() const
     {
       return {device(), stream()};
