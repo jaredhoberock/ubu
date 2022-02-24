@@ -22,13 +22,6 @@ concept has_allocator_traits_allocate = requires(A alloc, N n)
 };
 
 
-template<class T, class A>
-concept has_rebind_allocator = requires(A alloc)
-{
-  rebind_allocator<T>(alloc);
-};
-
-
 // this is the type of allocate
 template<class T>
 struct dispatch_allocate

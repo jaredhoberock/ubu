@@ -19,6 +19,20 @@ template<class T, class A>
 using rebind_allocator_result_t = decltype(ASPERA_NAMESPACE::rebind_allocator<T>(std::declval<A>()));
 
 
+namespace detail
+{
+
+
+template<class T, class A>
+concept has_rebind_allocator = requires(A alloc)
+{
+  rebind_allocator<T>(alloc);
+};
+
+
+} // end detail
+
+
 ASPERA_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
