@@ -4,7 +4,7 @@
 
 #include "memory/allocator.hpp"
 #include "memory/construct_at.hpp"
-#include "memory/pointer_adaptor.hpp"
+#include "memory/fancy_ptr.hpp"
 
 #include "detail/epilogue.hpp"
 
