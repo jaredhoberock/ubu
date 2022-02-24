@@ -250,13 +250,10 @@ class basic_future
     basic_future<R, rebind_allocator_result_t<R,A>>
       then_after(const Ex& ex, const A& alloc, Ev&& before, F&& f, basic_future<Args,Ds>&&... future_args) &&
     {
-      // 0. rebind the allocator
-      auto rebound_alloc = rebind_allocator<R>(alloc);
+      // 0. asynchronously allocate the output
+      auto future_ptr = first_allocate<R>(alloc, 1);
 
-      // 1. asynchronously allocate the output
-      auto future_ptr = first_allocate(rebound_alloc, 1);
-
-      // 2. schedule f after the before event
+      // 1. schedule f after the before event
       //    pass this future as the second argument of this lambda, which becomes the argument of f
       return std::move(future_ptr).then_construct_after(ex, std::forward<Ev>(before), [f](auto&&... args)
       {

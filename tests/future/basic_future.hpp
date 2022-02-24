@@ -45,7 +45,7 @@ void test_asynchronous_allocation()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr = ns::first_allocate(alloc, 1);
+  auto future_ptr = ns::first_allocate<T>(alloc, 1);
   
   future_ptr.wait();
 }
@@ -56,7 +56,7 @@ void test_asynchronous_allocation_and_asynchronous_deletion()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr = ns::first_allocate(alloc, 1);
+  auto future_ptr = ns::first_allocate<T>(alloc, 1);
   
   auto [ready, ptr, n] = std::move(future_ptr).release();
   
@@ -73,7 +73,7 @@ void test_asynchronous_allocation_and_synchronous_deletion()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr = ns::first_allocate(alloc, 1);
+  auto future_ptr = ns::first_allocate<T>(alloc, 1);
   
   future_ptr.wait();
   
@@ -90,7 +90,7 @@ void test_then_construct_with_no_args()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr = ns::first_allocate(alloc, 1);
+  auto future_ptr = ns::first_allocate<T>(alloc, 1);
 
   ns::inline_executor ex;
   
@@ -108,7 +108,7 @@ void test_then_construct_after()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr = ns::first_allocate(alloc, 1);
+  auto future_ptr = ns::first_allocate<T>(alloc, 1);
 
   auto ready = ns::make_complete_event(alloc);
 
@@ -128,8 +128,8 @@ void test_then_after()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr1 = ns::first_allocate(alloc, 1);
-  auto future_ptr2 = ns::first_allocate(alloc, 1);
+  auto future_ptr1 = ns::first_allocate<T>(alloc, 1);
+  auto future_ptr2 = ns::first_allocate<T>(alloc, 1);
 
   ns::inline_executor ex;
   
@@ -162,8 +162,8 @@ void test_then_with_allocator()
 {
   trivial_asynchronous_allocator<T> alloc;
   
-  auto future_ptr1 = ns::first_allocate(alloc, 1);
-  auto future_ptr2 = ns::first_allocate(alloc, 1);
+  auto future_ptr1 = ns::first_allocate<T>(alloc, 1);
+  auto future_ptr2 = ns::first_allocate<T>(alloc, 1);
   
   // create one future argument
   auto future_val1 = std::move(future_ptr1).then_construct([]
@@ -194,8 +194,8 @@ void test_then_with_executor()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr1 = ns::first_allocate(alloc, 1);
-  auto future_ptr2 = ns::first_allocate(alloc, 1);
+  auto future_ptr1 = ns::first_allocate<T>(alloc, 1);
+  auto future_ptr2 = ns::first_allocate<T>(alloc, 1);
   
   // create one future argument
   auto future_val1 = std::move(future_ptr1).then_construct([]
@@ -226,8 +226,8 @@ void test_then()
 {
   trivial_asynchronous_allocator<T> alloc;
 
-  auto future_ptr1 = ns::first_allocate(alloc, 1);
-  auto future_ptr2 = ns::first_allocate(alloc, 1);
+  auto future_ptr1 = ns::first_allocate<T>(alloc, 1);
+  auto future_ptr2 = ns::first_allocate<T>(alloc, 1);
   
   // create one future argument
   auto future_val1 = std::move(future_ptr1).then_construct([]
