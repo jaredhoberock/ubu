@@ -7,6 +7,7 @@
 #include "detail/launch_as_cuda_kernel.hpp"
 #include "event.hpp"
 #include "thread_id.hpp"
+#include <bit>
 #include <concepts>
 #include <functional>
 
@@ -69,9 +70,16 @@ class kernel_executor
 
     kernel_executor(const kernel_executor&) = default;
 
-    inline coordinate_type bulk_execution_grid(std::size_t n) const
+    constexpr coordinate_type bulk_execution_grid(std::size_t n) const
     {
       int block_size = 128;
+
+      // if n happens to be a valid block size, use it for a single block launch
+      if(n % 32 == 0 and n <= 1024)
+      {
+        block_size = n;
+      }
+
       int num_blocks = (n + block_size - 1) / block_size;
 
       return coordinate_type{{num_blocks, 1, 1}, {block_size, 1, 1}};
@@ -96,11 +104,25 @@ class kernel_executor
     }
 
 
+    template<std::regular_invocable<int2> F>
+      requires std::is_trivially_copyable_v<F>
+    inline event_type bulk_execute(const event& before, int2 shape, F f) const
+    {
+      // map the int2 to {{gx,gy,gz}, {bx, by, bz}}
+      coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+
+      return this->bulk_execute(before, native_shape, [f](coordinate_type native_coord)
+      {
+        std::invoke(f, int2{native_coord.block.x, native_coord.thread.x});
+      });
+    }
+
+
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
     inline event_type execute_after(const event& before, F f) const
     {
-      return bulk_execute(before, coordinate_type{::int3{1,1,1}, ::int3{1,1,1}}, [f](coordinate_type)
+      return bulk_execute(before, coordinate_type{int3{1,1,1}, int3{1,1,1}}, [f](coordinate_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);
