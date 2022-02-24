@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include <concepts>
+#include <iterator>
 #include <type_traits>
 
 ASPERA_NAMESPACE_OPEN_BRACE
@@ -43,8 +44,8 @@ concept copier = requires
   // the handle type must be regular
   requires std::regular<typename T::handle_type>;
 
-  // the handle type must be equality comparable
-  requires std::equality_comparable<typename T::handle_type>;
+  // the handle type must be totally ordered
+  requires std::totally_ordered<typename T::handle_type>;
 
   // XXX might also require handle_type to be default constructible (and null)
   //     otherwise, need to require copier.null_handle() function
@@ -72,7 +73,7 @@ concept copier = requires
 
 
 template<class T, copier C>
-class pointer_adaptor;
+class fancy_ptr;
 
 
 namespace detail
@@ -95,7 +96,7 @@ concept has_advance = requires(const Copier& c, typename Copier::handle_type& h,
 
 
 template<class T, copier C>
-class pointer_adaptor_reference : private C
+class fancy_ref : private C
 {
   private:
     // derive from copier for EBCO
@@ -108,11 +109,11 @@ class pointer_adaptor_reference : private C
     using value_type = std::remove_cv_t<element_type>;
 
   public:
-    pointer_adaptor_reference() = default;
+    fancy_ref() = default;
 
-    pointer_adaptor_reference(const pointer_adaptor_reference&) = default;
+    fancy_ref(const fancy_ref&) = default;
 
-    constexpr pointer_adaptor_reference(const handle_type& handle, const C& copier)
+    constexpr fancy_ref(const handle_type& handle, const C& copier)
       : super_t{copier}, handle_{handle}
     {}
 
@@ -125,13 +126,13 @@ class pointer_adaptor_reference : private C
       return result;
     }
 
-    // address-of operator returns pointer_adaptor
-    constexpr pointer_adaptor<T,C> operator&() const
+    // address-of operator returns fancy_ptr
+    constexpr fancy_ptr<T,C> operator&() const
     {
       return {handle_, copier()};
     }
 
-    pointer_adaptor_reference operator=(const pointer_adaptor_reference& ref) const
+    fancy_ref operator=(const fancy_ref& ref) const
     {
       copier().copy_n(ref.handle_, 1, handle_);
       return *this;
@@ -139,40 +140,40 @@ class pointer_adaptor_reference : private C
 
     template<class = T>
       requires std::is_assignable_v<element_type&, value_type>
-    pointer_adaptor_reference operator=(const value_type& value) const
+    fancy_ref operator=(const value_type& value) const
     {
       copier().copy_n_from_raw_pointer(&value, 1, handle_);
       return *this;
     }
 
     // equality
-    friend bool operator==(const pointer_adaptor_reference& self, const value_type& value)
+    friend bool operator==(const fancy_ref& self, const value_type& value)
     {
       return self.operator value_type () == value;
     }
 
-    friend bool operator==(const value_type& value, const pointer_adaptor_reference& self)
+    friend bool operator==(const value_type& value, const fancy_ref& self)
     {
       return self.operator value_type () == value;
     }
 
-    friend bool operator==(const pointer_adaptor_reference& lhs, const pointer_adaptor_reference& rhs)
+    friend bool operator==(const fancy_ref& lhs, const fancy_ref& rhs)
     {
       return lhs.operator value_type () == rhs.operator value_type ();
     }
 
     // inequality
-    friend bool operator!=(const pointer_adaptor_reference& self, const value_type& value)
+    friend bool operator!=(const fancy_ref& self, const value_type& value)
     {
       return !(self == value);
     }
 
-    friend bool operator!=(const value_type& value, const pointer_adaptor_reference& self)
+    friend bool operator!=(const value_type& value, const fancy_ref& self)
     {
       return !(self == value);
     }
 
-    friend bool operator!=(const pointer_adaptor_reference& lhs, const pointer_adaptor_reference& rhs)
+    friend bool operator!=(const fancy_ref& lhs, const fancy_ref& rhs)
     {
       return !(lhs == rhs);
     }
@@ -196,7 +197,7 @@ class pointer_adaptor_reference : private C
 
 
 template<class T, copier C>
-class pointer_adaptor : private C
+class fancy_ptr : private C
 {
   private:
     // derive from copier for EBCO
@@ -207,47 +208,48 @@ class pointer_adaptor : private C
     using element_type = T;
 
     using handle_type = typename C::handle_type;
-    using difference_type = std::ptrdiff_t; // XXX or ask the Accessor
 
     // iterator traits
+    using difference_type = std::ptrdiff_t; // XXX or ask the copier
     using value_type = std::remove_cv_t<element_type>;
+    using pointer = fancy_ptr;
+    using reference = detail::fancy_ref<T,C>;
     using iterator_category = std::random_access_iterator_tag;
-    using pointer = pointer_adaptor;
-    using reference = detail::pointer_adaptor_reference<T,C>;
+    using iterator_concept = std::random_access_iterator_tag;
 
-    pointer_adaptor() = default;
+    fancy_ptr() = default;
 
-    constexpr pointer_adaptor(std::nullptr_t) noexcept
-      : pointer_adaptor{null_handle(C{})}
+    constexpr fancy_ptr(std::nullptr_t) noexcept
+      : fancy_ptr{null_handle(C{})}
     {}
 
-    pointer_adaptor(const pointer_adaptor&) = default;
-    pointer_adaptor& operator=(const pointer_adaptor&) = default;
+    fancy_ptr(const fancy_ptr&) = default;
+    fancy_ptr& operator=(const fancy_ptr&) = default;
 
-    constexpr pointer_adaptor(const handle_type& h) noexcept
-      : pointer_adaptor{h, C{}}
+    constexpr fancy_ptr(const handle_type& h) noexcept
+      : fancy_ptr{h, C{}}
     {}
 
-    constexpr pointer_adaptor(const handle_type& h, const C& c) noexcept
+    constexpr fancy_ptr(const handle_type& h, const C& c) noexcept
       : super_t{c}, handle_{h}
     {}
 
-    constexpr pointer_adaptor(const handle_type& h, C&& c) noexcept
+    constexpr fancy_ptr(const handle_type& h, C&& c) noexcept
       : super_t{std::move(c)}, handle_{h}
     {}
 
     template<class... Args>
       requires std::constructible_from<C,Args&&...>
-    constexpr pointer_adaptor(const handle_type& h, Args&&... copier_args)
-      : pointer_adaptor{h, C{std::forward<Args&&>(copier_args)...}}
+    constexpr fancy_ptr(const handle_type& h, Args&&... copier_args)
+      : fancy_ptr{h, C{std::forward<Args&&>(copier_args)...}}
     {}
 
     template<class U, copier OtherC>
       requires (std::convertible_to<U*,T*> and
-                std::convertible_to<typename pointer_adaptor<U,OtherC>::handle_type, handle_type> and
+                std::convertible_to<typename fancy_ptr<U,OtherC>::handle_type, handle_type> and
                 std::convertible_to<OtherC, C>)
-    constexpr pointer_adaptor(const pointer_adaptor<U,OtherC>& other)
-      : pointer_adaptor{other.native_handle(), other.copier()}
+    constexpr fancy_ptr(const fancy_ptr<U,OtherC>& other)
+      : fancy_ptr{other.native_handle(), other.copier()}
     {}
 
     // returns the underlying handle
@@ -303,113 +305,130 @@ class pointer_adaptor : private C
     }
 
     // pre-increment
-    pointer_adaptor& operator++()
+    fancy_ptr& operator++()
     {
       this->advance(copier(), handle_, 1);
       return *this;
     }
 
     // pre-decrement
-    pointer_adaptor& operator--()
+    fancy_ptr& operator--()
     {
       this->advance(copier(), handle_, -1);
       return *this;
     }
 
     // post-increment
-    pointer_adaptor operator++(int)
+    fancy_ptr operator++(int)
     {
-      pointer_adaptor result = *this;
+      fancy_ptr result = *this;
       operator++();
       return result;
     }
 
     // post-decrement
-    pointer_adaptor operator--(int)
+    fancy_ptr operator--(int)
     {
-      pointer_adaptor result = *this;
+      fancy_ptr result = *this;
       operator--();
       return result;
     }
 
     // plus
-    pointer_adaptor operator+(difference_type n) const
+    fancy_ptr operator+(difference_type n) const
     {
-      pointer_adaptor result = *this;
+      fancy_ptr result = *this;
       result += n;
       return result;
     }
 
-    // minus
-    pointer_adaptor operator-(difference_type n) const
+    friend fancy_ptr operator+(difference_type n, const fancy_ptr& rhs)
     {
-      pointer_adaptor result = *this;
+      return rhs + n;
+    }
+
+    // minus
+    fancy_ptr operator-(difference_type n) const
+    {
+      fancy_ptr result = *this;
       result -= n;
       return result;
     }
 
     // plus-equal
-    pointer_adaptor& operator+=(difference_type n)
+    fancy_ptr& operator+=(difference_type n)
     {
       this->advance(copier(), handle_, n);
       return *this;
     }
 
     // minus-equal
-    pointer_adaptor& operator-=(difference_type n)
+    fancy_ptr& operator-=(difference_type n)
     {
       this->advance(copier(), handle_, -n);
       return *this;
     }
 
     // difference
-    difference_type operator-(const pointer_adaptor& other) const noexcept
+    difference_type operator-(const fancy_ptr& other) const noexcept
     {
       return get() - other.get();
     }
 
     // equality
-    bool operator==(const pointer_adaptor& other) const noexcept
+    bool operator==(const fancy_ptr& other) const noexcept
     {
       return native_handle() == other.native_handle();
     }
 
-    friend bool operator==(const pointer_adaptor& self, std::nullptr_t) noexcept
+    friend bool operator==(const fancy_ptr& self, std::nullptr_t) noexcept
     {
       return self.native_handle() == null_handle(self.copier());
     }
 
-    friend bool operator==(std::nullptr_t, const pointer_adaptor& self) noexcept
+    friend bool operator==(std::nullptr_t, const fancy_ptr& self) noexcept
     {
       return null_handle(self.copier()) == self.native_handle();
     }
 
     // inequality
-    bool operator!=(const pointer_adaptor& other) const noexcept
+    bool operator!=(const fancy_ptr& other) const noexcept
     {
       return !operator==(other);
     }
 
-    friend bool operator!=(const pointer_adaptor& self, std::nullptr_t) noexcept
+    friend bool operator!=(const fancy_ptr& self, std::nullptr_t) noexcept
     {
       return !(self == nullptr);
     }
 
-    friend bool operator!=(std::nullptr_t, const pointer_adaptor& self) noexcept
+    friend bool operator!=(std::nullptr_t, const fancy_ptr& self) noexcept
     {
       return !(nullptr == self);
     }
 
     // less
-    bool operator<(const pointer_adaptor& other) const noexcept
+    bool operator<(const fancy_ptr& other) const noexcept
     {
       return native_handle() < other.native_handle();
     }
 
     // lequal
-    bool operator<=(const pointer_adaptor& other) const noexcept
+    bool operator<=(const fancy_ptr& other) const noexcept
     {
       return native_handle() <= other.native_handle();
+    }
+
+    // greater
+    bool operator>(const fancy_ptr& other) const noexcept
+    {
+      return native_handle() > other.native_handle();
+    }
+
+    // gequal
+    bool operator>=(const fancy_ptr& other) const noexcept
+    {
+      return native_handle() >= other.native_handle();
     }
 
   private:
@@ -443,14 +462,14 @@ class pointer_adaptor : private C
 
 template<class T, copier C>
   requires std::is_assignable_v<T,T>
-pointer_adaptor<T,C> copy_n(const std::remove_cv_t<T>* first, std::size_t count, pointer_adaptor<T,C> result)
+fancy_ptr<T,C> copy_n(const std::remove_cv_t<T>* first, std::size_t count, fancy_ptr<T,C> result)
 {
   return result.copier().copy_n_from_raw_pointer(first, count, result.native_handle());
 }
 
 template<class T, copier C>
   requires std::is_assignable_v<T,T>
-std::remove_cv_t<T>* copy_n(pointer_adaptor<T,C> first, std::size_t count, std::remove_cv_t<T>* result)
+std::remove_cv_t<T>* copy_n(fancy_ptr<T,C> first, std::size_t count, std::remove_cv_t<T>* result)
 {
   return first.copier().copy_n_to_raw_pointer(first.native_handle(), count, result);
 }
@@ -458,13 +477,30 @@ std::remove_cv_t<T>* copy_n(pointer_adaptor<T,C> first, std::size_t count, std::
 // XXX U needs to be either T or const T
 template<class T, copier C, class U>
   requires std::is_assignable_v<T&,U>
-pointer_adaptor<T,C> copy_n(pointer_adaptor<U,C> first, std::size_t count, pointer_adaptor<T,C> result)
+fancy_ptr<T,C> copy_n(fancy_ptr<U,C> first, std::size_t count, fancy_ptr<T,C> result)
 {
   return first.copier().copy_n(first.native_handle(), count, result.native_handle());
 }
 
 
 ASPERA_NAMESPACE_CLOSE_BRACE
+
+
+namespace std
+{
+
+template<class T, class C>
+struct iterator_traits<aspera::fancy_ptr<T,C>>
+{
+  using difference_type = typename aspera::fancy_ptr<T,C>::difference_type;
+  using value_type = typename aspera::fancy_ptr<T,C>::value_type;
+  using pointer = typename aspera::fancy_ptr<T,C>::pointer;
+  using reference = typename aspera::fancy_ptr<T,C>::reference;
+  using iterator_category = typename aspera::fancy_ptr<T,C>::iterator_category;
+  using iterator_concept = typename aspera::fancy_ptr<T,C>::iterator_concept;
+};
+
+}
 
 #include "../detail/epilogue.hpp"
 

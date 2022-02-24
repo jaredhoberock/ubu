@@ -5,9 +5,20 @@
 #undef NDEBUG
 #include <cassert>
 
+#include <concepts>
 #include <cuda_runtime_api.h>
 
 namespace ns = aspera;
+
+
+void test_concepts()
+{
+  static_assert(std::input_or_output_iterator<ns::cuda::device_ptr<int>>);
+  static_assert(std::indirectly_readable<ns::cuda::device_ptr<int>>);
+  static_assert(std::forward_iterator<ns::cuda::device_ptr<int>>);
+  static_assert(std::bidirectional_iterator<ns::cuda::device_ptr<int>>);
+  static_assert(std::random_access_iterator<ns::cuda::device_ptr<int>>);
+}
 
 
 void test_copy_n_after()
@@ -360,6 +371,7 @@ void test_construct_at()
 
 void test_device_ptr()
 {
+  test_concepts();
   test_constructors();
   test_writeable_device_ptr();
   test_readable_device_ptr();

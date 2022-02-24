@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <aspera/memory/pointer_adaptor.hpp>
+#include <aspera/memory/fancy_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -31,13 +31,18 @@ struct trivial_copier
 };
 
 
-void test_pointer_adaptor()
+void test_fancy_ptr()
 {
   using namespace ns;
 
   {
+    // test concepts
+    static_assert(std::random_access_iterator<fancy_ptr<int, trivial_copier<int>>>);
+  }
+
+  {
     // test default construction
-    pointer_adaptor<int, trivial_copier<int>> ptr;
+    fancy_ptr<int, trivial_copier<int>> ptr;
 
     // silence "declared but never referenced" warnings
     static_cast<void>(ptr);
@@ -45,7 +50,7 @@ void test_pointer_adaptor()
 
   {
     // test construction from nullptr
-    pointer_adaptor<int, trivial_copier<int>> ptr{nullptr};
+    fancy_ptr<int, trivial_copier<int>> ptr{nullptr};
 
     assert(ptr.get() == nullptr);
     assert(!ptr);
@@ -55,7 +60,7 @@ void test_pointer_adaptor()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    pointer_adaptor<int, trivial_copier<int>> ptr(array);
+    fancy_ptr<int, trivial_copier<int>> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
@@ -91,7 +96,7 @@ void test_pointer_adaptor()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    pointer_adaptor<const int, trivial_copier<const int>> ptr(array);
+    fancy_ptr<const int, trivial_copier<const int>> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)

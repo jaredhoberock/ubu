@@ -4,7 +4,7 @@
 
 #include "../detail/exception.hpp"
 #include "../detail/reflection.hpp"
-#include "../memory/pointer_adaptor.hpp"
+#include "../memory/fancy_ptr.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "event.hpp"
 #include "kernel_executor.hpp"
@@ -94,7 +94,7 @@ class device_memory_copier
 
 
 template<class T>
-using device_ptr = pointer_adaptor<T, device_memory_copier<T>>;
+using device_ptr = fancy_ptr<T, device_memory_copier<T>>;
 
 
 // copy_n_after overloads
