@@ -71,7 +71,7 @@ struct dispatch_first_allocate
     return (*this)(rebound_alloc, std::forward<N>(n));
   }
 
-  // this dispatch path calls the free function
+  // this dispatch path calls allocate_after
   template<class Alloc, class N>
     requires (!has_first_allocate_member_function<T, Alloc&&, N&&> and
               !has_first_allocate_free_function<T, Alloc&&, N&&> and
