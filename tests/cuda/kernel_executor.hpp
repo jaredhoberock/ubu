@@ -4,7 +4,7 @@
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
 #include <aspera/event/wait.hpp>
-#include <aspera/execution/executor/bulk_execute.hpp>
+#include <aspera/execution/executor/bulk_execute_after.hpp>
 #include <aspera/execution/executor/bulk_execution_grid.hpp>
 #include <aspera/execution/executor/execute.hpp>
 #include <aspera/execution/executor/execute_after.hpp>
@@ -194,7 +194,7 @@ int hash_coord(ns::cuda::thread_id coord)
 __managed__ int bulk_result[4][4][4][4][4][4] = {};
 
 
-void test_native_bulk_execute(cudaStream_t s, int d)
+void test_native_bulk_execute_after(cudaStream_t s, int d)
 {
   using namespace ns;
 
@@ -206,7 +206,7 @@ void test_native_bulk_execute(cudaStream_t s, int d)
   {
     cuda::event before{ex1.stream()};
 
-    cuda::event e = ns::bulk_execute(ex1, before, shape, [=](ns::cuda::thread_id coord)
+    cuda::event e = ns::bulk_execute_after(ex1, before, shape, [=](ns::cuda::thread_id coord)
     {
       int result = hash_coord(coord);
 
@@ -249,7 +249,7 @@ void test_native_bulk_execute(cudaStream_t s, int d)
 
 
 template<ns::grid_coordinate C>
-void test_ND_bulk_execute(cudaStream_t s, int d, C shape)
+void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
 {
   using namespace ns;
 
@@ -261,7 +261,7 @@ void test_ND_bulk_execute(cudaStream_t s, int d, C shape)
 
     ns::int6 bulk_result_shape{4,4,4,4,4,4};
 
-    cuda::event e = ns::bulk_execute(ex1, before, shape, [=](C coord)
+    cuda::event e = ns::bulk_execute_after(ex1, before, shape, [=](C coord)
     {
       int i = colexicographic_index(coord, shape);
       int6 a = colexicographic_index_to_grid_coordinate(i, bulk_result_shape);
@@ -294,13 +294,13 @@ void test_on_stream(cudaStream_t s)
   test_finally_execute_after(s, 0);
   test_first_execute(s, 0);
   test_execute_after(s, 0);
-  test_native_bulk_execute(s, 0);
+  test_native_bulk_execute_after(s, 0);
 
-  test_ND_bulk_execute(s, 0, 4*4*4*4*4*4);
-  test_ND_bulk_execute(s, 0, ns::int2{4*4*4, 4*4*4});
-  test_ND_bulk_execute(s, 0, ns::int3{4*4, 4*4, 4*4});
-  test_ND_bulk_execute(s, 0, ns::int4{4*4, 4*4, 4, 4});
-  test_ND_bulk_execute(s, 0, ns::int5{4*4, 4, 4, 4, 4});
+  test_ND_bulk_execute_after(s, 0, 4*4*4*4*4*4);
+  test_ND_bulk_execute_after(s, 0, ns::int2{4*4*4, 4*4*4});
+  test_ND_bulk_execute_after(s, 0, ns::int3{4*4, 4*4, 4*4});
+  test_ND_bulk_execute_after(s, 0, ns::int4{4*4, 4*4, 4, 4});
+  test_ND_bulk_execute_after(s, 0, ns::int5{4*4, 4, 4, 4, 4});
 }
 
 

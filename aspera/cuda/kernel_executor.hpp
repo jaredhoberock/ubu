@@ -87,10 +87,10 @@ class kernel_executor
 
     template<std::regular_invocable<coordinate_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type bulk_execute(const event& before, coordinate_type shape, F f) const
+    inline event_type bulk_execute_after(const event& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
 
       // convert the shape to dim3
       dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
@@ -106,12 +106,12 @@ class kernel_executor
 
     template<std::regular_invocable<int2> F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type bulk_execute(const event& before, int2 shape, F f) const
+    inline event_type bulk_execute_after(const event& before, int2 shape, F f) const
     {
       // map the int2 to {{gx,gy,gz}, {bx, by, bz}}
       coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return this->bulk_execute(before, native_shape, [f](coordinate_type native_coord)
+      return this->bulk_execute_after(before, native_shape, [f](coordinate_type native_coord)
       {
         std::invoke(f, int2{native_coord.block.x, native_coord.thread.x});
       });
@@ -122,7 +122,7 @@ class kernel_executor
       requires std::is_trivially_copyable_v<F>
     inline event_type execute_after(const event& before, F f) const
     {
-      return bulk_execute(before, coordinate_type{int3{1,1,1}, int3{1,1,1}}, [f](coordinate_type)
+      return bulk_execute_after(before, coordinate_type{int3{1,1,1}, int3{1,1,1}}, [f](coordinate_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);

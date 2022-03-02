@@ -5,7 +5,7 @@
 #include "../coordinate/grid_coordinate.hpp"
 #include "../detail/for_each_arg.hpp"
 #include "../execution/executor/associated_executor.hpp"
-#include "../execution/executor/bulk_execute.hpp"
+#include "../execution/executor/bulk_execute_after.hpp"
 #include "../execution/executor/execute_after.hpp"
 #include "../event/event.hpp"
 #include "../event/make_complete_event.hpp"
@@ -174,7 +174,7 @@ class basic_future
       {
         // XXX should we pass n as well?
         //     should we pass a const reference to the value or a pointer to the value?
-        auto after_f = bulk_execute(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
+        auto after_f = bulk_execute_after(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
         {
           std::invoke(f, coord, ptr);
         });
@@ -185,7 +185,7 @@ class basic_future
       catch(...)
       {
         // XXX return an exceptional future
-        throw std::runtime_error("future::then_bulk_execute: bulk_execute failed");
+        throw std::runtime_error("future::then_bulk_execute: bulk_execute_after failed");
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile

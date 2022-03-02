@@ -23,27 +23,27 @@ struct bulk_invocable_archetype
 
 
 template<class E, class C>
-concept has_bulk_execute_member_function_customization =
+concept has_bulk_execute_after_member_function_customization =
   requires(E ex, executor_event_t<E> before, C grid_shape)
   {
-    {ex.bulk_execute(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
+    {ex.bulk_execute_after(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
   }
 ;
 
 
 template<class E, class C>
-concept has_bulk_execute_free_function_customization =
+concept has_bulk_execute_after_free_function_customization =
   requires(E ex, executor_event_t<E> before, C grid_shape)
   {
-    {bulk_execute(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
+    {bulk_execute_after(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
   }
 ;
 
 
 template<class E, class C>
-concept has_bulk_execute_customization =
+concept has_bulk_execute_after_customization =
   executor<E> and 
-  (has_bulk_execute_member_function_customization<E, C> or has_bulk_execute_free_function_customization<E, C>)
+  (has_bulk_execute_after_member_function_customization<E, C> or has_bulk_execute_after_free_function_customization<E, C>)
 ;
 
 
@@ -54,7 +54,7 @@ concept has_bulk_execution_grid_member_function =
   {
     {ex.bulk_execution_grid(n)} -> grid_coordinate;
 
-    requires has_bulk_execute_customization<E, decltype(ex.bulk_execution_grid(n))>;
+    requires has_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(n))>;
   }
 ;
 
@@ -65,7 +65,7 @@ concept has_bulk_execution_grid_free_function =
   {
     {bulk_execution_grid(ex,n)} -> grid_coordinate;
 
-    requires has_bulk_execute_customization<E, decltype(bulk_execution_grid(ex,n))>;
+    requires has_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,n))>;
   }
 ;
 

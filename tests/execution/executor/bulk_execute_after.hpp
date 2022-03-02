@@ -1,6 +1,6 @@
 #include <aspera/event/always_complete_event.hpp>
 #include <aspera/event/wait.hpp>
-#include <aspera/execution/executor/bulk_execute.hpp>
+#include <aspera/execution/executor/bulk_execute_after.hpp>
 #include <aspera/execution/executor/inline_executor.hpp>
 
 #undef NDEBUG
@@ -18,10 +18,10 @@ __global__ void device_invoke(F f)
 
 namespace ns = aspera;
 
-struct has_bulk_execute_member
+struct has_bulk_execute_after_member
 {
   template<class F>
-  ns::always_complete_event bulk_execute(ns::always_complete_event before, int n, F&& f) const
+  ns::always_complete_event bulk_execute_after(ns::always_complete_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -35,10 +35,10 @@ struct has_bulk_execute_member
 };
 
 
-struct has_bulk_execute_free_function {};
+struct has_bulk_execute_after_free_function {};
 
 template<class F>
-ns::always_complete_event bulk_execute(const has_bulk_execute_free_function&, ns::always_complete_event before, int n, F&& f)
+ns::always_complete_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::always_complete_event before, int n, F&& f)
 {
   before.wait();
 
@@ -54,28 +54,28 @@ ns::always_complete_event bulk_execute(const has_bulk_execute_free_function&, ns
 void test()
 {
   {
-    has_bulk_execute_member e;
+    has_bulk_execute_after_member e;
 
     int counter = 0;
 
     ns::always_complete_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
   }
 
   {
-    has_bulk_execute_free_function e;
+    has_bulk_execute_after_free_function e;
 
     int counter = 0;
 
     ns::always_complete_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
@@ -91,7 +91,7 @@ void test()
     ns::always_complete_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
@@ -108,7 +108,7 @@ void test()
 
     ns::int2 grid_shape{2,5};
 
-    auto done = ns::bulk_execute(e, before, grid_shape, [&](ns::int2){ ++counter; });
+    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int2){ ++counter; });
     ns::wait(done);
 
     assert(grid_shape.product() == counter);
@@ -125,14 +125,14 @@ void test()
 
     ns::int3 grid_shape{2,5,7};
 
-    auto done = ns::bulk_execute(e, before, grid_shape, [&](ns::int3){ ++counter; });
+    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int3){ ++counter; });
     ns::wait(done);
 
     assert(grid_shape.product() == counter);
   }
 }
 
-void test_bulk_execute()
+void test_bulk_execute_after()
 {
   test();
 
