@@ -6,7 +6,6 @@
 #include "../detail/reflection.hpp"
 #include "detail/launch_as_cuda_kernel.hpp"
 #include "event.hpp"
-#include "shmalloc.hpp"
 #include "thread_id.hpp"
 #include <bit>
 #include <concepts>
@@ -98,7 +97,7 @@ class kernel_executor
       dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
 
       // launch the kernel
-      detail::launch_as_cuda_kernel(detail::invoke_with_builtin_cuda_indices<F>{f}, grid_dim, block_dim, dynamic_shared_memory_size_, stream_, device_);
+      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size_, stream_, device_, detail::invoke_with_builtin_cuda_indices<F>{f});
 
       // return a new event recorded on our stream
       return {stream_};
