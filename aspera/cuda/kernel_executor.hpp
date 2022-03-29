@@ -111,8 +111,9 @@ class kernel_executor
       // map the int2 to {{gx,gy,gz}, {bx, by, bz}}
       coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return this->bulk_execute_after(before, native_shape, [f](coordinate_type native_coord)
+      return bulk_execute_after(before, native_shape, [f](coordinate_type native_coord)
       {
+        // map the native coordinate_type back into an int2 and invoke
         std::invoke(f, int2{native_coord.block.x, native_coord.thread.x});
       });
     }
