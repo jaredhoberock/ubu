@@ -6,6 +6,7 @@
 #include "../detail/reflection.hpp"
 #include "detail/launch_as_cuda_kernel.hpp"
 #include "event.hpp"
+#include "shmalloc.hpp"
 #include "thread_id.hpp"
 #include <bit>
 #include <concepts>
@@ -21,15 +22,23 @@ namespace detail
 
 template<std::invocable<cuda::thread_id> F>
   requires std::is_trivially_copyable_v<F>
-struct invoke_with_builtin_cuda_indices
+struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 {
   F f;
+  std::size_t dynamic_shared_memory_size;
 
   void operator()() const
   {
 #if defined(__CUDACC__)
     if ASPERA_TARGET(is_device())
     {
+      // initialize shmalloc
+      if(threadIdx.x == 0 and threadIdx.y == 0 and threadIdx.z == 0)
+      {
+        cuda::init_on_chip_malloc(dynamic_shared_memory_size);
+      }
+      __syncthreads();
+
       // create a thread_id from the built-in variables
       cuda::thread_id idx{{blockIdx.x, blockIdx.y, blockIdx.z}, {threadIdx.x, threadIdx.y, threadIdx.z}};
 
@@ -97,7 +106,7 @@ class kernel_executor
       dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
 
       // launch the kernel
-      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size_, stream_, device_, detail::invoke_with_builtin_cuda_indices<F>{f});
+      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size_, stream_, device_, detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F>{f, dynamic_shared_memory_size_});
 
       // return a new event recorded on our stream
       return {stream_};
