@@ -4,6 +4,7 @@
 
 #include "../../detail/reflection.hpp"
 #include "../../detail/exception.hpp"
+#include "cuda_kernel_entry_point.hpp"
 #include "temporarily_with_current_device.hpp"
 #include <concepts>
 #include <cstring>
@@ -15,14 +16,6 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 namespace detail
 {
-
-
-template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
-__global__ void cuda_kernel_entry_point(F f)
-{
-  f();
-}
 
 
 template<class Arg>
@@ -76,7 +69,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
     }
   });
 #else
-  detail::throw_runtime_error("detail::launch_cuda_kernel requires CUDA C++ language support.");
+  detail::throw_runtime_error("detail::launch_as_cuda_kernel requires CUDA C++ language support.");
 #endif
 }
 

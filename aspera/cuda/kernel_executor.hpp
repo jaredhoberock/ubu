@@ -4,6 +4,7 @@
 
 #include "../coordinate/point.hpp"
 #include "../detail/reflection.hpp"
+#include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cuda_kernel.hpp"
 #include "event.hpp"
 #include "shmalloc.hpp"
@@ -25,7 +26,7 @@ template<std::invocable<cuda::thread_id> F>
 struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 {
   F f;
-  std::size_t dynamic_shared_memory_size;
+  int dynamic_shared_memory_size;
 
   void operator()() const
   {
@@ -60,17 +61,19 @@ namespace cuda
 class kernel_executor
 {
   public:
+    constexpr static std::size_t default_shared_heap_size = -1;
+
     using coordinate_type = thread_id;
     using event_type = cuda::event;
 
-    constexpr kernel_executor(int device, cudaStream_t stream, std::size_t dynamic_shared_memory_size)
+    constexpr kernel_executor(int device, cudaStream_t stream, std::size_t shared_heap_size)
       : device_{device},
         stream_{stream},
-        dynamic_shared_memory_size_{dynamic_shared_memory_size}
+        shared_heap_size_{shared_heap_size}
     {}
 
     constexpr kernel_executor(int device, cudaStream_t stream)
-      : kernel_executor{device, stream, 0}
+      : kernel_executor{device, stream, default_shared_heap_size}
     {}
 
     constexpr kernel_executor()
@@ -105,8 +108,20 @@ class kernel_executor
       dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
       dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
 
+      // create the function that will be launched as a kernel
+      detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
+
+      // compute dynamic_shared_memory_size, if necessary
+      int dynamic_shared_memory_size = (shared_heap_size_ == default_shared_heap_size) ?
+        detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
+        shared_heap_size_
+      ;
+
+      // tell the kernel how much smem it's going to get
+      kernel.dynamic_shared_memory_size = dynamic_shared_memory_size;
+
       // launch the kernel
-      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size_, stream_, device_, detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F>{f, dynamic_shared_memory_size_});
+      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F>{f, dynamic_shared_memory_size});
 
       // return a new event recorded on our stream
       return {stream_};
@@ -178,15 +193,20 @@ class kernel_executor
       return stream_;
     }
 
-    constexpr std::size_t dynamic_shared_memory_size() const
+    constexpr std::size_t shared_heap_size() const
     {
-      return dynamic_shared_memory_size_;
+      return shared_heap_size_;
+    }
+
+    constexpr void shared_heap_size(std::size_t num_bytes)
+    {
+      shared_heap_size_ = num_bytes;
     }
 
   private:
     int device_;
     cudaStream_t stream_;
-    std::size_t dynamic_shared_memory_size_;
+    std::size_t shared_heap_size_;
 };
 
 
