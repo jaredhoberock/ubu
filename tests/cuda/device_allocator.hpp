@@ -1,12 +1,10 @@
 #include <aspera/cuda/device_allocator.hpp>
 #include <aspera/memory/allocator/asynchronous_allocator.hpp>
-#include <aspera/memory/allocator/asynchronous_deallocator.hpp>
 
 namespace ns = aspera;
 
 void test_concepts()
 {
-  static_assert(ns::asynchronous_deallocator<ns::cuda::device_allocator<int>>);
   static_assert(ns::asynchronous_allocator<ns::cuda::device_allocator<int>>);
 }
 

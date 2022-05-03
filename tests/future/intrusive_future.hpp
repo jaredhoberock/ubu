@@ -37,7 +37,6 @@ struct trivial_asynchronous_allocator : public std::allocator<T>
 };
 
 static_assert(ns::allocator<trivial_asynchronous_allocator<int>>);
-static_assert(ns::asynchronous_deallocator<trivial_asynchronous_allocator<int>>);
 static_assert(ns::asynchronous_allocator<trivial_asynchronous_allocator<int>>);
 
 

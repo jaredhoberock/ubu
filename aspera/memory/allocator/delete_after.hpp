@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
-#include "../allocator/asynchronous_deallocator.hpp"
+#include "../allocator/asynchronous_allocator.hpp"
 #include "../allocator/deallocate_after.hpp"
 #include "../allocator/destroy_after.hpp"
 #include <utility>
@@ -55,7 +55,7 @@ struct dispatch_delete_after
   //
   //   XXX P needs to be allocator_traits<A>::pointer
   //   XXX N should be allocator_traits<A>::size_type
-  template<asynchronous_deallocator A, event E, class P, class N>
+  template<asynchronous_allocator A, event E, class P, class N>
     requires (!has_delete_after_member_function<A&&, E&&, P, N> and
               !has_delete_after_free_function<A&&, E&&, P, N> and
               executor_associate<A&&>)
@@ -89,5 +89,4 @@ using delete_after_result_t = decltype(ASPERA_NAMESPACE::delete_after(std::declv
 ASPERA_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
-
 

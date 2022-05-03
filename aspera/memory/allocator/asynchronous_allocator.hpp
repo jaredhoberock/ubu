@@ -22,7 +22,7 @@ concept asynchronous_allocator =
 
   requires(A a, const typename std::remove_cvref_t<A>::event_type& e, typename std::allocator_traits<std::remove_cvref_t<A>>::pointer ptr, std::size_t n)
   {
-    // XXX this needs to check that the result is a future<pointer>
+    // XXX this needs to check that the result is a pair<event,pointer>
     ASPERA_NAMESPACE::allocate_after<allocator_value_t<A>>(a, e, n);
   
     {ASPERA_NAMESPACE::deallocate_after(a, e, ptr, n)} -> event;

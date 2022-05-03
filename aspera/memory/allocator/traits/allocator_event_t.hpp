@@ -2,13 +2,13 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../asynchronous_deallocator.hpp"
+#include "../asynchronous_allocator.hpp"
 
 ASPERA_NAMESPACE_OPEN_BRACE
 
 
 template<class A>
-  requires asynchronous_deallocator<A>
+  requires asynchronous_allocator<A>
 using allocator_event_t = typename std::decay_t<A>::event_type;
 
 
