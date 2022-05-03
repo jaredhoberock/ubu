@@ -19,11 +19,6 @@ namespace cuda
 class event
 {
   public:
-    inline event()
-      : native_handle_{make_cuda_event()},
-        origin_target_{current_target()}
-    {}
-
     inline event(cudaStream_t s)
       : event{}
     {
@@ -169,6 +164,11 @@ class event
 
       return result;
     }
+
+    inline event()
+      : native_handle_{make_cuda_event()},
+        origin_target_{current_target()}
+    {}
 
     // this ctor is available to make_contingent_event
     // the int parameter is simply there to distinguish this ctor from a copy ctor

@@ -10,7 +10,6 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 template<class E>
 concept event = 
-  std::constructible_from<std::remove_cvref_t<E>> and
   std::is_nothrow_move_constructible_v<E> and
   std::is_nothrow_destructible_v<E> and
   requires(const std::remove_cvref_t<E>& e)
