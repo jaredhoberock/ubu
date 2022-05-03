@@ -4,12 +4,12 @@
 
 #include "../detail/exception.hpp"
 #include "../detail/reflection.hpp"
-#include "../future/basic_future.hpp"
 #include "device_memory_resource.hpp"
 #include "device_ptr.hpp"
 #include "event.hpp"
 #include "kernel_executor.hpp"
 #include <cuda_runtime_api.h>
+#include <utility>
 
 ASPERA_NAMESPACE_OPEN_BRACE
 
@@ -66,14 +66,12 @@ class device_allocator : private device_memory_resource
       super_t::deallocate(ptr.native_handle(), sizeof(T) * n);
     }
 
-    // allocate_after is a function template because future requires its second template parameter to be a complete type before instantiation
-    template<class U = T>
-    basic_future<device_ptr<U>, device_allocator> allocate_after(const event& before, std::size_t n) const
+    std::pair<event_type, device_ptr<T>> allocate_after(const event& before, std::size_t n) const
     {
       auto [allocation_ready, raw_ptr] = super_t::allocate_after(before, sizeof(T) * n);
       device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device()};
 
-      return {std::move(allocation_ready), std::make_pair(d_ptr,n), *this};
+      return {std::move(allocation_ready), d_ptr};
     }
 
     event deallocate_after(const event& before, pointer ptr, std::size_t n) const

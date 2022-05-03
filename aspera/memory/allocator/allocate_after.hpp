@@ -18,7 +18,7 @@ concept has_allocate_after_member_function = requires(A alloc, E before, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a future<pointer>
+  // XXX this should check that the result is a pair<E,pointer>
   alloc.allocate_after(before, n);
 };
 
@@ -28,7 +28,7 @@ concept has_allocate_after_free_function = requires(A alloc, E before, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a future<pointer>
+  // XXX this should check that the result is a pair<E,pointer>
   allocate_after(alloc, before, n);
 };
 

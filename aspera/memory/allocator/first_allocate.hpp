@@ -20,7 +20,7 @@ concept has_first_allocate_member_function = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a future<pointer>
+  // XXX this should check that the result is a pair<event,pointer>
   alloc.first_allocate(n);
 };
 
@@ -30,7 +30,7 @@ concept has_first_allocate_free_function = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a future<pointer>
+  // XXX this should check that the result is a pair<event,pointer>
   first_allocate(alloc, n);
 };
 

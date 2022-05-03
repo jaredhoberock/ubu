@@ -1,5 +1,6 @@
 #include <aspera/cuda/device_allocator.hpp>
 #include <aspera/memory/allocator/asynchronous_allocator.hpp>
+#include <aspera/memory/allocator/asynchronous_deallocator.hpp>
 
 namespace ns = aspera;
 
@@ -29,12 +30,15 @@ void test_asynchronous_allocation()
   }
 
   {
-    // test asynchronous allocation
+    // test asynchronous allocation and synchronous deletion
+
     event ready{stream};
 
-    auto future_ptr = alloc.allocate_after(std::move(ready), 1);
+    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
-    future_ptr.wait();
+    e.wait();
+
+    alloc.deallocate(ptr, 1);
   }
 
   {
@@ -42,28 +46,13 @@ void test_asynchronous_allocation()
 
     event ready{stream};
 
-    auto future_ptr = alloc.allocate_after(std::move(ready), 1);
+    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
-    auto [e, ptr, n] = std::move(future_ptr).release();
-
-    event all_done = alloc.deallocate_after(e, ptr, n);
+    event all_done = alloc.deallocate_after(e, ptr, 1);
 
     all_done.wait();
   }
 
-  {
-    // test asynchronous allocation and synchronous deletion
-
-    event ready{stream};
-
-    auto future_ptr = alloc.allocate_after(std::move(ready), 1);
-
-    future_ptr.wait();
-
-    auto [_, ptr, n] = std::move(future_ptr).release();
-
-    alloc.deallocate(ptr, n);
-  }
 }
 
 void test_device_allocator()
