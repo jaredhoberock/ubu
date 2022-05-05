@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../detail/exception.hpp"
 #include "detail/temporarily_with_current_device.hpp"
+#include "detail/throw_on_cuda_error.hpp"
 #include "event.hpp"
 #include <cuda_runtime_api.h>
 #include <utility>
@@ -35,7 +35,7 @@ class device_memory_resource
       {
         void* result = nullptr;
 
-        detail::throw_on_error(cudaMalloc(&result, num_bytes), "cuda::device_memory_resource::allocate: CUDA error after cudaMalloc");
+        detail::throw_on_cuda_error(cudaMalloc(&result, num_bytes), "cuda::device_memory_resource::allocate: after cudaMalloc");
 
         return result;
       });
@@ -45,7 +45,7 @@ class device_memory_resource
     {
       detail::temporarily_with_current_device(device(), [=]
       {
-        detail::throw_on_error(cudaFree(ptr), "cuda::device_memory_resource::deallocate: CUDA error after cudaFree");
+        detail::throw_on_cuda_error(cudaFree(ptr), "cuda::device_memory_resource::deallocate: after cudaFree");
       });
     }
 
@@ -53,13 +53,13 @@ class device_memory_resource
     {
       return detail::temporarily_with_current_device(device(), [&]
       {
-        detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()),
-          "cuda::device_memory_resource::allocate_after: CUDA error after cudaStreamWaitEvent"
+        detail::throw_on_cuda_error(cudaStreamWaitEvent(stream_, before.native_handle()),
+          "cuda::device_memory_resource::allocate_after: after cudaStreamWaitEvent"
         );
 
         void* ptr{};
-        detail::throw_on_error(cudaMallocAsync(reinterpret_cast<void**>(&ptr), num_bytes, stream()),
-          "cuda::device_memory_resource::allocate_after: CUDA error after cudaMallocAsync"
+        detail::throw_on_cuda_error(cudaMallocAsync(reinterpret_cast<void**>(&ptr), num_bytes, stream()),
+          "cuda::device_memory_resource::allocate_after: after cudaMallocAsync"
         );
 
         event after{stream()};
@@ -70,12 +70,12 @@ class device_memory_resource
 
     inline event deallocate_after(const event& before, void* ptr, std::size_t) const
     {
-      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
-        "cuda::device_memory_resource::deallocate_after: CUDA error after cudaStreamWaitEvent"
+      detail::throw_on_cuda_error(cudaStreamWaitEvent(stream(), before.native_handle()),
+        "cuda::device_memory_resource::deallocate_after: after cudaStreamWaitEvent"
       );
 
-      detail::throw_on_error(cudaFreeAsync(ptr, stream()),
-        "cuda::device_memory_resource::deallocate_after: CUDA error after cudaFreeAsync"
+      detail::throw_on_cuda_error(cudaFreeAsync(ptr, stream()),
+        "cuda::device_memory_resource::deallocate_after: after cudaFreeAsync"
       );
 
       return {stream()};

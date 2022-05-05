@@ -2,8 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../detail/exception.hpp"
+#include "../../detail/exception/throw_runtime_error.hpp"
 #include "../../detail/reflection.hpp"
+#include "throw_on_cuda_error.hpp"
 #include <concepts>
 #include <cuda_runtime_api.h>
 #include <functional>
@@ -30,7 +31,7 @@ struct current_cuda_device_in_this_scope
     {
       if ASPERA_TARGET(has_cuda_runtime())
       {
-        detail::throw_on_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
+        detail::throw_on_cuda_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
       }
       else
       {
@@ -46,7 +47,7 @@ struct current_cuda_device_in_this_scope
       }
       else
       {
-        detail::throw_on_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaSetDevice");
+        detail::throw_on_cuda_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
       }
     }
   }
@@ -57,7 +58,7 @@ struct current_cuda_device_in_this_scope
     {
       if ASPERA_TARGET(is_host())
       {
-        detail::throw_on_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope dtor: CUDA error after cudaSetDevice");
+        detail::throw_on_cuda_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope dtor: after cudaSetDevice");
       }
     }
   }

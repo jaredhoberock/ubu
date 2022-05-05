@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../detail/exception.hpp"
 #include "detail/temporarily_with_current_device.hpp"
+#include "detail/throw_on_cuda_error.hpp"
 #include <cuda_runtime_api.h>
 
 ASPERA_NAMESPACE_OPEN_BRACE
@@ -32,7 +32,7 @@ class managed_memory_resource
       {
         void* result = nullptr;
 
-        detail::throw_on_error(cudaMallocManaged(&result, num_bytes, cudaMemAttachGlobal), "cuda::managed_memory_resource::allocate: CUDA error after cudaMallocManaged");
+        detail::throw_on_cuda_error(cudaMallocManaged(&result, num_bytes, cudaMemAttachGlobal), "cuda::managed_memory_resource::allocate: after cudaMallocManaged");
 
         return result;
       });
@@ -42,7 +42,7 @@ class managed_memory_resource
     {
       detail::temporarily_with_current_device(device(), [=]
       {
-        detail::throw_on_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: CUDA error after cudaFree");
+        detail::throw_on_cuda_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: after cudaFree");
       });
     }
 

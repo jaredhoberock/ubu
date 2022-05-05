@@ -6,6 +6,7 @@
 #include "../detail/reflection.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cuda_kernel.hpp"
+#include "detail/throw_on_cuda_error.hpp"
 #include "event.hpp"
 #include "shmalloc.hpp"
 #include "thread_id.hpp"
@@ -102,7 +103,7 @@ class kernel_executor
     inline event_type bulk_execute_after(const event_type& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_cuda_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
 
       // convert the shape to dim3
       dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
