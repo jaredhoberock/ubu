@@ -68,21 +68,22 @@ class intrusive_future
       return std::get<allocator_type>(resources_);
     }
 
-    void wait() const
+    void wait()
     {
       // either the allocation or the result needs to exist for this future to be valid
-      if(!data() and maybe_result_.empty())
+      if(!data() and !maybe_result_.has_value())
       {
         throw std::future_error(std::future_errc::no_state);
       }
 
-      // wait on the event
-      std::get<event_type>(resources_).wait();
+      // wait on the readiness of the result event
+      ready().wait();
 
       // get the result if we haven't already
-      if(maybe_result_.empty())
+      if(!maybe_result_.has_value())
       {
-        maybe_result_.emplace(std::move(*data()));
+        value_type result = std::move(*data());
+        maybe_result_.emplace(std::move(result));
 
         // release resources
         auto [alloc, ready, ptr] = std::move(*this).release();
