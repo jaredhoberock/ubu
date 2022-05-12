@@ -119,7 +119,7 @@ class event
       }
     }
 
-    inline static event make_complete_event()
+    inline static event make_independent_event()
     {
       return {0};
     }

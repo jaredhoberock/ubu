@@ -12,7 +12,7 @@ struct always_complete_event
 {
   constexpr void wait() const {}
 
-  constexpr static always_complete_event make_complete_event()
+  constexpr static always_complete_event make_independent_event()
   {
     return {};
   }

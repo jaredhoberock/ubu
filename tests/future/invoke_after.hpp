@@ -45,7 +45,7 @@ void test_invoke_after()
   ns::inline_executor ex;
   trivial_asynchronous_allocator<int> alloc;
 
-  auto before = ns::make_complete_event(alloc);
+  auto before = ns::make_independent_event(alloc);
 
   auto fut_13 = aspera::invoke_after(ex, alloc, before, []
   {
