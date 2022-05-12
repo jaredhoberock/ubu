@@ -1,6 +1,6 @@
 #include <aspera/event/always_complete_event.hpp>
 #include <aspera/event/wait.hpp>
-#include <aspera/execution/executor/contingent_on.hpp>
+#include <aspera/execution/executor/dependent_on.hpp>
 #include <aspera/execution/executor/first_execute.hpp>
 #include <aspera/execution/executor/inline_executor.hpp>
 
@@ -34,10 +34,10 @@ int call_wait(E& e)
 }
 
 
-struct has_contingent_on_member_function
+struct has_dependent_on_member_function
 {
   template<class... Events>
-  ns::always_complete_event contingent_on(Events&&... events) const
+  ns::always_complete_event dependent_on(Events&&... events) const
   {
     swallow(call_wait(events)...);
 
@@ -49,8 +49,8 @@ struct has_contingent_on_member_function
 void test()
 {
   {
-    has_contingent_on_member_function ex;
-    auto e = ns::contingent_on(ex, ns::always_complete_event{}, ns::always_complete_event{}, ns::always_complete_event{});
+    has_dependent_on_member_function ex;
+    auto e = ns::dependent_on(ex, ns::always_complete_event{}, ns::always_complete_event{}, ns::always_complete_event{});
     ns::wait(e);
   }
 
@@ -76,7 +76,7 @@ void test()
       ++counter;
     });
 
-    auto e = ns::contingent_on(ex, std::move(e1), std::move(e2), std::move(e3));
+    auto e = ns::dependent_on(ex, std::move(e1), std::move(e2), std::move(e3));
     ns::wait(e);
 
     assert(expected == counter);
@@ -84,7 +84,7 @@ void test()
 }
 
 
-void test_contingent_on()
+void test_dependent_on()
 {
   test();
 

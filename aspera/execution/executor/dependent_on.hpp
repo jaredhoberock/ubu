@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
-#include "../../event/make_contingent_event.hpp"
+#include "../../event/make_dependent_event.hpp"
 #include "../../event/wait.hpp"
 #include "executor.hpp"
 #include <type_traits>
@@ -18,45 +18,45 @@ namespace detail
 
 
 template<class Ex, class... Events>
-concept has_contingent_on_member_function = requires(Ex executor, Events... events)
+concept has_dependent_on_member_function = requires(Ex executor, Events... events)
 {
-  executor.contingent_on(events...);
+  executor.dependent_on(events...);
 };
 
 template<class Ex, class... Events>
-concept has_contingent_on_free_function = requires(Ex executor, Events... events)
+concept has_dependent_on_free_function = requires(Ex executor, Events... events)
 {
-  contingent_on(executor, events...);
+  dependent_on(executor, events...);
 };
 
 
-// this is the type of contingent_on
-struct dispatch_contingent_on
+// this is the type of dependent_on
+struct dispatch_dependent_on
 {
   // this dispatch path calls the member function
   template<class Ex, class... Events>
-    requires has_contingent_on_member_function<Ex&&,Events&&...>
+    requires has_dependent_on_member_function<Ex&&,Events&&...>
   constexpr auto operator()(Ex&& executor, Events&&... events) const
   {
-    return std::forward<Ex>(executor).contingent_on(std::forward<Events>(events)...);
+    return std::forward<Ex>(executor).dependent_on(std::forward<Events>(events)...);
   }
 
   // this dispatch path calls the free function
   template<class Ex, class... Events>
-    requires (!has_contingent_on_member_function<Ex&&,Events&&...> and
-              has_contingent_on_free_function<Ex&&,Events&&...>)
+    requires (!has_dependent_on_member_function<Ex&&,Events&&...> and
+              has_dependent_on_free_function<Ex&&,Events&&...>)
   constexpr auto operator()(Ex&& executor, Events&&... events) const
   {
-    return contingent_on(std::forward<Ex>(executor), std::forward<Events>(events)...);
+    return dependent_on(std::forward<Ex>(executor), std::forward<Events>(events)...);
   }
 
-  // the default path drops the executor and calls make_contingent_event
+  // the default path drops the executor and calls make_dependent_event
   template<executor Ex, event... Events>
-    requires (!has_contingent_on_member_function<Ex&&,Events&&...> and
-              !has_contingent_on_free_function<Ex&&,Events&&...>)
+    requires (!has_dependent_on_member_function<Ex&&,Events&&...> and
+              !has_dependent_on_free_function<Ex&&,Events&&...>)
   constexpr auto operator()(Ex&&, Events&&... events) const
   {
-    return make_contingent_event(std::forward<Events>(events)...);
+    return make_dependent_event(std::forward<Events>(events)...);
   }
 };
 
@@ -67,13 +67,13 @@ struct dispatch_contingent_on
 namespace
 {
 
-constexpr detail::dispatch_contingent_on contingent_on;
+constexpr detail::dispatch_dependent_on dependent_on;
 
 } // end anonymous namespace
 
 
 template<class Ex, class... Events>
-using contingent_on_result_t = decltype(ASPERA_NAMESPACE::contingent_on(std::declval<Ex>, std::declval<Events>...));
+using dependent_on_result_t = decltype(ASPERA_NAMESPACE::dependent_on(std::declval<Ex>, std::declval<Events>...));
 
 
 ASPERA_NAMESPACE_CLOSE_BRACE

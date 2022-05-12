@@ -17,7 +17,7 @@ struct always_complete_event
     return {};
   }
 
-  always_complete_event make_contingent_event(const always_complete_event&...) const
+  always_complete_event make_dependent_event(const always_complete_event&...) const
   {
     return {};
   }

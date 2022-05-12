@@ -6,7 +6,7 @@
 #include "../../coordinate/lattice.hpp"
 #include "../../event/event.hpp"
 #include "bulk_execution_grid.hpp"
-#include "contingent_on.hpp"
+#include "dependent_on.hpp"
 #include "executor.hpp"
 #include "executor_coordinate.hpp"
 #include "executor_event.hpp"
@@ -89,7 +89,7 @@ struct dispatch_bulk_execute_after
       std::invoke(function, coord);
     });
 
-    // build up the result event by adding a contingent event for each function invocation
+    // build up the result event by adding a dependent event for each function invocation
     for(++i; i != grid.end(); ++i)
     {
       auto coord = *i;
@@ -99,7 +99,7 @@ struct dispatch_bulk_execute_after
         std::invoke(function, coord);
       });
 
-      result = contingent_on(ex, std::move(e));
+      result = dependent_on(ex, std::move(e));
     }
 
     return result;

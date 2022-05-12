@@ -14,15 +14,15 @@ namespace detail
 
 
 template<class E, class... Es>
-concept has_make_contingent_event_member_function = requires(E e, Es... es)
+concept has_make_dependent_event_member_function = requires(E e, Es... es)
 {
-  {e.make_contingent_event(es...)} -> event;
+  {e.make_dependent_event(es...)} -> event;
 };
 
 template<class E, class... Es>
-concept has_make_contingent_event_free_function = requires(E e, Es... es)
+concept has_make_dependent_event_free_function = requires(E e, Es... es)
 {
-  {make_contingent_event(e,es...)} -> event;
+  {make_dependent_event(e,es...)} -> event;
 };
 
 
@@ -56,28 +56,28 @@ class event_tuple
 };
 
 
-struct dispatch_make_contingent_event
+struct dispatch_make_dependent_event
 {
   template<event E, event... Es>
-    requires has_make_contingent_event_member_function<E&&,Es&&...>
+    requires has_make_dependent_event_member_function<E&&,Es&&...>
   constexpr auto operator()(E&& e, Es&&... es) const
   {
-    return std::forward<E>(e).make_contingent_event(std::forward<Es>(es)...);
+    return std::forward<E>(e).make_dependent_event(std::forward<Es>(es)...);
   }
 
   template<event E, event... Es>
-    requires (!has_make_contingent_event_member_function<E&&,Es&&...> and
-               has_make_contingent_event_free_function<E&&,Es&&...>)
+    requires (!has_make_dependent_event_member_function<E&&,Es&&...> and
+               has_make_dependent_event_free_function<E&&,Es&&...>)
   constexpr auto operator()(E&& e, Es&&... es) const
   {
-    return make_contingent_event(std::forward<E>(e), std::forward<Es>(es)...);
+    return make_dependent_event(std::forward<E>(e), std::forward<Es>(es)...);
   }
 
 
   // a single event 
   template<event E>
-    requires (!has_make_contingent_event_member_function<E&&> and
-              !has_make_contingent_event_free_function<E&&> and
+    requires (!has_make_dependent_event_member_function<E&&> and
+              !has_make_dependent_event_free_function<E&&> and
               std::constructible_from<std::remove_cvref_t<E>, E&&>)
   constexpr std::remove_cvref_t<E> operator()(E&& e) const
   {
@@ -87,8 +87,8 @@ struct dispatch_make_contingent_event
 
   // the default path for many events moves the events into an event_tuple
   template<event E, event... Es>
-    requires (!has_make_contingent_event_member_function<E&&,Es&&...> and
-              !has_make_contingent_event_free_function<E&&,Es&&...> and
+    requires (!has_make_dependent_event_member_function<E&&,Es&&...> and
+              !has_make_dependent_event_free_function<E&&,Es&&...> and
               std::constructible_from<std::remove_cvref_t<E>,E&&> and
               std::conjunction_v<
                 std::is_constructible<std::remove_cvref_t<Es>,Es&&>...
@@ -107,13 +107,13 @@ struct dispatch_make_contingent_event
 namespace
 {
 
-constexpr detail::dispatch_make_contingent_event make_contingent_event;
+constexpr detail::dispatch_make_dependent_event make_dependent_event;
 
 } // end anonymous namespace
 
 
 template<class E, class... Es>
-using make_contingent_event_result_t = decltype(ASPERA_NAMESPACE::make_contingent_event(std::declval<E>(), std::declval<Es>()...));
+using make_dependent_event_result_t = decltype(ASPERA_NAMESPACE::make_dependent_event(std::declval<E>(), std::declval<Es>()...));
 
 
 ASPERA_NAMESPACE_CLOSE_BRACE

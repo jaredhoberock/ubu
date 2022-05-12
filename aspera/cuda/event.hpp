@@ -131,7 +131,7 @@ class event
     }
 
     template<std::same_as<event>... Es>
-    event make_contingent_event(const Es&... es) const
+    event make_dependent_event(const Es&... es) const
     {
       return {0, *this, es...};
     }
@@ -172,7 +172,7 @@ class event
         origin_target_{current_target()}
     {}
 
-    // this ctor is available to make_contingent_event
+    // this ctor is available to make_dependent_event
     // the int parameter is simply there to distinguish this ctor from a copy ctor
     template<std::same_as<event>... Es>
     event(int, const event& e, const Es&... es)

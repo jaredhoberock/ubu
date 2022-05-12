@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
-#include "../../execution/executor/contingent_on.hpp"
+#include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
 #include "../../execution/executor/executor_associate.hpp"
 #include "destroy.hpp"
@@ -88,7 +88,7 @@ struct dispatch_destroy_after
     // get an executor
     auto ex = associated_executor(std::forward<A>(alloc));
 
-    return contingent_on(ex, std::forward<E>(before));
+    return dependent_on(ex, std::forward<E>(before));
   }
 };
 

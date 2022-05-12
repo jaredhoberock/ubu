@@ -156,8 +156,8 @@ class intrusive_future
       // allocate storage for the result after before is ready
       auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(rebound_alloc, 1);
 
-      // create an event contingent on before, the allocation, and future_args
-      auto inputs_ready = contingent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), this->ready(), future_args.ready()...);
+      // create an event dependent on before, the allocation, and future_args
+      auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), this->ready(), future_args.ready()...);
 
       try
       {
