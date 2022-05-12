@@ -5,6 +5,7 @@
 #include "allocator/allocate.hpp"
 #include "allocator/allocate_after.hpp"
 #include "allocator/allocator.hpp"
+#include "allocator/allocator_delete.hpp"
 #include "allocator/asynchronous_allocator.hpp"
 #include "allocator/construct.hpp"
 #include "allocator/deallocate.hpp"
