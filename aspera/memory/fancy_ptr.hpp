@@ -286,6 +286,15 @@ class fancy_ptr : private C
       **this = copy;
     }
 
+    // customize destroy_at
+    // this is customized for parity with construct_at
+    template<class = void>
+      requires std::is_trivially_destructible_v<T>
+    void destroy_at() const
+    {
+      // no-op
+    }
+
     // conversion to bool
     explicit operator bool() const noexcept
     {
