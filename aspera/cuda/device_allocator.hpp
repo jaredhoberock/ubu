@@ -94,7 +94,7 @@ class device_allocator : private device_memory_resource
       return super_t::operator==(other);
     }
 
-    inline bool operator!=(const device_allocator& other) const
+    bool operator!=(const device_allocator& other) const
     {
       return !(*this == other);
     }
