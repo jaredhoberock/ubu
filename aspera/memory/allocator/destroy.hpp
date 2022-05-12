@@ -2,6 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../destroy_at.hpp"
+
 #include <type_traits>
 #include <utility>
 
@@ -45,15 +47,16 @@ struct dispatch_destroy
     return destroy(std::forward<Alloc>(alloc), std::forward<P>(ptr));
   }
 
-  // default path for pointers simply calls the destructor inline
-  template<class A, class T>
-    requires (!has_destroy_member_function<A&&, T*> and
-              !has_destroy_free_function<A&&, T*> and
+  // default path for pointers calls destroy_at
+  template<class A, class P,
+           class T = typename std::pointer_traits<std::remove_cvref_t<P>>::element_type
+          >
+    requires (!has_destroy_member_function<A&&, P&&> and
+              !has_destroy_free_function<A&&, P&&> and
               !std::is_void_v<T>)
-  constexpr void operator()(A&&, T* ptr) const
+  constexpr void operator()(A&&, P&& ptr) const
   {
-    // XXX consider calling destroy_at once it exists
-    ptr->~T();
+    destroy_at(std::forward<P>(ptr));
   }
 };
 
