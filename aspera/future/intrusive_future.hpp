@@ -7,6 +7,7 @@
 #include "../execution/executor/associated_executor.hpp"
 #include "../execution/executor/bulk_execute_after.hpp"
 #include "../event/event.hpp"
+#include "../memory/allocator/allocator_delete.hpp"
 #include "../memory/allocator/asynchronous_allocator.hpp"
 #include "../memory/allocator/finally_delete_after.hpp"
 #include "../memory/allocator/first_allocate.hpp"
@@ -69,23 +70,32 @@ class intrusive_future
 
     void wait() const
     {
-      std::get<event_type>(resources_).wait();
-    }
-
-    value_type get()
-    {
-      if(!data())
+      // either the allocation or the result needs to exist for this future to be valid
+      if(!data() and maybe_result_.empty())
       {
         throw std::future_error(std::future_errc::no_state);
       }
 
+      // wait on the event
+      std::get<event_type>(resources_).wait();
+
+      // get the result if we haven't already
+      if(maybe_result_.empty())
+      {
+        maybe_result_.emplace(std::move(*data()));
+
+        // release resources
+        auto [alloc, ready, ptr] = std::move(*this).release();
+        allocator_delete(alloc, ptr);
+      }
+    }
+
+    value_type get()
+    {
       wait();
 
-      value_type result = std::move(*data());
-
-      auto [alloc, ready, ptr] = std::move(*this).release();
-      finally_delete_after(alloc, std::move(ready), ptr, 1);
-
+      value_type result = std::move(maybe_result_).value();
+      maybe_result_.reset();
       return result;
     }
 
@@ -210,6 +220,7 @@ class intrusive_future
 
   private:
     std::tuple<allocator_type, event_type, pointer> resources_;
+    std::optional<value_type> maybe_result_;
 };
 
 
