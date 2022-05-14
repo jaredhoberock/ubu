@@ -28,29 +28,31 @@ class event
     }
 
     inline event(event&& other) noexcept
-      : event{0}
+      : native_handle_{0},
+        origin_target_{current_target()}
     {
       swap(other);
     }
 
     inline ~event() noexcept
     {
-      // XXX should make sure the event is valid before doing any of this
-
-      if(origin_target_ == current_target())
+      if(native_handle_)
       {
-        if ASPERA_TARGET(detail::has_cuda_runtime())
+        if(origin_target_ == current_target())
         {
-          detail::throw_on_cuda_error(cudaEventDestroy(native_handle()), "cuda::event::~event: after cudaEventDestroy");
+          if ASPERA_TARGET(detail::has_cuda_runtime())
+          {
+            detail::throw_on_cuda_error(cudaEventDestroy(native_handle()), "cuda::event::~event: after cudaEventDestroy");
+          }
+          else
+          {
+            detail::terminate_with_message("cuda::event::~event: cudaEventDestroy is unavailable.");
+          }
         }
         else
         {
-          detail::terminate_with_message("cuda::event::~event: cudaEventDestroy is unavailable.");
+          printf("Warning: cuda::event::~event: Leaking cudaEvent_t created on different target.");
         }
-      }
-      else
-      {
-        printf("Warning: cuda::event::~event: Leaking cudaEvent_t created on different target.");
       }
     }
 
@@ -121,7 +123,7 @@ class event
 
     inline static event make_independent_event()
     {
-      return {0};
+      return {cudaStream_t{0}};
     }
 
     inline void swap(event& other)
