@@ -12,9 +12,9 @@ template<class E>
 concept event = 
   std::is_nothrow_move_constructible_v<E> and
   std::is_nothrow_destructible_v<E> and
-  requires(const std::remove_cvref_t<E>& e)
+  requires(std::remove_cvref_t<E>& e)
   {
-    // a const ref to e must be able to wait
+    // a mutable ref to e must be able to wait
     ASPERA_NAMESPACE::wait(e);
   }
 ;
