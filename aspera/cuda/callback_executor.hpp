@@ -68,7 +68,7 @@ class callback_executor
       execute(std::forward<F>(f));
 
       // return a new event recorded on our stream
-      return event{stream_};
+      return event{0, stream_};
     }
 
     template<std::invocable F>

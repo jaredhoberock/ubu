@@ -3,6 +3,7 @@
 #include <aspera/coordinate/grid_coordinate.hpp>
 #include <aspera/coordinate/lattice.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
+#include <aspera/event/make_independent_event.hpp>
 #include <aspera/event/wait.hpp>
 #include <aspera/execution/executor/bulk_execute_after.hpp>
 #include <aspera/execution/executor/bulk_execution_grid.hpp>
@@ -204,7 +205,7 @@ void test_native_bulk_execute_after(cudaStream_t s, int d)
 
   try
   {
-    cuda::event before{ex1.stream()};
+    cuda::event before = ns::make_independent_event(ex1);
 
     cuda::event e = ns::bulk_execute_after(ex1, before, shape, [=](ns::cuda::thread_id coord)
     {
@@ -257,7 +258,7 @@ void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
 
   try
   {
-    cuda::event before{ex1.stream()};
+    cuda::event before = ns::make_independent_event(ex1);
 
     ns::int6 bulk_result_shape{4,4,4,4,4,4};
 

@@ -1,3 +1,4 @@
+#include <aspera/event/make_independent_event.hpp>
 #include <aspera/cuda/device_allocator.hpp>
 #include <aspera/memory/allocator/asynchronous_allocator.hpp>
 
@@ -22,7 +23,7 @@ void test_asynchronous_allocation()
 
     device_ptr<T> ptr = alloc.allocate(1);
 
-    event ready{stream};
+    event ready = ns::make_independent_event(ex);
 
     alloc.deallocate_after(ready, ptr, 1);
   }
@@ -30,7 +31,7 @@ void test_asynchronous_allocation()
   {
     // test asynchronous allocation and synchronous deletion
 
-    event ready{stream};
+    event ready = ns::make_independent_event(ex);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
@@ -42,7 +43,7 @@ void test_asynchronous_allocation()
   {
     // test asynchronous allocation and asynchronous deletion
 
-    event ready{stream};
+    event ready = ns::make_independent_event(ex);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 

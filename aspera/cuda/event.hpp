@@ -6,6 +6,7 @@
 #include "../detail/exception/throw_runtime_error.hpp"
 #include "../detail/for_each_arg.hpp"
 #include "../detail/reflection.hpp"
+#include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_cuda_error.hpp"
 #include <cuda_runtime_api.h>
 
@@ -21,8 +22,8 @@ namespace cuda
 class event
 {
   public:
-    inline event(cudaStream_t s)
-      : event{}
+    inline event(int device, cudaStream_t s)
+      : event{device}
     {
       record_on(s);
     }
@@ -123,7 +124,7 @@ class event
 
     inline static event make_independent_event()
     {
-      return {cudaStream_t{0}};
+      return {0, cudaStream_t{0}};
     }
 
     inline void swap(event& other)
@@ -153,13 +154,16 @@ class event
       return result;
     }
 
-    inline static cudaEvent_t make_cuda_event()
+    inline static cudaEvent_t make_cuda_event(int device)
     {
       cudaEvent_t result{};
 
       if ASPERA_TARGET(detail::has_cuda_runtime())
       {
-        detail::throw_on_cuda_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: after cudaEventCreateWithFlags");
+        detail::temporarily_with_current_device(device, [&]
+        {
+          detail::throw_on_cuda_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: after cudaEventCreateWithFlags");
+        });
       }
       else
       {
@@ -169,34 +173,36 @@ class event
       return result;
     }
 
-    inline event()
-      : native_handle_{make_cuda_event()},
+    inline event(int device)
+      : native_handle_{make_cuda_event(device)},
         origin_target_{current_target()}
     {}
 
     // this ctor is available to make_dependent_event
-    // the int parameter is simply there to distinguish this ctor from a copy ctor
     template<std::same_as<event>... Es>
-    event(int, const event& e, const Es&... es)
-      : event{}
+    event(int device, const event& e, const Es&... es)
+      : event{device}
     {
       if ASPERA_TARGET(detail::has_cuda_runtime())
       {
-        // create a cudaStream_t on which to record our event
-        cudaStream_t s{};
-        detail::throw_on_cuda_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: after cudaStreamCreateWithFlags");
-
-        // make the new stream wait on all the event parameters
-        detail::for_each_arg([s](const event& e)
+        detail::temporarily_with_current_device(device, [&]
         {
-          detail::throw_on_cuda_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: after cudaStreamWaitEvent");
-        }, e, es...);
+          // create a cudaStream_t on which to record our event
+          cudaStream_t s{};
+          detail::throw_on_cuda_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: after cudaStreamCreateWithFlags");
 
-        // record our event on the stream
-        record_on(s);
+          // make the new stream wait on all the event parameters
+          detail::for_each_arg([s](const event& e)
+          {
+            detail::throw_on_cuda_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: after cudaStreamWaitEvent");
+          }, e, es...);
 
-        // immediately destroy the stream
-        detail::throw_on_cuda_error(cudaStreamDestroy(s), "cuda::event ctor: after cudaStreamDestroy");
+          // record our event on the stream
+          record_on(s);
+
+          // immediately destroy the stream
+          detail::throw_on_cuda_error(cudaStreamDestroy(s), "cuda::event ctor: after cudaStreamDestroy");
+        });
       }
       else
       {

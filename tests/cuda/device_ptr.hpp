@@ -1,6 +1,7 @@
 #include <aspera/cuda/device_memory_resource.hpp>
 #include <aspera/cuda/device_ptr.hpp>
 #include <aspera/cuda/kernel_executor.hpp>
+#include <aspera/event/make_independent_event.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -60,7 +61,7 @@ void test_copy_n_after()
 
     kernel_executor ex0{0,s0};
 
-    event before{ex0.stream()};
+    event before = ns::make_independent_event(ex0);
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -78,7 +79,7 @@ void test_copy_n_after()
 
     kernel_executor ex1{1,s1};
 
-    event before{ex1.stream()};
+    event before = ns::make_independent_event(ex1);
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -96,7 +97,7 @@ void test_copy_n_after()
 
     kernel_executor ex0{0,s0};
 
-    event before{ex0.stream()};
+    event before = ns::make_independent_event(ex0);
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -113,7 +114,7 @@ void test_copy_n_after()
 
     kernel_executor ex1{1,s1};
 
-    event before{ex1.stream()};
+    event before = ns::make_independent_event(ex1);
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -275,7 +276,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex0{0,s0};
 
-    event before{ex0.stream()};
+    event before = ns::make_independent_event(ex0);
     auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -293,7 +294,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex1{1,s1};
 
-    event before{ex1.stream()};
+    event before = ns::make_independent_event(ex1);
     auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
     after.wait();
 
@@ -311,7 +312,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex0{0,s0};
 
-    event before{ex0.stream()};
+    event before = ns::make_independent_event(ex0);
     auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
     after.wait();
 
@@ -328,7 +329,7 @@ void test_copy_n_after_between_devices()
 
     kernel_executor ex1{1,s1};
 
-    event before{ex1.stream()};
+    event before = ns::make_independent_event(ex1);
     auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
     after.wait();
 

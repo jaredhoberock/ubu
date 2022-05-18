@@ -125,7 +125,7 @@ class kernel_executor
       detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
 
       // return a new event recorded on our stream
-      return {stream_};
+      return {device_, stream_};
     }
 
 
@@ -160,7 +160,7 @@ class kernel_executor
       requires std::is_trivially_copyable_v<F>
     inline event_type first_execute(F f) const
     {
-      return execute_after(event_type{stream()}, f);
+      return execute_after(event_type{device(), stream()}, f);
     }
 
 

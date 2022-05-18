@@ -135,7 +135,7 @@ event copy_n_after(kernel_executor ex, const event& before, device_ptr<T> from, 
   );
 
   // create a new event
-  return event{ex.stream()};
+  return event{ex.device(), ex.stream()};
 }
 
 

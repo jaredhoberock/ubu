@@ -62,7 +62,7 @@ class device_memory_resource
           "cuda::device_memory_resource::allocate_after: after cudaMallocAsync"
         );
 
-        event after{stream()};
+        event after{device(), stream()};
 
         return std::pair<event,void*>(std::move(after), ptr);
       });
@@ -78,7 +78,7 @@ class device_memory_resource
         "cuda::device_memory_resource::deallocate_after: after cudaFreeAsync"
       );
 
-      return {stream()};
+      return {device_, stream()};
     }
 
     inline int device() const
