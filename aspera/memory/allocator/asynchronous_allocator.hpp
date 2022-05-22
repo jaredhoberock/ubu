@@ -3,9 +3,11 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
+#include "../../event/make_independent_event.hpp"
 #include "allocate_after.hpp"
 #include "allocator.hpp"
 #include "deallocate_after.hpp"
+#include "traits/allocator_pointer_t.hpp"
 #include "traits/allocator_value_t.hpp"
 #include <memory>
 #include <type_traits>
@@ -14,13 +16,14 @@ ASPERA_NAMESPACE_OPEN_BRACE
 
 template<class A>
 concept asynchronous_allocator =
-  allocator<A> and
+  allocator<A>
 
-  requires{ typename std::remove_cvref_t<A>::event_type; } and
+  and requires(A a)
+  {
+    {make_independent_event(a)} -> event;
+  }
 
-  event<typename std::remove_cvref_t<A>::event_type> and
-
-  requires(A a, const typename std::remove_cvref_t<A>::event_type& e, typename std::allocator_traits<std::remove_cvref_t<A>>::pointer ptr, std::size_t n)
+  and requires(A a, const make_independent_event_result_t<A>& e, allocator_pointer_t<A> ptr, std::size_t n)
   {
     // XXX this needs to check that the result is a pair<event,pointer>
     ASPERA_NAMESPACE::allocate_after<allocator_value_t<A>>(a, e, n);
