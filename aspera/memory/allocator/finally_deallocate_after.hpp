@@ -36,47 +36,47 @@ concept has_finally_deallocate_after_customization = has_finally_deallocate_afte
 struct dispatch_finally_deallocate_after
 {
   // this dispatch path calls the member function
-  template<class Alloc, class Event, class P, class N>
-    requires has_finally_deallocate_after_member_function<Alloc&&, Event&&, P&&, N&&>
-  constexpr auto operator()(Alloc&& alloc, Event&& before, P&& ptr, N&& n) const
+  template<class Allocator, class Event, class P, class N>
+    requires has_finally_deallocate_after_member_function<Allocator&&, Event&&, P&&, N&&>
+  constexpr auto operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    return std::forward<Alloc>(alloc).finally_deallocate_after(std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return std::forward<Allocator>(alloc).finally_deallocate_after(std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
   // this dispatch path calls the free function
-  template<class Alloc, class Event, class P, class N>
-    requires (!has_finally_deallocate_after_member_function<Alloc&&, Event&&, P&&, N&&> and
-               has_finally_deallocate_after_free_function<Alloc&&, Event&&, P&&, N&&>)
-  constexpr auto operator()(Alloc&& alloc, Event&& before, P&& ptr, N&& n) const
+  template<class Allocator, class Event, class P, class N>
+    requires (!has_finally_deallocate_after_member_function<Allocator&&, Event&&, P&&, N&&> and
+               has_finally_deallocate_after_free_function<Allocator&&, Event&&, P&&, N&&>)
+  constexpr auto operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    return finally_deallocate_after(std::forward<Alloc>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return finally_deallocate_after(std::forward<Allocator>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
   // this dispatch path tries to rebind and then call finally_deallocate_after again
-  template<class Alloc, class Event, class P, class N>
-    requires (!has_finally_deallocate_after_member_function<Alloc&&, Event&&, P&&, N&&> and
-              !has_finally_deallocate_after_free_function<Alloc&&, Event&&, P&&, N&&> and
+  template<class Allocator, class Event, class P, class N>
+    requires (!has_finally_deallocate_after_member_function<Allocator&&, Event&&, P&&, N&&> and
+              !has_finally_deallocate_after_free_function<Allocator&&, Event&&, P&&, N&&> and
               has_finally_deallocate_after_customization<
-                rebind_allocator_result_t<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Alloc&&>,
+                rebind_allocator_result_t<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Allocator&&>,
                 Event&&, P&&, N&&
               >)
-  constexpr void operator()(Alloc&& alloc, Event&& before, P&& ptr, N&& n) const
+  constexpr void operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    auto rebound_alloc = rebind_allocator<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type>(std::forward<Alloc>(alloc));
+    auto rebound_alloc = rebind_allocator<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type>(std::forward<Allocator>(alloc));
     return (*this)(rebound_alloc, std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
   // the default path calls deallocate_after
-  template<class Alloc, class Event, class P, class N>
-    requires (!has_finally_deallocate_after_member_function<Alloc&&, Event&&, P&&, N&&> and
-              !has_finally_deallocate_after_free_function<Alloc&&, Event&&, P&&, N&&> and
+  template<class Allocator, class Event, class P, class N>
+    requires (!has_finally_deallocate_after_member_function<Allocator&&, Event&&, P&&, N&&> and
+              !has_finally_deallocate_after_free_function<Allocator&&, Event&&, P&&, N&&> and
               !has_finally_deallocate_after_customization<
-                rebind_allocator_result_t<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Alloc&&>,
+                rebind_allocator_result_t<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Allocator&&>,
                 Event&&, P&&, N&&
               >)
-  constexpr decltype(auto) operator()(Alloc&& alloc, Event&& before, P&& ptr, N&& n) const
+  constexpr decltype(auto) operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    return deallocate_after(std::forward<Alloc>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return deallocate_after(std::forward<Allocator>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 };
 

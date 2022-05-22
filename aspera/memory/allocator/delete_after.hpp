@@ -15,17 +15,17 @@ namespace detail
 {
 
 
-template<class D, class E, class P, class N>
-concept has_delete_after_member_function = requires(D deleter, E before, P ptr, N n)
+template<class A, class E, class P, class N>
+concept has_delete_after_member_function = requires(A alloc, E before, P ptr, N n)
 {
-  {deleter.delete_after(before, ptr, n)} -> event;
+  {alloc.delete_after(before, ptr, n)} -> event;
 };
 
 
-template<class D, class E, class P, class N>
-concept has_delete_after_free_function = requires(D deleter, E before, P ptr, N n)
+template<class A, class E, class P, class N>
+concept has_delete_after_free_function = requires(A alloc, E before, P ptr, N n)
 {
-  {delete_after(deleter, before, ptr, n)} -> event;
+  {delete_after(alloc, before, ptr, n)} -> event;
 };
 
 
@@ -33,20 +33,20 @@ concept has_delete_after_free_function = requires(D deleter, E before, P ptr, N 
 struct dispatch_delete_after
 {
   // this dispatch path calls the member function
-  template<class Deleter, class Event, class P, class N>
-    requires has_delete_after_member_function<Deleter&&, Event&&, P&&, N&&>
-  constexpr auto operator()(Deleter&& deleter, Event&& before, P&& ptr, N&& n) const
+  template<class Allocator, class Event, class P, class N>
+    requires has_delete_after_member_function<Allocator&&, Event&&, P&&, N&&>
+  constexpr auto operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    return std::forward<Deleter>(deleter).delete_after(std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return std::forward<Allocator>(alloc).delete_after(std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
   // this dispatch path calls the free function
-  template<class Deleter, class Event, class P, class N>
-    requires (!has_delete_after_member_function<Deleter&&, Event&&, P&&, N&&> and
-               has_delete_after_free_function<Deleter&&, Event&&, P&&, N&&>)
-  constexpr auto operator()(Deleter&& deleter, Event&& before, P&& ptr, N&& n) const
+  template<class Allocator, class Event, class P, class N>
+    requires (!has_delete_after_member_function<Allocator&&, Event&&, P&&, N&&> and
+               has_delete_after_free_function<Allocator&&, Event&&, P&&, N&&>)
+  constexpr auto operator()(Allocator&& alloc, Event&& before, P&& ptr, N&& n) const
   {
-    return delete_after(std::forward<Deleter>(deleter), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return delete_after(std::forward<Allocator>(alloc), std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 
   // the default path
@@ -82,8 +82,8 @@ constexpr detail::dispatch_delete_after delete_after;
 } // end anonymous namespace
 
 
-template<class D, class E, class P, class N>
-using delete_after_result_t = decltype(ASPERA_NAMESPACE::delete_after(std::declval<D>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
+template<class A, class E, class P, class N>
+using delete_after_result_t = decltype(ASPERA_NAMESPACE::delete_after(std::declval<A>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
 
 
 ASPERA_NAMESPACE_CLOSE_BRACE
