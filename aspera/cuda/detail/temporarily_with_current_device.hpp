@@ -47,7 +47,7 @@ struct current_cuda_device_in_this_scope
       }
       else
       {
-        detail::throw_on_cuda_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
+        detail::throw_on_cuda_error(cudaSetDevice(new_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
       }
     }
   }
