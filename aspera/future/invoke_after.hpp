@@ -54,7 +54,7 @@ intrusive_future<R,rebind_allocator_result_t<R,A>> invoke_after(const Ex& ex, co
   }
 
   // XXX until we can handle exceptions, just return this to make everything compile
-  return {std::remove_cvref_t<Ev>{}, nullptr, std::move(rebound_alloc)};
+  return {std::move(result_allocation_ready), ptr_to_result, std::move(rebound_alloc)};
 }
 
 

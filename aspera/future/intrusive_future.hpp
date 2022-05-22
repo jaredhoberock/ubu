@@ -77,7 +77,7 @@ class intrusive_future
       }
 
       // wait on the readiness of the result event
-      ready().wait();
+      std::get<event_type>(resources_).wait();
 
       // get the result if we haven't already
       if(!maybe_result_.has_value())
@@ -184,7 +184,7 @@ class intrusive_future
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile
-      return {std::remove_cvref_t<Ev>{}, nullptr, std::move(rebound_alloc)};
+      return {std::move(result_allocation_ready), ptr_to_result, std::move(rebound_alloc)};
     }
 
 
