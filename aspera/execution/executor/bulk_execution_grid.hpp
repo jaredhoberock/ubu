@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../coordinate/grid_coordinate.hpp"
+#include "../../coordinate/grid_size.hpp"
 #include "executor.hpp"
 #include "executor_event.hpp"
 #include <concepts>
@@ -47,25 +48,25 @@ concept has_bulk_execute_after_customization =
 ;
 
 
-template<class E>
+template<class E, class G>
 concept has_bulk_execution_grid_member_function =
   executor<E>
-  and requires(E ex, std::size_t n)
+  and requires(E ex, G grid_shape)
   {
-    {ex.bulk_execution_grid(n)} -> grid_coordinate;
+    {ex.bulk_execution_grid(grid_shape)} -> grid_coordinate;
 
-    requires has_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(n))>;
+    requires has_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(grid_shape))>;
   }
 ;
 
-template<class E>
+template<class E, class G>
 concept has_bulk_execution_grid_free_function =
   executor<E> and
-  requires(E ex, std::size_t n)
+  requires(E ex, G grid_shape)
   {
-    {bulk_execution_grid(ex,n)} -> grid_coordinate;
+    {bulk_execution_grid(ex,grid_shape)} -> grid_coordinate;
 
-    requires has_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,n))>;
+    requires has_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,grid_shape))>;
   }
 ;
 
@@ -74,27 +75,37 @@ concept has_bulk_execution_grid_free_function =
 struct dispatch_bulk_execution_grid
 {
   // this path calls the member function
-  template<executor E>
-    requires has_bulk_execution_grid_member_function<E&&>
-  constexpr auto operator()(E&& ex, std::size_t n) const
+  template<executor E, grid_coordinate G>
+    requires has_bulk_execution_grid_member_function<E&&,G>
+  constexpr auto operator()(E&& ex, G grid_shape) const
   {
-    return std::forward<E>(ex).bulk_execution_grid(n);
+    return std::forward<E>(ex).bulk_execution_grid(grid_shape);
   }
 
   // this path calls the free function
-  template<executor E>
-    requires (!has_bulk_execution_grid_member_function<E&&> and
-               has_bulk_execution_grid_free_function<E&&>)
-  constexpr auto operator()(E&& ex, std::size_t n) const
+  template<executor E, grid_coordinate G>
+    requires (!has_bulk_execution_grid_member_function<E&&,G> and
+               has_bulk_execution_grid_free_function<E&&,G>)
+  constexpr auto operator()(E&& ex, G grid_shape) const
   {
-    return bulk_execution_grid(std::forward<E>(ex), n);
+    return bulk_execution_grid(std::forward<E>(ex), grid_shape);
   }
 
-  // default path just returns the argument
+  template<executor E, grid_coordinate G>
+    requires (!has_bulk_execution_grid_member_function<E&&,G> and
+              !has_bulk_execution_grid_free_function<E&&,G>)
+  constexpr auto operator()(E&& ex, G grid_shape) const
+  {
+    // this path maps grid_shape to 1D and recurses
+    std::size_t num_points = grid_size(grid_shape);
+    return (*this)(std::forward<E>(ex), num_points);
+  }
+
+  // default path for size_t just returns the argument
   template<executor E>
-    requires (!has_bulk_execution_grid_member_function<E&&> and
-              !has_bulk_execution_grid_free_function<E&&>)
-  constexpr std::size_t operator()(E&& ex, std::size_t n) const
+    requires (!has_bulk_execution_grid_member_function<E&&,std::size_t> and
+              !has_bulk_execution_grid_free_function<E&&,std::size_t>)
+  constexpr std::size_t operator()(E&&, std::size_t n) const
   {
     return n;
   }
