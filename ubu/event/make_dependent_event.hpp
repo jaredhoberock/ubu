@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "event.hpp"
+#include <future>
 #include <utility>
 #include <type_traits>
 
@@ -16,56 +16,32 @@ namespace detail
 template<class E, class... Es>
 concept has_make_dependent_event_member_function = requires(E e, Es... es)
 {
-  {e.make_dependent_event(es...)} -> event;
+  e.make_dependent_event(es...);
 };
 
 template<class E, class... Es>
 concept has_make_dependent_event_free_function = requires(E e, Es... es)
 {
-  {make_dependent_event(e,es...)} -> event;
+  make_dependent_event(e,es...);
 };
 
-
-template<event... Events>
-class event_tuple
-{
-  public:
-    event_tuple(const event_tuple&) = delete;
-    event_tuple(event_tuple&&) = default;
-
-    event_tuple(Events&&... events)
-      : events_{std::move(events)...}
-    {}
-
-    void wait()
-    {
-      wait_impl(std::integral_constant<std::size_t,0>{});
-    }
-
-  private:
-    void wait_impl(std::integral_constant<std::size_t, sizeof...(Events)>) {}
-
-    template<std::size_t i>
-    void wait_impl(std::integral_constant<std::size_t,i>)
-    {
-      UBU_NAMESPACE::wait(std::get<i>(events_));
-      wait_impl(std::integral_constant<std::size_t,i+1>{});
-    }
-
-    std::tuple<Events...> events_;
-};
+template<class E, class... Es>
+concept has_make_dependent_event_customization = 
+  has_make_dependent_event_member_function<E,Es...> or
+  has_make_dependent_event_free_function<E,Es...>
+;
 
 
 struct dispatch_make_dependent_event
 {
-  template<event E, event... Es>
+  template<class E, class... Es>
     requires has_make_dependent_event_member_function<E&&,Es&&...>
   constexpr auto operator()(E&& e, Es&&... es) const
   {
     return std::forward<E>(e).make_dependent_event(std::forward<Es>(es)...);
   }
 
-  template<event E, event... Es>
+  template<class E, class... Es>
     requires (!has_make_dependent_event_member_function<E&&,Es&&...> and
                has_make_dependent_event_free_function<E&&,Es&&...>)
   constexpr auto operator()(E&& e, Es&&... es) const
@@ -75,7 +51,7 @@ struct dispatch_make_dependent_event
 
 
   // a single event 
-  template<event E>
+  template<class E>
     requires (!has_make_dependent_event_member_function<E&&> and
               !has_make_dependent_event_free_function<E&&> and
               std::constructible_from<std::remove_cvref_t<E>, E&&>)
@@ -85,18 +61,32 @@ struct dispatch_make_dependent_event
   }
 
 
-  // the default path for many events moves the events into an event_tuple
-  template<event E, event... Es>
-    requires (!has_make_dependent_event_member_function<E&&,Es&&...> and
-              !has_make_dependent_event_free_function<E&&,Es&&...> and
-              std::constructible_from<std::remove_cvref_t<E>,E&&> and
-              std::conjunction_v<
-                std::is_constructible<std::remove_cvref_t<Es>,Es&&>...
-              >)
-  constexpr event_tuple<std::remove_cvref_t<Es>...>
-    operator()(Es&&... events) const
+  // at least three events
+  template<class E1, class E2, class E3, class... Es>
+    requires (!has_make_dependent_event_member_function<E1&&,E2&&,E3&&,Es&&...> and
+              !has_make_dependent_event_free_function<E1&&,E2&&,E3&&,Es&&...> and
+              has_make_dependent_event_customization<E1&&,E2&&>)
+  constexpr auto operator()(E1&& e1, E2&& e2, E3&& e3, Es&&... es) const
   {
-    return {std::move(events)...};
+    // combine e1 and e2
+    auto e1_and_e2 = (*this)(std::forward<E1>(e1), std::forward<E2>(e2));
+
+    // recurse with the combined result
+    return (*this)(std::move(e1_and_e2), std::forward<Es>(es)...);
+  }
+
+
+  // customization for std::future<void>
+  // XXX rather than provide this customization for std::future<void>, maybe we should just implement
+  // a bare-bones c++ event type using standard synchronization primitives and allow std::future<void>
+  // to be created from that
+  inline std::future<void> operator()(std::future<void>&& f1, std::future<void>&& f2) const
+  {
+    return std::async(std::launch::deferred, [f1 = std::move(f1), f2 = std::move(f2)]
+    {
+      f1.wait();
+      f2.wait();
+    });
   }
 };
 

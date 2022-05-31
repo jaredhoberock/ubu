@@ -18,34 +18,60 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
+struct event_with_member_functions
+{
+  void wait() const {}
+
+  event_with_member_functions make_dependent_event(const event_with_member_functions&) const
+  {
+    return {};
+  }
+};
+
+
 struct event_with_wait_member
 {
   void wait() const {}
 };
 
+event_with_wait_member make_dependent_event(const event_with_wait_member&, const event_with_wait_member&)
+{
+  return {};
+}
 
-struct event_with_wait_free_function {};
+
+struct event_with_free_functions {};
+
+void wait(const event_with_free_functions&) {}
+
+event_with_free_functions make_dependent_event(const event_with_free_functions&, const event_with_free_functions&)
+{
+  return {};
+}
+
+
+struct event_with_wait_free_function
+{
+  event_with_wait_free_function make_dependent_event(const event_with_wait_free_function&) const
+  {
+    return {};
+  }
+};
 
 void wait(const event_with_wait_free_function&) {}
 
 
 void test()
 {
-  {
-    static_assert(ns::event<event_with_wait_member>);
-  }
+  static_assert(ns::event<event_with_member_functions>);
 
-  {
-    static_assert(ns::event<event_with_wait_free_function>);
-  }
+  static_assert(ns::event<event_with_wait_member>);
 
-  {
-    static_assert(ns::event<std::future<void>>);
-  }
+  static_assert(ns::event<event_with_free_functions>);
 
-  {
-    static_assert(ns::event<std::future<int>>);
-  }
+  static_assert(ns::event<event_with_wait_free_function>);
+
+  static_assert(ns::event<std::future<void>>);
 }
 
 
