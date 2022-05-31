@@ -1,9 +1,9 @@
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 template<class T, class... Args>
 void test(Args... args)

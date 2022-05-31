@@ -1,12 +1,12 @@
-#include <aspera/coordinate/lattice.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/lattice.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 void test_reshape()
 {
-  namespace ns = aspera;
+  namespace ns = ubu;
 
   {
     ns::lattice<int> l{13};

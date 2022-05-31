@@ -1,11 +1,11 @@
-#include <aspera/coordinate/congruent.hpp>
+#include <ubu/coordinate/congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>
 
 void test_congruent()
 {
-  using namespace aspera;
+  using namespace ubu;
 
   // test some congruent coordinates
   static_assert(congruent<int,int>);

@@ -1,6 +1,6 @@
-#include <aspera/event/always_complete_event.hpp>
-#include <aspera/event/event.hpp>
-#include <aspera/event/wait.hpp>
+#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/event.hpp>
+#include <ubu/event/wait.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -15,7 +15,7 @@ __global__ void device_invoke(F f)
 }
 #endif
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test()

@@ -1,11 +1,11 @@
-#include <aspera/coordinate/grid_coordinate.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/grid_coordinate.hpp>
+#include <ubu/coordinate/point.hpp>
 #include <utility>
 #include <tuple>
 #include <array>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test_grid_coordinate()

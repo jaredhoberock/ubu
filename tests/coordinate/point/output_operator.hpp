@@ -1,4 +1,4 @@
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -29,7 +29,7 @@ void test(Types... args)
   output_all(expected, ", ", static_cast<T>(args)...);
   expected << "}";
 
-  using namespace aspera;
+  using namespace ubu;
 
   point<T, sizeof...(args)> x(static_cast<T>(args)...);
 

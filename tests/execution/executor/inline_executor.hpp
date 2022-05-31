@@ -1,6 +1,6 @@
-#include <aspera/execution/executor/executor.hpp>
-#include <aspera/execution/executor/executor_of.hpp>
-#include <aspera/execution/executor/inline_executor.hpp>
+#include <ubu/execution/executor/executor.hpp>
+#include <ubu/execution/executor/executor_of.hpp>
+#include <ubu/execution/executor/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -15,7 +15,7 @@ __global__ void device_invoke(F f)
 }
 #endif
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test()

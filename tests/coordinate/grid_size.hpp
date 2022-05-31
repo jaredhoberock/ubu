@@ -1,5 +1,5 @@
-#include <aspera/coordinate/grid_size.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/grid_size.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -9,7 +9,7 @@
 
 void test_grid_size()
 {
-  namespace ns = aspera;
+  namespace ns = ubu;
 
   // 1D spaces
   assert(13 == ns::grid_size(13));

@@ -1,7 +1,7 @@
-#include <aspera/coordinate/grid_coordinate.hpp>
-#include <aspera/cuda/thread_id.hpp>
+#include <ubu/coordinate/grid_coordinate.hpp>
+#include <ubu/cuda/thread_id.hpp>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 void test_thread_id()
 {

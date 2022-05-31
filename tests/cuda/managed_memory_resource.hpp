@@ -1,10 +1,10 @@
-#include <aspera/cuda/managed_memory_resource.hpp>
+#include <ubu/cuda/managed_memory_resource.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test_allocate()

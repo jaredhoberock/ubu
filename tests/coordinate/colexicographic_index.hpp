@@ -1,5 +1,5 @@
-#include <aspera/coordinate/colexicographic_index.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/colexicographic_index.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -8,7 +8,7 @@
 
 void test_colexicographic_index()
 {
-  namespace ns = aspera;
+  namespace ns = ubu;
 
   {
     // 1D

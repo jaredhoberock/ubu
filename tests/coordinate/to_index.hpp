@@ -1,7 +1,7 @@
-#include <aspera/coordinate/detail/compact_column_major_stride.hpp>
-#include <aspera/coordinate/detail/compact_row_major_stride.hpp>
-#include <aspera/coordinate/point.hpp>
-#include <aspera/coordinate/to_index.hpp>
+#include <ubu/coordinate/detail/compact_column_major_stride.hpp>
+#include <ubu/coordinate/detail/compact_row_major_stride.hpp>
+#include <ubu/coordinate/point.hpp>
+#include <ubu/coordinate/to_index.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -9,7 +9,7 @@
 
 void test_to_index()
 {
-  namespace ns = aspera;
+  namespace ns = ubu;
 
   {
     // 1D, column major

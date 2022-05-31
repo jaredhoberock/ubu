@@ -1,13 +1,13 @@
-#include <aspera/cl/context.hpp>
-#include <aspera/cl/device_memory_resource.hpp>
-#include <aspera/cl/device_ptr.hpp>
+#include <ubu/cl/context.hpp>
+#include <ubu/cl/device_memory_resource.hpp>
+#include <ubu/cl/device_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 #include <CL/cl.h>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 //void test_copy_n_after()
@@ -27,14 +27,14 @@ namespace ns = aspera;
 //  assert(7 == *d_ptr0);
 //  assert(13 == *d_ptr1);
 //
-//  cudaStream_t s0 = aspera::detail::temporarily_with_current_device(0, [&]
+//  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
 //  {
 //    cudaStream_t result{};
 //    cudaStreamCreate(&result);
 //    return result;
 //  });
 //
-//  cudaStream_t s1 = aspera::detail::temporarily_with_current_device(1, [&]
+//  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
 //  {
 //    cudaStream_t result{};
 //    cudaStreamCreate(&result);

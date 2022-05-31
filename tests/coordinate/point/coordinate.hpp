@@ -1,9 +1,9 @@
-#include <aspera/coordinate/coordinate.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/coordinate.hpp>
+#include <ubu/coordinate/point.hpp>
 
 void test_coordinate()
 {
-  using namespace aspera;
+  using namespace ubu;
 
   static_assert(coordinate<point<char,1>>);
   static_assert(coordinate<point<char,2>>);

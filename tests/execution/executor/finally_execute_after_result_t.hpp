@@ -1,5 +1,5 @@
-#include <aspera/event/always_complete_event.hpp>
-#include <aspera/execution/executor/finally_execute_after.hpp>
+#include <ubu/event/always_complete_event.hpp>
+#include <ubu/execution/executor/finally_execute_after.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -14,7 +14,7 @@ __global__ void device_invoke(F f)
 }
 #endif
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 struct has_finally_execute_after_member_function
 {

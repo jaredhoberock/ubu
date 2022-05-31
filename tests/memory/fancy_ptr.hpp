@@ -1,10 +1,10 @@
 #include <algorithm>
-#include <aspera/memory/fancy_ptr.hpp>
+#include <ubu/memory/fancy_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 template<class T>

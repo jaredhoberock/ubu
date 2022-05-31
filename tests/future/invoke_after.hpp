@@ -1,7 +1,7 @@
-#include <aspera/event/always_complete_event.hpp>
-#include <aspera/execution/executor.hpp>
-#include <aspera/future/invoke_after.hpp>
-#include <aspera/memory/allocator.hpp>
+#include <ubu/event/always_complete_event.hpp>
+#include <ubu/execution/executor.hpp>
+#include <ubu/future/invoke_after.hpp>
+#include <ubu/memory/allocator.hpp>
 
 #define NDEBUG
 #include <cassert>
@@ -9,7 +9,7 @@
 #include <memory>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 template<class T>
 struct trivial_asynchronous_allocator : public std::allocator<T>
@@ -47,19 +47,19 @@ void test_invoke_after()
 
   auto before = ns::make_independent_event(alloc);
 
-  auto fut_13 = aspera::invoke_after(ex, alloc, before, []
+  auto fut_13 = ubu::invoke_after(ex, alloc, before, []
   {
     int result = 13;
     return result;
   });
 
-  auto fut_7 = aspera::invoke_after(ex, alloc, before, []
+  auto fut_7 = ubu::invoke_after(ex, alloc, before, []
   {
     int result = 7;
     return result;
   });
 
-  auto sum = aspera::invoke_after(ex, alloc, before, [](int a, int b)
+  auto sum = ubu::invoke_after(ex, alloc, before, [](int a, int b)
   {
     int result = a + b;
     return result;

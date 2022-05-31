@@ -1,12 +1,12 @@
-#include <aspera/coordinate/lattice.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/lattice.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 void test_number_of_dimensions()
 {
-  namespace ns = aspera;
+  namespace ns = ubu;
 
   std::cout << "number_of_dimensions: " << ns::lattice<int>::number_of_dimensions() << std::endl;
   std::cout << "ns::size_v<int>: " << ns::size_v<int> << std::endl;

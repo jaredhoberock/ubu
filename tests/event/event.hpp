@@ -1,4 +1,4 @@
-#include <aspera/event/event.hpp>
+#include <ubu/event/event.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -15,7 +15,7 @@ __global__ void device_invoke(F f)
 }
 #endif
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 struct event_with_wait_member

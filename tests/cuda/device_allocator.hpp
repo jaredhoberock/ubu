@@ -1,8 +1,8 @@
-#include <aspera/event/make_independent_event.hpp>
-#include <aspera/cuda/device_allocator.hpp>
-#include <aspera/memory/allocator/asynchronous_allocator.hpp>
+#include <ubu/event/make_independent_event.hpp>
+#include <ubu/cuda/device_allocator.hpp>
+#include <ubu/memory/allocator/asynchronous_allocator.hpp>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 void test_concepts()
 {

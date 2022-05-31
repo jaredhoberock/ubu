@@ -1,6 +1,6 @@
 #include <array>
-#include <aspera/coordinate/element.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/element.hpp>
+#include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -9,7 +9,7 @@
 #include <utility>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 struct has_element_member_function

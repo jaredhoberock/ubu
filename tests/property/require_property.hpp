@@ -1,8 +1,8 @@
-#include <aspera/property/require_property.hpp>
-#include <aspera/property/property.hpp>
+#include <ubu/property/require_property.hpp>
+#include <ubu/property/property.hpp>
 #include <cassert>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 template<class>

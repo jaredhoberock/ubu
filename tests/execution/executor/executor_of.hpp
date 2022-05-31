@@ -1,4 +1,4 @@
-#include <aspera/execution/executor/executor_of.hpp>
+#include <ubu/execution/executor/executor_of.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -13,7 +13,7 @@ __global__ void device_invoke(F f)
 }
 #endif
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 struct executor_with_execute_member

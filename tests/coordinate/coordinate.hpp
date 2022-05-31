@@ -1,11 +1,11 @@
 #include <array>
-#include <aspera/coordinate/coordinate.hpp>
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/coordinate.hpp>
+#include <ubu/coordinate/point.hpp>
 #include <tuple>
 #include <utility>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 struct has_member_functions

@@ -1,17 +1,17 @@
-#include <aspera/coordinate/colexicographic_index.hpp>
-#include <aspera/coordinate/colexicographic_index_to_grid_coordinate.hpp>
-#include <aspera/coordinate/grid_coordinate.hpp>
-#include <aspera/coordinate/lattice.hpp>
-#include <aspera/cuda/kernel_executor.hpp>
-#include <aspera/event/make_independent_event.hpp>
-#include <aspera/event/wait.hpp>
-#include <aspera/execution/executor/bulk_execute_after.hpp>
-#include <aspera/execution/executor/bulk_execution_grid.hpp>
-#include <aspera/execution/executor/execute.hpp>
-#include <aspera/execution/executor/execute_after.hpp>
-#include <aspera/execution/executor/executor.hpp>
-#include <aspera/execution/executor/finally_execute_after.hpp>
-#include <aspera/execution/executor/first_execute.hpp>
+#include <ubu/coordinate/colexicographic_index.hpp>
+#include <ubu/coordinate/colexicographic_index_to_grid_coordinate.hpp>
+#include <ubu/coordinate/grid_coordinate.hpp>
+#include <ubu/coordinate/lattice.hpp>
+#include <ubu/cuda/kernel_executor.hpp>
+#include <ubu/event/make_independent_event.hpp>
+#include <ubu/event/wait.hpp>
+#include <ubu/execution/executor/bulk_execute_after.hpp>
+#include <ubu/execution/executor/bulk_execution_grid.hpp>
+#include <ubu/execution/executor/execute.hpp>
+#include <ubu/execution/executor/execute_after.hpp>
+#include <ubu/execution/executor/executor.hpp>
+#include <ubu/execution/executor/finally_execute_after.hpp>
+#include <ubu/execution/executor/first_execute.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -19,7 +19,7 @@
 #include <cuda_runtime_api.h>
 
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 #ifndef __host__
 #define __host__

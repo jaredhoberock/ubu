@@ -1,10 +1,10 @@
-#include <aspera/coordinate/point.hpp>
+#include <ubu/coordinate/point.hpp>
 #include <cassert>
 
 template<class T, class... Types>
 void test(T arg1, Types... args)
 {
-  using namespace aspera;
+  using namespace ubu;
 
   using point_t = point<T, 1 + sizeof...(args)>;
 

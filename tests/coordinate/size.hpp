@@ -1,9 +1,9 @@
-#include <aspera/coordinate/point.hpp>
-#include <aspera/coordinate/size.hpp>
+#include <ubu/coordinate/point.hpp>
+#include <ubu/coordinate/size.hpp>
 #include <tuple>
 #include <utility>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 struct has_static_size_member_function

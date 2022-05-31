@@ -1,7 +1,7 @@
-#include <aspera/cuda/device_memory_resource.hpp>
-#include <aspera/cuda/device_ptr.hpp>
-#include <aspera/cuda/kernel_executor.hpp>
-#include <aspera/event/make_independent_event.hpp>
+#include <ubu/cuda/device_memory_resource.hpp>
+#include <ubu/cuda/device_ptr.hpp>
+#include <ubu/cuda/kernel_executor.hpp>
+#include <ubu/event/make_independent_event.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -9,7 +9,7 @@
 #include <concepts>
 #include <cuda_runtime_api.h>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test_concepts()
@@ -39,14 +39,14 @@ void test_copy_n_after()
   assert(7 == *d_ptr0);
   assert(13 == *d_ptr1);
 
-  cudaStream_t s0 = aspera::detail::temporarily_with_current_device(0, [&]
+  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
     return result;
   });
 
-  cudaStream_t s1 = aspera::detail::temporarily_with_current_device(1, [&]
+  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
@@ -254,14 +254,14 @@ void test_copy_n_after_between_devices()
   assert(7 == *d_ptr0);
   assert(13 == *d_ptr1);
 
-  cudaStream_t s0 = aspera::detail::temporarily_with_current_device(0, [&]
+  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
     return result;
   });
 
-  cudaStream_t s1 = aspera::detail::temporarily_with_current_device(1, [&]
+  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);

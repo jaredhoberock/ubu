@@ -1,16 +1,16 @@
-#include <aspera/execution/executor/execute.hpp>
-#include <aspera/execution/executor/execute_after.hpp>
-#include <aspera/execution/executor/executor_of.hpp>
-#include <aspera/execution/executor/finally_execute_after.hpp>
-#include <aspera/execution/executor/first_execute.hpp>
-#include <aspera/execution/executor/new_thread_executor.hpp>
+#include <ubu/execution/executor/execute.hpp>
+#include <ubu/execution/executor/execute_after.hpp>
+#include <ubu/execution/executor/executor_of.hpp>
+#include <ubu/execution/executor/finally_execute_after.hpp>
+#include <ubu/execution/executor/first_execute.hpp>
+#include <ubu/execution/executor/new_thread_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 #include <future>
 
-namespace ns = aspera;
+namespace ns = ubu;
 
 
 void test_new_thread_executor()
