@@ -1,9 +1,9 @@
 CXX = clang
-CUDACXX = nvcc
+CUDACXX = /home/jhoberock/Desktop/circle/circle
 INCLUDES = -I../ -I/usr/local/cuda/include
 CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_35 -Xcompiler "$(CCFLAGS)"
-CUDACXXFLAGS = $(NVCCFLAGS)
+CUDACXXFLAGS = --cuda-path=/usr/local/cuda $(CCFLAGS) -sm_60
 
 # this gets a list of all directories in this directory
 DIRECTORIES = $(sort $(wildcard */))
@@ -21,11 +21,11 @@ test : all-test-sources all-cpp-test-programs all-cuda-test-programs all-test-re
 
 # this compiles a .cpp file into an executable file (without a file extension)
 % : %.cpp
-	$(CXX) $(CCFLAGS) $< -lstdc++ -L/usr/local/cuda/lib64 -lcudart -o $@
+	$(CXX) $(CCFLAGS) $< -lstdc++ -lpthread -L/usr/local/cuda/lib64 -lcudart -o $@
 
 # this compiles a .cpp file into a CUDA executable file (without a file extension)
 %-cuda : %.cpp
-	$(CUDACXX) $(CUDACXXFLAGS) -x cu $< -o $@
+	$(CUDACXX) $(CUDACXXFLAGS) $< -lstdc++ -lpthread -o $@
 
 # this runs an executable silently
 test.% : %
