@@ -5,7 +5,7 @@
 #include "../coordinate/point.hpp"
 #include "../detail/reflection.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
-#include "detail/launch_as_cuda_kernel.hpp"
+#include "detail/launch_as_kernel.hpp"
 #include "detail/throw_on_error.hpp"
 #include "event.hpp"
 #include "shmalloc.hpp"
@@ -121,7 +121,7 @@ class kernel_executor
       kernel.on_chip_heap_size = dynamic_shared_memory_size;
 
       // launch the kernel
-      ubu::detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
+      detail::launch_as_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
 
       // return a new event recorded on our stream
       return {device_, stream_};
