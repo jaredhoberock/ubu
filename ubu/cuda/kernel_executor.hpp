@@ -113,7 +113,7 @@ class kernel_executor
 
       // compute dynamic_shared_memory_size
       int dynamic_shared_memory_size = (on_chip_heap_size_ == default_on_chip_heap_size) ?
-        ubu::detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
+        detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
         on_chip_heap_size_
       ;
 

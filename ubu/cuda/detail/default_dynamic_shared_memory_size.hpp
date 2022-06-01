@@ -10,7 +10,7 @@
 #include <type_traits>
 
 
-namespace ubu::detail
+namespace ubu::cuda::detail
 {
 
 
@@ -19,21 +19,21 @@ template<std::invocable F>
 int max_potential_occupancy(int device, F, int num_threads_per_block, std::size_t dynamic_shared_memory_size)
 {
 #if defined(__CUDACC__)
-  return cuda::detail::temporarily_with_current_device(device, [=]
+  return temporarily_with_current_device(device, [=]
   {
     int result = 0;
 
     // point to the kernel
-    const void* ptr_to_kernel = reinterpret_cast<void*>(cuda::detail::kernel_entry_point<F>);
+    const void* ptr_to_kernel = reinterpret_cast<void*>(kernel_entry_point<F>);
 
-    cuda::detail::throw_on_error(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&result, ptr_to_kernel, num_threads_per_block, dynamic_shared_memory_size),
-      "detail::max_potential_occupancy: after cudaOccupancyMaxActiveBlocksPerMultiprocessor"
+    throw_on_error(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&result, ptr_to_kernel, num_threads_per_block, dynamic_shared_memory_size),
+      "cuda::detail::max_potential_occupancy: after cudaOccupancyMaxActiveBlocksPerMultiprocessor"
     );
 
     return result;
   });
 #else
-  detail::throw_runtime_error("detail::max_potential_occupancy requires CUDA C++ language support.");
+  ubu::detail::throw_runtime_error("cuda::detail::max_potential_occupancy requires CUDA C++ language support.");
   return 0;
 #endif
 }
@@ -44,21 +44,21 @@ template<std::invocable F>
 std::size_t max_dynamic_shared_memory_size(int device, F, int num_blocks_per_multiprocessor, int num_threads_per_block)
 {
 #if defined(__CUDACC__)
-  return cuda::detail::temporarily_with_current_device(device, [=]
+  return temporarily_with_current_device(device, [=]
   {
     std::size_t result = 0;
 
     // point to the kernel
-    const void* ptr_to_kernel = reinterpret_cast<void*>(cuda::detail::kernel_entry_point<F>);
+    const void* ptr_to_kernel = reinterpret_cast<void*>(kernel_entry_point<F>);
 
-    cuda::detail::throw_on_error(cudaOccupancyAvailableDynamicSMemPerBlock(&result, ptr_to_kernel, num_blocks_per_multiprocessor, num_threads_per_block),
-      "detail::max_dynamic_shared_memory_per_block: after cudaOccupancyAvailableDynamicSMemPerBlock"
+    throw_on_error(cudaOccupancyAvailableDynamicSMemPerBlock(&result, ptr_to_kernel, num_blocks_per_multiprocessor, num_threads_per_block),
+      "cuda::detail::max_dynamic_shared_memory_per_block: after cudaOccupancyAvailableDynamicSMemPerBlock"
     );
 
     return result;
   });
 #else
-  detail::throw_runtime_error("detail::max_dynamic_shared_memory_per_block requires CUDA C++ language support.");
+  ubu::detail::throw_runtime_error("cuda::detail::max_dynamic_shared_memory_per_block requires CUDA C++ language support.");
   return 0;
 #endif
 }
@@ -80,7 +80,7 @@ std::size_t default_dynamic_shared_memory_size(int device, F f, int num_threads_
 }
 
 
-} // end ubu::detail
+} // end ubu::cuda::detail
 
 
 #include "../../detail/epilogue.hpp"
