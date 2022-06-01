@@ -24,9 +24,9 @@ struct current_cuda_device_in_this_scope
     : old_device_{-1},
       new_device_{new_device}
   {
-    if UBU_TARGET(has_runtime())
+    if UBU_TARGET(cuda::detail::has_runtime())
     {
-      if UBU_TARGET(has_runtime())
+      if UBU_TARGET(cuda::detail::has_runtime())
       {
         cuda::detail::throw_on_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
       }

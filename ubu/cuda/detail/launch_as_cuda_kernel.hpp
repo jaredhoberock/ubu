@@ -32,7 +32,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
     // reference the kernel to encourage the compiler not to optimize it away
     workaround_unused_variable_warning(ptr_to_kernel);
 
-    if UBU_TARGET(has_runtime())
+    if UBU_TARGET(cuda::detail::has_runtime())
     {
       // ignore empty launches
       if(grid_dim.x * grid_dim.y * grid_dim.z * block_dim.x * block_dim.y * block_dim.z != 0)

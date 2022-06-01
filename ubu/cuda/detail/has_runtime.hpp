@@ -5,8 +5,7 @@
 #include "../../detail/reflection/is_host.hpp"
 
 
-// XXX this needs to be cuda::detail
-namespace ubu::detail
+namespace ubu::cuda::detail
 {
 
 
@@ -15,7 +14,7 @@ constexpr bool has_runtime()
   bool result = false;
 
 #if defined(__circle_lang__)
-  if target(is_host())
+  if target(ubu::detail::is_host())
   {
     // XXX we could consider using #__has_include(<cuda_runtime_api.h>) here
     result = true;
@@ -35,7 +34,7 @@ constexpr bool has_runtime()
 }
 
 
-} // end ubu::detail
+} // end ubu::cuda::detail
 
 
 #include "../../detail/epilogue.hpp"
