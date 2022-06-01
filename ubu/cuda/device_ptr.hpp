@@ -42,7 +42,7 @@ class device_memory_copier
 #if defined(__CUDACC__)
       if UBU_TARGET(ubu::detail::is_host())
       {
-        ubu::detail::temporarily_with_current_device(device_, [=]
+        detail::temporarily_with_current_device(device_, [=]
         {
           detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
             "device_memory_copier: after cudaMemcpy"
@@ -59,7 +59,7 @@ class device_memory_copier
         assert(0);
       }
 #else
-      ubu::detail::temporarily_with_current_device(device_, [=]
+      detail::temporarily_with_current_device(device_, [=]
       {
         detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
           "device_memory_copier: after cudaMemcpy"

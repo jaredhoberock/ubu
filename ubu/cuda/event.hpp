@@ -157,7 +157,7 @@ class event
 
       if UBU_TARGET(detail::has_runtime())
       {
-        ubu::detail::temporarily_with_current_device(device, [&]
+        detail::temporarily_with_current_device(device, [&]
         {
           detail::throw_on_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: after cudaEventCreateWithFlags");
         });
@@ -182,7 +182,7 @@ class event
     {
       if UBU_TARGET(detail::has_runtime())
       {
-        ubu::detail::temporarily_with_current_device(device, [&]
+        detail::temporarily_with_current_device(device, [&]
         {
           // create a cudaStream_t on which to record our event
           cudaStream_t s{};

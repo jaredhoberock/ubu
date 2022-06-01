@@ -29,7 +29,7 @@ class device_memory_resource
 
     inline void* allocate(std::size_t num_bytes) const
     {
-      return ubu::detail::temporarily_with_current_device(device(), [=]
+      return detail::temporarily_with_current_device(device(), [=]
       {
         void* result = nullptr;
 
@@ -41,7 +41,7 @@ class device_memory_resource
 
     inline void deallocate(void* ptr, std::size_t) const
     {
-      ubu::detail::temporarily_with_current_device(device(), [=]
+      detail::temporarily_with_current_device(device(), [=]
       {
         detail::throw_on_error(cudaFree(ptr), "cuda::device_memory_resource::deallocate: after cudaFree");
       });
@@ -49,7 +49,7 @@ class device_memory_resource
 
     inline std::pair<event,void*> allocate_after(const event& before, std::size_t num_bytes) const
     {
-      return ubu::detail::temporarily_with_current_device(device(), [&]
+      return detail::temporarily_with_current_device(device(), [&]
       {
         detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()),
           "cuda::device_memory_resource::allocate_after: after cudaStreamWaitEvent"

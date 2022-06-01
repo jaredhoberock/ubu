@@ -39,14 +39,14 @@ void test_copy_n_after()
   assert(7 == *d_ptr0);
   assert(13 == *d_ptr1);
 
-  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
+  cudaStream_t s0 = detail::temporarily_with_current_device(0, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
     return result;
   });
 
-  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
+  cudaStream_t s1 = detail::temporarily_with_current_device(1, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
@@ -254,14 +254,14 @@ void test_copy_n_after_between_devices()
   assert(7 == *d_ptr0);
   assert(13 == *d_ptr1);
 
-  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
+  cudaStream_t s0 = detail::temporarily_with_current_device(0, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);
     return result;
   });
 
-  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
+  cudaStream_t s1 = detail::temporarily_with_current_device(1, [&]
   {
     cudaStream_t result{};
     cudaStreamCreate(&result);

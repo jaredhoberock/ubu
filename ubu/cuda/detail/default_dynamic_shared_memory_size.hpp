@@ -19,7 +19,7 @@ template<std::invocable F>
 int max_potential_occupancy(int device, F, int num_threads_per_block, std::size_t dynamic_shared_memory_size)
 {
 #if defined(__CUDACC__)
-  return detail::temporarily_with_current_device(device, [=]
+  return cuda::detail::temporarily_with_current_device(device, [=]
   {
     int result = 0;
 
@@ -44,7 +44,7 @@ template<std::invocable F>
 std::size_t max_dynamic_shared_memory_size(int device, F, int num_blocks_per_multiprocessor, int num_threads_per_block)
 {
 #if defined(__CUDACC__)
-  return detail::temporarily_with_current_device(device, [=]
+  return cuda::detail::temporarily_with_current_device(device, [=]
   {
     std::size_t result = 0;
 

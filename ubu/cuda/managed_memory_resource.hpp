@@ -26,7 +26,7 @@ class managed_memory_resource
 
     inline void* allocate(std::size_t num_bytes) const
     {
-      return ubu::detail::temporarily_with_current_device(device(), [=]
+      return detail::temporarily_with_current_device(device(), [=]
       {
         void* result = nullptr;
 
@@ -38,7 +38,7 @@ class managed_memory_resource
 
     inline void deallocate(void* ptr, std::size_t) const
     {
-      ubu::detail::temporarily_with_current_device(device(), [=]
+      detail::temporarily_with_current_device(device(), [=]
       {
         detail::throw_on_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: after cudaFree");
       });

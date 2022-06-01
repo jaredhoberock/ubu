@@ -24,7 +24,7 @@ template<std::invocable F>
 void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
 {
 #if defined(__CUDACC__)
-  detail::temporarily_with_current_device(device, [=]() mutable
+  cuda::detail::temporarily_with_current_device(device, [=]() mutable
   {
     // point to the kernel
     void* ptr_to_kernel = reinterpret_cast<void*>(&cuda::detail::kernel_entry_point<F>);

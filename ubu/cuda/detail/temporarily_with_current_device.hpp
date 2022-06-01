@@ -11,51 +11,51 @@
 #include <utility>
 
 
-namespace ubu::detail
+namespace ubu::cuda::detail
 {
 
 
-struct current_cuda_device_in_this_scope
+struct current_device_in_this_scope
 {
   int old_device_;
   int new_device_;
 
-  inline current_cuda_device_in_this_scope(int new_device)
+  inline current_device_in_this_scope(int new_device)
     : old_device_{-1},
       new_device_{new_device}
   {
-    if UBU_TARGET(cuda::detail::has_runtime())
+    if UBU_TARGET(has_runtime())
     {
-      if UBU_TARGET(cuda::detail::has_runtime())
+      if UBU_TARGET(has_runtime())
       {
-        cuda::detail::throw_on_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
+        throw_on_error(cudaGetDevice(&old_device_), "cuda::detail::current_device_in_this_scope ctor: CUDA error after cudaGetDevice");
       }
       else
       {
-        ubu::detail::throw_runtime_error("detail::current_cuda_device_in_this_scope ctor: cudaGetDevice is unavailable.");
+        ubu::detail::throw_runtime_error("cuda::detail::current_device_in_this_scope ctor: cudaGetDevice is unavailable.");
       }
     }
 
     if(new_device_ != old_device_)
     {
-      if UBU_TARGET(is_device())
+      if UBU_TARGET(ubu::detail::is_device())
       {
-        ubu::detail::terminate_with_message("detail::current_cuda_device_in_this_scope ctor:: Requested device cannot differ from current device in __device__ code.");
+        ubu::detail::terminate_with_message("cuda::detail::current_device_in_this_scope ctor:: Requested device cannot differ from current device in __device__ code.");
       }
       else
       {
-        cuda::detail::throw_on_error(cudaSetDevice(new_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
+        throw_on_error(cudaSetDevice(new_device_), "cuda::detail::current_device_in_this_scope ctor: after cudaSetDevice");
       }
     }
   }
 
-  inline ~current_cuda_device_in_this_scope()
+  inline ~current_device_in_this_scope()
   {
     if(new_device_ != old_device_)
     {
-      if UBU_TARGET(is_host())
+      if UBU_TARGET(ubu::detail::is_host())
       {
-        cuda::detail::throw_on_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope dtor: after cudaSetDevice");
+        throw_on_error(cudaSetDevice(old_device_), "cuda::detail::current_device_in_this_scope dtor: after cudaSetDevice");
       }
     }
   }
@@ -65,13 +65,13 @@ struct current_cuda_device_in_this_scope
 template<std::invocable F>
 std::invoke_result_t<F&&> temporarily_with_current_device(int device, F&& f)
 {
-  current_cuda_device_in_this_scope scope{device};
+  current_device_in_this_scope scope{device};
 
   return std::invoke(std::forward<F>(f));
 };
 
 
-} // end ubu::detail
+} // end ubu::cuda::detail
 
 
 #include "../../detail/epilogue.hpp"
