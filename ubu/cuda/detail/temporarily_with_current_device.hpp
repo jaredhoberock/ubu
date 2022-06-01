@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/exception/throw_runtime_error.hpp"
-#include "../../detail/reflection.hpp"
+#include "has_runtime.hpp"
 #include "throw_on_cuda_error.hpp"
 #include <concepts>
 #include <cuda_runtime_api.h>
@@ -27,9 +27,9 @@ struct current_cuda_device_in_this_scope
     : old_device_{-1},
       new_device_{new_device}
   {
-    if UBU_TARGET(has_cuda_runtime())
+    if UBU_TARGET(has_runtime())
     {
-      if UBU_TARGET(has_cuda_runtime())
+      if UBU_TARGET(has_runtime())
       {
         detail::throw_on_cuda_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
       }

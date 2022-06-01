@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../detail/reflection.hpp"
 #include "cuda_kernel_entry_point.hpp"
+#include "has_runtime.hpp"
 #include "temporarily_with_current_device.hpp"
 #include "throw_on_cuda_error.hpp"
 #include <concepts>
@@ -35,7 +35,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
     // reference the kernel to encourage the compiler not to optimize it away
     workaround_unused_variable_warning(ptr_to_kernel);
 
-    if UBU_TARGET(has_cuda_runtime())
+    if UBU_TARGET(has_runtime())
     {
       // ignore empty launches
       if(grid_dim.x * grid_dim.y * grid_dim.z * block_dim.x * block_dim.y * block_dim.z != 0)

@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../detail/reflection.hpp"
+#include "detail/has_runtime.hpp"
 #include <cuda_runtime.h>
 #include <system_error>
 
@@ -23,7 +23,7 @@ class error_category : public std::error_category
 
     inline std::string message(int ev) const
     {
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         return cudaGetErrorString(static_cast<cudaError_t>(ev));
       }

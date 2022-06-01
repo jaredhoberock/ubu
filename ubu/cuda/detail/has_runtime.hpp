@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "is_host.hpp"
+#include "../../detail/reflection/is_host.hpp"
 
 UBU_NAMESPACE_OPEN_BRACE
 
+// XXX this needs to be cuda::detail
 namespace detail
 {
 
 
-constexpr bool has_cuda_runtime()
+constexpr bool has_runtime()
 {
   bool result = false;
-
 
 #if defined(__circle_lang__)
   if target(is_host())
@@ -40,5 +40,5 @@ constexpr bool has_cuda_runtime()
 
 UBU_NAMESPACE_CLOSE_BRACE
 
-#include "../epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

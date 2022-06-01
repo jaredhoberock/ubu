@@ -5,7 +5,7 @@
 #include "../detail/exception/terminate_with_message.hpp"
 #include "../detail/exception/throw_runtime_error.hpp"
 #include "../detail/for_each_arg.hpp"
-#include "../detail/reflection.hpp"
+#include "detail/has_runtime.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_cuda_error.hpp"
 #include <cuda_runtime_api.h>
@@ -41,7 +41,7 @@ class event
       {
         if(origin_target_ == current_target())
         {
-          if UBU_TARGET(detail::has_cuda_runtime())
+          if UBU_TARGET(detail::has_runtime())
           {
             detail::throw_on_cuda_error(cudaEventDestroy(native_handle()), "cuda::event::~event: after cudaEventDestroy");
           }
@@ -70,7 +70,7 @@ class event
 
     void record_on(cudaStream_t s)
     {
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         detail::throw_on_cuda_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: after cudaEventRecord");
       }
@@ -84,7 +84,7 @@ class event
     {
       bool result = false;
 
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         cudaError_t status = cudaEventQuery(native_handle());
 
@@ -105,7 +105,7 @@ class event
 
     inline void wait() const
     {
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         if UBU_TARGET(detail::is_device())
         {
@@ -158,7 +158,7 @@ class event
     {
       cudaEvent_t result{};
 
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         detail::temporarily_with_current_device(device, [&]
         {
@@ -183,7 +183,7 @@ class event
     event(int device, const event& e, const Es&... es)
       : event{device}
     {
-      if UBU_TARGET(detail::has_cuda_runtime())
+      if UBU_TARGET(detail::has_runtime())
       {
         detail::temporarily_with_current_device(device, [&]
         {
