@@ -5,7 +5,7 @@
 #include <concepts>
 #include <type_traits>
 
-namespace ubu::detail
+namespace ubu::cuda::detail
 {
 
 
@@ -14,7 +14,7 @@ namespace ubu::detail
 
 template<std::invocable F>
   requires std::is_trivially_copyable_v<F>
-__global__ void cuda_kernel_entry_point(F f)
+__global__ void kernel_entry_point(F f)
 {
   f();
 }
@@ -23,7 +23,7 @@ __global__ void cuda_kernel_entry_point(F f)
 #endif
 
 
-} // end ubu::detail
+} // end ubu::cuda::detail
 
 
 #include "../../detail/epilogue.hpp"

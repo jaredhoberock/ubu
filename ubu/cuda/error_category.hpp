@@ -21,7 +21,7 @@ class error_category : public std::error_category
 
     inline std::string message(int ev) const
     {
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
         return cudaGetErrorString(static_cast<cudaError_t>(ev));
       }
