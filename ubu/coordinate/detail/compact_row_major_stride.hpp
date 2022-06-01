@@ -12,10 +12,7 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -54,10 +51,7 @@ constexpr T compact_row_major_stride(const T& shape)
 }
   
 
-} // end detail
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::detail
 
 
 #include "../../detail/epilogue.hpp"

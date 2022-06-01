@@ -10,7 +10,8 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<std::integral T>
@@ -33,7 +34,7 @@ template<grid_coordinate T, grid_coordinate Shape, grid_coordinate Stride, std::
   requires (!std::integral<Shape> and congruent<T,Shape,Stride>)
 constexpr T to_grid_coordinate_impl(const std::integral auto& i, const Shape& shape, const Stride& stride, std::index_sequence<Is...>)
 {
-  return detail::make_coordinate<T>(UBU_NAMESPACE::to_grid_coordinate<element_t<Is, T>>(i, element<Is>(shape), element<Is>(stride))...);
+  return detail::make_coordinate<T>(ubu::to_grid_coordinate<element_t<Is, T>>(i, element<Is>(shape), element<Is>(stride))...);
 }
 
 
@@ -48,7 +49,7 @@ constexpr T to_grid_coordinate(const std::integral auto& i, const Shape& shape, 
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../detail/epilogue.hpp"

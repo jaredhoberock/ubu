@@ -4,10 +4,9 @@
 
 #include "../../detail/reflection/is_host.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
 
 // XXX this needs to be cuda::detail
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -36,9 +35,8 @@ constexpr bool has_runtime()
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

@@ -5,8 +5,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -63,10 +63,10 @@ constexpr detail::dispatch_construct_at construct_at;
 
 
 template<class P, class... Args>
-using construct_at_result_t = decltype(UBU_NAMESPACE::construct_at(std::declval<P>(), std::declval<Args>()...));
+using construct_at_result_t = decltype(ubu::construct_at(std::declval<P>(), std::declval<Args>()...));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

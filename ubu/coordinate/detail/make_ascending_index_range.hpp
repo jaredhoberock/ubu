@@ -6,9 +6,7 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -39,9 +37,7 @@ template<std::size_t Begin, std::size_t End>
 using make_ascending_index_range = typename make_ascending_index_range_impl<Begin, std::index_sequence<>, End>::type;
 
 
-} // end detail
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::detail
 
 #include "../../detail/epilogue.hpp"
 

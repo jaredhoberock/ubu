@@ -10,10 +10,7 @@
 #include "size.hpp"
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -22,7 +19,7 @@ struct is_grid_coordinate;
 
 
 template<std::size_t I, class T>
-concept element_is_a_grid_coordinate = (requires(T x) { UBU_NAMESPACE::element<I>(x); } and is_grid_coordinate<element_t<I,T>>::value);
+concept element_is_a_grid_coordinate = (requires(T x) { ubu::element<I>(x); } and is_grid_coordinate<element_t<I,T>>::value);
 
 
 // check T for elements 0... N-1, and make sure that each one is itself a grid coordinate
@@ -69,7 +66,11 @@ struct is_grid_coordinate
 };
 
 
-} // end detail
+} // end ubu::detail
+
+
+namespace ubu
+{
 
 
 // grid_coordinate is a recursive concept, so we need to implement it with traditional SFINAE techniques
@@ -86,7 +87,8 @@ template<class... Types>
 concept are_grid_coordinates = (... and grid_coordinate<Types>);
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

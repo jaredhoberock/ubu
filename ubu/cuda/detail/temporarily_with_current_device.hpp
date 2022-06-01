@@ -11,10 +11,7 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -74,10 +71,8 @@ std::invoke_result_t<F&&> temporarily_with_current_device(int device, F&& f)
 };
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

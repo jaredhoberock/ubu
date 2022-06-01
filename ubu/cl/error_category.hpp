@@ -5,10 +5,8 @@
 #include <system_error>
 #include <CL/cl.h>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace cl
+namespace ubu::cl
 {
 
 
@@ -102,10 +100,7 @@ class error_category : public std::error_category
 };
 
 
-} // end cl
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::cl
 
 
 #include "../detail/epilogue.hpp"

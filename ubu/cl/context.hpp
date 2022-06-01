@@ -6,9 +6,8 @@
 #include <vector>
 #include <CL/cl.h>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-namespace cl
+namespace ubu::cl
 {
 
 class context
@@ -107,9 +106,8 @@ class context
     cl_context handle_;
 };
 
-} // end cl
+} // end ubu::cl
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

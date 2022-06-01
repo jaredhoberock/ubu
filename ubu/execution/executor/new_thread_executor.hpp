@@ -8,7 +8,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 struct new_thread_executor
@@ -24,7 +25,7 @@ struct new_thread_executor
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../../detail/epilogue.hpp"

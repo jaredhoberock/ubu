@@ -10,18 +10,18 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<grid_coordinate S>
 constexpr S colexicographic_index_to_grid_coordinate(const std::integral auto& i, const S& shape)
 {
-  return UBU_NAMESPACE::to_grid_coordinate<S>(i, shape, detail::compact_row_major_stride(shape));
+  return ubu::to_grid_coordinate<S>(i, shape, detail::compact_row_major_stride(shape));
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
-
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

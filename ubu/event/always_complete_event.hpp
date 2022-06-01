@@ -5,7 +5,8 @@
 #include <concepts>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 struct always_complete_event
@@ -24,7 +25,7 @@ struct always_complete_event
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../detail/epilogue.hpp"

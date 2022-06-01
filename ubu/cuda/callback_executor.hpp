@@ -7,10 +7,7 @@
 #include <cuda_runtime_api.h>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -97,18 +94,10 @@ class callback_executor
     {
       return stream_;
     }
-
-    //inline blocking_t query(blocking_t) const noexcept
-    //{
-    //  return blocking.possibly;
-    //}
 };
 
 
-} // end namespace cuda
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end namespace ubu::cuda
 
 
 #include "../detail/epilogue.hpp"

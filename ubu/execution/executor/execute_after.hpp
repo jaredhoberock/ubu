@@ -13,7 +13,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -58,7 +59,7 @@ struct dispatch_execute_after
   {
     return first_execute(std::forward<Ex>(ex), [ev=std::move(ev), f=std::forward<F>(f)]() mutable
     {
-      UBU_NAMESPACE::wait(std::move(ev));
+      ubu::wait(std::move(ev));
       std::invoke(std::forward<F>(f));
     });
   }
@@ -77,10 +78,11 @@ constexpr detail::dispatch_execute_after execute_after;
 
 
 template<class Ex, class Ev, class F>
-using execute_after_result_t = decltype(UBU_NAMESPACE::execute_after(std::declval<Ex>(), std::declval<Ev>(), std::declval<F>()));
+using execute_after_result_t = decltype(ubu::execute_after(std::declval<Ex>(), std::declval<Ev>(), std::declval<F>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

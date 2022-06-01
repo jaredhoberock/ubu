@@ -9,8 +9,9 @@
 #include <concepts>
 #include <cstdint>
 
-UBU_NAMESPACE_OPEN_BRACE
 
+namespace ubu
+{
 
 namespace detail
 {
@@ -123,7 +124,8 @@ constexpr detail::dispatch_bulk_execution_grid bulk_execution_grid;
 } // end anonymous namespace
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

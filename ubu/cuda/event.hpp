@@ -11,10 +11,7 @@
 #include <cuda_runtime_api.h>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -215,10 +212,7 @@ class event
 };
 
 
-} // end cuda
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::cuda
 
 
 #include "../detail/epilogue.hpp"

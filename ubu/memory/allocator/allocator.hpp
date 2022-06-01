@@ -7,7 +7,8 @@
 #include <concepts>
 #include <memory>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 template<class A>
 concept allocator = 
@@ -18,12 +19,12 @@ concept allocator =
 
   requires(std::decay_t<A>& a, typename std::allocator_traits<std::decay_t<A>>::size_type n, typename std::allocator_traits<std::decay_t<A>>::pointer p)
   {
-    UBU_NAMESPACE::allocate<int>(a, n);
-    UBU_NAMESPACE::deallocate(a, p, n);
+    ubu::allocate<int>(a, n);
+    ubu::deallocate(a, p, n);
   }
 ;
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

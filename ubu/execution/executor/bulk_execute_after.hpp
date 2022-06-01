@@ -18,7 +18,8 @@
 #include <vector>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -217,10 +218,11 @@ constexpr detail::dispatch_bulk_execute_after bulk_execute_after;
 
 
 template<class Ex, class Ev, class S, class F>
-using bulk_execute_after_result_t = decltype(UBU_NAMESPACE::bulk_execute_after(std::declval<Ex>(), std::declval<Ev>(), std::declval<S>(), std::declval<F>()));
+using bulk_execute_after_result_t = decltype(ubu::bulk_execute_after(std::declval<Ex>(), std::declval<Ev>(), std::declval<S>(), std::declval<F>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

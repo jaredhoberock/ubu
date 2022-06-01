@@ -6,14 +6,12 @@
 #include <concepts>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
-
 
 // the reason that make_coordinate exists is to provide a uniform means of constructing
 // a coordinate, which is otherwise defied by std::array's weird construction syntax
 
 
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -60,9 +58,8 @@ constexpr T make_coordinate(Args&&... args)
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

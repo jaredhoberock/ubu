@@ -7,10 +7,7 @@
 #include <vector_types.h>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -69,10 +66,7 @@ constexpr int3& element<1>(thread_id& t)
 }
 
 
-} // end cuda
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::cuda
 
 
 #include "../detail/epilogue.hpp"

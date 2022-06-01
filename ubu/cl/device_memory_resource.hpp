@@ -7,10 +7,8 @@
 #include <stdexcept>
 #include <CL/cl.h>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace cl
+namespace ubu::cl
 {
 
 
@@ -91,10 +89,8 @@ class device_memory_resource
 };
 
 
-} // end cl
+} // end ubu::cl
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

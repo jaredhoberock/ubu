@@ -8,8 +8,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -90,7 +90,7 @@ concept can_mix_property = requires(T t, P prop)
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

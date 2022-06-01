@@ -2,9 +2,8 @@
 
 #include "../prologue.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
 
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -23,9 +22,8 @@ constexpr bool is_host()
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

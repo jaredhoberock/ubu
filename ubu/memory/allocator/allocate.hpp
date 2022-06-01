@@ -6,8 +6,8 @@
 #include <memory>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -59,10 +59,10 @@ constexpr detail::dispatch_allocate<T> allocate;
 
 
 template<class T, class A, class N>
-using allocate_result_t = decltype(UBU_NAMESPACE::allocate<T>(std::declval<A>(), std::declval<N>()));
+using allocate_result_t = decltype(ubu::allocate<T>(std::declval<A>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

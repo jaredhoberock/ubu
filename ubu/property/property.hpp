@@ -4,7 +4,8 @@
 
 #include <concepts>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<class T, class P>
@@ -136,7 +137,7 @@ struct name_##_property \
 #endif
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

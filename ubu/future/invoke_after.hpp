@@ -12,7 +12,8 @@
 #include <tuple>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<executor Ex, asynchronous_allocator A, event Ev, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
@@ -58,7 +59,7 @@ intrusive_future<R,rebind_allocator_result_t<R,A>> invoke_after(const Ex& ex, co
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

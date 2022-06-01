@@ -7,7 +7,8 @@
 #include <type_traits>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -81,10 +82,11 @@ constexpr detail::dispatch_allocate_after<T> allocate_after;
 
 
 template<class T, class A, class E, class N>
-using allocate_after_result_t = decltype(UBU_NAMESPACE::allocate_after<T>(std::declval<A>(), std::declval<E>(), std::declval<N>()));
+using allocate_after_result_t = decltype(ubu::allocate_after<T>(std::declval<A>(), std::declval<E>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

@@ -11,9 +11,7 @@
 #include <CL/cl.h>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-namespace cl
+namespace ubu::cl
 {
 
 
@@ -121,10 +119,8 @@ template<plain_old_data T>
 using device_ptr = fancy_ptr<T, device_memory_copier<T>>;
 
 
-} // end cl
+} // end ubu::cl
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

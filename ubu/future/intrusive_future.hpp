@@ -22,7 +22,9 @@
 #include <tuple>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
+
+namespace ubu
+{
 
 
 template<class T, asynchronous_allocator A, event E = allocator_event_t<A>>
@@ -225,7 +227,8 @@ class intrusive_future
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

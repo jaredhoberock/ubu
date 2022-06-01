@@ -6,10 +6,8 @@
 #include <tuple>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -20,10 +18,8 @@ constexpr void for_each_arg(F&& f, Args&&... args)
 }
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "epilogue.hpp"
 

@@ -10,7 +10,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 namespace detail
@@ -107,7 +108,7 @@ constexpr detail::dispatch_size size;
 
 
 template<class T>
-using size_result_t = decltype(UBU_NAMESPACE::size(std::declval<T>()));
+using size_result_t = decltype(ubu::size(std::declval<T>()));
 
 
 namespace detail
@@ -173,7 +174,7 @@ struct is_tuple_of_types_each_with_static_size<std::array<T,N>>
 } // end detail
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../detail/epilogue.hpp"

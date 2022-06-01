@@ -9,7 +9,8 @@
 #include <functional>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 struct inline_executor
@@ -41,7 +42,7 @@ struct inline_executor
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../../detail/epilogue.hpp"

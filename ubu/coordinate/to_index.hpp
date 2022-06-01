@@ -10,7 +10,9 @@
 #include <cstdint>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
+
+namespace ubu
+{
 
 
 // XXX the shape parameter is never actually used in this computation... what gives?
@@ -51,7 +53,7 @@ template<class T1, class T2, class T3, std::size_t i0, std::size_t... is>
             congruent<T1,T2,T3>)
 constexpr std::size_t to_index_impl(const T1& coord, const T2& shape, const T3& stride, std::index_sequence<i0,is...>)
 {
-  return UBU_NAMESPACE::to_index(element<i0>(coord), element<i0>(shape), element<i0>(stride))
+  return ubu::to_index(element<i0>(coord), element<i0>(shape), element<i0>(stride))
     + detail::to_index_impl(coord, shape, stride, std::index_sequence<is...>{});
 }
 
@@ -70,7 +72,7 @@ constexpr std::size_t to_index(const T1& coord, const T2& shape, const T3& strid
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

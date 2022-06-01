@@ -14,10 +14,7 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -139,10 +136,7 @@ event copy_n_after(kernel_executor ex, const event& before, device_ptr<T> from, 
 }
 
 
-} // end cuda
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::cuda
 
 #include "../detail/epilogue.hpp"
 

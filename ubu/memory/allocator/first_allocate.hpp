@@ -9,7 +9,8 @@
 #include <type_traits>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -100,7 +101,7 @@ template<class T, class A, class N>
 using first_allocate_result_t = decltype(first_allocate<T>(std::declval<A>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

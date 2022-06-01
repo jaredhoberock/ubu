@@ -6,7 +6,9 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
+
 
 namespace detail
 {
@@ -58,10 +60,11 @@ constexpr detail::dispatch_associated_executor associated_executor;
 
 
 template<class T>
-using associated_executor_result_t = decltype(UBU_NAMESPACE::associated_executor(std::declval<T>()));
+using associated_executor_result_t = decltype(ubu::associated_executor(std::declval<T>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

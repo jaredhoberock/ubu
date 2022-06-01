@@ -5,7 +5,8 @@
 #include "../allocator.hpp"
 #include <memory>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<class A>
@@ -13,7 +14,7 @@ template<class A>
 using allocator_value_t = typename std::allocator_traits<std::decay_t<A>>::value_type;
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../../detail/epilogue.hpp"
 

@@ -10,8 +10,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -535,8 +535,8 @@ __device__ inline void shfree(void *ptr)
 
 } // end cuda
 
+} // end ubu
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

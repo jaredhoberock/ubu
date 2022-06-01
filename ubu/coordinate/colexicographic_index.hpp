@@ -9,17 +9,17 @@
 #include <cstdint>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 template<grid_coordinate C, grid_coordinate S>
   requires congruent<C,S>
 constexpr std::size_t colexicographic_index(const C& coord, const S& grid_shape)
 {
-  return UBU_NAMESPACE::to_index(coord, grid_shape, detail::compact_row_major_stride(grid_shape));
+  return ubu::to_index(coord, grid_shape, detail::compact_row_major_stride(grid_shape));
 }
 
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

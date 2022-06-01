@@ -12,7 +12,8 @@
 #include <memory>
 #include <type_traits>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 template<class A>
 concept asynchronous_allocator =
@@ -26,13 +27,13 @@ concept asynchronous_allocator =
   and requires(A a, const make_independent_event_result_t<A>& e, allocator_pointer_t<A> ptr, std::size_t n)
   {
     // XXX this needs to check that the result is a pair<event,pointer>
-    UBU_NAMESPACE::allocate_after<allocator_value_t<A>>(a, e, n);
+    ubu::allocate_after<allocator_value_t<A>>(a, e, n);
   
-    {UBU_NAMESPACE::deallocate_after(a, e, ptr, n)} -> event;
+    {ubu::deallocate_after(a, e, ptr, n)} -> event;
   }
 ;
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

@@ -14,9 +14,8 @@
 #include <concepts>
 #include <functional>
 
-
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -213,8 +212,8 @@ class kernel_executor
 
 } // end cuda
 
+} // end ubu
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

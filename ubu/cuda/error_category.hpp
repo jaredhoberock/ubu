@@ -6,10 +6,8 @@
 #include <cuda_runtime.h>
 #include <system_error>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -35,10 +33,7 @@ class error_category : public std::error_category
 };
 
 
-} // end cuda
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::cuda
 
 
 #include "../detail/epilogue.hpp"

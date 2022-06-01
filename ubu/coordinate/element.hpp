@@ -8,10 +8,7 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -88,7 +85,11 @@ struct dispatch_element
 };
 
 
-} // end detail
+} // end ubu::detail
+
+
+namespace ubu
+{
 
 
 namespace
@@ -101,10 +102,10 @@ constexpr detail::dispatch_element<i> element;
 
 
 template<std::size_t i, class T>
-using element_t = std::remove_cvref_t<decltype(UBU_NAMESPACE::element<i>(std::declval<T>()))>;
+using element_t = std::remove_cvref_t<decltype(ubu::element<i>(std::declval<T>()))>;
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../detail/epilogue.hpp"

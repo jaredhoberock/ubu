@@ -7,8 +7,8 @@
 #include <type_traits>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -56,10 +56,10 @@ constexpr detail::dispatch_deallocate deallocate;
 
 
 template<class A, class P, class N>
-using deallocate_result_t = decltype(UBU_NAMESPACE::deallocate(std::declval<A>(), std::declval<P>(), std::declval<N>()));
+using deallocate_result_t = decltype(ubu::deallocate(std::declval<A>(), std::declval<P>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

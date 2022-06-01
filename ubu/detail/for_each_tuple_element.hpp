@@ -5,10 +5,8 @@
 #include <functional>
 #include <tuple>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -28,10 +26,8 @@ constexpr void for_each_tuple_element(F&& f, Tuple&& t)
 }
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "epilogue.hpp"
 

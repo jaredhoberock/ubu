@@ -5,7 +5,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 namespace detail
@@ -70,10 +71,11 @@ constexpr detail::dispatch_destroy_at destroy_at;
 
 
 template<class P>
-using destroy_at_result_t = decltype(UBU_NAMESPACE::destroy_at(std::declval<P>()));
+using destroy_at_result_t = decltype(ubu::destroy_at(std::declval<P>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

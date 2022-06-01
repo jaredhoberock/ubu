@@ -2,10 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -16,10 +14,8 @@ struct invocable_archetype
 };
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../../detail/epilogue.hpp"
 

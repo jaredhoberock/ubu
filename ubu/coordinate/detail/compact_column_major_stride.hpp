@@ -11,9 +11,7 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -51,9 +49,8 @@ constexpr S compact_column_major_stride(const S& shape)
 }
   
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

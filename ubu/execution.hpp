@@ -6,4 +6,3 @@
 
 #include "detail/epilogue.hpp"
 
-

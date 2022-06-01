@@ -5,7 +5,8 @@
 #include "../../../event/make_independent_event.hpp"
 #include "../asynchronous_allocator.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<class A>
@@ -13,7 +14,7 @@ template<class A>
 using allocator_event_t = make_independent_event_result_t<A>;
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../../detail/epilogue.hpp"
 

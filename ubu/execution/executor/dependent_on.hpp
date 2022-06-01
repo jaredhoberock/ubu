@@ -11,7 +11,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -73,10 +74,11 @@ constexpr detail::dispatch_dependent_on dependent_on;
 
 
 template<class Ex, class... Events>
-using dependent_on_result_t = decltype(UBU_NAMESPACE::dependent_on(std::declval<Ex>, std::declval<Events>...));
+using dependent_on_result_t = decltype(ubu::dependent_on(std::declval<Ex>, std::declval<Events>...));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../../detail/epilogue.hpp"
 

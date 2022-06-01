@@ -10,10 +10,7 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -83,9 +80,8 @@ std::size_t default_dynamic_shared_memory_size(int device, F f, int num_threads_
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

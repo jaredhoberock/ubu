@@ -5,10 +5,7 @@
 #include <concepts>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -20,10 +17,8 @@ template<class T>
 concept not_a_number = !(number<T>);
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

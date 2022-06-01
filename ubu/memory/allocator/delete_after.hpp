@@ -9,7 +9,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -62,7 +63,7 @@ struct dispatch_delete_after
   constexpr auto operator()(A&& alloc, E&& before, P ptr, N n) const
   {
     // destroy
-    auto after_destructors = UBU_NAMESPACE::destroy_after(std::forward<A>(alloc), std::forward<E>(before), ptr, n);
+    auto after_destructors = ubu::destroy_after(std::forward<A>(alloc), std::forward<E>(before), ptr, n);
 
     // deallocate
     return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), ptr, n);
@@ -83,10 +84,10 @@ constexpr detail::dispatch_delete_after delete_after;
 
 
 template<class A, class E, class P, class N>
-using delete_after_result_t = decltype(UBU_NAMESPACE::delete_after(std::declval<A>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
+using delete_after_result_t = decltype(ubu::delete_after(std::declval<A>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

@@ -11,10 +11,7 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -74,10 +71,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
 }
 
 
-} // end detail
-
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu::detail
 
 
 #include "../../detail/epilogue.hpp"

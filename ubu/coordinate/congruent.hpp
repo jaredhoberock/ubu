@@ -9,7 +9,8 @@
 #include <type_traits>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 namespace detail
@@ -140,7 +141,7 @@ template<class T1, class T2, class... Types>
 concept congruent = detail::are_congruent<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>,std::remove_cvref_t<Types>...>();
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

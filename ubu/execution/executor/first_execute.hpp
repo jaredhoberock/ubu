@@ -11,7 +11,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -81,10 +82,10 @@ constexpr detail::dispatch_first_execute first_execute;
 
 
 template<class E, class F>
-using first_execute_result_t = decltype(UBU_NAMESPACE::first_execute(std::declval<E>(), std::declval<F>()));
+using first_execute_result_t = decltype(ubu::first_execute(std::declval<E>(), std::declval<F>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

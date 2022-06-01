@@ -9,8 +9,8 @@
 #include "traits/allocator_size_t.hpp"
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 template<allocator A>
 constexpr void allocator_delete(A& a, allocator_pointer_t<A> ptr)
@@ -19,8 +19,7 @@ constexpr void allocator_delete(A& a, allocator_pointer_t<A> ptr)
   deallocate(a, ptr, 1);
 }
 
-
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

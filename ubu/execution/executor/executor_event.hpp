@@ -6,14 +6,14 @@
 #include "executor.hpp"
 #include "first_execute.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 template<class E>
   requires executor<E>
 using executor_event_t = first_execute_result_t<E, detail::invocable_archetype>;
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

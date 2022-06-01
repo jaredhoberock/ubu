@@ -9,8 +9,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -59,7 +59,7 @@ std::remove_cvref_t<T> require_property(T&& object, P prop)
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../detail/epilogue.hpp"
 

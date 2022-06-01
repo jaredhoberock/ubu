@@ -6,8 +6,8 @@
 #include <iterator>
 #include <type_traits>
 
-UBU_NAMESPACE_OPEN_BRACE
-
+namespace ubu
+{
 
 namespace detail
 {
@@ -498,7 +498,7 @@ fancy_ptr<T,C> copy_n(fancy_ptr<U,C> first, std::size_t count, fancy_ptr<T,C> re
 }
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 namespace std
@@ -515,7 +515,7 @@ struct iterator_traits<ubu::fancy_ptr<T,C>>
   using iterator_concept = typename ubu::fancy_ptr<T,C>::iterator_concept;
 };
 
-}
+} // end std
 
 #include "../detail/epilogue.hpp"
 

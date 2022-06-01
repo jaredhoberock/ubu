@@ -6,8 +6,9 @@
 #include <concepts>
 #include <type_traits>
 
-UBU_NAMESPACE_OPEN_BRACE
 
+namespace ubu
+{
 
 namespace detail
 {
@@ -84,10 +85,11 @@ constexpr detail::dispatch_make_independent_event make_independent_event;
 
 
 template<class T>
-using make_independent_event_result_t = decltype(UBU_NAMESPACE::make_independent_event(std::declval<T>()));
+using make_independent_event_result_t = decltype(ubu::make_independent_event(std::declval<T>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

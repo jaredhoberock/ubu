@@ -13,7 +13,9 @@
 #include <iterator>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
+
 
 namespace detail
 {
@@ -87,7 +89,7 @@ class lattice
     // returns the number of lattice points
     constexpr size_type size() const
     {
-      return UBU_NAMESPACE::grid_size(shape());
+      return ubu::grid_size(shape());
     }
 
     // returns whether this lattice contains no points
@@ -356,7 +358,7 @@ class lattice_iterator
       requires not_a_number<U>
     constexpr void advance(difference_type n)
     {
-      current_ = domain_.origin() + UBU_NAMESPACE::colexicographic_index_to_grid_coordinate(colexicographic_index() + n, domain_.shape());
+      current_ = domain_.origin() + ubu::colexicographic_index_to_grid_coordinate(colexicographic_index() + n, domain_.shape());
     }
 
     // scalar case
@@ -380,7 +382,7 @@ class lattice_iterator
       // 0-based indices along each axis
       T idx = current_ - domain_.origin();
 
-      return UBU_NAMESPACE::colexicographic_index(idx, domain_.shape());
+      return ubu::colexicographic_index(idx, domain_.shape());
     }
 
 
@@ -398,7 +400,8 @@ class lattice_iterator
 } // end detail
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

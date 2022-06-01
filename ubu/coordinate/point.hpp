@@ -14,7 +14,8 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 namespace detail
@@ -603,7 +604,7 @@ using double9  = point<double,9>;
 using double10 = point<double,10>;
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 
 #include "../detail/epilogue.hpp"

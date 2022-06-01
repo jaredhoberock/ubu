@@ -5,7 +5,8 @@
 #include "associated_executor.hpp"
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<class T>
@@ -15,7 +16,7 @@ concept executor_associate = requires(T arg)
 };
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

@@ -40,22 +40,6 @@
 #error UBU_MAKE_UNIQUE defined in client code.
 #endif
 
-#ifdef UBU_NAMESPACE
-#error UBU_NAMESPACE defined in client code.
-#endif
-
-#ifdef UBU_NAMESPACE_CLOSE_BRACE
-#error UBU_NAMESPACE_CLOSE_BRACE defined in client code.
-#endif
-
-#ifdef UBU_NAMESPACE_OPEN_BRACE
-#error UBU_NAMESPACE_OPEN_BRACE defined in client code.
-#endif
-
-#ifdef UBU_NAMESPACE_NEEDS_UNDEF
-#error UBU_NAMESPACE_NEEDS_UNDEF defined in client code.
-#endif
-
 #ifdef UBU_REQUIRES
 #error UBU_REQUIRES defined in client code.
 #endif

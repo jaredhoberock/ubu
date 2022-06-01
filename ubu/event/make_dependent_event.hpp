@@ -6,8 +6,9 @@
 #include <utility>
 #include <type_traits>
 
-UBU_NAMESPACE_OPEN_BRACE
 
+namespace ubu
+{
 
 namespace detail
 {
@@ -103,10 +104,11 @@ constexpr detail::dispatch_make_dependent_event make_dependent_event;
 
 
 template<class E, class... Es>
-using make_dependent_event_result_t = decltype(UBU_NAMESPACE::make_dependent_event(std::declval<E>(), std::declval<Es>()...));
+using make_dependent_event_result_t = decltype(ubu::make_dependent_event(std::declval<E>(), std::declval<Es>()...));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
+
 
 #include "../detail/epilogue.hpp"
 

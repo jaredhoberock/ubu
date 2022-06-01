@@ -6,7 +6,8 @@
 #include "delete_after.hpp"
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 namespace detail
 {
@@ -71,10 +72,10 @@ constexpr detail::dispatch_finally_delete_after finally_delete_after;
 
 
 template<class A, class E, class P, class N>
-using finally_delete_after_result_t = decltype(UBU_NAMESPACE::finally_delete_after(std::declval<A>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
+using finally_delete_after_result_t = decltype(ubu::finally_delete_after(std::declval<A>(), std::declval<E>(), std::declval<P>(), std::declval<N>()));
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

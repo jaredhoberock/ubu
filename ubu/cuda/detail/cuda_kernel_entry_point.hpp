@@ -5,10 +5,7 @@
 #include <concepts>
 #include <type_traits>
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -26,10 +23,8 @@ __global__ void cuda_kernel_entry_point(F f)
 #endif
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

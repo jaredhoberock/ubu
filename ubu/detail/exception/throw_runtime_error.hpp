@@ -7,10 +7,7 @@
 #include <stdexcept>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -27,10 +24,8 @@ inline void throw_runtime_error(const char* message)
 }
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

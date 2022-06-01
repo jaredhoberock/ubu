@@ -7,9 +7,8 @@
 #include <cstdint>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -22,13 +21,12 @@ constexpr std::size_t subgrid_size(const grid_coordinate auto& shape, std::index
 template<std::size_t axis0, std::size_t... axes>
 constexpr std::size_t subgrid_size(const grid_coordinate auto& shape, std::index_sequence<axis0, axes...>)
 {
-  return UBU_NAMESPACE::grid_size(element<axis0>(shape)) * detail::subgrid_size(shape, std::index_sequence<axes...>{});
+  return ubu::grid_size(element<axis0>(shape)) * detail::subgrid_size(shape, std::index_sequence<axes...>{});
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../../detail/epilogue.hpp"
 

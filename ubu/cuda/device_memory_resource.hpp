@@ -8,10 +8,8 @@
 #include <cuda_runtime_api.h>
 #include <utility>
 
-UBU_NAMESPACE_OPEN_BRACE
 
-
-namespace cuda
+namespace ubu::cuda
 {
 
 
@@ -112,10 +110,8 @@ class device_memory_resource
 };
 
 
-} // end cuda
+} // end ubu::cuda
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

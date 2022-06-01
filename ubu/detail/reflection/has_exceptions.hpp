@@ -4,9 +4,8 @@
 
 #include "is_device.hpp"
 
-UBU_NAMESPACE_OPEN_BRACE
 
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -29,9 +28,8 @@ constexpr bool has_exceptions()
 }
 
 
-} // end detail
+} // end ubu::detail
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

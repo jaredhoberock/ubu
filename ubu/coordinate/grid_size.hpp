@@ -11,7 +11,9 @@
 #include <utility>
 
 
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
+
 
 // scalar case
 constexpr std::size_t grid_size(const std::integral auto& grid_shape)
@@ -55,8 +57,8 @@ constexpr std::size_t grid_size(const T& grid_shape)
 }
 
 
+} // end ubu
 
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../detail/epilogue.hpp"
 

@@ -8,10 +8,7 @@
 #include <system_error>
 
 
-UBU_NAMESPACE_OPEN_BRACE
-
-
-namespace detail
+namespace ubu::detail
 {
 
 
@@ -35,10 +32,8 @@ inline int throw_on_error(int e, const std::error_category& category, const char
 }
 
 
-} // end detail
+} // end ubu::detail
 
-
-UBU_NAMESPACE_CLOSE_BRACE
 
 #include "../epilogue.hpp"
 

@@ -5,15 +5,15 @@
 #include "detail/invocable_archetype.hpp"
 #include "executor_of.hpp"
 
-
-UBU_NAMESPACE_OPEN_BRACE
+namespace ubu
+{
 
 
 template<class E>
 concept executor = executor_of<E, detail::invocable_archetype>;
 
 
-UBU_NAMESPACE_CLOSE_BRACE
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 
