@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "detail/throw_on_cuda_error.hpp"
+#include "detail/throw_on_error.hpp"
 #include "event.hpp"
 #include <cuda_runtime_api.h>
 
@@ -55,7 +55,7 @@ class callback_executor
       T* ptr_to_f = new T{std::forward<F>(f)};
 
       // enqueue the callback
-      detail::throw_on_cuda_error(cudaStreamAddCallback(stream_, &callback<T>, ptr_to_f, 0), "callback_executor::execute: CUDA error after cudaStreamAddCallback");
+      detail::throw_on_error(cudaStreamAddCallback(stream_, &callback<T>, ptr_to_f, 0), "callback_executor::execute: CUDA error after cudaStreamAddCallback");
     }
 
     template<std::invocable F>
@@ -72,7 +72,7 @@ class callback_executor
     event execute_after(const event& before, F&& f) const noexcept
     {
       // make the stream wait for the before event
-      detail::throw_on_cuda_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
 
       // execute f and return the event
       return first_execute(std::forward<F>(f));
@@ -82,7 +82,7 @@ class callback_executor
     void finally_execute(const event& before, F&& f) const noexcept
     {
       // make the stream wait for the before event
-      detail::throw_on_cuda_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()), "callback_executor::execute_after: CUDA error after cudaStreamWaitEvent");
 
       // execute f
       execute(std::forward<F>(f));

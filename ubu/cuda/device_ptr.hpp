@@ -5,7 +5,7 @@
 #include "../detail/exception.hpp"
 #include "../memory/fancy_ptr.hpp"
 #include "detail/temporarily_with_current_device.hpp"
-#include "detail/throw_on_cuda_error.hpp"
+#include "detail/throw_on_error.hpp"
 #include "event.hpp"
 #include "kernel_executor.hpp"
 #include <cassert>
@@ -40,16 +40,16 @@ class device_memory_copier
     value_type* copy_n(const value_type* from, std::size_t count, value_type* to) const
     {
 #if defined(__CUDACC__)
-      if UBU_TARGET(detail::is_host())
+      if UBU_TARGET(ubu::detail::is_host())
       {
-        detail::temporarily_with_current_device(device_, [=]
+        ubu::detail::temporarily_with_current_device(device_, [=]
         {
-          detail::throw_on_cuda_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
+          detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
             "device_memory_copier: after cudaMemcpy"
           );
         });
       }
-      else if UBU_TARGET(detail::is_device())
+      else if UBU_TARGET(ubu::detail::is_device())
       {
         std::memcpy(to, from, sizeof(value_type) * count);
       }
@@ -59,9 +59,9 @@ class device_memory_copier
         assert(0);
       }
 #else
-      detail::temporarily_with_current_device(device_, [=]
+      ubu::detail::temporarily_with_current_device(device_, [=]
       {
-        detail::throw_on_cuda_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
+        detail::throw_on_error(cudaMemcpy(to, from, sizeof(value_type) * count, cudaMemcpyDefault),
           "device_memory_copier: after cudaMemcpy"
         );
       });
@@ -101,12 +101,12 @@ template<class T, class U>
 event copy_n_after(kernel_executor ex, event&& before, device_ptr<T> from, std::size_t count, device_ptr<U> to)
 {
   // make the stream wait for the before event
-  detail::throw_on_cuda_error(cudaStreamWaitEvent(ex.stream(), before.native_handle()),
+  detail::throw_on_error(cudaStreamWaitEvent(ex.stream(), before.native_handle()),
     "cuda::copy_n_after: after cudaStreamWaitEvent"
   );
 
   // enqueue a cudaMemcpyAsync
-  detail::throw_on_cuda_error(cudaMemcpyAsync(to.native_handle(), from.native_handle(), sizeof(U) * count, cudaMemcpyDeviceToDevice, ex.stream()),
+  detail::throw_on_error(cudaMemcpyAsync(to.native_handle(), from.native_handle(), sizeof(U) * count, cudaMemcpyDeviceToDevice, ex.stream()),
     "cuda::copy_n_after: after cudaMemcpyAsync"
   );
 
@@ -122,12 +122,12 @@ template<class T, class U>
 event copy_n_after(kernel_executor ex, const event& before, device_ptr<T> from, std::size_t count, device_ptr<U> to)
 {
   // make the stream wait for the before event
-  detail::throw_on_cuda_error(cudaStreamWaitEvent(ex.stream(), before.native_handle()),
+  detail::throw_on_error(cudaStreamWaitEvent(ex.stream(), before.native_handle()),
     "cuda::copy_n_after: after cudaStreamWaitEvent"
   );
 
   // enqueue a cudaMemcpyAsync
-  detail::throw_on_cuda_error(cudaMemcpyAsync(to.native_handle(), from.native_handle(), sizeof(U) * count, cudaMemcpyDeviceToDevice, ex.stream()),
+  detail::throw_on_error(cudaMemcpyAsync(to.native_handle(), from.native_handle(), sizeof(U) * count, cudaMemcpyDeviceToDevice, ex.stream()),
     "cuda::copy_n_after: after cudaMemcpyAsync"
   );
 

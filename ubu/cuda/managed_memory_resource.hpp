@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "detail/temporarily_with_current_device.hpp"
-#include "detail/throw_on_cuda_error.hpp"
+#include "detail/throw_on_error.hpp"
 #include <cuda_runtime_api.h>
 
 
@@ -26,11 +26,11 @@ class managed_memory_resource
 
     inline void* allocate(std::size_t num_bytes) const
     {
-      return detail::temporarily_with_current_device(device(), [=]
+      return ubu::detail::temporarily_with_current_device(device(), [=]
       {
         void* result = nullptr;
 
-        detail::throw_on_cuda_error(cudaMallocManaged(&result, num_bytes, cudaMemAttachGlobal), "cuda::managed_memory_resource::allocate: after cudaMallocManaged");
+        detail::throw_on_error(cudaMallocManaged(&result, num_bytes, cudaMemAttachGlobal), "cuda::managed_memory_resource::allocate: after cudaMallocManaged");
 
         return result;
       });
@@ -38,9 +38,9 @@ class managed_memory_resource
 
     inline void deallocate(void* ptr, std::size_t) const
     {
-      detail::temporarily_with_current_device(device(), [=]
+      ubu::detail::temporarily_with_current_device(device(), [=]
       {
-        detail::throw_on_cuda_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: after cudaFree");
+        detail::throw_on_error(cudaFree(ptr), "cuda::managed_memory_resource::deallocate: after cudaFree");
       });
     }
 

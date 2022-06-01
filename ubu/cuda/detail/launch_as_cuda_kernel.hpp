@@ -5,7 +5,7 @@
 #include "cuda_kernel_entry_point.hpp"
 #include "has_runtime.hpp"
 #include "temporarily_with_current_device.hpp"
-#include "throw_on_cuda_error.hpp"
+#include "throw_on_error.hpp"
 #include <concepts>
 #include <cstring>
 #include <type_traits>
@@ -43,7 +43,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
           void* ptr_to_arg[] = {reinterpret_cast<void*>(&f)};
 
           // launch the kernel
-          detail::throw_on_cuda_error(cudaLaunchKernel(ptr_to_kernel, grid_dim, block_dim, ptr_to_arg, dynamic_shared_memory_size, stream),
+          cuda::detail::throw_on_error(cudaLaunchKernel(ptr_to_kernel, grid_dim, block_dim, ptr_to_arg, dynamic_shared_memory_size, stream),
             "detail::launch_as_cuda_kernel: after cudaLaunchKernel"
           );
         }
@@ -54,7 +54,7 @@ void launch_as_cuda_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_sh
           std::memcpy(ptr_to_arg, &f, sizeof(F));
 
           // launch the kernel
-          detail::throw_on_cuda_error(cudaLaunchDevice(ptr_to_kernel, ptr_to_arg, grid_dim, block_dim, dynamic_shared_memory_size, stream),
+          cuda::detail::throw_on_error(cudaLaunchDevice(ptr_to_kernel, ptr_to_arg, grid_dim, block_dim, dynamic_shared_memory_size, stream),
             "detail::launch_as_cuda_kernel: after cudaLaunchDevice"
           );
         }

@@ -4,7 +4,7 @@
 
 #include "cuda_kernel_entry_point.hpp"
 #include "temporarily_with_current_device.hpp"
-#include "throw_on_cuda_error.hpp"
+#include "throw_on_error.hpp"
 #include <concepts>
 #include <cuda_runtime.h>
 #include <type_traits>
@@ -26,7 +26,7 @@ int max_potential_occupancy(int device, F, int num_threads_per_block, std::size_
     // point to the kernel
     const void* ptr_to_kernel = reinterpret_cast<void*>(cuda_kernel_entry_point<F>);
 
-    detail::throw_on_cuda_error(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&result, ptr_to_kernel, num_threads_per_block, dynamic_shared_memory_size),
+    cuda::detail::throw_on_error(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&result, ptr_to_kernel, num_threads_per_block, dynamic_shared_memory_size),
       "detail::max_potential_occupancy: after cudaOccupancyMaxActiveBlocksPerMultiprocessor"
     );
 
@@ -51,7 +51,7 @@ std::size_t max_dynamic_shared_memory_size(int device, F, int num_blocks_per_mul
     // point to the kernel
     const void* ptr_to_kernel = reinterpret_cast<void*>(cuda_kernel_entry_point<F>);
 
-    detail::throw_on_cuda_error(cudaOccupancyAvailableDynamicSMemPerBlock(&result, ptr_to_kernel, num_blocks_per_multiprocessor, num_threads_per_block),
+    cuda::detail::throw_on_error(cudaOccupancyAvailableDynamicSMemPerBlock(&result, ptr_to_kernel, num_blocks_per_multiprocessor, num_threads_per_block),
       "detail::max_dynamic_shared_memory_per_block: after cudaOccupancyAvailableDynamicSMemPerBlock"
     );
 

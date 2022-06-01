@@ -7,7 +7,7 @@
 #include "../detail/for_each_arg.hpp"
 #include "detail/has_runtime.hpp"
 #include "detail/temporarily_with_current_device.hpp"
-#include "detail/throw_on_cuda_error.hpp"
+#include "detail/throw_on_error.hpp"
 #include <cuda_runtime_api.h>
 
 
@@ -38,13 +38,13 @@ class event
       {
         if(origin_target_ == current_target())
         {
-          if UBU_TARGET(detail::has_runtime())
+          if UBU_TARGET(ubu::detail::has_runtime())
           {
-            detail::throw_on_cuda_error(cudaEventDestroy(native_handle()), "cuda::event::~event: after cudaEventDestroy");
+            detail::throw_on_error(cudaEventDestroy(native_handle()), "cuda::event::~event: after cudaEventDestroy");
           }
           else
           {
-            detail::terminate_with_message("cuda::event::~event: cudaEventDestroy is unavailable.");
+            ubu::detail::terminate_with_message("cuda::event::~event: cudaEventDestroy is unavailable.");
           }
         }
         else
@@ -67,13 +67,13 @@ class event
 
     void record_on(cudaStream_t s)
     {
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
-        detail::throw_on_cuda_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: after cudaEventRecord");
+        detail::throw_on_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: after cudaEventRecord");
       }
       else
       {
-        detail::throw_runtime_error("cuda::event::record_on: cudaEventRecord is unavailable.");
+        ubu::detail::throw_runtime_error("cuda::event::record_on: cudaEventRecord is unavailable.");
       }
     }
 
@@ -81,20 +81,20 @@ class event
     {
       bool result = false;
 
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
         cudaError_t status = cudaEventQuery(native_handle());
 
         if(status != cudaErrorNotReady and status != cudaSuccess)
         {
-          detail::throw_on_cuda_error(status, "cuda::event::is_ready: after cudaEventQuery");
+          detail::throw_on_error(status, "cuda::event::is_ready: after cudaEventQuery");
         }
 
         result = (status == cudaSuccess);
       }
       else
       {
-        detail::throw_runtime_error("cuda::event::record_on: cudaEventRecord is unavailable.");
+        ubu::detail::throw_runtime_error("cuda::event::record_on: cudaEventRecord is unavailable.");
       }
 
       return result;
@@ -102,20 +102,20 @@ class event
 
     inline void wait() const
     {
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
-        if UBU_TARGET(detail::is_device())
+        if UBU_TARGET(ubu::detail::is_device())
         {
-          detail::throw_on_cuda_error(cudaDeviceSynchronize(), "cuda::event::wait: after cudaDeviceSynchronize");
+          detail::throw_on_error(cudaDeviceSynchronize(), "cuda::event::wait: after cudaDeviceSynchronize");
         }
         else
         {
-          detail::throw_on_cuda_error(cudaEventSynchronize(native_handle()), "cuda::event::wait: after cudaEventSynchronize");
+          detail::throw_on_error(cudaEventSynchronize(native_handle()), "cuda::event::wait: after cudaEventSynchronize");
         }
       }
       else
       {
-        detail::throw_runtime_error("cuda::event::wait: Unsupported operation.");
+        ubu::detail::throw_runtime_error("cuda::event::wait: Unsupported operation.");
       }
     }
 
@@ -143,7 +143,7 @@ class event
     {
       from result{from::host};
 
-      if UBU_TARGET(detail::is_device())
+      if UBU_TARGET(ubu::detail::is_device())
       {
         result = from::device;
       }
@@ -155,16 +155,16 @@ class event
     {
       cudaEvent_t result{};
 
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
-        detail::temporarily_with_current_device(device, [&]
+        ubu::detail::temporarily_with_current_device(device, [&]
         {
-          detail::throw_on_cuda_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: after cudaEventCreateWithFlags");
+          detail::throw_on_error(cudaEventCreateWithFlags(&result, cudaEventDisableTiming), "cuda::event::make_cuda_event: after cudaEventCreateWithFlags");
         });
       }
       else
       {
-        detail::throw_runtime_error("cuda::event::make_cuda_event: cudaEventCreateWithFlags is unavailable.");
+        ubu::detail::throw_runtime_error("cuda::event::make_cuda_event: cudaEventCreateWithFlags is unavailable.");
       }
 
       return result;
@@ -180,30 +180,30 @@ class event
     event(int device, const event& e, const Es&... es)
       : event{device}
     {
-      if UBU_TARGET(detail::has_runtime())
+      if UBU_TARGET(ubu::detail::has_runtime())
       {
-        detail::temporarily_with_current_device(device, [&]
+        ubu::detail::temporarily_with_current_device(device, [&]
         {
           // create a cudaStream_t on which to record our event
           cudaStream_t s{};
-          detail::throw_on_cuda_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: after cudaStreamCreateWithFlags");
+          detail::throw_on_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: after cudaStreamCreateWithFlags");
 
           // make the new stream wait on all the event parameters
-          detail::for_each_arg([s](const event& e)
+          ubu::detail::for_each_arg([s](const event& e)
           {
-            detail::throw_on_cuda_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: after cudaStreamWaitEvent");
+            detail::throw_on_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: after cudaStreamWaitEvent");
           }, e, es...);
 
           // record our event on the stream
           record_on(s);
 
           // immediately destroy the stream
-          detail::throw_on_cuda_error(cudaStreamDestroy(s), "cuda::event ctor: after cudaStreamDestroy");
+          detail::throw_on_error(cudaStreamDestroy(s), "cuda::event ctor: after cudaStreamDestroy");
         });
       }
       else
       {
-        detail::throw_runtime_error("cuda::event ctor: cudaStreamCreateWithFlags is unavailable.");
+        ubu::detail::throw_runtime_error("cuda::event ctor: cudaStreamCreateWithFlags is unavailable.");
       }
     }
 

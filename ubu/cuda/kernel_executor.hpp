@@ -6,7 +6,7 @@
 #include "../detail/reflection.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cuda_kernel.hpp"
-#include "detail/throw_on_cuda_error.hpp"
+#include "detail/throw_on_error.hpp"
 #include "event.hpp"
 #include "shmalloc.hpp"
 #include "thread_id.hpp"
@@ -102,18 +102,18 @@ class kernel_executor
     inline event_type bulk_execute_after(const event_type& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
-      detail::throw_on_cuda_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
 
       // convert the shape to dim3
       dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
       dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
 
       // create the function that will be launched as a kernel
-      detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
+      ubu::detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
 
       // compute dynamic_shared_memory_size
       int dynamic_shared_memory_size = (on_chip_heap_size_ == default_on_chip_heap_size) ?
-        detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
+        ubu::detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
         on_chip_heap_size_
       ;
 
@@ -121,7 +121,7 @@ class kernel_executor
       kernel.on_chip_heap_size = dynamic_shared_memory_size;
 
       // launch the kernel
-      detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
+      ubu::detail::launch_as_cuda_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
 
       // return a new event recorded on our stream
       return {device_, stream_};

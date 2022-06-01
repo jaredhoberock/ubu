@@ -447,19 +447,19 @@ namespace cuda
 
 __device__ inline void init_on_chip_malloc(size_t max_data_segment_size)
 {
-  detail::s_on_chip_allocator.construct(max_data_segment_size);
+  ubu::detail::s_on_chip_allocator.construct(max_data_segment_size);
 }
 
 
 __device__ inline void *on_chip_malloc(size_t size)
 {
-  return detail::s_on_chip_allocator.get().allocate(size);
+  return ubu::detail::s_on_chip_allocator.get().allocate(size);
 }
 
 
 __device__ inline void on_chip_free(void *ptr)
 {
-  return detail::s_on_chip_allocator.get().deallocate(ptr);
+  return ubu::detail::s_on_chip_allocator.get().deallocate(ptr);
 }
 
 
@@ -522,7 +522,7 @@ namespace cuda
 
 __device__ inline void shfree(void *ptr)
 {
-  if(detail::is_on_chip(ptr))
+  if(ubu::detail::is_on_chip(ptr))
   {
     on_chip_free(ptr);
   }

@@ -4,7 +4,7 @@
 
 #include "../../detail/exception/throw_runtime_error.hpp"
 #include "has_runtime.hpp"
-#include "throw_on_cuda_error.hpp"
+#include "throw_on_error.hpp"
 #include <concepts>
 #include <cuda_runtime_api.h>
 #include <functional>
@@ -28,11 +28,11 @@ struct current_cuda_device_in_this_scope
     {
       if UBU_TARGET(has_runtime())
       {
-        detail::throw_on_cuda_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
+        cuda::detail::throw_on_error(cudaGetDevice(&old_device_), "detail::current_cuda_device_in_this_scope ctor: CUDA error after cudaGetDevice");
       }
       else
       {
-        detail::throw_runtime_error("detail::current_cuda_device_in_this_scope ctor: cudaGetDevice is unavailable.");
+        ubu::detail::throw_runtime_error("detail::current_cuda_device_in_this_scope ctor: cudaGetDevice is unavailable.");
       }
     }
 
@@ -40,11 +40,11 @@ struct current_cuda_device_in_this_scope
     {
       if UBU_TARGET(is_device())
       {
-        detail::terminate_with_message("detail::current_cuda_device_in_this_scope ctor:: Requested device cannot differ from current device in __device__ code.");
+        ubu::detail::terminate_with_message("detail::current_cuda_device_in_this_scope ctor:: Requested device cannot differ from current device in __device__ code.");
       }
       else
       {
-        detail::throw_on_cuda_error(cudaSetDevice(new_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
+        cuda::detail::throw_on_error(cudaSetDevice(new_device_), "detail::current_cuda_device_in_this_scope ctor: after cudaSetDevice");
       }
     }
   }
@@ -55,7 +55,7 @@ struct current_cuda_device_in_this_scope
     {
       if UBU_TARGET(is_host())
       {
-        detail::throw_on_cuda_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope dtor: after cudaSetDevice");
+        cuda::detail::throw_on_error(cudaSetDevice(old_device_), "detail::current_cuda_device_in_this_scope dtor: after cudaSetDevice");
       }
     }
   }
