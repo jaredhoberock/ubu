@@ -14,14 +14,14 @@
 #include <concepts>
 #include <functional>
 
-namespace ubu
+namespace ubu::cuda
 {
 
 namespace detail
 {
 
 
-template<std::invocable<cuda::thread_id> F>
+template<std::invocable<thread_id> F>
   requires std::is_trivially_copyable_v<F>
 struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 {
@@ -31,17 +31,17 @@ struct init_shmalloc_and_invoke_with_builtin_cuda_indices
   void operator()() const
   {
 #if defined(__CUDACC__)
-    if UBU_TARGET(is_device())
+    if UBU_TARGET(ubu::detail::is_device())
     {
       // initialize shmalloc
       if(threadIdx.x == 0 and threadIdx.y == 0 and threadIdx.z == 0)
       {
-        cuda::init_on_chip_malloc(on_chip_heap_size);
+        init_on_chip_malloc(on_chip_heap_size);
       }
       __syncthreads();
 
       // create a thread_id from the built-in variables
-      cuda::thread_id idx{{blockIdx.x, blockIdx.y, blockIdx.z}, {threadIdx.x, threadIdx.y, threadIdx.z}};
+      thread_id idx{{blockIdx.x, blockIdx.y, blockIdx.z}, {threadIdx.x, threadIdx.y, threadIdx.z}};
 
       // invoke the function with the id
       std::invoke(f, idx);
@@ -52,10 +52,6 @@ struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 
 
 } // end detail
-
-
-namespace cuda
-{
 
 
 class kernel_executor
@@ -109,7 +105,7 @@ class kernel_executor
       dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
 
       // create the function that will be launched as a kernel
-      ubu::detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
+      detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
 
       // compute dynamic_shared_memory_size
       int dynamic_shared_memory_size = (on_chip_heap_size_ == default_on_chip_heap_size) ?
@@ -210,9 +206,7 @@ class kernel_executor
 };
 
 
-} // end cuda
-
-} // end ubu
+} // end ubu::cuda
 
 
 #include "../detail/epilogue.hpp"
