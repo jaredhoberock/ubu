@@ -6,6 +6,7 @@
 #include "cuda/device_memory_resource.hpp"
 #include "cuda/device_ptr.hpp"
 #include "cuda/event.hpp"
+#include "cuda/graph_allocator.hpp"
 #include "cuda/graph_event.hpp"
 #include "cuda/graph_executor.hpp"
 #include "cuda/kernel_executor.hpp"
