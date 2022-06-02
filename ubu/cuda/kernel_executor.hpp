@@ -78,7 +78,7 @@ class kernel_executor
 
     kernel_executor(const kernel_executor&) = default;
 
-    constexpr coordinate_type bulk_execution_grid(std::size_t n) const
+    constexpr static coordinate_type bulk_execution_grid(std::size_t n)
     {
       int block_size = 128;
 
