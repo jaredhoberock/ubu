@@ -16,6 +16,9 @@ namespace detail
 {
 
 
+// XXX this should have a path that attempts a rebind
+
+
 template<class A, class E, class P, class N>
 concept has_delete_after_member_function = requires(A alloc, E before, P ptr, N n)
 {
@@ -54,9 +57,8 @@ struct dispatch_delete_after
   //   1. calls destroy_after
   //   2. calls deallocate_after
   //
-  //   XXX P needs to be allocator_traits<A>::pointer
   //   XXX N should be allocator_traits<A>::size_type
-  template<asynchronous_allocator A, event E, class P, class N>
+  template<pointer_like P, asynchronous_allocator_of<pointer_pointee_t<P>> A, event E, class N>
     requires (!has_delete_after_member_function<A&&, E&&, P, N> and
               !has_delete_after_free_function<A&&, E&&, P, N> and
               executor_associate<A&&>)

@@ -27,12 +27,12 @@ namespace ubu
 {
 
 
-template<class T, asynchronous_allocator A, event E = allocator_event_t<A>>
+template<class T, asynchronous_allocator_of<T> A, event E = allocator_event_t<A>>
 class intrusive_future
 {
   public:
     using value_type = T;
-    using pointer = allocator_pointer_t<rebind_allocator_result_t<T,A>>;
+    using pointer = allocator_pointer_t<A,T>;
     using event_type = E;
     using allocator_type = A;
 

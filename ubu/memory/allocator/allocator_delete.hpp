@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../pointer.hpp"
 #include "allocator.hpp"
 #include "deallocate.hpp"
 #include "destroy.hpp"
@@ -12,8 +13,8 @@
 namespace ubu
 {
 
-template<allocator A>
-constexpr void allocator_delete(A& a, allocator_pointer_t<A> ptr)
+template<pointer_like P, allocator_of<pointer_pointee_t<P>> A>
+constexpr void allocator_delete(A& a, P ptr)
 {
   destroy(a, ptr);
   deallocate(a, ptr, 1);

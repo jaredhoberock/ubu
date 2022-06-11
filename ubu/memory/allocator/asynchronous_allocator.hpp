@@ -15,23 +15,26 @@
 namespace ubu
 {
 
-template<class A>
-concept asynchronous_allocator =
-  allocator<A>
+template<class A, class T>
+concept asynchronous_allocator_of =
+  allocator_of<A,T>
 
   and requires(A a)
   {
     {make_independent_event(a)} -> event;
   }
 
-  and requires(A a, const make_independent_event_result_t<A>& e, allocator_pointer_t<A> ptr, std::size_t n)
+  and requires(A a, const make_independent_event_result_t<A>& e, allocator_pointer_t<A,T> ptr, std::size_t n)
   {
     // XXX this needs to check that the result is a pair<event,pointer>
-    ubu::allocate_after<allocator_value_t<A>>(a, e, n);
+    ubu::allocate_after<T>(a, e, n);
   
     {ubu::deallocate_after(a, e, ptr, n)} -> event;
   }
 ;
+
+template<class A>
+concept asynchronous_allocator = allocator<A> and asynchronous_allocator_of<A,int>;
 
 } // end ubu
 

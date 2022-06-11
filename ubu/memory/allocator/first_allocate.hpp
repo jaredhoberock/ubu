@@ -17,6 +17,22 @@ namespace detail
 
 
 template<class T, class A, class N>
+concept has_first_allocate_member_function_template = requires(A alloc, N n)
+{
+  // XXX this should check that the result is a pair<event,pointer>
+  alloc.template first_allocate<T>(n);
+};
+
+
+template<class T, class A, class N>
+concept has_first_allocate_free_function_template = requires(A alloc, N n)
+{
+  // XXX this should check that the result is a pair<event,pointer>
+  first_allocate<T>(alloc, n);
+};
+
+
+template<class T, class A, class N>
 concept has_first_allocate_member_function = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
@@ -37,25 +53,51 @@ concept has_first_allocate_free_function = requires(A alloc, N n)
 
 
 template<class T, class A, class N>
-concept has_first_allocate_customization = has_first_allocate_member_function<T,A,N> or has_first_allocate_free_function<T,A,N>;
+concept has_first_allocate_customization =
+  has_first_allocate_member_function_template<T,A,N>
+  or has_first_allocate_free_function_template<T,A,N>
+  or has_first_allocate_member_function<T,A,N>
+  or has_first_allocate_free_function<T,A,N>
+;
 
 
 // this is the type of first_allocate
 template<class T>
 struct dispatch_first_allocate
 {
-  // this dispatch path calls the member function
+  // this path calls the member function template
   template<class Alloc, class N>
-    requires has_first_allocate_member_function<T, Alloc&&, N&&>
+    requires has_first_allocate_member_function_template<T, Alloc&&, N&&>
+  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  {
+    return std::forward<Alloc>(alloc).template first_allocate<T>(std::forward<N>(n));
+  }
+  
+  // this path calls the free function template
+  template<class Alloc, class N>
+    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
+              and has_first_allocate_free_function_template<T, Alloc&&, N&&>)
+  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  {
+    return first_allocate<T>(std::forward<Alloc>(alloc), std::forward<N>(n));
+  }
+
+  // this path calls the member function
+  template<class Alloc, class N>
+    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
+              and has_first_allocate_member_function<T, Alloc&&, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const
   {
     return std::forward<Alloc>(alloc).first_allocate(std::forward<N>(n));
   }
 
-  // this dispatch path calls the free function
+  // this path calls the free function
   template<class Alloc, class N>
-    requires (!has_first_allocate_member_function<T, Alloc&&, N&&> and
-               has_first_allocate_free_function<T, Alloc&&, N&&>)
+    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_member_function<T, Alloc&&, N&&>
+              and has_first_allocate_free_function<T, Alloc&&, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const
   {
     return first_allocate(std::forward<Alloc>(alloc), std::forward<N>(n));
@@ -63,9 +105,11 @@ struct dispatch_first_allocate
 
   // this dispatch path tries to rebind and then call first_allocate again
   template<class Alloc, class N>
-    requires (!has_first_allocate_member_function<T, Alloc&&, N&&> and
-              !has_first_allocate_free_function<T, Alloc&&, N&&> and
-              has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
+    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_member_function<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function<T, Alloc&&, N&&>
+              and has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const
   {
     auto rebound_alloc = rebind_allocator<T>(std::forward<Alloc>(alloc));
@@ -74,9 +118,11 @@ struct dispatch_first_allocate
 
   // this dispatch path calls allocate_after
   template<class Alloc, class N>
-    requires (!has_first_allocate_member_function<T, Alloc&&, N&&> and
-              !has_first_allocate_free_function<T, Alloc&&, N&&> and
-              !has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
+    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
+              and !has_first_allocate_member_function<T, Alloc&&, N&&>
+              and !has_first_allocate_free_function<T, Alloc&&, N&&>
+              and !has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const ->
     decltype(allocate_after<T>(std::forward<Alloc>(alloc), make_independent_event(std::forward<Alloc>(alloc)), std::forward<N>(n)))
   {

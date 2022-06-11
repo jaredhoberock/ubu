@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
+#include "../pointer.hpp"
 #include "rebind_allocator.hpp"
-#include <memory>
 #include <type_traits>
 #include <utility>
 
@@ -50,13 +50,13 @@ struct dispatch_deallocate_after
   }
 
   // this dispatch path attempts to first rebind_allocator and then recurse
-  template<class Alloc, class Event, class P, class N>
-    requires (!has_deallocate_after_member_function<Alloc&&, Event&&, P&&, N&&> and
-              !has_deallocate_after_free_function<Alloc&&, Event&&, P&&, N&&> and
-              has_rebind_allocator<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Alloc&&>)
-  constexpr decltype(auto) operator()(Alloc&& alloc, Event&& before, P&& ptr, N&& n) const
+  template<class Alloc, class Event, pointer_like P, class N>
+    requires (!has_deallocate_after_member_function<Alloc&&, Event&&, P, N&&> and
+              !has_deallocate_after_free_function<Alloc&&, Event&&, P, N&&> and
+              has_rebind_allocator<pointer_pointee_t<P>,Alloc&&>)
+  constexpr decltype(auto) operator()(Alloc&& alloc, Event&& before, P ptr, N&& n) const
   {
-    auto rebound_alloc = rebind_allocator<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type>(std::forward<Alloc>(alloc));
+    auto rebound_alloc = rebind_allocator<pointer_pointee_t<P>>(std::forward<Alloc>(alloc));
     return (*this)(rebound_alloc, std::forward<Event>(before), std::forward<P>(ptr), std::forward<N>(n));
   }
 };

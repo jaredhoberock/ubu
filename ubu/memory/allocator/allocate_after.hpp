@@ -15,6 +15,22 @@ namespace detail
 
 
 template<class T, class A, class E, class N>
+concept has_allocate_after_member_function_template = requires(A alloc, E before, N n)
+{
+  // XXX this should check that the result is a pair<E,pointer>
+  alloc.template allocate_after<T>(before, n);
+};
+
+
+template<class T, class A, class E , class N>
+concept has_allocate_after_free_function_template = requires(A alloc, E before, N n)
+{
+  // XXX this should check that the result is a pair<E,pointer>
+  allocate_after<T>(alloc, before, n);
+};
+
+
+template<class T, class A, class E, class N>
 concept has_allocate_after_member_function = requires(A alloc, E before, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
@@ -38,9 +54,28 @@ concept has_allocate_after_free_function = requires(A alloc, E before, N n)
 template<class T>
 struct dispatch_allocate_after
 {
+  // this dispatch path calls a member function template
+  template<class Alloc, class Event, class N>
+    requires has_allocate_after_member_function_template<T, Alloc&&, Event&&, N&&>
+  constexpr auto operator()(Alloc&& alloc, Event&& before, N&& n) const
+  {
+    return std::forward<Alloc>(alloc).template allocate_after<T>(std::forward<Event>(before), std::forward<N>(n));
+  }
+
+  // this dispatch path calls a free function template
+  template<class Alloc, class Event, class N>
+    requires (!has_allocate_after_member_function_template<T, Alloc&&, Event&&, N&&>
+              and has_allocate_after_free_function_template<T, Alloc&&, Event&&, N&&>)
+  constexpr auto operator()(Alloc&& alloc, Event&& before, N&& n) const
+  {
+    return allocate_after<T>(std::forward<Alloc>(alloc), std::forward<Event>(before), std::forward<N>(n));
+  }
+
   // this dispatch path calls the member function
   template<class Alloc, class Event, class N>
-    requires has_allocate_after_member_function<T, Alloc&&, Event&&, N&&>
+    requires (!has_allocate_after_member_function_template<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_free_function_template<T, Alloc&&, Event&&, N&&>
+              and has_allocate_after_member_function<T, Alloc&&, Event&&, N&&>)
   constexpr auto operator()(Alloc&& alloc, Event&& before, N&& n) const
   {
     return std::forward<Alloc>(alloc).allocate_after(std::forward<Event>(before), std::forward<N>(n));
@@ -48,8 +83,10 @@ struct dispatch_allocate_after
 
   // this dispatch path calls the free function
   template<class Alloc, class Event, class N>
-    requires (!has_allocate_after_member_function<T, Alloc&&, Event&&, N&&> and
-               has_allocate_after_free_function<T, Alloc&&, Event&&, N&&>)
+    requires (!has_allocate_after_member_function_template<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_free_function_template<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_member_function<T, Alloc&&, Event&&, N&&>
+              and has_allocate_after_free_function<T, Alloc&&, Event&&, N&&>)
   constexpr auto operator()(Alloc&& alloc, Event&& before, N&& n) const
   {
     return allocate_after(std::forward<Alloc>(alloc), std::forward<Event>(before), std::forward<N>(n));
@@ -57,9 +94,11 @@ struct dispatch_allocate_after
 
   // this dispatch path calls the free function
   template<class Alloc, class Event, class N>
-    requires (!has_allocate_after_member_function<T, Alloc&&, Event&&, N&&> and
-              !has_allocate_after_free_function<T, Alloc&&, Event&&, N&&> and
-              has_rebind_allocator<T, Alloc&&>)
+    requires (!has_allocate_after_member_function_template<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_free_function_template<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_member_function<T, Alloc&&, Event&&, N&&>
+              and !has_allocate_after_free_function<T, Alloc&&, Event&&, N&&>
+              and has_rebind_allocator<T, Alloc&&>)
   constexpr decltype(auto) operator()(Alloc&& alloc, Event&& before, N&& n) const
   {
     auto rebound_alloc = rebind_allocator<T>(std::forward<Alloc>(alloc));

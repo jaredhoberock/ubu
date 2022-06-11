@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../pointer.hpp"
 #include "rebind_allocator.hpp"
 #include <memory>
 #include <type_traits>
@@ -33,12 +34,12 @@ struct dispatch_deallocate
   }
 
   // this path attempts to first rebind_allocator and then recurse
-  template<class Alloc, class P, class N>
-    requires (!has_allocator_traits_deallocate<Alloc&&,P&&,N&&> and
-              has_rebind_allocator<typename std::pointer_traits<std::remove_cvref_t<P>>::element_type,Alloc&&>)
-  constexpr decltype(auto) operator()(Alloc&& alloc, P&& p, N&& n) const
+  template<class Alloc, pointer_like P, class N>
+    requires (!has_allocator_traits_deallocate<Alloc&&,P,N&&> and
+              has_rebind_allocator<pointer_pointee_t<P>,Alloc&&>)
+  constexpr decltype(auto) operator()(Alloc&& alloc, P p, N&& n) const
   {
-    auto rebound_alloc = rebind_allocator<typename std::pointer_traits<P>::element_type>(std::forward<Alloc>(alloc));
+    auto rebound_alloc = rebind_allocator<pointer_pointee_t<P>>(std::forward<Alloc>(alloc));
     return (*this)(rebound_alloc, std::forward<P>(p), std::forward<N>(n));
   }
 };

@@ -6,8 +6,8 @@
 #include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
 #include "../../execution/executor/executor_associate.hpp"
+#include "../pointer.hpp"
 #include "destroy.hpp"
-#include "traits/allocator_pointer_t.hpp"
 #include "traits/allocator_size_t.hpp"
 #include "traits/allocator_value_t.hpp"
 #include <utility>
@@ -55,13 +55,13 @@ struct dispatch_destroy_after
   }
 
   // path for objects with destructors
-  template<allocator A, event E>
-    requires (!has_destroy_after_member_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
-              !has_destroy_after_free_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+  template<pointer_like P, allocator_of<pointer_pointee_t<P>> A, event E>
+    requires (!has_destroy_after_member_function<A&&, E&&, P&&, allocator_size_t<A>> and
+              !has_destroy_after_free_function<A&&, E&&, P&&, allocator_size_t<A>> and
               executor_associate<A&&> and
-              !std::is_trivially_destructible_v<allocator_value_t<A>>
+              !std::is_trivially_destructible_v<pointer_pointee_t<P>>
              )
-  constexpr auto operator()(A&& alloc, E&& before, allocator_pointer_t<A> ptr, allocator_size_t<A> n) const
+  constexpr auto operator()(A&& alloc, E&& before, P ptr, allocator_size_t<A> n) const
   {
     // get an executor
     auto ex = associated_executor(std::forward<A>(alloc));
@@ -78,13 +78,13 @@ struct dispatch_destroy_after
   }
 
   // path for objects without destructors
-  template<allocator A, event E>
-    requires (!has_destroy_after_member_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
-              !has_destroy_after_free_function<A&&, E&&, allocator_pointer_t<A>, allocator_size_t<A>> and
+  template<pointer_like P, allocator_of<pointer_pointee_t<P>> A, event E>
+    requires (!has_destroy_after_member_function<A&&, E&&, P&&, allocator_size_t<A>> and
+              !has_destroy_after_free_function<A&&, E&&, P&&, allocator_size_t<A>> and
               executor_associate<A&&> and
-              std::is_trivially_destructible_v<allocator_value_t<A>>
+              std::is_trivially_destructible_v<pointer_pointee_t<P>>
              )
-  constexpr auto operator()(A&& alloc, E&& before, allocator_pointer_t<A> ptr, allocator_size_t<A> n) const
+  constexpr auto operator()(A&& alloc, E&& before, P ptr, allocator_size_t<A> n) const
   {
     // get an executor
     auto ex = associated_executor(std::forward<A>(alloc));

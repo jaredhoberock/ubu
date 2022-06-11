@@ -10,19 +10,24 @@
 namespace ubu
 {
 
-template<class A>
-concept allocator = 
-  std::equality_comparable<A> and
-  std::is_nothrow_copy_constructible_v<A> and
-  std::is_nothrow_destructible_v<A> and
-  requires { typename std::decay_t<A>::value_type; } and
 
-  requires(std::decay_t<A>& a, typename std::allocator_traits<std::decay_t<A>>::size_type n, typename std::allocator_traits<std::decay_t<A>>::pointer p)
+template<class A, class T>
+concept allocator_of =
+  std::equality_comparable<A>
+  and std::is_nothrow_destructible_v<A>
+  and std::is_nothrow_destructible_v<A>
+  and requires { typename std::decay_t<A>::value_type; }
+
+  and requires(std::decay_t<A>& a, typename std::allocator_traits<std::decay_t<A>>::size_type n)
   {
-    ubu::allocate<int>(a, n);
-    ubu::deallocate(a, p, n);
+    ubu::deallocate(a, ubu::allocate<T>(a, n), n);
   }
 ;
+
+
+template<class A>
+concept allocator = allocator_of<A, int>;
+
 
 } // end ubu
 

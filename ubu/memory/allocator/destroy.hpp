@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../destroy_at.hpp"
-
+#include "../pointer.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -49,12 +49,10 @@ struct dispatch_destroy
   }
 
   // default path for pointers calls destroy_at
-  template<class A, class P,
-           class T = typename std::pointer_traits<std::remove_cvref_t<P>>::element_type
-          >
+  template<class A, pointer_like P>
     requires (!has_destroy_member_function<A&&, P&&> and
               !has_destroy_free_function<A&&, P&&> and
-              !std::is_void_v<T>)
+              !std::is_void_v<pointer_pointee_t<P>>)
   constexpr void operator()(A&&, P&& ptr) const
   {
     destroy_at(std::forward<P>(ptr));
