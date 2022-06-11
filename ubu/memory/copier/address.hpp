@@ -16,19 +16,19 @@ namespace detail
 
 
 template<class T>
-struct address_element
+struct address_addressee
 {
-  using type = typename T::element_type;
+  using type = typename T::addressee_type;
 };
 
 template<class T>
-struct address_element<T*>
+struct address_addressee<T*>
 {
   using type = T;
 };
 
 template<class T>
-using address_element_t = typename address_element<T>::type;
+using address_addressee_t = typename address_addressee<T>::type;
 
 
 } // end detail
@@ -41,16 +41,20 @@ concept address =
 
   and requires
   {
-    typename detail::address_element_t<std::remove_cvref_t<A>>;
+    typename detail::address_addressee_t<std::remove_cvref_t<A>>;
     make_null_address<A>;
   }
 ;
 
 
+template<class A, class T>
+concept address_for = address<A> and std::same_as<detail::address_addressee_t<A>, T>;
+
+
 template<class A>
 concept typed_address =
   address<A> 
-  and !std::is_void_v<detail::address_element_t<std::remove_cvref_t<A>>>
+  and !std::is_void_v<detail::address_addressee_t<std::remove_cvref_t<A>>>
   and requires(A a, A b, std::ptrdiff_t n)
   {
     advance_address(a, n);

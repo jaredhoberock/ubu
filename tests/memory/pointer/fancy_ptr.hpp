@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <ubu/memory/fancy_ptr.hpp>
+#include <ubu/memory/pointer/fancy_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>

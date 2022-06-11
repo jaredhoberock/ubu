@@ -22,7 +22,7 @@ concept copier_between =
   and address<From>
   and address<To>
 
-  // a copier must copy elements from From to To
+  // a copier must copy values from From to To
   and requires(C c, From from, std::size_t n, To to)
   {
     ubu::copy_n(c, from, n, to);
@@ -35,11 +35,8 @@ concept copier_of =
   // T shouldn't be a reference
   !std::is_reference_v<T>
 
-  // a copier must be able to instantiate an address for Ts
-  and requires
-  {
-    typename std::remove_cvref_t<C>::template address<T>;
-  }
+  // a copier must be able to provide an address for Ts
+  and address_for<typename std::remove_cvref_t<C>::template address<T>, T>
 
   // if T is not void, then a copier needs to be able to copy Ts
   and (std::is_void_v<T> or (

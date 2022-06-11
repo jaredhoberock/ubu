@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../memory/fancy_ptr.hpp"
+#include "../memory/pointer/fancy_ptr.hpp"
 #include "../memory/plain_old_data.hpp"
 #include "detail/throw_on_cl_error.hpp"
 #include <stdexcept>
@@ -24,7 +24,7 @@ struct address
 
   auto operator<=>(const address&) const = default;
   
-  using element_type = T;
+  using addressee_type = T;
   
   inline static address make_null_address()
   {

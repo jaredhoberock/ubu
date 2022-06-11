@@ -5,7 +5,7 @@
 #include "../event/event.hpp"
 #include "../execution/executor.hpp"
 #include "../memory/allocator.hpp"
-#include "../memory/construct_at.hpp"
+#include "../memory/pointer/construct_at.hpp"
 #include "intrusive_future.hpp"
 #include <concepts>
 #include <utility>

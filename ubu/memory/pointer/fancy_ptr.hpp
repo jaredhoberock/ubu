@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "copier.hpp"
+#include "../copier.hpp"
 #include <concepts>
 #include <iterator>
 #include <type_traits>
@@ -28,9 +28,7 @@ class fancy_ref : private C
     using super_t = C;
     using address_type = copier_address_t<C, T>;
 
-    static_assert(std::same_as<T, address_element_t<address_type>>);
-    using element_type = address_element_t<address_type>;
-
+    using element_type = T;
     using value_type = std::remove_cv_t<element_type>;
 
   public:
@@ -129,10 +127,8 @@ class fancy_ptr : private C
     using super_t = C;
 
   public:
-    using address_type = copier_address_t<C, T>;
-    static_assert(std::same_as<T, address_element_t<address_type>>);
-
     using element_type = T;
+    using address_type = copier_address_t<C, T>;
 
     // iterator traits
     using difference_type = address_difference_result_t<address_type>;
@@ -412,5 +408,5 @@ struct iterator_traits<ubu::fancy_ptr<T,C>>
 
 } // end std
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

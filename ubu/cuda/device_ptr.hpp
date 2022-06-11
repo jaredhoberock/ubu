@@ -3,8 +3,8 @@
 #include "../detail/prologue.hpp"
 
 #include "../detail/exception.hpp"
-#include "../memory/fancy_ptr.hpp"
 #include "../memory/plain_old_data.hpp"
+#include "../memory/pointer/fancy_ptr.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
 #include <cassert>
