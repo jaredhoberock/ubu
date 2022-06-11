@@ -11,7 +11,6 @@
 #include "../memory/allocator/asynchronous_allocator.hpp"
 #include "../memory/allocator/finally_delete_after.hpp"
 #include "../memory/allocator/first_allocate.hpp"
-#include "../memory/allocator/rebind_allocator.hpp"
 #include "../memory/allocator/traits.hpp"
 #include "../memory/construct_at.hpp"
 #include <cassert>
@@ -143,20 +142,18 @@ class intrusive_future
     }
 
 
-    template<executor Ex, asynchronous_allocator OtherA, event Ev, class... Args, class... Ds, std::invocable<value_type&&,Args&&...> F,
-             class R = std::invoke_result_t<F,value_type&&,Args&&...>
+    template<executor Ex, event Ev, class... Args, class... Ds, std::invocable<value_type&&,Args&&...> F,
+             class R = std::invoke_result_t<F,value_type&&,Args&&...>,
+             asynchronous_allocator_of<R> OtherA
             >
-    intrusive_future<R, rebind_allocator_result_t<R,OtherA>>
+    intrusive_future<R, OtherA>
       then_after(const Ex& ex, const OtherA& alloc, Ev&& before, F&& f, intrusive_future<Args,Ds>&&... future_args) &&
     {
       // XXX we can't simply call invoke_after because it #includes this header file
       //return invoke_after(ex, alloc, std::forward<Ev>(before), std::forward<F>(f), std::move(*this), std::move(future_args)...);
-      
-      // rebind the allocator to the type of the result
-      auto rebound_alloc = rebind_allocator<R>(alloc);
 
       // allocate storage for the result after before is ready
-      auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(rebound_alloc, 1);
+      auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
 
       // create an event dependent on before, the allocation, and future_args
       auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), this->ready(), future_args.ready()...);
@@ -177,7 +174,7 @@ class intrusive_future
         }, std::move(*this), std::move(future_args)...);
 
         // return a new future
-        return {std::move(result_ready), ptr_to_result, std::move(rebound_alloc)};
+        return {std::move(result_ready), ptr_to_result, alloc};
       }
       catch(...)
       {
@@ -186,14 +183,15 @@ class intrusive_future
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile
-      return {std::move(result_allocation_ready), ptr_to_result, std::move(rebound_alloc)};
+      return {std::move(result_allocation_ready), ptr_to_result, alloc};
     }
 
 
-    template<executor Ex, asynchronous_allocator OtherA, class... Args, class... As, std::invocable<value_type&&,Args&&...> F,
-             class R = std::invoke_result_t<F,value_type&&,Args&&...>
+    template<executor Ex, class... Args, class... As, std::invocable<value_type&&,Args&&...> F,
+             class R = std::invoke_result_t<F,value_type&&,Args&&...>,
+             asynchronous_allocator_of<R> OtherA
             >
-    intrusive_future<R, rebind_allocator_result_t<R,OtherA>>
+    intrusive_future<R, OtherA>
       then(const Ex& ex, const OtherA& alloc, F&& f, intrusive_future<Args,As>&&... future_args) &&
     {
       // forward to then_after using our ready() event as the before event

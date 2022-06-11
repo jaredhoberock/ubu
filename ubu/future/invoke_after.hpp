@@ -16,16 +16,14 @@ namespace ubu
 {
 
 
-template<executor Ex, asynchronous_allocator A, event Ev, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
-         class R = std::invoke_result_t<F,Args&&...>
+template<executor Ex, event Ev, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
+         class R = std::invoke_result_t<F,Args&&...>,
+         asynchronous_allocator_of<R> A
         >
-intrusive_future<R,rebind_allocator_result_t<R,A>> invoke_after(const Ex& ex, const A& alloc, Ev&& before, F&& f, intrusive_future<Args,As>&&... future_args)
+intrusive_future<R,A> invoke_after(const Ex& ex, const A& alloc, Ev&& before, F&& f, intrusive_future<Args,As>&&... future_args)
 {
-  // rebind the allocator to the type of the result
-  auto rebound_alloc = rebind_allocator<R>(alloc);
-
   // allocate storage for the result after before is ready
-  auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(rebound_alloc, 1);
+  auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
 
   // create an event dependent on before, the allocation, and future_args
   auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), future_args.ready()...);
@@ -46,7 +44,7 @@ intrusive_future<R,rebind_allocator_result_t<R,A>> invoke_after(const Ex& ex, co
     }, std::move(future_args)...);
 
     // return a new future
-    return {std::move(result_ready), ptr_to_result, std::move(rebound_alloc)};
+    return {std::move(result_ready), ptr_to_result, alloc};
   }
   catch(...)
   {
@@ -55,7 +53,7 @@ intrusive_future<R,rebind_allocator_result_t<R,A>> invoke_after(const Ex& ex, co
   }
 
   // XXX until we can handle exceptions, just return this to make everything compile
-  return {std::move(result_allocation_ready), ptr_to_result, std::move(rebound_alloc)};
+  return {std::move(result_allocation_ready), ptr_to_result, alloc};
 }
 
 
