@@ -4,7 +4,7 @@
 
 #include "../detail/exception.hpp"
 #include "../memory/plain_old_data.hpp"
-#include "../memory/pointer/fancy_ptr.hpp"
+#include "../memory/pointer/remote_ptr.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
 #include <cassert>
@@ -81,7 +81,7 @@ class device_memory_copier
 
 
 template<plain_old_data_or_void T>
-using device_ptr = fancy_ptr<T, device_memory_copier>;
+using device_ptr = remote_ptr<T, device_memory_copier>;
 
 
 } // end ubu::cuda

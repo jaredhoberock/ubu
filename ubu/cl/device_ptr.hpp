@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../memory/pointer/fancy_ptr.hpp"
+#include "../memory/pointer/remote_ptr.hpp"
 #include "../memory/plain_old_data.hpp"
 #include "detail/throw_on_cl_error.hpp"
 #include <stdexcept>
@@ -133,7 +133,7 @@ class device_memory_copier
 
 
 template<plain_old_data_or_void T>
-using device_ptr = fancy_ptr<T, device_memory_copier>;
+using device_ptr = remote_ptr<T, device_memory_copier>;
 
 
 } // end ubu::cl

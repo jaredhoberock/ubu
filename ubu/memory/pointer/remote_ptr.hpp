@@ -12,7 +12,7 @@ namespace ubu
 
 
 template<class T, copier_of<T> C>
-class fancy_ptr;
+class remote_ptr;
 
 
 namespace detail
@@ -21,7 +21,7 @@ namespace detail
 
 template<class T, copier_of<T> C>
   requires (!std::is_void_v<T>)
-class fancy_ref : private C
+class remote_ref : private C
 {
   private:
     // derive from copier for EBCO
@@ -32,11 +32,11 @@ class fancy_ref : private C
     using value_type = std::remove_cv_t<element_type>;
 
   public:
-    fancy_ref() = default;
+    remote_ref() = default;
 
-    fancy_ref(const fancy_ref&) = default;
+    remote_ref(const remote_ref&) = default;
 
-    constexpr fancy_ref(const address_type& a, const C& copier)
+    constexpr remote_ref(const address_type& a, const C& copier)
       : super_t{copier}, address_{a}
     {}
 
@@ -49,13 +49,13 @@ class fancy_ref : private C
       return result;
     }
 
-    // address-of operator returns fancy_ptr
-    constexpr fancy_ptr<T,C> operator&() const
+    // address-of operator returns remote_ptr
+    constexpr remote_ptr<T,C> operator&() const
     {
       return {address_, copier()};
     }
 
-    fancy_ref operator=(const fancy_ref& ref) const
+    remote_ref operator=(const remote_ref& ref) const
     {
       copy_n(copier(), ref.address_, 1, address_);
       return *this;
@@ -63,40 +63,40 @@ class fancy_ref : private C
 
     template<class = T>
       requires std::is_assignable_v<element_type&, value_type>
-    fancy_ref operator=(const value_type& value) const
+    remote_ref operator=(const value_type& value) const
     {
       copy_n(copier(), &value, 1, address_);
       return *this;
     }
 
     // equality
-    friend bool operator==(const fancy_ref& self, const value_type& value)
+    friend bool operator==(const remote_ref& self, const value_type& value)
     {
       return self.operator value_type () == value;
     }
 
-    friend bool operator==(const value_type& value, const fancy_ref& self)
+    friend bool operator==(const value_type& value, const remote_ref& self)
     {
       return self.operator value_type () == value;
     }
 
-    friend bool operator==(const fancy_ref& lhs, const fancy_ref& rhs)
+    friend bool operator==(const remote_ref& lhs, const remote_ref& rhs)
     {
       return lhs.operator value_type () == rhs.operator value_type ();
     }
 
     // inequality
-    friend bool operator!=(const fancy_ref& self, const value_type& value)
+    friend bool operator!=(const remote_ref& self, const value_type& value)
     {
       return !(self == value);
     }
 
-    friend bool operator!=(const value_type& value, const fancy_ref& self)
+    friend bool operator!=(const value_type& value, const remote_ref& self)
     {
       return !(self == value);
     }
 
-    friend bool operator!=(const fancy_ref& lhs, const fancy_ref& rhs)
+    friend bool operator!=(const remote_ref& lhs, const remote_ref& rhs)
     {
       return !(lhs == rhs);
     }
@@ -120,7 +120,7 @@ class fancy_ref : private C
 
 
 template<class T, copier_of<T> C>
-class fancy_ptr : private C
+class remote_ptr : private C
 {
   private:
     // derive from copier for EBCO
@@ -133,44 +133,44 @@ class fancy_ptr : private C
     // iterator traits
     using difference_type = address_difference_result_t<address_type>;
     using value_type = std::remove_cv_t<element_type>;
-    using pointer = fancy_ptr;
-    using reference = detail::fancy_ref<T,C>;
+    using pointer = remote_ptr;
+    using reference = detail::remote_ref<T,C>;
     using iterator_category = std::random_access_iterator_tag;
     using iterator_concept = std::random_access_iterator_tag;
 
-    fancy_ptr() = default;
+    remote_ptr() = default;
 
-    constexpr fancy_ptr(std::nullptr_t) noexcept
-      : fancy_ptr{make_null_address<address_type>()}
+    constexpr remote_ptr(std::nullptr_t) noexcept
+      : remote_ptr{make_null_address<address_type>()}
     {}
 
-    fancy_ptr(const fancy_ptr&) = default;
-    fancy_ptr& operator=(const fancy_ptr&) = default;
+    remote_ptr(const remote_ptr&) = default;
+    remote_ptr& operator=(const remote_ptr&) = default;
 
-    constexpr fancy_ptr(const address_type& a) noexcept
-      : fancy_ptr{a, C{}}
+    constexpr remote_ptr(const address_type& a) noexcept
+      : remote_ptr{a, C{}}
     {}
 
-    constexpr fancy_ptr(const address_type& a, const C& c) noexcept
+    constexpr remote_ptr(const address_type& a, const C& c) noexcept
       : super_t{c}, address_{a}
     {}
 
-    constexpr fancy_ptr(const address_type& a, C&& c) noexcept
+    constexpr remote_ptr(const address_type& a, C&& c) noexcept
       : super_t{std::move(c)}, address_{a}
     {}
 
     template<class... Args>
       requires std::constructible_from<C,Args&&...>
-    constexpr fancy_ptr(const address_type& a, Args&&... copier_args)
-      : fancy_ptr{a, C{std::forward<Args&&>(copier_args)...}}
+    constexpr remote_ptr(const address_type& a, Args&&... copier_args)
+      : remote_ptr{a, C{std::forward<Args&&>(copier_args)...}}
     {}
 
     template<class U, copier_of<U> OtherC>
       requires (std::convertible_to<U*,T*> and
-                std::convertible_to<typename fancy_ptr<U,OtherC>::address_type, address_type> and
+                std::convertible_to<typename remote_ptr<U,OtherC>::address_type, address_type> and
                 std::convertible_to<OtherC, C>)
-    constexpr fancy_ptr(const fancy_ptr<U,OtherC>& other)
-      : fancy_ptr{other.to_address(), other.copier()}
+    constexpr remote_ptr(const remote_ptr<U,OtherC>& other)
+      : remote_ptr{other.to_address(), other.copier()}
     {}
 
     // returns the underlying address
@@ -235,7 +235,7 @@ class fancy_ptr : private C
     // pre-increment
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr& operator++()
+    remote_ptr& operator++()
     {
       advance_address(address_, 1);
       return *this;
@@ -244,7 +244,7 @@ class fancy_ptr : private C
     // pre-decrement
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr& operator--()
+    remote_ptr& operator--()
     {
       advance_address(address_, -1);
       return *this;
@@ -253,9 +253,9 @@ class fancy_ptr : private C
     // post-increment
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr operator++(int)
+    remote_ptr operator++(int)
     {
-      fancy_ptr result = *this;
+      remote_ptr result = *this;
       operator++();
       return result;
     }
@@ -263,9 +263,9 @@ class fancy_ptr : private C
     // post-decrement
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr operator--(int)
+    remote_ptr operator--(int)
     {
-      fancy_ptr result = *this;
+      remote_ptr result = *this;
       operator--();
       return result;
     }
@@ -273,16 +273,16 @@ class fancy_ptr : private C
     // plus
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr operator+(difference_type n) const
+    remote_ptr operator+(difference_type n) const
     {
-      fancy_ptr result = *this;
+      remote_ptr result = *this;
       result += n;
       return result;
     }
 
     template<class = void>
       requires (!std::is_void_v<T>)
-    friend fancy_ptr operator+(difference_type n, const fancy_ptr& rhs)
+    friend remote_ptr operator+(difference_type n, const remote_ptr& rhs)
     {
       return rhs + n;
     }
@@ -290,9 +290,9 @@ class fancy_ptr : private C
     // minus
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr operator-(difference_type n) const
+    remote_ptr operator-(difference_type n) const
     {
-      fancy_ptr result = *this;
+      remote_ptr result = *this;
       result -= n;
       return result;
     }
@@ -300,7 +300,7 @@ class fancy_ptr : private C
     // plus-equal
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr& operator+=(difference_type n)
+    remote_ptr& operator+=(difference_type n)
     {
       advance_address(address_, n);
       return *this;
@@ -309,7 +309,7 @@ class fancy_ptr : private C
     // minus-equal
     template<class = void>
       requires (!std::is_void_v<T>)
-    fancy_ptr& operator-=(difference_type n)
+    remote_ptr& operator-=(difference_type n)
     {
       return operator+=(-n);
     }
@@ -317,69 +317,69 @@ class fancy_ptr : private C
     // difference
     template<class = void>
       requires (!std::is_void_v<T>)
-    difference_type operator-(const fancy_ptr& other) const noexcept
+    difference_type operator-(const remote_ptr& other) const noexcept
     {
       return address_difference(to_address(), other.to_address());
     }
 
     // equality
-    bool operator==(const fancy_ptr& other) const noexcept
+    bool operator==(const remote_ptr& other) const noexcept
     {
       return to_address() == other.to_address();
     }
 
-    friend bool operator==(const fancy_ptr& self, std::nullptr_t) noexcept
+    friend bool operator==(const remote_ptr& self, std::nullptr_t) noexcept
     {
       return self.to_address() == make_null_address<address_type>();
     }
 
-    friend bool operator==(std::nullptr_t, const fancy_ptr& self) noexcept
+    friend bool operator==(std::nullptr_t, const remote_ptr& self) noexcept
     {
       return make_null_address<address_type>() == self.to_address();
     }
 
     // inequality
-    bool operator!=(const fancy_ptr& other) const noexcept
+    bool operator!=(const remote_ptr& other) const noexcept
     {
       return !operator==(other);
     }
 
-    friend bool operator!=(const fancy_ptr& self, std::nullptr_t) noexcept
+    friend bool operator!=(const remote_ptr& self, std::nullptr_t) noexcept
     {
       return !(self == nullptr);
     }
 
-    friend bool operator!=(std::nullptr_t, const fancy_ptr& self) noexcept
+    friend bool operator!=(std::nullptr_t, const remote_ptr& self) noexcept
     {
       return !(nullptr == self);
     }
 
     // less
-    bool operator<(const fancy_ptr& other) const noexcept
+    bool operator<(const remote_ptr& other) const noexcept
     {
       return to_address() < other.to_address();
     }
 
     // lequal
-    bool operator<=(const fancy_ptr& other) const noexcept
+    bool operator<=(const remote_ptr& other) const noexcept
     {
       return to_address() <= other.to_address();
     }
 
     // greater
-    bool operator>(const fancy_ptr& other) const noexcept
+    bool operator>(const remote_ptr& other) const noexcept
     {
       return to_address() > other.to_address();
     }
 
     // gequal
-    bool operator>=(const fancy_ptr& other) const noexcept
+    bool operator>=(const remote_ptr& other) const noexcept
     {
       return to_address() >= other.to_address();
     }
 
     // spaceship
-    bool operator<=>(const fancy_ptr& other) const noexcept
+    bool operator<=>(const remote_ptr& other) const noexcept
     {
       return to_address() <=> other.to_address();
     }
@@ -396,14 +396,14 @@ namespace std
 {
 
 template<class T, class C>
-struct iterator_traits<ubu::fancy_ptr<T,C>>
+struct iterator_traits<ubu::remote_ptr<T,C>>
 {
-  using difference_type = typename ubu::fancy_ptr<T,C>::difference_type;
-  using value_type = typename ubu::fancy_ptr<T,C>::value_type;
-  using pointer = typename ubu::fancy_ptr<T,C>::pointer;
-  using reference = typename ubu::fancy_ptr<T,C>::reference;
-  using iterator_category = typename ubu::fancy_ptr<T,C>::iterator_category;
-  using iterator_concept = typename ubu::fancy_ptr<T,C>::iterator_concept;
+  using difference_type = typename ubu::remote_ptr<T,C>::difference_type;
+  using value_type = typename ubu::remote_ptr<T,C>::value_type;
+  using pointer = typename ubu::remote_ptr<T,C>::pointer;
+  using reference = typename ubu::remote_ptr<T,C>::reference;
+  using iterator_category = typename ubu::remote_ptr<T,C>::iterator_category;
+  using iterator_concept = typename ubu::remote_ptr<T,C>::iterator_concept;
 };
 
 } // end std

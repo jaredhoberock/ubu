@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <ubu/memory/pointer/fancy_ptr.hpp>
+#include <ubu/memory/pointer/remote_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -25,18 +25,18 @@ struct trivial_copier
 };
 
 
-void test_fancy_ptr()
+void test_remote_ptr()
 {
   using namespace ns;
 
   {
     // test concepts
-    static_assert(std::random_access_iterator<fancy_ptr<int, trivial_copier>>);
+    static_assert(std::random_access_iterator<remote_ptr<int, trivial_copier>>);
   }
 
   {
     // test default construction
-    fancy_ptr<int, trivial_copier> ptr;
+    remote_ptr<int, trivial_copier> ptr;
 
     // silence "declared but never referenced" warnings
     static_cast<void>(ptr);
@@ -44,7 +44,7 @@ void test_fancy_ptr()
 
   {
     // test construction from nullptr
-    fancy_ptr<int, trivial_copier> ptr{nullptr};
+    remote_ptr<int, trivial_copier> ptr{nullptr};
 
     assert(ptr.to_address() == nullptr);
     assert(!ptr);
@@ -54,7 +54,7 @@ void test_fancy_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    fancy_ptr<int, trivial_copier> ptr(array);
+    remote_ptr<int, trivial_copier> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
@@ -90,7 +90,7 @@ void test_fancy_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    fancy_ptr<const int, trivial_copier> ptr(array);
+    remote_ptr<const int, trivial_copier> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
