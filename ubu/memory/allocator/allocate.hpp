@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../pointer/pointer_like.hpp"
 #include "rebind_allocator.hpp"
 #include <memory>
 #include <utility>
@@ -16,16 +17,14 @@ namespace detail
 template<class T, class A, class N>
 concept has_allocate_member_function_template = requires(A alloc, N n)
 {
-  // XXX this should check that the result is a pointer
-  alloc.template allocate<T>(n);
+  { alloc.template allocate<T>(n) } -> pointer_like;
 };
 
 
 template<class T, class A, class N>
 concept has_allocate_free_function_template = requires(A alloc, N n)
 {
-  // XXX this should check that the result is a pointer
-  allocate<T>(alloc, n);
+  { allocate<T>(alloc, n) } -> pointer_like;
 };
 
 
@@ -34,7 +33,7 @@ concept has_allocator_traits_allocate = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::decay_t<A>>::value_type>;
 
-  std::allocator_traits<std::decay_t<A>>::allocate(alloc, n);
+  { std::allocator_traits<std::decay_t<A>>::allocate(alloc, n) } -> pointer_like;
 };
 
 
