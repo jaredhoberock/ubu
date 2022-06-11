@@ -86,7 +86,7 @@ class graph_allocator
         throw std::runtime_error("cuda::graph_allocator::deallocate_after: before's graph differs from graph_allocator's");
       }
 
-      return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.native_handle()), stream()};
+      return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.to_address()), stream()};
     }
 
     const graph_executor associated_executor() const

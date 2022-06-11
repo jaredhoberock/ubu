@@ -1,124 +1,24 @@
 #include <ubu/cl/context.hpp>
-#include <ubu/cl/device_memory_resource.hpp>
+#include <ubu/cl/device_allocator.hpp>
 #include <ubu/cl/device_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
+#include <concepts>
 #include <CL/cl.h>
 
 namespace ns = ubu;
 
 
-//void test_copy_n_after()
-//{
-//  using namespace ns::cuda;
-//  cudaStream_t s = 0;
-//
-//  device_memory_resource mem0{0,s}, mem1{1,s};
-//
-//  // allocate an int on each of two devices
-//  device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
-//  device_ptr<int> d_ptr1{reinterpret_cast<int*>(mem1.allocate(sizeof(int))), 1};
-//
-//  *d_ptr0 = 7;
-//  *d_ptr1 = 13;
-//
-//  assert(7 == *d_ptr0);
-//  assert(13 == *d_ptr1);
-//
-//  cudaStream_t s0 = ubu::detail::temporarily_with_current_device(0, [&]
-//  {
-//    cudaStream_t result{};
-//    cudaStreamCreate(&result);
-//    return result;
-//  });
-//
-//  cudaStream_t s1 = ubu::detail::temporarily_with_current_device(1, [&]
-//  {
-//    cudaStream_t result{};
-//    cudaStreamCreate(&result);
-//    return result;
-//  });
-//
-//
-//  {
-//    // test copy from device 0 to device 1 on device 0
-//    assert(7 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    kernel_executor ex0{0,s0};
-//
-//    event before{ex0.stream()};
-//    auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
-//    after.wait();
-//
-//    assert(7 == *d_ptr0);
-//    assert(7 == *d_ptr1);
-//    assert(*d_ptr0 == *d_ptr1);
-//
-//    *d_ptr1 = 13;
-//  }
-//
-//  {
-//    // test copy from device 0 to device 1 on device 1
-//    assert(7 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    kernel_executor ex1{1,s1};
-//
-//    event before{ex1.stream()};
-//    auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
-//    after.wait();
-//
-//    assert(7 == *d_ptr0);
-//    assert(7 == *d_ptr1);
-//    assert(*d_ptr0 == *d_ptr1);
-//
-//    *d_ptr1 = 13;
-//  }
-//
-//  {
-//    // test copy from device 1 to device 0 on device 0
-//    assert(7 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    kernel_executor ex0{0,s0};
-//
-//    event before{ex0.stream()};
-//    auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
-//    after.wait();
-//
-//    assert(13 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    *d_ptr0 = 7;
-//  }
-//
-//  {
-//    // test copy from device 1 to device 0 on device 1
-//    assert(7 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    kernel_executor ex1{1,s1};
-//
-//    event before{ex1.stream()};
-//    auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
-//    after.wait();
-//
-//    assert(13 == *d_ptr0);
-//    assert(13 == *d_ptr1);
-//
-//    *d_ptr0 = 7;
-//  }
-//
-//
-//  mem0.deallocate(d_ptr0.native_handle(), sizeof(int));
-//  mem1.deallocate(d_ptr1.native_handle(), sizeof(int));
-//
-//  cudaStreamDestroy(s0);
-//  cudaStreamDestroy(s1);
-//}
+void test_concepts()
+{
+  static_assert(std::input_or_output_iterator<ns::cl::device_ptr<int>>);
+  static_assert(std::indirectly_readable<ns::cl::device_ptr<int>>);
+  static_assert(std::forward_iterator<ns::cl::device_ptr<int>>);
+  static_assert(std::bidirectional_iterator<ns::cl::device_ptr<int>>);
+  static_assert(std::random_access_iterator<ns::cl::device_ptr<int>>);
+}
 
 
 void test_constructors()
@@ -226,129 +126,6 @@ void test_readable_device_ptr()
 }
 
 
-void test_copy_n()
-{
-  using namespace ns::cl;
-
-  // create a context
-  context ctx;
-
-  // create a queue 
-  cl_int error = 0;
-  cl_command_queue queue = clCreateCommandQueueWithProperties(ctx.native_handle(), ctx.device(0), 0, &error);
-  assert(CL_SUCCESS == error);
-
-  // create a memory resource
-  device_memory_resource mem{ctx.native_handle(), queue};
-
-  // allocate two ints
-  device_ptr<int> d_ptr0{mem.allocate(sizeof(int)), queue};
-  device_ptr<int> d_ptr1{mem.allocate(sizeof(int)), queue};
-
-  *d_ptr0 = 7;
-  *d_ptr1 = 13;
-
-  assert(7 == *d_ptr0);
-  assert(13 == *d_ptr1);
-
-  {
-    // test copy from 0 to 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    copy_n(d_ptr0, 1, d_ptr1);
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from 1 to 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    copy_n(d_ptr1, 1, d_ptr0);
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-  mem.deallocate(d_ptr0.native_handle(), sizeof(int));
-  mem.deallocate(d_ptr1.native_handle(), sizeof(int));
-
-  assert(CL_SUCCESS == clReleaseCommandQueue(queue));
-}
-
-
-void test_copy_n_between_devices()
-{
-  using namespace ns::cl;
-
-  // create a context
-  context ctx;
-
-  // create a queue for each device
-  cl_int error = 0;
-  cl_command_queue queue0 = clCreateCommandQueueWithProperties(ctx.native_handle(), ctx.device(0), 0, &error);
-  assert(CL_SUCCESS == error);
-
-  cl_command_queue queue1 = clCreateCommandQueueWithProperties(ctx.native_handle(), ctx.device(1), 0, &error);
-  assert(CL_SUCCESS == error);
-
-  // create a memory resource for each context
-  device_memory_resource mem0{ctx.native_handle(), queue0};
-  device_memory_resource mem1{ctx.native_handle(), queue1};
-
-  // allocate an int on each of two devices
-  device_ptr<int> d_ptr0{mem0.allocate(sizeof(int)), queue0};
-  device_ptr<int> d_ptr1{mem1.allocate(sizeof(int)), queue1};
-
-  *d_ptr0 = 7;
-  *d_ptr1 = 13;
-
-  assert(7 == *d_ptr0);
-  assert(13 == *d_ptr1);
-
-  {
-    // test copy from device 0 to device 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    copy_n(d_ptr0, 1, d_ptr1);
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from device 1 to device 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    copy_n(d_ptr1, 1, d_ptr0);
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-  mem0.deallocate(d_ptr0.native_handle(), sizeof(int));
-  mem1.deallocate(d_ptr1.native_handle(), sizeof(int));
-
-  assert(CL_SUCCESS == clReleaseCommandQueue(queue0));
-  assert(CL_SUCCESS == clReleaseCommandQueue(queue1));
-}
-
-
 void test_construct_at()
 {
   using namespace ns::cl;
@@ -378,8 +155,73 @@ void test_construct_at()
 }
 
 
+void test_copy_between_devices()
+{
+  using namespace ns::cl;
+
+  // create a context
+  context ctx;
+
+  // create a queue for each device
+  cl_int error = 0;
+  cl_command_queue queue0 = clCreateCommandQueueWithProperties(ctx.native_handle(), ctx.device(0), 0, &error);
+  assert(CL_SUCCESS == error);
+
+  cl_command_queue queue1 = clCreateCommandQueueWithProperties(ctx.native_handle(), ctx.device(1), 0, &error);
+  assert(CL_SUCCESS == error);
+
+  // create an allocator for each context
+  device_allocator<int> alloc0{ctx.native_handle(), queue0};
+  device_allocator<int> alloc1{ctx.native_handle(), queue1};
+
+  // allocate an int on each of two devices
+  device_ptr<int> d_ptr0 = alloc0.allocate(1);
+  device_ptr<int> d_ptr1 = alloc1.allocate(1);
+
+  *d_ptr0 = 7;
+  *d_ptr1 = 13;
+
+  assert(7 == *d_ptr0);
+  assert(13 == *d_ptr1);
+
+  {
+    // test copy from device 0 to device 1
+    assert(7 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr1 = *d_ptr0;
+
+    assert(7 == *d_ptr0);
+    assert(7 == *d_ptr1);
+    assert(*d_ptr0 == *d_ptr1);
+
+    *d_ptr1 = 13;
+  }
+
+  {
+    // test copy from device 1 to device 0
+    assert(7 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr0 = *d_ptr1;
+
+    assert(13 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr0 = 7;
+  }
+
+  alloc0.deallocate(d_ptr0, 1);
+  alloc1.deallocate(d_ptr1, 1);
+
+  assert(CL_SUCCESS == clReleaseCommandQueue(queue0));
+  assert(CL_SUCCESS == clReleaseCommandQueue(queue1));
+}
+
+
 void test_device_ptr()
 {
+  test_concepts();
   test_constructors();
 
   cl_platform_id platform = 0;
@@ -393,11 +235,10 @@ void test_device_ptr()
     test_writeable_device_ptr();
     test_readable_device_ptr();
     test_construct_at();
-    test_copy_n();
 
     if(num_devices > 1)
     {
-      test_copy_n_between_devices();
+      test_copy_between_devices();
     }
   }
 }

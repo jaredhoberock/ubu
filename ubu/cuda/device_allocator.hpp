@@ -16,6 +16,9 @@ namespace ubu::cuda
 {
 
 
+// XXX eliminate device_memory_resource
+
+
 template<class T>
 class device_allocator : private device_memory_resource
 {
@@ -61,7 +64,7 @@ class device_allocator : private device_memory_resource
 
     void deallocate(pointer ptr, std::size_t n) const
     {
-      super_t::deallocate(ptr.native_handle(), sizeof(T) * n);
+      super_t::deallocate(ptr.to_address(), sizeof(T) * n);
     }
 
     std::pair<event_type, device_ptr<T>> allocate_after(const event& before, std::size_t n) const
@@ -74,7 +77,7 @@ class device_allocator : private device_memory_resource
 
     event deallocate_after(const event& before, pointer ptr, std::size_t n) const
     {
-      return super_t::deallocate_after(before, ptr.native_handle(), sizeof(T) * n);
+      return super_t::deallocate_after(before, ptr.to_address(), sizeof(T) * n);
     }
 
     int device() const

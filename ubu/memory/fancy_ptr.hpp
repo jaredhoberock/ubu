@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "copier.hpp"
 #include <concepts>
 #include <iterator>
 #include <type_traits>
@@ -9,70 +10,8 @@
 namespace ubu
 {
 
-namespace detail
-{
 
-
-template<class C, class H, class V>
-concept has_copy_n_to_raw_pointer = requires(C copier, H from, std::size_t n, V* to)
-{
-  copier.copy_n_to_raw_pointer(from, n, to);
-};
-
-template<class C, class H>
-concept has_copy_n = requires(C copier, H from, std::size_t n, H to)
-{
-  copier.copy_n(from, n, to);
-};
-
-template<class C, class V, class H>
-concept has_copy_n_from_raw_pointer = requires(C copier, const V* from, std::size_t n, H to)
-{
-  copier.copy_n_from_raw_pointer(from, n, to);
-};
-
-
-} // end detail
-
-
-template<class T>
-concept copier = requires
-{
-  // a copier must declare a handle_type
-  typename T::handle_type;
-
-  // the handle type must be regular
-  requires std::regular<typename T::handle_type>;
-
-  // the handle type must be totally ordered
-  requires std::totally_ordered<typename T::handle_type>;
-
-  // XXX might also require handle_type to be default constructible (and null)
-  //     otherwise, need to require copier.null_handle() function
-  //
-
-  // if handle_type is not a pointer, a copier must be able to advance a handle_type
-  
-  // a copier must declare an element_type
-  // XXX this could be relaxed if handle_type is a pointer
-  typename T::element_type;
-
-  // a copier must be able to copy from a handle to a raw pointer
-  requires detail::has_copy_n_to_raw_pointer<T, typename T::handle_type, std::remove_cv_t<typename T::element_type>>;
-
-  // a copier must be able to copy from a raw pointer to a handle if element_type is assignable
-  requires (!std::is_assignable_v<typename T::element_type, typename T::element_type> or
-    detail::has_copy_n_from_raw_pointer<T, std::remove_cv_t<typename T::element_type>, typename T::handle_type>
-  );
-
-  // a copier must be able to copy from a handle to a handle if element_type is assignable
-  requires (!std::is_assignable_v<typename T::element_type, typename T::element_type> or
-    detail::has_copy_n<T, typename T::handle_type>
-  );
-};
-
-
-template<class T, copier C>
+template<class T, copier_of<T> C>
 class fancy_ptr;
 
 
@@ -80,31 +19,17 @@ namespace detail
 {
 
 
-template<class Copier>
-concept has_null_handle = requires(Copier c)
-{
-  typename Copier::handle_type;
-  {c.null_handle()} -> std::same_as<typename Copier::handle_type>;
-};
-
-
-template<class Copier, class Difference>
-concept has_advance = requires(const Copier& c, typename Copier::handle_type& h, Difference n)
-{
-  c.advance(h, n);
-};
-
-
-template<class T, copier C>
+template<class T, copier_of<T> C>
+  requires (!std::is_void_v<T>)
 class fancy_ref : private C
 {
   private:
     // derive from copier for EBCO
     using super_t = C;
-    using handle_type = typename C::handle_type;
+    using address_type = copier_address_t<C, T>;
 
-    static_assert(std::same_as<T, typename C::element_type>);
-    using element_type = T;
+    static_assert(std::same_as<T, address_element_t<address_type>>);
+    using element_type = address_element_t<address_type>;
 
     using value_type = std::remove_cv_t<element_type>;
 
@@ -113,8 +38,8 @@ class fancy_ref : private C
 
     fancy_ref(const fancy_ref&) = default;
 
-    constexpr fancy_ref(const handle_type& handle, const C& copier)
-      : super_t{copier}, handle_{handle}
+    constexpr fancy_ref(const address_type& a, const C& copier)
+      : super_t{copier}, address_{a}
     {}
 
     template<class = T>
@@ -122,19 +47,19 @@ class fancy_ref : private C
     operator value_type () const
     {
       value_type result{};
-      copier().copy_n_to_raw_pointer(handle_, 1, &result);
+      copy_n(copier(), address_, 1, &result);
       return result;
     }
 
     // address-of operator returns fancy_ptr
     constexpr fancy_ptr<T,C> operator&() const
     {
-      return {handle_, copier()};
+      return {address_, copier()};
     }
 
     fancy_ref operator=(const fancy_ref& ref) const
     {
-      copier().copy_n(ref.handle_, 1, handle_);
+      copy_n(copier(), ref.address_, 1, address_);
       return *this;
     }
 
@@ -142,7 +67,7 @@ class fancy_ref : private C
       requires std::is_assignable_v<element_type&, value_type>
     fancy_ref operator=(const value_type& value) const
     {
-      copier().copy_n_from_raw_pointer(&value, 1, handle_);
+      copy_n(copier(), &value, 1, address_);
       return *this;
     }
 
@@ -189,14 +114,14 @@ class fancy_ref : private C
       return *this;
     }
 
-    handle_type handle_;
+    address_type address_;
 };
 
 
 } // end detail
 
 
-template<class T, copier C>
+template<class T, copier_of<T> C>
 class fancy_ptr : private C
 {
   private:
@@ -204,13 +129,13 @@ class fancy_ptr : private C
     using super_t = C;
 
   public:
-    static_assert(std::same_as<T, typename C::element_type>);
+    using address_type = copier_address_t<C, T>;
+    static_assert(std::same_as<T, address_element_t<address_type>>);
+
     using element_type = T;
 
-    using handle_type = typename C::handle_type;
-
     // iterator traits
-    using difference_type = std::ptrdiff_t; // XXX or ask the copier
+    using difference_type = address_difference_result_t<address_type>;
     using value_type = std::remove_cv_t<element_type>;
     using pointer = fancy_ptr;
     using reference = detail::fancy_ref<T,C>;
@@ -220,48 +145,42 @@ class fancy_ptr : private C
     fancy_ptr() = default;
 
     constexpr fancy_ptr(std::nullptr_t) noexcept
-      : fancy_ptr{null_handle(C{})}
+      : fancy_ptr{make_null_address<address_type>()}
     {}
 
     fancy_ptr(const fancy_ptr&) = default;
     fancy_ptr& operator=(const fancy_ptr&) = default;
 
-    constexpr fancy_ptr(const handle_type& h) noexcept
-      : fancy_ptr{h, C{}}
+    constexpr fancy_ptr(const address_type& a) noexcept
+      : fancy_ptr{a, C{}}
     {}
 
-    constexpr fancy_ptr(const handle_type& h, const C& c) noexcept
-      : super_t{c}, handle_{h}
+    constexpr fancy_ptr(const address_type& a, const C& c) noexcept
+      : super_t{c}, address_{a}
     {}
 
-    constexpr fancy_ptr(const handle_type& h, C&& c) noexcept
-      : super_t{std::move(c)}, handle_{h}
+    constexpr fancy_ptr(const address_type& a, C&& c) noexcept
+      : super_t{std::move(c)}, address_{a}
     {}
 
     template<class... Args>
       requires std::constructible_from<C,Args&&...>
-    constexpr fancy_ptr(const handle_type& h, Args&&... copier_args)
-      : fancy_ptr{h, C{std::forward<Args&&>(copier_args)...}}
+    constexpr fancy_ptr(const address_type& a, Args&&... copier_args)
+      : fancy_ptr{a, C{std::forward<Args&&>(copier_args)...}}
     {}
 
-    template<class U, copier OtherC>
+    template<class U, copier_of<U> OtherC>
       requires (std::convertible_to<U*,T*> and
-                std::convertible_to<typename fancy_ptr<U,OtherC>::handle_type, handle_type> and
+                std::convertible_to<typename fancy_ptr<U,OtherC>::address_type, address_type> and
                 std::convertible_to<OtherC, C>)
     constexpr fancy_ptr(const fancy_ptr<U,OtherC>& other)
-      : fancy_ptr{other.native_handle(), other.copier()}
+      : fancy_ptr{other.to_address(), other.copier()}
     {}
 
-    // returns the underlying handle
-    const handle_type& native_handle() const noexcept
+    // returns the underlying address
+    const address_type& to_address() const noexcept
     {
-      return handle_;
-    }
-
-    // synonym for native_handle
-    const handle_type& get() const noexcept
-    {
-      return native_handle();
+      return address_;
     }
 
     // returns the copier
@@ -298,36 +217,46 @@ class fancy_ptr : private C
     // conversion to bool
     explicit operator bool() const noexcept
     {
-      return native_handle() != null_handle(copier());
+      return to_address() != make_null_address<address_type>();
     }
 
     // dereference
+    template<class = void>
+      requires (!std::is_void_v<T>)
     reference operator*() const
     {
-      return {native_handle(), copier()};
+      return {to_address(), copier()};
     }
 
     // subscript
+    template<class = void>
+      requires (!std::is_void_v<T>)
     reference operator[](difference_type i) const
     {
       return *(*this + i);
     }
 
     // pre-increment
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr& operator++()
     {
-      this->advance(copier(), handle_, 1);
+      advance_address(address_, 1);
       return *this;
     }
 
     // pre-decrement
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr& operator--()
     {
-      this->advance(copier(), handle_, -1);
+      advance_address(address_, -1);
       return *this;
     }
 
     // post-increment
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr operator++(int)
     {
       fancy_ptr result = *this;
@@ -336,6 +265,8 @@ class fancy_ptr : private C
     }
 
     // post-decrement
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr operator--(int)
     {
       fancy_ptr result = *this;
@@ -344,6 +275,8 @@ class fancy_ptr : private C
     }
 
     // plus
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr operator+(difference_type n) const
     {
       fancy_ptr result = *this;
@@ -351,12 +284,16 @@ class fancy_ptr : private C
       return result;
     }
 
+    template<class = void>
+      requires (!std::is_void_v<T>)
     friend fancy_ptr operator+(difference_type n, const fancy_ptr& rhs)
     {
       return rhs + n;
     }
 
     // minus
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr operator-(difference_type n) const
     {
       fancy_ptr result = *this;
@@ -365,39 +302,44 @@ class fancy_ptr : private C
     }
 
     // plus-equal
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr& operator+=(difference_type n)
     {
-      this->advance(copier(), handle_, n);
+      advance_address(address_, n);
       return *this;
     }
 
     // minus-equal
+    template<class = void>
+      requires (!std::is_void_v<T>)
     fancy_ptr& operator-=(difference_type n)
     {
-      this->advance(copier(), handle_, -n);
-      return *this;
+      return operator+=(-n);
     }
 
     // difference
+    template<class = void>
+      requires (!std::is_void_v<T>)
     difference_type operator-(const fancy_ptr& other) const noexcept
     {
-      return get() - other.get();
+      return address_difference(to_address(), other.to_address());
     }
 
     // equality
     bool operator==(const fancy_ptr& other) const noexcept
     {
-      return native_handle() == other.native_handle();
+      return to_address() == other.to_address();
     }
 
     friend bool operator==(const fancy_ptr& self, std::nullptr_t) noexcept
     {
-      return self.native_handle() == null_handle(self.copier());
+      return self.to_address() == make_null_address<address_type>();
     }
 
     friend bool operator==(std::nullptr_t, const fancy_ptr& self) noexcept
     {
-      return null_handle(self.copier()) == self.native_handle();
+      return make_null_address<address_type>() == self.to_address();
     }
 
     // inequality
@@ -419,83 +361,36 @@ class fancy_ptr : private C
     // less
     bool operator<(const fancy_ptr& other) const noexcept
     {
-      return native_handle() < other.native_handle();
+      return to_address() < other.to_address();
     }
 
     // lequal
     bool operator<=(const fancy_ptr& other) const noexcept
     {
-      return native_handle() <= other.native_handle();
+      return to_address() <= other.to_address();
     }
 
     // greater
     bool operator>(const fancy_ptr& other) const noexcept
     {
-      return native_handle() > other.native_handle();
+      return to_address() > other.to_address();
     }
 
     // gequal
     bool operator>=(const fancy_ptr& other) const noexcept
     {
-      return native_handle() >= other.native_handle();
+      return to_address() >= other.to_address();
     }
 
     // spaceship
     bool operator<=>(const fancy_ptr& other) const noexcept
     {
-      return native_handle() <=> other.native_handle();
+      return to_address() <=> other.to_address();
     }
 
   private:
-    handle_type handle_;
-
-    static handle_type null_handle(const C& c)
-    {
-      if constexpr(detail::has_null_handle<C>)
-      {
-        return c.null_handle();
-      }
-
-      return handle_type{};
-    }
-
-    static void advance(const C& c, handle_type& h, difference_type n)
-    {
-      if constexpr(detail::has_advance<C,difference_type>)
-      {
-        c.advance(h, n);
-      }
-      else
-      {
-        h += n;
-      }
-    }
+    address_type address_;
 };
-
-
-// copy_n overloads
-
-template<class T, copier C>
-  requires std::is_assignable_v<T,T>
-fancy_ptr<T,C> copy_n(const std::remove_cv_t<T>* first, std::size_t count, fancy_ptr<T,C> result)
-{
-  return result.copier().copy_n_from_raw_pointer(first, count, result.native_handle());
-}
-
-template<class T, copier C>
-  requires std::is_assignable_v<T,T>
-std::remove_cv_t<T>* copy_n(fancy_ptr<T,C> first, std::size_t count, std::remove_cv_t<T>* result)
-{
-  return first.copier().copy_n_to_raw_pointer(first.native_handle(), count, result);
-}
-
-// XXX U needs to be either T or const T
-template<class T, copier C, class U>
-  requires std::is_assignable_v<T&,U>
-fancy_ptr<T,C> copy_n(fancy_ptr<U,C> first, std::size_t count, fancy_ptr<T,C> result)
-{
-  return first.copier().copy_n(first.native_handle(), count, result.native_handle());
-}
 
 
 } // end ubu

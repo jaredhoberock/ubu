@@ -1,7 +1,6 @@
 #include <ubu/cuda/device_memory_resource.hpp>
 #include <ubu/cuda/device_ptr.hpp>
-#include <ubu/cuda/kernel_executor.hpp>
-#include <ubu/event/make_independent_event.hpp>
+#include <ubu/memory/copier/copy_n.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -22,117 +21,6 @@ void test_concepts()
 }
 
 
-void test_copy_n_after()
-{
-  using namespace ns::cuda;
-  cudaStream_t s = 0;
-
-  device_memory_resource mem0{0,s}, mem1{1,s};
-
-  // allocate an int on each of two devices
-  device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
-  device_ptr<int> d_ptr1{reinterpret_cast<int*>(mem1.allocate(sizeof(int))), 1};
-
-  *d_ptr0 = 7;
-  *d_ptr1 = 13;
-
-  assert(7 == *d_ptr0);
-  assert(13 == *d_ptr1);
-
-  cudaStream_t s0 = detail::temporarily_with_current_device(0, [&]
-  {
-    cudaStream_t result{};
-    cudaStreamCreate(&result);
-    return result;
-  });
-
-  cudaStream_t s1 = detail::temporarily_with_current_device(1, [&]
-  {
-    cudaStream_t result{};
-    cudaStreamCreate(&result);
-    return result;
-  });
-
-
-  {
-    // test copy from device 0 to device 1 on device 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex0{0,s0};
-
-    event before = ns::make_independent_event(ex0);
-    auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
-    after.wait();
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from device 0 to device 1 on device 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex1{1,s1};
-
-    event before = ns::make_independent_event(ex1);
-    auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
-    after.wait();
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from device 1 to device 0 on device 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex0{0,s0};
-
-    event before = ns::make_independent_event(ex0);
-    auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
-    after.wait();
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-  {
-    // test copy from device 1 to device 0 on device 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex1{1,s1};
-
-    event before = ns::make_independent_event(ex1);
-    auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
-    after.wait();
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-
-  mem0.deallocate(d_ptr0.native_handle(), sizeof(int));
-  mem1.deallocate(d_ptr1.native_handle(), sizeof(int));
-
-  cudaStreamDestroy(s0);
-  cudaStreamDestroy(s1);
-}
-
-
 void test_constructors()
 {
   using namespace ns::cuda;
@@ -149,7 +37,7 @@ void test_constructors()
     // test construction from nullptr
     device_ptr<int> ptr{nullptr};
 
-    assert(ptr.native_handle() == nullptr);
+    assert(ptr.to_address() == nullptr);
     assert(!ptr);
   }
 }
@@ -171,7 +59,7 @@ void test_writeable_device_ptr()
   // test native_handle
   for(int i = 0; i < 4; ++i)
   {
-    assert((ptr + i).native_handle() == d_array + i);
+    assert((ptr + i).to_address() == d_array + i);
   }
   
   // test dereference
@@ -218,7 +106,7 @@ void test_readable_device_ptr()
   // test native_handle
   for(int i = 0; i < 4; ++i)
   {
-    assert((ptr + i).native_handle() == d_array + i);
+    assert((ptr + i).to_address() == d_array + i);
   }
   
   // test dereference
@@ -234,116 +122,6 @@ void test_readable_device_ptr()
   }
   
   assert(cudaFree(d_array) == cudaSuccess);
-}
-
-
-void test_copy_n_after_between_devices()
-{
-  using namespace ns::cuda;
-
-  cudaStream_t s = 0;
-  device_memory_resource mem0{0,s}, mem1{1,s};
-
-  // allocate an int on each of two devices
-  device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
-  device_ptr<int> d_ptr1{reinterpret_cast<int*>(mem1.allocate(sizeof(int))), 1};
-
-  *d_ptr0 = 7;
-  *d_ptr1 = 13;
-
-  assert(7 == *d_ptr0);
-  assert(13 == *d_ptr1);
-
-  cudaStream_t s0 = detail::temporarily_with_current_device(0, [&]
-  {
-    cudaStream_t result{};
-    cudaStreamCreate(&result);
-    return result;
-  });
-
-  cudaStream_t s1 = detail::temporarily_with_current_device(1, [&]
-  {
-    cudaStream_t result{};
-    cudaStreamCreate(&result);
-    return result;
-  });
-
-
-  {
-    // test copy from device 0 to device 1 on device 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex0{0,s0};
-
-    event before = ns::make_independent_event(ex0);
-    auto after = copy_n_after(ex0, before, d_ptr0, 1, d_ptr1);
-    after.wait();
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from device 0 to device 1 on device 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex1{1,s1};
-
-    event before = ns::make_independent_event(ex1);
-    auto after = copy_n_after(ex1, before, d_ptr0, 1, d_ptr1);
-    after.wait();
-
-    assert(7 == *d_ptr0);
-    assert(7 == *d_ptr1);
-    assert(*d_ptr0 == *d_ptr1);
-
-    *d_ptr1 = 13;
-  }
-
-  {
-    // test copy from device 1 to device 0 on device 0
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex0{0,s0};
-
-    event before = ns::make_independent_event(ex0);
-    auto after = copy_n_after(ex0, before, d_ptr1, 1, d_ptr0);
-    after.wait();
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-  {
-    // test copy from device 1 to device 0 on device 1
-    assert(7 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    kernel_executor ex1{1,s1};
-
-    event before = ns::make_independent_event(ex1);
-    auto after = copy_n_after(ex1, before, d_ptr1, 1, d_ptr0);
-    after.wait();
-
-    assert(13 == *d_ptr0);
-    assert(13 == *d_ptr1);
-
-    *d_ptr0 = 7;
-  }
-
-  mem0.deallocate(d_ptr0.native_handle(), sizeof(int));
-  mem1.deallocate(d_ptr1.native_handle(), sizeof(int));
-
-  assert(cudaStreamDestroy(s0) == cudaSuccess);
-  assert(cudaStreamDestroy(s1) == cudaSuccess);
 }
 
 
@@ -370,6 +148,55 @@ void test_construct_at()
 }
 
 
+void test_copy_between_devices()
+{
+  using namespace ns;
+  cudaStream_t s = 0;
+
+  cuda::device_memory_resource mem0{0,s}, mem1{1,s};
+
+  // allocate an int on each of two devices
+  cuda::device_ptr<int> d_ptr0{reinterpret_cast<int*>(mem0.allocate(sizeof(int))), 0};
+  cuda::device_ptr<int> d_ptr1{reinterpret_cast<int*>(mem1.allocate(sizeof(int))), 1};
+
+  *d_ptr0 = 7;
+  *d_ptr1 = 13;
+
+  assert(7 == *d_ptr0);
+  assert(13 == *d_ptr1);
+
+  {
+    // test copy from device 0 to device 1
+    assert(7 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr1 = *d_ptr0;
+
+    assert(7 == *d_ptr0);
+    assert(7 == *d_ptr1);
+    assert(*d_ptr0 == *d_ptr1);
+
+    *d_ptr1 = 13;
+  }
+
+  {
+    // test copy from device 1 to device 0
+    assert(7 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr0 = *d_ptr1;
+
+    assert(13 == *d_ptr0);
+    assert(13 == *d_ptr1);
+
+    *d_ptr0 = 7;
+  }
+
+  mem0.deallocate(d_ptr0.to_address(), sizeof(int));
+  mem1.deallocate(d_ptr1.to_address(), sizeof(int));
+}
+
+
 void test_device_ptr()
 {
   test_concepts();
@@ -383,7 +210,7 @@ void test_device_ptr()
 
   if(num_devices > 1)
   {
-    test_copy_n_after_between_devices();
+    test_copy_between_devices();
   }
 }
 

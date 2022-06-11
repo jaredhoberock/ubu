@@ -7,26 +7,20 @@
 namespace ns = ubu;
 
 
-template<class T>
 struct trivial_copier
 {
-  using handle_type = T*;
-  using element_type = T;
-  using value_type = std::remove_cv_t<element_type>;
+  template<class T>
+  using address = T*;
 
-  static value_type* copy_n_to_raw_pointer(handle_type from, std::size_t n, value_type* to)
+  template<class T>
+  void copy_n(const T* from, std::size_t count, T* to) const
   {
-    return std::copy_n(from, n, to);
+    std::copy_n(from, count, to);
   }
 
-  static handle_type copy_n_from_raw_pointer(const value_type* from, std::size_t n, handle_type to)
+  constexpr bool operator==(const trivial_copier&) const
   {
-    return std::copy_n(from, n, to);
-  }
-
-  static handle_type copy_n(handle_type from, std::size_t n, handle_type to)
-  {
-    return std::copy_n(from, n, to);
+    return true;
   }
 };
 
@@ -37,12 +31,12 @@ void test_fancy_ptr()
 
   {
     // test concepts
-    static_assert(std::random_access_iterator<fancy_ptr<int, trivial_copier<int>>>);
+    static_assert(std::random_access_iterator<fancy_ptr<int, trivial_copier>>);
   }
 
   {
     // test default construction
-    fancy_ptr<int, trivial_copier<int>> ptr;
+    fancy_ptr<int, trivial_copier> ptr;
 
     // silence "declared but never referenced" warnings
     static_cast<void>(ptr);
@@ -50,9 +44,9 @@ void test_fancy_ptr()
 
   {
     // test construction from nullptr
-    fancy_ptr<int, trivial_copier<int>> ptr{nullptr};
+    fancy_ptr<int, trivial_copier> ptr{nullptr};
 
-    assert(ptr.get() == nullptr);
+    assert(ptr.to_address() == nullptr);
     assert(!ptr);
   }
 
@@ -60,12 +54,12 @@ void test_fancy_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    fancy_ptr<int, trivial_copier<int>> ptr(array);
+    fancy_ptr<int, trivial_copier> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
     {
-      assert((ptr + i).native_handle() == &array[i]);
+      assert((ptr + i).to_address() == &array[i]);
     }
 
     // test dereference
@@ -96,12 +90,12 @@ void test_fancy_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    fancy_ptr<const int, trivial_copier<const int>> ptr(array);
+    fancy_ptr<const int, trivial_copier> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
     {
-      assert((ptr + i).native_handle() == &array[i]);
+      assert((ptr + i).to_address() == &array[i]);
     }
 
     // test dereference
