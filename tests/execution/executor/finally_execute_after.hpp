@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 
@@ -44,7 +44,7 @@ void test()
 {
   {
     has_finally_execute_after_member_function ex;
-    ns::always_complete_event before;
+    ns::past_event before;
 
     bool invoked = false;
     ns::finally_execute_after(ex, before, [&]{ invoked = true; });
@@ -53,7 +53,7 @@ void test()
 
   {
     has_finally_execute_after_free_function ex;
-    ns::always_complete_event before;
+    ns::past_event before;
 
     bool invoked = false;
     ns::finally_execute_after(ex, before, [&]{ invoked = true; });
@@ -62,7 +62,7 @@ void test()
 
   {
     ns::inline_executor ex;
-    ns::always_complete_event before;
+    ns::past_event before;
 
     bool invoked = false;
     ns::finally_execute_after(ex, before, [&]{ invoked = true; });

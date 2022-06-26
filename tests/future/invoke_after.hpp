@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor.hpp>
 #include <ubu/future/invoke_after.hpp>
 #include <ubu/memory/allocator.hpp>
@@ -14,7 +14,7 @@ namespace ns = ubu;
 template<class T>
 struct trivial_asynchronous_allocator : public std::allocator<T>
 {
-  using event_type = ns::always_complete_event;
+  using event_type = ns::past_event;
 
   template<class U = T>
   std::pair<event_type, U*> allocate_after(const event_type& before, std::size_t n)

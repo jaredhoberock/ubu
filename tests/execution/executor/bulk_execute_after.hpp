@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/event/wait.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
@@ -21,7 +21,7 @@ namespace ns = ubu;
 struct has_bulk_execute_after_member
 {
   template<class F>
-  ns::always_complete_event bulk_execute_after(ns::always_complete_event before, int n, F&& f) const
+  ns::past_event bulk_execute_after(ns::past_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -38,7 +38,7 @@ struct has_bulk_execute_after_member
 struct has_bulk_execute_after_free_function {};
 
 template<class F>
-ns::always_complete_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::always_complete_event before, int n, F&& f)
+ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event before, int n, F&& f)
 {
   before.wait();
 
@@ -58,7 +58,7 @@ void test()
 
     int counter = 0;
 
-    ns::always_complete_event before;
+    ns::past_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
@@ -72,7 +72,7 @@ void test()
 
     int counter = 0;
 
-    ns::always_complete_event before;
+    ns::past_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
@@ -88,7 +88,7 @@ void test()
 
     int counter = 0;
 
-    ns::always_complete_event before;
+    ns::past_event before;
     int expected = 10;
 
     auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
@@ -104,7 +104,7 @@ void test()
 
     int counter = 0;
 
-    ns::always_complete_event before;
+    ns::past_event before;
 
     ns::int2 grid_shape{2,5};
 
@@ -121,7 +121,7 @@ void test()
 
     int counter = 0;
 
-    ns::always_complete_event before;
+    ns::past_event before;
 
     ns::int3 grid_shape{2,5,7};
 

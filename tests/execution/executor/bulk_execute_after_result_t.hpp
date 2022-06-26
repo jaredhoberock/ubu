@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 
 #undef NDEBUG
@@ -19,7 +19,7 @@ namespace ns = ubu;
 struct has_bulk_execute_after_member
 {
   template<class F>
-  ns::always_complete_event bulk_execute_after(ns::always_complete_event before, int n, F&& f) const
+  ns::past_event bulk_execute_after(ns::past_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -36,7 +36,7 @@ struct has_bulk_execute_after_member
 struct has_bulk_execute_after_free_function {};
 
 template<class F>
-ns::always_complete_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::always_complete_event before, int n, F&& f)
+ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event before, int n, F&& f)
 {
   before.wait();
 
@@ -54,13 +54,13 @@ void test()
   {
     auto lambda = [](int){};
 
-    static_assert(std::is_same_v<ns::always_complete_event, ns::bulk_execute_after_result_t<has_bulk_execute_after_member, ns::always_complete_event, int, decltype(lambda)>>, "Expected always_complete_event.");
+    static_assert(std::is_same_v<ns::past_event, ns::bulk_execute_after_result_t<has_bulk_execute_after_member, ns::past_event, int, decltype(lambda)>>, "Expected past_event.");
   }
 
   {
     auto lambda = [](int){};
 
-    static_assert(std::is_same_v<ns::always_complete_event, ns::bulk_execute_after_result_t<has_bulk_execute_after_free_function, ns::always_complete_event, int, decltype(lambda)>>, "Expected always_complete_event.");
+    static_assert(std::is_same_v<ns::past_event, ns::bulk_execute_after_result_t<has_bulk_execute_after_free_function, ns::past_event, int, decltype(lambda)>>, "Expected past_event.");
   }
 }
 

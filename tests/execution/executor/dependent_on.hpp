@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/event/wait.hpp>
 #include <ubu/execution/executor/dependent_on.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
@@ -37,7 +37,7 @@ int call_wait(E& e)
 struct has_dependent_on_member_function
 {
   template<class... Events>
-  ns::always_complete_event dependent_on(Events&&... events) const
+  ns::past_event dependent_on(Events&&... events) const
   {
     swallow(call_wait(events)...);
 
@@ -50,7 +50,7 @@ void test()
 {
   {
     has_dependent_on_member_function ex;
-    auto e = ns::dependent_on(ex, ns::always_complete_event{}, ns::always_complete_event{}, ns::always_complete_event{});
+    auto e = ns::dependent_on(ex, ns::past_event{}, ns::past_event{}, ns::past_event{});
     ns::wait(e);
   }
 
@@ -61,17 +61,17 @@ void test()
     int expected = 3;
     int counter = 0;
 
-    ns::always_complete_event e1 = ns::first_execute(ex, [&counter]
+    ns::past_event e1 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });
 
-    ns::always_complete_event e2 = ns::first_execute(ex, [&counter]
+    ns::past_event e2 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });
 
-    ns::always_complete_event e3 = ns::first_execute(ex, [&counter]
+    ns::past_event e3 = ns::first_execute(ex, [&counter]
     {
       ++counter;
     });

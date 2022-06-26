@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 
@@ -22,7 +22,7 @@ namespace ns = ubu;
 struct has_first_execute_member_function
 {
   template<class F>
-  ns::always_complete_event first_execute(F&& f) const
+  ns::past_event first_execute(F&& f) const
   {
     f();
     return {};
@@ -33,7 +33,7 @@ struct has_first_execute_member_function
 struct has_first_execute_free_function {};
 
 template<class F>
-ns::always_complete_event first_execute(const has_first_execute_free_function&, F&& f)
+ns::past_event first_execute(const has_first_execute_free_function&, F&& f)
 {
   f();
   return {};

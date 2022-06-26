@@ -9,16 +9,16 @@ namespace ubu
 {
 
 
-struct always_complete_event
+struct past_event
 {
   constexpr void wait() const {}
 
-  constexpr static always_complete_event make_independent_event()
+  constexpr static past_event make_independent_event()
   {
     return {};
   }
 
-  always_complete_event make_dependent_event(const always_complete_event&...) const
+  past_event make_dependent_event(const past_event&...) const
   {
     return {};
   }

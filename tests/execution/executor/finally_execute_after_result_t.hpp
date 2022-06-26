@@ -1,4 +1,4 @@
-#include <ubu/event/always_complete_event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 
 #undef NDEBUG
@@ -42,13 +42,13 @@ void test()
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<void, ns::finally_execute_after_result_t<has_finally_execute_after_member_function, ns::always_complete_event, decltype(lambda)>>, "Expected void.");
+    static_assert(std::is_same_v<void, ns::finally_execute_after_result_t<has_finally_execute_after_member_function, ns::past_event, decltype(lambda)>>, "Expected void.");
   }
 
   {
     auto lambda = []{};
 
-    static_assert(std::is_same_v<void, ns::finally_execute_after_result_t<has_finally_execute_after_free_function, ns::always_complete_event, decltype(lambda)>>, "Expected void.");
+    static_assert(std::is_same_v<void, ns::finally_execute_after_result_t<has_finally_execute_after_free_function, ns::past_event, decltype(lambda)>>, "Expected void.");
   }
 }
 

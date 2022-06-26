@@ -1,5 +1,5 @@
-#include <ubu/event/always_complete_event.hpp>
 #include <ubu/event/event.hpp>
+#include <ubu/event/past_event.hpp>
 #include <ubu/event/wait.hpp>
 
 #undef NDEBUG
@@ -21,14 +21,14 @@ namespace ns = ubu;
 void test()
 {
   {
-    static_assert(ns::event<ns::always_complete_event>);
-    ns::always_complete_event e;
+    static_assert(ns::event<ns::past_event>);
+    ns::past_event e;
     ns::wait(e);
   }
 }
 
 
-void test_always_complete_event()
+void test_past_event()
 {
   test();
 
