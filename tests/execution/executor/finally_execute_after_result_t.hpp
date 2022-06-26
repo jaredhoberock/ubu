@@ -1,3 +1,4 @@
+#include <ubu/event/happening.hpp>
 #include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 
@@ -18,8 +19,8 @@ namespace ns = ubu;
 
 struct has_finally_execute_after_member_function
 {
-  template<ns::event E, class F>
-  void finally_execute_after(E&& before, F&& f) const
+  template<ns::happening H, class F>
+  void finally_execute_after(H&& before, F&& f) const
   {
     ns::wait(std::move(before));
     f();
@@ -29,8 +30,8 @@ struct has_finally_execute_after_member_function
 
 struct has_finally_execute_after_free_function {};
 
-template<ns::event E, class F>
-void finally_execute_after(const has_finally_execute_after_free_function&, E&& before, F&& f)
+template<ns::happening H, class F>
+void finally_execute_after(const has_finally_execute_after_free_function&, H&& before, F&& f)
 {
   ns::wait(std::move(before));
   f();

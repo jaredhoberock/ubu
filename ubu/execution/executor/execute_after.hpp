@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "../../event/wait.hpp"
 #include "executor.hpp"
-#include "executor_event.hpp"
+#include "executor_happening.hpp"
 #include "first_execute.hpp"
 #include <concepts>
 #include <functional>
@@ -20,16 +20,16 @@ namespace detail
 {
 
 
-template<class Ex, class Ev, class F>
-concept has_execute_after_member_function = requires(Ex ex, Ev ev, F f)
+template<class E, class H, class F>
+concept has_execute_after_member_function = requires(E ex, H before, F f)
 {
-  {ex.execute_after(ev, f)} -> event;
+  {ex.execute_after(before, f)} -> happening;
 };
 
-template<class Ex, class Ev, class F>
-concept has_execute_after_free_function = requires(Ex ex, Ev ev, F f)
+template<class E, class H, class F>
+concept has_execute_after_free_function = requires(E ex, H before, F f)
 {
-  {execute_after(ex, ev, f)} -> event;
+  {execute_after(ex, before, f)} -> happening;
 };
 
 
@@ -37,29 +37,29 @@ concept has_execute_after_free_function = requires(Ex ex, Ev ev, F f)
 struct dispatch_execute_after
 {
   // this dispatch path calls the member function
-  template<class Ex, class Ev, class F>
-    requires has_execute_after_member_function<Ex&&,Ev&&,F&&>
-  constexpr auto operator()(Ex&& ex, Ev&& ev, F&& f) const
+  template<class E, class H, class F>
+    requires has_execute_after_member_function<E&&,H&&,F&&>
+  constexpr auto operator()(E&& ex, H&& before, F&& f) const
   {
-    return std::forward<Ex>(ex).execute_after(std::forward<Ev>(ev), std::forward<F>(f));
+    return std::forward<E>(ex).execute_after(std::forward<H>(before), std::forward<F>(f));
   }
 
   // this dispatch path calls the free function
-  template<class Ex, class Ev, class F>
-    requires (!has_execute_after_member_function<Ex&&,Ev&&,F&&> and has_execute_after_free_function<Ex&&,Ev&&,F&&>)
-  constexpr auto operator()(Ex&& ex, Ev&& ev, F&& f) const
+  template<class E, class H, class F>
+    requires (!has_execute_after_member_function<E&&,H&&,F&&> and has_execute_after_free_function<E&&,H&&,F&&>)
+  constexpr auto operator()(E&& ex, H&& before, F&& f) const
   {
-    return execute_after(std::forward<Ex>(ex), std::forward<Ev>(ev), std::forward<F>(f));
+    return execute_after(std::forward<E>(ex), std::forward<H>(before), std::forward<F>(f));
   }
 
   // this dispatch path adapts first_execute
-  template<executor Ex, event Ev, std::invocable F>
-    requires (!has_execute_after_member_function<Ex&&,Ev&&,F&&> and !has_execute_after_free_function<Ex&&,Ev&&,F&&>)
-  executor_event_t<Ex&&> operator()(Ex&& ex, Ev&& ev, F&& f) const
+  template<executor E, happening H, std::invocable F>
+    requires (!has_execute_after_member_function<E&&,H&&,F&&> and !has_execute_after_free_function<E&&,H&&,F&&>)
+  executor_happening_t<E&&> operator()(E&& ex, H&& before, F&& f) const
   {
-    return first_execute(std::forward<Ex>(ex), [ev=std::move(ev), f=std::forward<F>(f)]() mutable
+    return first_execute(std::forward<E>(ex), [before=std::move(before), f=std::forward<F>(f)]() mutable
     {
-      ubu::wait(std::move(ev));
+      ubu::wait(std::move(before));
       std::invoke(std::forward<F>(f));
     });
   }
@@ -77,8 +77,8 @@ constexpr detail::dispatch_execute_after execute_after;
 } // end anonymous namespace
 
 
-template<class Ex, class Ev, class F>
-using execute_after_result_t = decltype(ubu::execute_after(std::declval<Ex>(), std::declval<Ev>(), std::declval<F>()));
+template<class E, class H, class F>
+using execute_after_result_t = decltype(ubu::execute_after(std::declval<E>(), std::declval<H>(), std::declval<F>()));
 
 
 } // end ubu

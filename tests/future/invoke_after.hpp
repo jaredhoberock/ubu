@@ -14,17 +14,17 @@ namespace ns = ubu;
 template<class T>
 struct trivial_asynchronous_allocator : public std::allocator<T>
 {
-  using event_type = ns::past_event;
+  using happening_type = ns::past_event;
 
   template<class U = T>
-  std::pair<event_type, U*> allocate_after(const event_type& before, std::size_t n)
+  std::pair<ns::past_event, U*> allocate_after(const ns::past_event& before, std::size_t n)
   {
     T* ptr = std::allocator<T>::allocate(sizeof(T) * n);
   
-    return {event_type{}, ptr};
+    return {{}, ptr};
   }
   
-  event_type deallocate_after(const event_type&, T* ptr, std::size_t n)
+  ns::past_event deallocate_after(const ns::past_event&, T* ptr, std::size_t n)
   {
     std::allocator<T>::deallocate(ptr, sizeof(T) * n);
     return {};

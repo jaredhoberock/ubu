@@ -5,7 +5,7 @@
 #include "../../coordinate/grid_coordinate.hpp"
 #include "../../coordinate/grid_size.hpp"
 #include "executor.hpp"
-#include "executor_event.hpp"
+#include "executor_happening.hpp"
 #include <concepts>
 #include <cstdint>
 
@@ -26,18 +26,18 @@ struct bulk_invocable_archetype
 
 template<class E, class C>
 concept has_bulk_execute_after_member_function_customization =
-  requires(E ex, executor_event_t<E> before, C grid_shape)
+  requires(E ex, executor_happening_t<E> before, C grid_shape)
   {
-    {ex.bulk_execute_after(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
+    {ex.bulk_execute_after(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
   }
 ;
 
 
 template<class E, class C>
 concept has_bulk_execute_after_free_function_customization =
-  requires(E ex, executor_event_t<E> before, C grid_shape)
+  requires(E ex, executor_happening_t<E> before, C grid_shape)
   {
-    {bulk_execute_after(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_event_t<E>>;
+    {bulk_execute_after(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
   }
 ;
 

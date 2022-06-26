@@ -1,4 +1,4 @@
-#include <ubu/execution/executor/executor_event.hpp>
+#include <ubu/execution/executor/executor_happening.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -56,16 +56,16 @@ std::future<void> execute(const upstream_executor_with_execute_free_function&, a
 void test()
 {
   {
-    static_assert(std::is_same_v<std::future<void>, ns::executor_event_t<upstream_executor_with_execute_member_function>>, "Expected std::future<void>.");
+    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<upstream_executor_with_execute_member_function>>, "Expected std::future<void>.");
   }
 
   {
-    static_assert(std::is_same_v<std::future<void>, ns::executor_event_t<upstream_executor_with_execute_free_function>>, "Expected std::future<void>.");
+    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<upstream_executor_with_execute_free_function>>, "Expected std::future<void>.");
   }
 }
 
 
-void test_executor_event()
+void test_executor_happening()
 {
   test();
 

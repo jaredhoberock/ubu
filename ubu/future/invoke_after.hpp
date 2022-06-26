@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../event/event.hpp"
+#include "../event/happening.hpp"
 #include "../execution/executor.hpp"
 #include "../memory/allocator.hpp"
 #include "../memory/pointer/construct_at.hpp"
@@ -16,17 +16,17 @@ namespace ubu
 {
 
 
-template<executor Ex, event Ev, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
+template<executor E, happening H, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
          class R = std::invoke_result_t<F,Args&&...>,
          asynchronous_allocator_of<R> A
         >
-intrusive_future<R,A> invoke_after(const Ex& ex, const A& alloc, Ev&& before, F&& f, intrusive_future<Args,As>&&... future_args)
+intrusive_future<R,A> invoke_after(const E& ex, const A& alloc, H&& before, F&& f, intrusive_future<Args,As>&&... future_args)
 {
   // allocate storage for the result after before is ready
   auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
 
-  // create an event dependent on before, the allocation, and future_args
-  auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), future_args.ready()...);
+  // create a happening dependent on before, the allocation, and future_args
+  auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<H>(before), future_args.ready()...);
 
   try
   {

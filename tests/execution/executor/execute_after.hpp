@@ -1,3 +1,4 @@
+#include <ubu/event/happening.hpp>
 #include <ubu/event/past_event.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
@@ -21,8 +22,8 @@ namespace ns = ubu;
 
 struct has_execute_after_member_function
 {
-  template<ns::event E, class F>
-  ns::past_event execute_after(E&& before, F&& f) const
+  template<ns::happening H, class F>
+  ns::past_event execute_after(H&& before, F&& f) const
   {
     ns::wait(std::move(before));
     f();
@@ -33,8 +34,8 @@ struct has_execute_after_member_function
 
 struct has_execute_after_free_function {};
 
-template<ns::event E, class F>
-ns::past_event execute_after(const has_execute_after_free_function&, E&& before, F&& f)
+template<ns::happening H, class F>
+ns::past_event execute_after(const has_execute_after_free_function&, H&& before, F&& f)
 {
   ns::wait(std::move(before));
   f();

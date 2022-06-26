@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/because_of.hpp"
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "../../event/wait.hpp"
 #include "executor.hpp"
 #include <type_traits>
@@ -18,16 +18,16 @@ namespace detail
 {
 
 
-template<class Ex, class... Events>
-concept has_dependent_on_member_function = requires(Ex executor, Events... events)
+template<class E, class... Happenings>
+concept has_dependent_on_member_function = requires(E executor, Happenings... happenings)
 {
-  executor.dependent_on(events...);
+  { executor.dependent_on(happenings...) } -> happening;
 };
 
-template<class Ex, class... Events>
-concept has_dependent_on_free_function = requires(Ex executor, Events... events)
+template<class E, class... Happenings>
+concept has_dependent_on_free_function = requires(E executor, Happenings... happenings)
 {
-  dependent_on(executor, events...);
+  { dependent_on(executor, happenings...) } -> happening;
 };
 
 
@@ -35,29 +35,29 @@ concept has_dependent_on_free_function = requires(Ex executor, Events... events)
 struct dispatch_dependent_on
 {
   // this dispatch path calls the member function
-  template<class Ex, class... Events>
-    requires has_dependent_on_member_function<Ex&&,Events&&...>
-  constexpr auto operator()(Ex&& executor, Events&&... events) const
+  template<class E, class... Happenings>
+    requires has_dependent_on_member_function<E&&,Happenings&&...>
+  constexpr auto operator()(E&& executor, Happenings&&... happenings) const
   {
-    return std::forward<Ex>(executor).dependent_on(std::forward<Events>(events)...);
+    return std::forward<E>(executor).dependent_on(std::forward<Happenings>(happenings)...);
   }
 
   // this dispatch path calls the free function
-  template<class Ex, class... Events>
-    requires (!has_dependent_on_member_function<Ex&&,Events&&...> and
-              has_dependent_on_free_function<Ex&&,Events&&...>)
-  constexpr auto operator()(Ex&& executor, Events&&... events) const
+  template<class E, class... Happenings>
+    requires (!has_dependent_on_member_function<E&&,Happenings&&...> and
+              has_dependent_on_free_function<E&&,Happenings&&...>)
+  constexpr auto operator()(E&& executor, Happenings&&... happenings) const
   {
-    return dependent_on(std::forward<Ex>(executor), std::forward<Events>(events)...);
+    return dependent_on(std::forward<E>(executor), std::forward<Happenings>(happenings)...);
   }
 
   // the default path drops the executor and calls because_of
-  template<executor Ex, event... Events>
-    requires (!has_dependent_on_member_function<Ex&&,Events&&...> and
-              !has_dependent_on_free_function<Ex&&,Events&&...>)
-  constexpr auto operator()(Ex&&, Events&&... events) const
+  template<executor E, happening... Happenings>
+    requires (!has_dependent_on_member_function<E&&,Happenings&&...> and
+              !has_dependent_on_free_function<E&&,Happenings&&...>)
+  constexpr auto operator()(E&&, Happenings&&... happenings) const
   {
-    return because_of(std::forward<Events>(events)...);
+    return because_of(std::forward<Happenings>(happenings)...);
   }
 };
 
@@ -73,8 +73,8 @@ constexpr detail::dispatch_dependent_on dependent_on;
 } // end anonymous namespace
 
 
-template<class Ex, class... Events>
-using dependent_on_result_t = decltype(ubu::dependent_on(std::declval<Ex>, std::declval<Events>...));
+template<class E, class... Happenings>
+using dependent_on_result_t = decltype(ubu::dependent_on(std::declval<E>, std::declval<Happenings>...));
 
 
 } // end ubu

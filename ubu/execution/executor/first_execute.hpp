@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "execute.hpp"
 #include "executor.hpp"
 #include <concepts>
@@ -21,13 +21,13 @@ namespace detail
 template<class E, class F>
 concept has_first_execute_member_function = requires(E e, F f)
 {
-  {e.first_execute(f)} -> event;
+  {e.first_execute(f)} -> happening;
 };
 
 template<class E, class F>
 concept has_first_execute_free_function = requires(E e, F f)
 {
-  {first_execute(e, f)} -> event;
+  {first_execute(e, f)} -> happening;
 };
 
 

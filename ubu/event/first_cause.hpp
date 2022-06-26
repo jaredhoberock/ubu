@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "event.hpp"
+#include "happening.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -17,28 +17,28 @@ namespace detail
 template<class T>
 concept has_first_cause_member_function = requires(T arg)
 {
-  {arg.first_cause()} -> event;
+  {arg.first_cause()} -> happening;
 };
 
 template<class T>
 concept has_first_cause_free_function = requires(T arg)
 {
-  {first_cause(arg)} -> event;
+  {first_cause(arg)} -> happening;
 };
 
 template<class T>
-concept has_event_type_member_type = requires
+concept has_happening_type_member_type = requires
 {
-  typename std::decay_t<T>::event_type;
-  requires event<typename std::decay_t<T>::event_type>;
+  typename std::decay_t<T>::happening_type;
+  requires happening<typename std::decay_t<T>::happening_type>;
 };
 
 template<class T>
 concept has_first_cause_static_member_function = requires
 {
-  requires event<T>;
+  requires happening<T>;
 
-  // the result of first_cause() be the same event type as T
+  // the result of first_cause() be the same happening type as T
   {T::first_cause()} -> std::same_as<T>;
 };
 
@@ -63,12 +63,12 @@ struct dispatch_first_cause
   template<class T>
     requires (!has_first_cause_free_function<T> and
               !has_first_cause_free_function<T> and
-              has_event_type_member_type<T> and
-              has_first_cause_static_member_function<typename std::decay_t<T>::event_type>)
+              has_happening_type_member_type<T> and
+              has_first_cause_static_member_function<typename std::decay_t<T>::happening_type>)
   constexpr auto operator()(T&&) const
   {
-    using event_type = typename std::decay_t<T>::event_type;
-    return event_type::first_cause();
+    using happening_type = typename std::decay_t<T>::happening_type;
+    return happening_type::first_cause();
   }
 };
 

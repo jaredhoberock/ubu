@@ -19,7 +19,7 @@ namespace detail
 template<class T, class A, class N>
 concept has_first_allocate_member_function_template = requires(A alloc, N n)
 {
-  // XXX this should check that the result is a pair<event,pointer>
+  // XXX this should check that the result is a pair<happening,pointer>
   alloc.template first_allocate<T>(n);
 };
 
@@ -27,7 +27,7 @@ concept has_first_allocate_member_function_template = requires(A alloc, N n)
 template<class T, class A, class N>
 concept has_first_allocate_free_function_template = requires(A alloc, N n)
 {
-  // XXX this should check that the result is a pair<event,pointer>
+  // XXX this should check that the result is a pair<happening,pointer>
   first_allocate<T>(alloc, n);
 };
 
@@ -37,7 +37,7 @@ concept has_first_allocate_member_function = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a pair<event,pointer>
+  // XXX this should check that the result is a pair<happening,pointer>
   alloc.first_allocate(n);
 };
 
@@ -47,7 +47,7 @@ concept has_first_allocate_free_function = requires(A alloc, N n)
 {
   requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
 
-  // XXX this should check that the result is a pair<event,pointer>
+  // XXX this should check that the result is a pair<happening,pointer>
   first_allocate(alloc, n);
 };
 

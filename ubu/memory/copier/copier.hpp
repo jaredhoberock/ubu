@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
 #include "address.hpp"
 #include "copy_n.hpp"
 #include <concepts>

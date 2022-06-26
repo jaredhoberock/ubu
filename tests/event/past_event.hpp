@@ -1,4 +1,4 @@
-#include <ubu/event/event.hpp>
+#include <ubu/event/happening.hpp>
 #include <ubu/event/past_event.hpp>
 #include <ubu/event/wait.hpp>
 
@@ -21,7 +21,7 @@ namespace ns = ubu;
 void test()
 {
   {
-    static_assert(ns::event<ns::past_event>);
+    static_assert(ns::happening<ns::past_event>);
     ns::past_event e;
     ns::wait(e);
   }

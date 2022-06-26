@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "../pointer.hpp"
 #include "rebind_allocator.hpp"
 #include <type_traits>
@@ -18,14 +18,14 @@ namespace detail
 template<class A, class E, class P, class N>
 concept has_deallocate_after_member_function = requires(A alloc, E before, P ptr, N n)
 {
-  {alloc.deallocate_after(before, ptr, n)} -> event;
+  {alloc.deallocate_after(before, ptr, n)} -> happening;
 };
 
 
 template<class A, class E, class P, class N>
 concept has_deallocate_after_free_function = requires(A alloc, E before, P ptr, N n)
 {
-  {deallocate_after(alloc, before, ptr, n)} -> event;
+  {deallocate_after(alloc, before, ptr, n)} -> happening;
 };
 
 

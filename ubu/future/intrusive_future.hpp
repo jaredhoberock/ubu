@@ -6,7 +6,7 @@
 #include "../detail/for_each_arg.hpp"
 #include "../execution/executor/associated_executor.hpp"
 #include "../execution/executor/bulk_execute_after.hpp"
-#include "../event/event.hpp"
+#include "../event/happening.hpp"
 #include "../memory/allocator/allocator_delete.hpp"
 #include "../memory/allocator/asynchronous_allocator.hpp"
 #include "../memory/allocator/finally_delete_after.hpp"
@@ -26,20 +26,20 @@ namespace ubu
 {
 
 
-template<class T, asynchronous_allocator_of<T> A, event E = allocator_event_t<A>>
+template<class T, asynchronous_allocator_of<T> A, happening H = allocator_happening_t<A>>
 class intrusive_future
 {
   public:
     using value_type = T;
     using pointer = allocator_pointer_t<A,T>;
-    using event_type = E;
+    using happening_type = H;
     using allocator_type = A;
 
-    intrusive_future(std::tuple<allocator_type, event_type, pointer>&& resources)
+    intrusive_future(std::tuple<allocator_type, happening_type, pointer>&& resources)
       : resources_{std::move(resources)}
     {}
 
-    intrusive_future(event_type&& ready, pointer ptr_to_value, const A& allocator) noexcept
+    intrusive_future(happening_type&& ready, pointer ptr_to_value, const A& allocator) noexcept
       : intrusive_future{std::forward_as_tuple(allocator, std::move(ready), ptr_to_value)}
     {}
 
@@ -54,9 +54,9 @@ class intrusive_future
       }
     }
 
-    const event_type& ready() const
+    const happening_type& ready() const
     {
-      return std::get<event_type>(resources_);
+      return std::get<happening_type>(resources_);
     }
 
     pointer data() const
@@ -77,8 +77,8 @@ class intrusive_future
         throw std::future_error(std::future_errc::no_state);
       }
 
-      // wait on the readiness of the result event
-      std::get<event_type>(resources_).wait();
+      // wait on the readiness of the result happening
+      std::get<happening_type>(resources_).wait();
 
       // get the result if we haven't already
       if(!maybe_result_.has_value())
@@ -101,7 +101,7 @@ class intrusive_future
       return result;
     }
 
-    std::tuple<allocator_type,event_type,pointer> release() &&
+    std::tuple<allocator_type,happening_type,pointer> release() &&
     {
       auto result = std::move(resources_);
 
@@ -142,21 +142,21 @@ class intrusive_future
     }
 
 
-    template<executor Ex, event Ev, class... Args, class... Ds, std::invocable<value_type&&,Args&&...> F,
+    template<executor E, happening OtherH, class... Args, class... Ds, std::invocable<value_type&&,Args&&...> F,
              class R = std::invoke_result_t<F,value_type&&,Args&&...>,
              asynchronous_allocator_of<R> OtherA
             >
     intrusive_future<R, OtherA>
-      then_after(const Ex& ex, const OtherA& alloc, Ev&& before, F&& f, intrusive_future<Args,Ds>&&... future_args) &&
+      then_after(const E& ex, const OtherA& alloc, OtherH&& before, F&& f, intrusive_future<Args,Ds>&&... future_args) &&
     {
       // XXX we can't simply call invoke_after because it #includes this header file
-      //return invoke_after(ex, alloc, std::forward<Ev>(before), std::forward<F>(f), std::move(*this), std::move(future_args)...);
+      //return invoke_after(ex, alloc, std::forward<H>(before), std::forward<F>(f), std::move(*this), std::move(future_args)...);
 
       // allocate storage for the result after before is ready
       auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
 
-      // create an event dependent on before, the allocation, and future_args
-      auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<Ev>(before), this->ready(), future_args.ready()...);
+      // create a happening dependent on before, the allocation, and future_args
+      auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<OtherH>(before), this->ready(), future_args.ready()...);
 
       try
       {
@@ -194,7 +194,7 @@ class intrusive_future
     intrusive_future<R, OtherA>
       then(const Ex& ex, const OtherA& alloc, F&& f, intrusive_future<Args,As>&&... future_args) &&
     {
-      // forward to then_after using our ready() event as the before event
+      // forward to then_after using our ready() happening as the before happening
       return std::move(*this).then_after(ex, alloc, ready(), std::forward<F>(f), std::move(future_args)...);
     }
 
@@ -220,7 +220,7 @@ class intrusive_future
     }
 
   private:
-    std::tuple<allocator_type, event_type, pointer> resources_;
+    std::tuple<allocator_type, happening_type, pointer> resources_;
     std::optional<value_type> maybe_result_;
 };
 

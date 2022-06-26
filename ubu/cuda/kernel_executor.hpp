@@ -60,7 +60,7 @@ class kernel_executor
     constexpr static std::size_t default_on_chip_heap_size = -1;
 
     using coordinate_type = thread_id;
-    using event_type = cuda::event;
+    using happening_type = cuda::event;
 
     constexpr kernel_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : device_{device},
@@ -95,7 +95,7 @@ class kernel_executor
 
     template<std::regular_invocable<coordinate_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type bulk_execute_after(const event_type& before, coordinate_type shape, F f) const
+    inline event bulk_execute_after(const event& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
       detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
@@ -126,7 +126,7 @@ class kernel_executor
 
     template<std::regular_invocable<int2> F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type bulk_execute_after(const event_type& before, int2 shape, F f) const
+    inline event bulk_execute_after(const event& before, int2 shape, F f) const
     {
       // map the int2 to {{gx,gy,gz}, {bx, by, bz}}
       coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
@@ -141,7 +141,7 @@ class kernel_executor
 
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type execute_after(const event_type& before, F f) const
+    inline event execute_after(const event& before, F f) const
     {
       return bulk_execute_after(before, coordinate_type{int3{1,1,1}, int3{1,1,1}}, [f](coordinate_type)
       {
@@ -153,9 +153,9 @@ class kernel_executor
     
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline event_type first_execute(F f) const
+    inline event first_execute(F f) const
     {
-      return execute_after(event_type{device(), stream()}, f);
+      return execute_after(event{device(), stream()}, f);
     }
 
 
@@ -170,7 +170,7 @@ class kernel_executor
 
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
-    inline void finally_execute_after(const event_type& before, F f) const
+    inline void finally_execute_after(const event& before, F f) const
     {
       // just discard the result of execute_after
       execute_after(before, f);

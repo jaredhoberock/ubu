@@ -28,9 +28,7 @@ class device_allocator : private device_memory_resource
   public:
     using value_type = T;
     using pointer = device_ptr<T>;
-
-    // this typedef is a requirement of asynchronous_deleter
-    using event_type = cuda::event;
+    using happening_type = event;
 
     device_allocator(int device, cudaStream_t s)
       : super_t{device, s}
@@ -67,7 +65,7 @@ class device_allocator : private device_memory_resource
       super_t::deallocate(ptr.to_address(), sizeof(T) * n);
     }
 
-    std::pair<event_type, device_ptr<T>> allocate_after(const event& before, std::size_t n) const
+    std::pair<event, device_ptr<T>> allocate_after(const event& before, std::size_t n) const
     {
       auto [allocation_ready, raw_ptr] = super_t::allocate_after(before, sizeof(T) * n);
       device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device()};

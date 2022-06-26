@@ -2,8 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "../../event/past_event.hpp"
+#include "../../event/wait.hpp"
 #include <compare>
 #include <concepts>
 #include <functional>
@@ -33,10 +34,10 @@ struct inline_executor
     return {};
   }
 
-  template<event E, std::invocable F>
-  constexpr past_event execute_after(E&& before, F&& f) const
+  template<happening H, std::invocable F>
+  constexpr past_event execute_after(H&& before, F&& f) const
   {
-    wait(std::forward<E>(before));
+    wait(std::forward<H>(before));
     return this->first_execute(std::forward<F>(f));
   }
 };

@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
 #include <concepts>
 
 namespace ubu

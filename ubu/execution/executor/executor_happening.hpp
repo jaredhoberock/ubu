@@ -11,7 +11,7 @@ namespace ubu
 
 template<class E>
   requires executor<E>
-using executor_event_t = first_execute_result_t<E, detail::invocable_archetype>;
+using executor_happening_t = first_execute_result_t<E, detail::invocable_archetype>;
 
 } // end ubu
 

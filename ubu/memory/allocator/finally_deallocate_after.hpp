@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/event.hpp"
+#include "../../event/happening.hpp"
 #include "../pointer.hpp"
 #include "rebind_allocator.hpp"
 #include <type_traits>

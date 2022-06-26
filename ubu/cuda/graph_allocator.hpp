@@ -22,7 +22,7 @@ class graph_allocator
   public:
     using value_type = T;
     using pointer = device_ptr<T>;
-    using event_type = graph_event;
+    using happening_type = graph_event;
 
     graph_allocator(cudaGraph_t graph, int device, cudaStream_t stream)
       : graph_{graph},
@@ -60,12 +60,12 @@ class graph_allocator
       alloc_.deallocate(ptr,n);
     }
 
-    event_type first_cause() const
+    graph_event first_cause() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    std::pair<event_type, pointer> allocate_after(const event_type& before, std::size_t n) const
+    std::pair<graph_event, pointer> allocate_after(const graph_event& before, std::size_t n) const
     {
       if(before.graph() != graph())
       {
@@ -76,10 +76,10 @@ class graph_allocator
 
       pointer d_ptr{reinterpret_cast<T*>(ptr), alloc_.device()};
 
-      return {event_type{graph(), node, stream()}, d_ptr};
+      return {graph_event{graph(), node, stream()}, d_ptr};
     }
 
-    event_type deallocate_after(const event_type& before, pointer ptr, std::size_t n) const
+    graph_event deallocate_after(const graph_event& before, pointer ptr, std::size_t n) const
     {
       if(before.graph() != graph())
       {
