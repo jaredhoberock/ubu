@@ -42,7 +42,7 @@ class graph_event
     }
 
     template<std::same_as<graph_event>... Events>
-    graph_event make_dependent_event(const Events&... es) const
+    graph_event because_of(const Events&... es) const
     {
       return {graph(), detail::make_empty_node(graph_, native_handle(), es.native_handle()...), stream_};
     }

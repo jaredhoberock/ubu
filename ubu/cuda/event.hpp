@@ -119,7 +119,7 @@ class event
       }
     }
 
-    inline static event make_independent_event()
+    inline static event first_cause()
     {
       return {0, cudaStream_t{0}};
     }
@@ -131,7 +131,7 @@ class event
     }
 
     template<std::same_as<event>... Es>
-    event make_dependent_event(const Es&... es) const
+    event because_of(const Es&... es) const
     {
       return {0, *this, es...};
     }
@@ -175,7 +175,7 @@ class event
         origin_target_{current_target()}
     {}
 
-    // this ctor is available to make_dependent_event
+    // this ctor is available to because_of
     template<std::same_as<event>... Es>
     event(int device, const event& e, const Es&... es)
       : event{device}

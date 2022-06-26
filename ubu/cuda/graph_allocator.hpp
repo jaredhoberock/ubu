@@ -60,7 +60,7 @@ class graph_allocator
       alloc_.deallocate(ptr,n);
     }
 
-    event_type make_independent_event() const
+    event_type first_cause() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }

@@ -45,7 +45,7 @@ void test_invoke_after()
   ns::inline_executor ex;
   trivial_asynchronous_allocator<int> alloc;
 
-  auto before = ns::make_independent_event(alloc);
+  auto before = ns::first_cause(alloc);
 
   auto fut_13 = ubu::invoke_after(ex, alloc, before, []
   {

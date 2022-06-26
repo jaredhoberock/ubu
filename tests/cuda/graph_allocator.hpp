@@ -1,4 +1,4 @@
-#include <ubu/event/make_independent_event.hpp>
+#include <ubu/event/first_cause.hpp>
 #include <ubu/cuda/graph_allocator.hpp>
 #include <ubu/memory/allocator/asynchronous_allocator.hpp>
 
@@ -21,7 +21,7 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
 //
 //    cuda::device_ptr<T> ptr = alloc.allocate(1);
 //
-//    auto ready = ns::make_independent_event(alloc);
+//    auto ready = ns::first_cause(alloc);
 //
 //    auto done = alloc.deallocate_after(ready, ptr, 1);
 //
@@ -31,7 +31,7 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
   {
     // test asynchronous allocation and synchronous deletion
 
-    auto ready = ns::make_independent_event(alloc);
+    auto ready = ns::first_cause(alloc);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
@@ -43,7 +43,7 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
   {
     // test asynchronous allocation and asynchronous deletion
 
-    auto ready = ns::make_independent_event(alloc);
+    auto ready = ns::first_cause(alloc);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 

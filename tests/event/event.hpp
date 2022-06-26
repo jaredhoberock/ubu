@@ -22,7 +22,7 @@ struct event_with_member_functions
 {
   void wait() const {}
 
-  event_with_member_functions make_dependent_event(const event_with_member_functions&) const
+  event_with_member_functions because_of(const event_with_member_functions&) const
   {
     return {};
   }
@@ -34,7 +34,7 @@ struct event_with_wait_member
   void wait() const {}
 };
 
-event_with_wait_member make_dependent_event(const event_with_wait_member&, const event_with_wait_member&)
+event_with_wait_member because_of(const event_with_wait_member&, const event_with_wait_member&)
 {
   return {};
 }
@@ -44,7 +44,7 @@ struct event_with_free_functions {};
 
 void wait(const event_with_free_functions&) {}
 
-event_with_free_functions make_dependent_event(const event_with_free_functions&, const event_with_free_functions&)
+event_with_free_functions because_of(const event_with_free_functions&, const event_with_free_functions&)
 {
   return {};
 }
@@ -52,7 +52,7 @@ event_with_free_functions make_dependent_event(const event_with_free_functions&,
 
 struct event_with_wait_free_function
 {
-  event_with_wait_free_function make_dependent_event(const event_with_wait_free_function&) const
+  event_with_wait_free_function because_of(const event_with_wait_free_function&) const
   {
     return {};
   }

@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/make_independent_event.hpp"
+#include "../../event/first_cause.hpp"
 #include "allocate_after.hpp"
 #include "traits/allocator_value_t.hpp"
 #include <memory>
@@ -124,9 +124,9 @@ struct dispatch_first_allocate
               and !has_first_allocate_free_function<T, Alloc&&, N&&>
               and !has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
   constexpr auto operator()(Alloc&& alloc, N&& n) const ->
-    decltype(allocate_after<T>(std::forward<Alloc>(alloc), make_independent_event(std::forward<Alloc>(alloc)), std::forward<N>(n)))
+    decltype(allocate_after<T>(std::forward<Alloc>(alloc), first_cause(std::forward<Alloc>(alloc)), std::forward<N>(n)))
   {
-    return allocate_after<T>(std::forward<Alloc>(alloc), make_independent_event(std::forward<Alloc>(alloc)), std::forward<N>(n));
+    return allocate_after<T>(std::forward<Alloc>(alloc), first_cause(std::forward<Alloc>(alloc)), std::forward<N>(n));
   }
 };
 

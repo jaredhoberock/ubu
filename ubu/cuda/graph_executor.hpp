@@ -61,7 +61,7 @@ class graph_executor
       return on_chip_heap_size_;
     }
   
-    inline event_type make_independent_event() const
+    inline event_type first_cause() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
@@ -110,7 +110,7 @@ class graph_executor
     template<std::invocable F>
     event_type first_execute(F f) const
     {
-      return execute_after(make_independent_event(), f);
+      return execute_after(first_cause(), f);
     }
   
     template<std::invocable F>

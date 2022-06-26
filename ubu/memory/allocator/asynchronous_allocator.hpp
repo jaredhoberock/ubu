@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../event/event.hpp"
-#include "../../event/make_independent_event.hpp"
+#include "../../event/first_cause.hpp"
 #include "allocate_after.hpp"
 #include "allocator.hpp"
 #include "deallocate_after.hpp"
@@ -21,10 +21,10 @@ concept asynchronous_allocator_of =
 
   and requires(A a)
   {
-    {make_independent_event(a)} -> event;
+    {first_cause(a)} -> event;
   }
 
-  and requires(A a, const make_independent_event_result_t<A>& e, allocator_pointer_t<A,T> ptr, std::size_t n)
+  and requires(A a, const first_cause_result_t<A>& e, allocator_pointer_t<A,T> ptr, std::size_t n)
   {
     // XXX this needs to check that the result is a pair<event,pointer>
     ubu::allocate_after<T>(a, e, n);

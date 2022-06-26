@@ -3,7 +3,7 @@
 #include <ubu/coordinate/grid_coordinate.hpp>
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/cuda/kernel_executor.hpp>
-#include <ubu/event/make_independent_event.hpp>
+#include <ubu/event/first_cause.hpp>
 #include <ubu/event/wait.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
@@ -205,7 +205,7 @@ void test_native_bulk_execute_after(cudaStream_t s, int d)
 
   try
   {
-    cuda::event before = ns::make_independent_event(ex1);
+    cuda::event before = ns::first_cause(ex1);
 
     cuda::event e = ns::bulk_execute_after(ex1, before, shape, [=](ns::cuda::thread_id coord)
     {
@@ -258,7 +258,7 @@ void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
 
   try
   {
-    cuda::event before = ns::make_independent_event(ex1);
+    cuda::event before = ns::first_cause(ex1);
 
     ns::int6 bulk_result_shape{4,4,4,4,4,4};
 

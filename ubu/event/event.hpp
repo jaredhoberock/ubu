@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "make_dependent_event.hpp"
+#include "because_of.hpp"
 #include "wait.hpp"
 #include <concepts>
 #include <utility>
@@ -23,10 +23,10 @@ concept event =
     ubu::wait(e);
   }
 
-  // a dependent event must be constructible from two rvalue refs
+  // a dependent event must be constructible from two lvalue refs
   and requires(std::remove_cvref_t<E>& e1, std::remove_cvref_t<E>& e2)
   {
-    { ubu::make_dependent_event(std::move(e1), std::move(e2)) } -> std::same_as<std::remove_cvref_t<E>>;
+    { ubu::because_of(std::move(e1), std::move(e2)) } -> std::same_as<std::remove_cvref_t<E>>;
   }
 ;
 

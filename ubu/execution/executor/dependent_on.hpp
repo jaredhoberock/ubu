@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../event/because_of.hpp"
 #include "../../event/event.hpp"
-#include "../../event/make_dependent_event.hpp"
 #include "../../event/wait.hpp"
 #include "executor.hpp"
 #include <type_traits>
@@ -51,13 +51,13 @@ struct dispatch_dependent_on
     return dependent_on(std::forward<Ex>(executor), std::forward<Events>(events)...);
   }
 
-  // the default path drops the executor and calls make_dependent_event
+  // the default path drops the executor and calls because_of
   template<executor Ex, event... Events>
     requires (!has_dependent_on_member_function<Ex&&,Events&&...> and
               !has_dependent_on_free_function<Ex&&,Events&&...>)
   constexpr auto operator()(Ex&&, Events&&... events) const
   {
-    return make_dependent_event(std::forward<Events>(events)...);
+    return because_of(std::forward<Events>(events)...);
   }
 };
 
