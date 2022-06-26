@@ -18,58 +18,28 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
-struct happening_with_member_functions
+struct happening_with_member_function
 {
-  void wait() const {}
-
-  happening_with_member_functions because_of(const happening_with_member_functions&) const
+  happening_with_member_function because_of(const happening_with_member_function&) const
   {
     return {};
   }
 };
 
 
-struct happening_with_wait_member
-{
-  void wait() const {}
-};
+struct happening_with_free_function {};
 
-happening_with_wait_member because_of(const happening_with_wait_member&, const happening_with_wait_member&)
+happening_with_free_function because_of(const happening_with_free_function&, const happening_with_free_function&)
 {
   return {};
 }
-
-
-struct happening_with_free_functions {};
-
-void wait(const happening_with_free_functions&) {}
-
-happening_with_free_functions because_of(const happening_with_free_functions&, const happening_with_free_functions&)
-{
-  return {};
-}
-
-
-struct happening_with_wait_free_function
-{
-  happening_with_wait_free_function because_of(const happening_with_wait_free_function&) const
-  {
-    return {};
-  }
-};
-
-void wait(const happening_with_wait_free_function&) {}
 
 
 void test()
 {
-  static_assert(ns::happening<happening_with_member_functions>);
+  static_assert(ns::happening<happening_with_member_function>);
 
-  static_assert(ns::happening<happening_with_wait_member>);
-
-  static_assert(ns::happening<happening_with_free_functions>);
-
-  static_assert(ns::happening<happening_with_wait_free_function>);
+  static_assert(ns::happening<happening_with_free_function>);
 
   static_assert(ns::happening<std::future<void>>);
 }

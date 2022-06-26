@@ -77,7 +77,7 @@ class event
       }
     }
 
-    inline bool is_ready() const
+    inline bool has_happened() const
     {
       bool result = false;
 
@@ -87,7 +87,7 @@ class event
 
         if(status != cudaErrorNotReady and status != cudaSuccess)
         {
-          detail::throw_on_error(status, "cuda::event::is_ready: after cudaEventQuery");
+          detail::throw_on_error(status, "cuda::event::has_happened: after cudaEventQuery");
         }
 
         result = (status == cudaSuccess);

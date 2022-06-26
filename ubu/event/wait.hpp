@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "actual_happening.hpp"
 #include <utility>
 
 
@@ -12,30 +13,41 @@ namespace detail
 {
 
 
-template<class E>
-concept has_wait_member_function = requires(E e) { e.wait(); };
+template<class H>
+concept has_wait_member_function = requires(H h) { h.wait(); };
 
-template<class E>
-concept has_wait_free_function = requires(E e) { wait(e); };
+template<class H>
+concept has_wait_free_function = requires(H h) { wait(h); };
 
 
 // this is the type of wait
 struct dispatch_wait
 {
   // this dispatch path calls the member function
-  template<class E>
-    requires has_wait_member_function<E&&>
-  constexpr auto operator()(E&& e) const
+  template<class H>
+    requires has_wait_member_function<H&&>
+  constexpr auto operator()(H&& h) const
   {
-    return std::forward<E>(e).wait();
+    return std::forward<H>(h).wait();
   }
 
   // this dispatch path calls the free function
-  template<class E>
-    requires (!has_wait_member_function<E&&> and has_wait_free_function<E&&>)
-  constexpr auto operator()(E&& e) const
+  template<class H>
+    requires (!has_wait_member_function<H&&> and has_wait_free_function<H&&>)
+  constexpr auto operator()(H&& h) const
   {
-    return wait(std::forward<E>(e));
+    return wait(std::forward<H>(h));
+  }
+
+  template<actual_happening H>
+    requires (!has_wait_member_function<H&&> and !has_wait_free_function<H&&>)
+  constexpr auto operator()(H&& h) const
+  {
+    // XXX optimize this
+    while(not has_happened(h))
+    {
+      // busy wait
+    }
   }
 };
 

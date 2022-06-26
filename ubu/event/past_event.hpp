@@ -13,6 +13,11 @@ struct past_event
 {
   constexpr void wait() const {}
 
+  constexpr bool has_happened() const
+  {
+    return true;
+  }
+
   constexpr static past_event first_cause()
   {
     return {};

@@ -3,9 +3,8 @@
 #include "../detail/prologue.hpp"
 
 #include "because_of.hpp"
-#include "wait.hpp"
 #include <concepts>
-#include <utility>
+#include <type_traits>
 
 
 namespace ubu
@@ -16,12 +15,6 @@ template<class H>
 concept happening = 
   std::is_nothrow_move_constructible_v<H>
   and std::is_nothrow_destructible_v<H>
-
-  // a mutable ref to h must be able to wait
-  and requires(std::remove_cvref_t<H>& h)
-  {
-    ubu::wait(h);
-  }
 
   // a happening must be the effect of two lvalue refs
   and requires(std::remove_cvref_t<H>& h1, std::remove_cvref_t<H>& h2)
