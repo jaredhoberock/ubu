@@ -1,7 +1,7 @@
+#include <ubu/causality/future/intrusive_future.hpp>
+#include <ubu/causality/future/invoke_after.hpp>
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor.hpp>
-#include <ubu/future/intrusive_future.hpp>
-#include <ubu/future/invoke_after.hpp>
 #include <ubu/memory/allocator.hpp>
 
 #define NDEBUG

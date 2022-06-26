@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../causality/happening.hpp"
-#include "../coordinate/grid_coordinate.hpp"
-#include "../detail/for_each_arg.hpp"
-#include "../execution/executor/associated_executor.hpp"
-#include "../execution/executor/bulk_execute_after.hpp"
-#include "../memory/allocator/allocator_delete.hpp"
-#include "../memory/allocator/asynchronous_allocator.hpp"
-#include "../memory/allocator/finally_delete_after.hpp"
-#include "../memory/allocator/first_allocate.hpp"
-#include "../memory/allocator/traits.hpp"
-#include "../memory/pointer/construct_at.hpp"
+#include "../../coordinate/grid_coordinate.hpp"
+#include "../../detail/for_each_arg.hpp"
+#include "../../execution/executor/associated_executor.hpp"
+#include "../../execution/executor/bulk_execute_after.hpp"
+#include "../../memory/allocator/allocator_delete.hpp"
+#include "../../memory/allocator/asynchronous_allocator.hpp"
+#include "../../memory/allocator/finally_delete_after.hpp"
+#include "../../memory/allocator/first_allocate.hpp"
+#include "../../memory/allocator/traits.hpp"
+#include "../../memory/pointer/construct_at.hpp"
+#include "../happening.hpp"
 #include <cassert>
 #include <concepts>
 #include <future>
@@ -26,6 +26,7 @@ namespace ubu
 {
 
 
+// XXX rename this to something else
 template<class T, asynchronous_allocator_of<T> A, happening H = allocator_happening_t<A>>
 class intrusive_future
 {
@@ -228,5 +229,5 @@ class intrusive_future
 } // end ubu
 
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 
