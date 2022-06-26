@@ -5,8 +5,8 @@
 #include "detail/graph_utility_functions.hpp"
 #include "device_allocator.hpp"
 #include "device_ptr.hpp"
-#include "graph_event.hpp"
 #include "graph_executor.hpp"
+#include "graph_node.hpp"
 #include <cuda_runtime.h>
 #include <stdexcept>
 #include <utility>
@@ -22,7 +22,7 @@ class graph_allocator
   public:
     using value_type = T;
     using pointer = device_ptr<T>;
-    using happening_type = graph_event;
+    using happening_type = graph_node;
 
     graph_allocator(cudaGraph_t graph, int device, cudaStream_t stream)
       : graph_{graph},
@@ -60,12 +60,12 @@ class graph_allocator
       alloc_.deallocate(ptr,n);
     }
 
-    graph_event first_cause() const
+    graph_node first_cause() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    std::pair<graph_event, pointer> allocate_after(const graph_event& before, std::size_t n) const
+    std::pair<graph_node, pointer> allocate_after(const graph_node& before, std::size_t n) const
     {
       if(before.graph() != graph())
       {
@@ -76,10 +76,10 @@ class graph_allocator
 
       pointer d_ptr{reinterpret_cast<T*>(ptr), alloc_.device()};
 
-      return {graph_event{graph(), node, stream()}, d_ptr};
+      return {graph_node{graph(), node, stream()}, d_ptr};
     }
 
-    graph_event deallocate_after(const graph_event& before, pointer ptr, std::size_t n) const
+    graph_node deallocate_after(const graph_node& before, pointer ptr, std::size_t n) const
     {
       if(before.graph() != graph())
       {

@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "detail/graph_utility_functions.hpp"
-#include "graph_event.hpp"
+#include "graph_node.hpp"
 #include "kernel_executor.hpp"
 #include <concepts>
 #include <cstdint>
@@ -22,7 +22,7 @@ class graph_executor
     constexpr static std::size_t default_on_chip_heap_size = -1;
 
     using coordinate_type = thread_id;
-    using happening_type = graph_event;
+    using happening_type = graph_node;
 
     inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : graph_{graph},
@@ -61,7 +61,7 @@ class graph_executor
       return on_chip_heap_size_;
     }
   
-    inline graph_event first_cause() const
+    inline graph_node first_cause() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
@@ -72,7 +72,7 @@ class graph_executor
     }
   
     template<std::invocable<coordinate_type> F>
-    graph_event bulk_execute_after(const graph_event& before, coordinate_type shape, F f) const
+    graph_node bulk_execute_after(const graph_node& before, coordinate_type shape, F f) const
     {
       if(before.graph() != graph())
       {
@@ -98,7 +98,7 @@ class graph_executor
     }
   
     template<std::invocable F>
-    graph_event execute_after(const graph_event& before, F f) const
+    graph_node execute_after(const graph_node& before, F f) const
     {
       return bulk_execute_after(before, coordinate_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](coordinate_type)
       {
@@ -108,7 +108,7 @@ class graph_executor
     }
   
     template<std::invocable F>
-    graph_event first_execute(F f) const
+    graph_node first_execute(F f) const
     {
       return execute_after(first_cause(), f);
     }
@@ -116,8 +116,8 @@ class graph_executor
     template<std::invocable F>
     void execute(F f) const
     {
-      graph_event e = first_execute(f);
-      e.wait();
+      graph_node n = first_execute(f);
+      n.wait();
     }
   
     auto operator<=>(const graph_executor&) const = default;
