@@ -1,5 +1,5 @@
-#include <ubu/event/past_event.hpp>
-#include <ubu/event/wait.hpp>
+#include <ubu/causality/past_event.hpp>
+#include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 

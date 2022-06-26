@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/because_of.hpp"
-#include "../../event/happening.hpp"
-#include "../../event/wait.hpp"
+#include "../../causality/because_of.hpp"
+#include "../../causality/happening.hpp"
+#include "../../causality/wait.hpp"
 #include "executor.hpp"
 #include <type_traits>
 #include <tuple>

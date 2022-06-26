@@ -1,5 +1,5 @@
+#include <ubu/causality/wait.hpp>
 #include <ubu/cuda/callback_executor.hpp>
-#include <ubu/event/wait.hpp>
 #include <ubu/execution/executor/executor.hpp>
 
 #undef NDEBUG

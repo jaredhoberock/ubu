@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/happening.hpp"
+#include "../../causality/happening.hpp"
 #include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
 #include "../../execution/executor/executor_associate.hpp"

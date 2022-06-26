@@ -1,10 +1,10 @@
+#include <ubu/causality/first_cause.hpp>
+#include <ubu/causality/wait.hpp>
 #include <ubu/coordinate/colexicographic_index.hpp>
 #include <ubu/coordinate/colexicographic_index_to_grid_coordinate.hpp>
 #include <ubu/coordinate/grid_coordinate.hpp>
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/cuda/graph_executor.hpp>
-#include <ubu/event/first_cause.hpp>
-#include <ubu/event/wait.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/execute.hpp>

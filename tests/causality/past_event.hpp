@@ -1,6 +1,6 @@
-#include <ubu/event/happening.hpp>
-#include <ubu/event/past_event.hpp>
-#include <ubu/event/wait.hpp>
+#include <ubu/causality/happening.hpp>
+#include <ubu/causality/past_event.hpp>
+#include <ubu/causality/wait.hpp>
 
 #undef NDEBUG
 #include <cassert>

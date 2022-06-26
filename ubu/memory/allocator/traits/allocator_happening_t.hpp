@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../event/first_cause.hpp"
+#include "../../../causality/first_cause.hpp"
 #include "../asynchronous_allocator.hpp"
 
 namespace ubu

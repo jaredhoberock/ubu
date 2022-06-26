@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../causality/happening.hpp"
 #include "../../coordinate/colexicographic_index.hpp"
 #include "../../coordinate/colexicographic_index_to_grid_coordinate.hpp"
 #include "../../coordinate/lattice.hpp"
 #include "../../coordinate/point.hpp"
-#include "../../event/happening.hpp"
 #include "bulk_execution_grid.hpp"
 #include "dependent_on.hpp"
 #include "executor.hpp"

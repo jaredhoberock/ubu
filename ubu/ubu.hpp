@@ -28,9 +28,9 @@
 
 #include "detail/prologue.hpp"
 
+#include "causality.hpp"
 #include "coordinate.hpp"
 #include "execution.hpp"
-#include "event.hpp"
 #include "memory.hpp"
 
 #include "detail/epilogue.hpp"

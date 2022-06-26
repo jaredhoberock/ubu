@@ -1,4 +1,4 @@
-#include <ubu/event/first_cause.hpp>
+#include <ubu/causality/first_cause.hpp>
 #include <ubu/cuda/device_allocator.hpp>
 #include <ubu/memory/allocator/asynchronous_allocator.hpp>
 

@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/first_cause.hpp"
-#include "../../event/happening.hpp"
+#include "../../causality/first_cause.hpp"
+#include "../../causality/happening.hpp"
 #include "allocate_after.hpp"
 #include "allocator.hpp"
 #include "deallocate_after.hpp"

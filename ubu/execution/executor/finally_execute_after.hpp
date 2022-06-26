@@ -2,8 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/happening.hpp"
-#include "../../event/wait.hpp"
+#include "../../causality/happening.hpp"
 #include "executor.hpp"
 #include "execute_after.hpp"
 #include <concepts>

@@ -2,11 +2,11 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../causality/happening.hpp"
 #include "../coordinate/grid_coordinate.hpp"
 #include "../detail/for_each_arg.hpp"
 #include "../execution/executor/associated_executor.hpp"
 #include "../execution/executor/bulk_execute_after.hpp"
-#include "../event/happening.hpp"
 #include "../memory/allocator/allocator_delete.hpp"
 #include "../memory/allocator/asynchronous_allocator.hpp"
 #include "../memory/allocator/finally_delete_after.hpp"

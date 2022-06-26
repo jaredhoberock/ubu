@@ -1,4 +1,4 @@
-#include <ubu/event/actual_happening.hpp>
+#include <ubu/causality/actual_happening.hpp>
 
 #undef NDEBUG
 #include <cassert>

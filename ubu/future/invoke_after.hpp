@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../event/happening.hpp"
+#include "../causality/happening.hpp"
 #include "../execution/executor.hpp"
 #include "../memory/allocator.hpp"
 #include "../memory/pointer/construct_at.hpp"

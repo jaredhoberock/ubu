@@ -1,5 +1,5 @@
-#include <ubu/event/happening.hpp>
-#include <ubu/event/past_event.hpp>
+#include <ubu/causality/happening.hpp>
+#include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 

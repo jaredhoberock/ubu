@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../event/happening.hpp"
-#include "../../event/past_event.hpp"
-#include "../../event/wait.hpp"
+#include "../../causality/actual_happening.hpp"
+#include "../../causality/past_event.hpp"
+#include "../../causality/wait.hpp"
 #include <compare>
 #include <concepts>
 #include <functional>
@@ -34,7 +34,7 @@ struct inline_executor
     return {};
   }
 
-  template<happening H, std::invocable F>
+  template<actual_happening H, std::invocable F>
   constexpr past_event execute_after(H&& before, F&& f) const
   {
     wait(std::forward<H>(before));

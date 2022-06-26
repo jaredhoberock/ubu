@@ -1,5 +1,5 @@
-#include <ubu/event/first_cause.hpp>
-#include <ubu/event/wait.hpp>
+#include <ubu/causality/first_cause.hpp>
+#include <ubu/causality/wait.hpp>
 #include <ubu/cuda/graph_allocator.hpp>
 #include <ubu/memory/allocator/asynchronous_allocator.hpp>
 
