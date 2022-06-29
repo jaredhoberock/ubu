@@ -1,4 +1,3 @@
-#include <ubu/memory/copier/copy_n.hpp>
 #include <ubu/platform/cuda/device_memory_resource.hpp>
 #include <ubu/platform/cuda/device_ptr.hpp>
 

@@ -38,11 +38,11 @@ template<class A>
 concept address = 
   std::regular<A>
   and std::totally_ordered<A>
-
-  and requires
+  and requires(A& mutable_a, A a, A b, std::ptrdiff_t n)
   {
-    typename detail::address_addressee_t<std::remove_cvref_t<A>>;
     make_null_address<A>;
+    advance_address(mutable_a, n);
+    { address_difference(a, b) } -> std::convertible_to<std::ptrdiff_t>;
   }
 ;
 

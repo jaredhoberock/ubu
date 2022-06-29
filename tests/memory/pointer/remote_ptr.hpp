@@ -3,22 +3,26 @@
 
 #undef NDEBUG
 #include <cassert>
+#include <cstring>
 
 namespace ns = ubu;
 
 
-struct trivial_copier
+struct trivial_loader
 {
-  template<class T>
-  using address = T*;
+  using address_type = void*;
 
-  template<class T>
-  void copy_n(const T* from, std::size_t count, T* to) const
+  void upload(const void* from, std::size_t num_bytes, address_type to) const
   {
-    std::copy_n(from, count, to);
+    std::memcpy(to, from, num_bytes);
   }
 
-  constexpr bool operator==(const trivial_copier&) const
+  void download(address_type from, std::size_t num_bytes, void* to) const
+  {
+    std::memcpy(to, from, num_bytes);
+  }
+
+  constexpr bool operator==(const trivial_loader&) const
   {
     return true;
   }
@@ -31,12 +35,12 @@ void test_remote_ptr()
 
   {
     // test concepts
-    static_assert(std::random_access_iterator<remote_ptr<int, trivial_copier>>);
+    static_assert(std::random_access_iterator<remote_ptr<int, trivial_loader>>);
   }
 
   {
     // test default construction
-    remote_ptr<int, trivial_copier> ptr;
+    remote_ptr<int, trivial_loader> ptr;
 
     // silence "declared but never referenced" warnings
     static_cast<void>(ptr);
@@ -44,7 +48,7 @@ void test_remote_ptr()
 
   {
     // test construction from nullptr
-    remote_ptr<int, trivial_copier> ptr{nullptr};
+    remote_ptr<int, trivial_loader> ptr{nullptr};
 
     assert(ptr.to_address() == nullptr);
     assert(!ptr);
@@ -54,7 +58,7 @@ void test_remote_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    remote_ptr<int, trivial_copier> ptr(array);
+    remote_ptr<int, trivial_loader> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)
@@ -90,7 +94,7 @@ void test_remote_ptr()
     int array[] = {0, 1, 2, 3};
 
     // test construction from raw pointer
-    remote_ptr<const int, trivial_copier> ptr(array);
+    remote_ptr<const int, trivial_loader> ptr(array);
 
     // test native_handle
     for(int i = 0; i < 4; ++i)

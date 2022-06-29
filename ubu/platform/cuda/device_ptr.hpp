@@ -17,38 +17,36 @@ namespace ubu::cuda
 {
 
 
-class device_memory_copier
+class device_memory_loader
 {
   public:
-    template<plain_old_data_or_void T>
-    using address = T*;
+    using address_type = void*;
 
-    constexpr device_memory_copier(int device)
+    constexpr device_memory_loader(int device)
       : device_{device}
     {}
 
-    constexpr device_memory_copier()
-      : device_memory_copier{0}
+    constexpr device_memory_loader()
+      : device_memory_loader{0}
     {}
 
-    device_memory_copier(const device_memory_copier&) = default;
+    device_memory_loader(const device_memory_loader&) = default;
 
-    template<plain_old_data T>
-    void copy_n(const T* from, std::size_t count, T* to) const
+    void download(address_type from, std::size_t num_bytes, void* to) const
     {
 #if defined(__CUDACC__)
       if UBU_TARGET(ubu::detail::is_host())
       {
         detail::temporarily_with_current_device(device_, [=]
         {
-          detail::throw_on_error(cudaMemcpy(to, from, sizeof(T) * count, cudaMemcpyDefault),
-            "device_memory_copier: after cudaMemcpy"
+          detail::throw_on_error(cudaMemcpy(to, from, num_bytes, cudaMemcpyDeviceToHost),
+            "device_memory_loader::download: after cudaMemcpy"
           );
         });
       }
       else if UBU_TARGET(ubu::detail::is_device())
       {
-        std::memcpy(to, from, sizeof(T) * count);
+        std::memcpy(to, from, num_bytes);
       }
       else
       {
@@ -58,8 +56,39 @@ class device_memory_copier
 #else
       detail::temporarily_with_current_device(device_, [=]
       {
-        detail::throw_on_error(cudaMemcpy(to, from, sizeof(T) * count, cudaMemcpyDefault),
-          "device_memory_copier: after cudaMemcpy"
+        detail::throw_on_error(cudaMemcpy(to, from, num_bytes, cudaMemcpyDeviceToHost),
+          "device_memory_loader::download: after cudaMemcpy"
+        );
+      });
+#endif
+    }
+
+    void upload(const void* from, std::size_t num_bytes, address_type to) const
+    {
+#if defined(__CUDACC__)
+      if UBU_TARGET(ubu::detail::is_host())
+      {
+        detail::temporarily_with_current_device(device_, [=]
+        {
+          detail::throw_on_error(cudaMemcpy(to, from, num_bytes, cudaMemcpyHostToDevice),
+            "device_memory_loader::upload: after cudaMemcpy"
+          );
+        });
+      }
+      else if UBU_TARGET(ubu::detail::is_device())
+      {
+        std::memcpy(to, from, num_bytes);
+      }
+      else
+      {
+        // this should never be reached
+        assert(0);
+      }
+#else
+      detail::temporarily_with_current_device(device_, [=]
+      {
+        detail::throw_on_error(cudaMemcpy(to, from, num_bytes, cudaMemcpyHostToDevice),
+          "device_memory_loader::upload after cudaMemcpy"
         );
       });
 #endif
@@ -70,7 +99,7 @@ class device_memory_copier
       return device_;
     }
 
-    constexpr bool operator==(const device_memory_copier& other) const
+    constexpr bool operator==(const device_memory_loader& other) const
     {
       return device() == other.device();
     }
@@ -81,7 +110,7 @@ class device_memory_copier
 
 
 template<plain_old_data_or_void T>
-using device_ptr = remote_ptr<T, device_memory_copier>;
+using device_ptr = remote_ptr<T, device_memory_loader>;
 
 
 } // end ubu::cuda

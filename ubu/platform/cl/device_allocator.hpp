@@ -56,14 +56,14 @@ class device_allocator
         "cl::device_allocator::allocate: CL error after clWaitForEvents"
       );
 
-      address<T> addr{buffer,0};
+      address addr{buffer,0};
 
       return {addr, queue_};
     }
 
     void deallocate(pointer ptr, std::size_t) const
     {
-      address<T> addr = ptr.to_address();
+      address addr = ptr.to_address();
 
       if(addr.offset != 0)
       {

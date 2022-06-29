@@ -44,17 +44,19 @@ struct dispatch_advance_address
     return advance_address(std::forward<Address>(a), std::forward<N>(n));
   }
 
-  // default paths for pointer types
-  template<class T>
-  constexpr void operator()(T*& ptr, std::ptrdiff_t n) const
+  // default paths for void pointers
+  void operator()(void*& ptr, std::ptrdiff_t n) const
   {
-    ptr += n;
+    char* ptr_to_char = reinterpret_cast<char*>(ptr);
+    ptr_to_char += n;
+    ptr = reinterpret_cast<void*>(ptr_to_char);
   }
 
-  template<class T>
-  constexpr void operator()(const T*& ptr, std::ptrdiff_t n) const
+  void operator()(const void*& ptr, std::ptrdiff_t n) const
   {
-    ptr += n;
+    const char* ptr_to_char = reinterpret_cast<const char*>(ptr);
+    ptr_to_char += n;
+    ptr = reinterpret_cast<const void*>(ptr_to_char);
   }
 };
 

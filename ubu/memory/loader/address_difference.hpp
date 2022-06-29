@@ -16,14 +16,14 @@ namespace detail
 template<class A, class B>
 concept has_address_difference_member_function = requires(A lhs, B rhs)
 {
-  { lhs.address_difference(rhs) } -> std::integral;
+  { lhs.address_difference(rhs) } -> std::convertible_to<std::ptrdiff_t>;
 };
 
 
 template<class A, class B>
 concept has_address_difference_free_function = requires(A lhs, B rhs)
 {
-  { address_difference(lhs, rhs) } -> std::integral;
+  { address_difference(lhs, rhs) } -> std::convertible_to<std::ptrdiff_t>;
 };
 
 
@@ -45,11 +45,12 @@ struct dispatch_address_difference
     return address_difference(std::forward<A>(lhs), std::forward<B>(rhs));
   }
 
-  // default path for typed pointers
-  template<class T, class U>
-  constexpr decltype(auto) operator()(T* lhs, U* rhs) const
+  // default path for void pointers
+  decltype(auto) operator()(const void* lhs, const void* rhs) const
   {
-    return lhs - rhs;
+    const char* lhs_char = reinterpret_cast<const char*>(lhs);
+    const char* rhs_char = reinterpret_cast<const char*>(rhs);
+    return lhs_char - rhs_char;
   }
 };
 
