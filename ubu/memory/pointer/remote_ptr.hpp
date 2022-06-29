@@ -181,12 +181,6 @@ class remote_ptr : private L
     }
 
     // returns the loader
-    L& loader() noexcept
-    {
-      return *this;
-    }
-
-    // returns the loader
     const L& loader() const noexcept
     {
       return *this;
