@@ -29,7 +29,9 @@ class point_base
     std::array<T,N> elements_;
 
   protected:
-    point_base() = default;
+    constexpr point_base()
+      : elements_{}
+    {}
 
     template<class... OtherT>
       requires (sizeof...(OtherT) == N) and (... and std::convertible_to<OtherT,T>)
@@ -56,6 +58,14 @@ class point_base<T,1>
   public:
     T x;
 
+    constexpr point_base()
+      : x{}
+    {}
+
+    constexpr point_base(T xx)
+      : x{xx}
+    {}
+
   protected:
     constexpr T* data()
     {
@@ -75,6 +85,14 @@ class point_base<T,2>
   public:
     T x;
     T y;
+
+    constexpr point_base()
+      : x{},y{}
+    {}
+
+    constexpr point_base(T xx, T yy)
+      : x{xx},y{yy}
+    {}
 
   protected:
     constexpr T* data()
@@ -97,6 +115,14 @@ class point_base<T,3>
     T y;
     T z;
 
+    constexpr point_base()
+      : x{},y{},z{}
+    {}
+
+    constexpr point_base(T xx, T yy, T zz)
+      : x{xx},y{yy},z{zz}
+    {}
+
   protected:
     constexpr T* data()
     {
@@ -118,6 +144,14 @@ class point_base<T,4>
     T y;
     T z;
     T w;
+
+    constexpr point_base()
+      : x{},y{},z{},w{}
+    {}
+
+    constexpr point_base(T xx, T yy, T zz, T ww)
+      : x{xx},y{yy},z{zz},w{ww}
+    {}
 
   protected:
     constexpr T* data()
