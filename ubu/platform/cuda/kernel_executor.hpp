@@ -150,33 +150,6 @@ class kernel_executor
       });
     }
 
-    
-    template<std::regular_invocable F>
-      requires std::is_trivially_copyable_v<F>
-    inline event first_execute(F f) const
-    {
-      return execute_after(event{device(), stream()}, f);
-    }
-
-
-    template<std::regular_invocable F>
-      requires std::is_trivially_copyable_v<F>
-    inline void execute(F f) const
-    {
-      // just discard the result of first_execute
-      first_execute(f);
-    }
-
-
-    template<std::regular_invocable F>
-      requires std::is_trivially_copyable_v<F>
-    inline void finally_execute_after(const event& before, F f) const
-    {
-      // just discard the result of execute_after
-      execute_after(before, f);
-    }
-
-
     auto operator<=>(const kernel_executor&) const = default;
 
     constexpr int device() const
