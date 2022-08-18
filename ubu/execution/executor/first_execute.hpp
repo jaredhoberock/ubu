@@ -2,8 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../causality/first_cause.hpp"
 #include "../../causality/happening.hpp"
-#include "execute.hpp"
+#include "execute_after.hpp"
 #include "executor.hpp"
 #include <concepts>
 #include <functional>
@@ -50,22 +51,12 @@ struct dispatch_first_execute
     return first_execute(std::forward<E>(e), std::forward<F>(f));
   }
 
-  // this dispatch path adapts execute
+  // this dispatch path adapts execute_after
   template<executor E, std::invocable F>
     requires (!has_first_execute_member_function<E&&,F&&> and !has_first_execute_free_function<E&&,F&&>)
-  std::future<void> operator()(E&& e, F&& f) const
+  constexpr auto operator()(E&& e, F&& f) const
   {
-    // XXX should ask the executor for a promise instead of using std::promise
-    std::promise<void> p;
-    std::future<void> result = p.get_future();
-
-    execute(std::forward<E>(e), [p=std::move(p), f=std::forward<F>(f)]() mutable
-    {
-      std::invoke(std::forward<F>(f));
-      p.set_value();
-    });
-
-    return result;
+    return execute_after(std::forward<E>(e), first_cause(std::forward<E>(e)), std::forward<F>(f));
   }
 };
 

@@ -1,4 +1,5 @@
-#include <ubu/execution/executor/executor_of.hpp>
+#include <ubu/causality/past_event.hpp>
+#include <ubu/execution/executor/executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -16,29 +17,35 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
-struct executor_with_execute_member
+struct executor_with_execute_after_member
 {
-  bool operator==(const executor_with_execute_member&) const { return true; }
-  bool operator!=(const executor_with_execute_member&) const { return false; }
+  bool operator==(const executor_with_execute_after_member&) const { return true; }
+  bool operator!=(const executor_with_execute_after_member&) const { return false; }
+
+  using happening_type = ns::past_event;
 
   template<class F>
-  void execute(F&& f) const
+  ns::past_event execute_after(ns::past_event, F&& f) const
   {
     f();
+    return {};
   }
 };
 
 
-struct executor_with_execute_free_function
+struct executor_with_execute_after_free_function
 {
-  bool operator==(const executor_with_execute_free_function&) const { return true; }
-  bool operator!=(const executor_with_execute_free_function&) const { return false; }
+  bool operator==(const executor_with_execute_after_free_function&) const { return true; }
+  bool operator!=(const executor_with_execute_after_free_function&) const { return false; }
+
+  using happening_type = ns::past_event;
 };
 
 template<class F>
-void execute(const executor_with_execute_free_function&, F&& f)
+ns::past_event execute_after(const executor_with_execute_after_free_function&, ns::past_event, F&& f)
 {
   f();
+  return {};
 }
 
 
@@ -47,13 +54,13 @@ void test()
   {
     auto lambda = []{};
 
-    static_assert(ns::executor_of<executor_with_execute_member, decltype(lambda)>);
+    static_assert(ns::executor_of<executor_with_execute_after_member, decltype(lambda)>);
   }
 
   {
     auto lambda = []{};
 
-    static_assert(ns::executor_of<executor_with_execute_free_function, decltype(lambda)>);
+    static_assert(ns::executor_of<executor_with_execute_after_free_function, decltype(lambda)>);
   }
 }
 

@@ -61,7 +61,7 @@ struct dispatch_first_cause
   }
 
   template<class T>
-    requires (!has_first_cause_free_function<T> and
+    requires (!has_first_cause_member_function<T> and
               !has_first_cause_free_function<T> and
               has_happening_type_member_type<T> and
               has_first_cause_static_member_function<typename std::decay_t<T>::happening_type>)

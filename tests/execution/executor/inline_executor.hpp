@@ -1,5 +1,5 @@
+#include <ubu/causality/first_cause.hpp>
 #include <ubu/execution/executor/executor.hpp>
-#include <ubu/execution/executor/executor_of.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 
 #undef NDEBUG
@@ -30,7 +30,9 @@ void test()
 
     ns::inline_executor e;
 
-    ns::execute(e, [&invoked]
+    auto before = ns::first_cause(e);
+
+    ns::execute_after(e, before, [&invoked]
     {
       invoked = true;
     });

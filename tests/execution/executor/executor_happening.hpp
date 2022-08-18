@@ -27,27 +27,33 @@ std::future<void> make_ready_future()
 }
 
 
-struct upstream_executor_with_execute_member_function
+struct executor_with_execute_after_member_function
 {
-  bool operator==(const upstream_executor_with_execute_member_function&) const { return true; }
-  bool operator!=(const upstream_executor_with_execute_member_function&) const { return false; }
+  bool operator==(const executor_with_execute_after_member_function&) const { return true; }
+  bool operator!=(const executor_with_execute_after_member_function&) const { return false; }
 
-  std::future<void> execute(auto&& f) const
+  std::future<void> first_cause() const;
+
+  std::future<void> execute_after(const std::future<void>& before, auto&& f) const
   {
+    before.wait();
     f();
     return make_ready_future();
   }
 };
 
 
-struct upstream_executor_with_execute_free_function
+struct executor_with_execute_after_free_function
 {
-  bool operator==(const upstream_executor_with_execute_free_function&) const { return true; }
-  bool operator!=(const upstream_executor_with_execute_free_function&) const { return false; }
+  bool operator==(const executor_with_execute_after_free_function&) const { return true; }
+  bool operator!=(const executor_with_execute_after_free_function&) const { return false; }
+
+  std::future<void> first_cause() const;
 };
 
-std::future<void> execute(const upstream_executor_with_execute_free_function&, auto&& f)
+std::future<void> execute_after(const executor_with_execute_after_free_function&, const std::future<void>& before, auto&& f)
 {
+  before.wait();
   f();
   return make_ready_future();
 }
@@ -56,11 +62,11 @@ std::future<void> execute(const upstream_executor_with_execute_free_function&, a
 void test()
 {
   {
-    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<upstream_executor_with_execute_member_function>>, "Expected std::future<void>.");
+    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<executor_with_execute_after_member_function>>, "Expected std::future<void>.");
   }
 
   {
-    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<upstream_executor_with_execute_free_function>>, "Expected std::future<void>.");
+    static_assert(std::is_same_v<std::future<void>, ns::executor_happening_t<executor_with_execute_after_free_function>>, "Expected std::future<void>.");
   }
 }
 

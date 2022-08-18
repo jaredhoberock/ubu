@@ -6,7 +6,6 @@
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
-#include <ubu/execution/executor/execute.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
@@ -53,34 +52,6 @@ void test_equality(cudaStream_t s, std::size_t dynamic_shared_memory_size, int d
 
   assert(ex1 == ex2);
   assert(!(ex1 != ex2));
-}
-
-
-void test_execute(cudaStream_t s, int d)
-{
-  using namespace ns;
-
-  cuda::kernel_executor ex1{d, s};
-
-  result = 0;
-  int expected = 13;
-
-  try
-  {
-    ns::execute(ex1,[=] 
-    {
-      result = expected;
-    });
-
-    assert(cudaStreamSynchronize(s) == cudaSuccess);
-    assert(expected == result);
-  }
-  catch(std::runtime_error&)
-  {
-#if defined(__CUDACC__)
-    assert(false);
-#endif
-  }
 }
 
 
@@ -291,7 +262,6 @@ void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
 void test_on_stream(cudaStream_t s)
 {
   test_equality(s, 16, 0);
-  test_execute(s, 0);
   test_finally_execute_after(s, 0);
   test_first_execute(s, 0);
   test_execute_after(s, 0);

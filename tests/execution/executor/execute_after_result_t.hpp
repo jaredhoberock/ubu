@@ -1,5 +1,6 @@
 #include <ubu/causality/happening.hpp>
 #include <ubu/causality/past_event.hpp>
+#include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
 
 #undef NDEBUG

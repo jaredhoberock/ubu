@@ -1,5 +1,7 @@
 #include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/executor.hpp>
+#include <ubu/execution/executor/finally_execute_after.hpp>
+#include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/platform/cuda/callback_executor.hpp>
 
 #undef NDEBUG
@@ -20,26 +22,12 @@ void test(cudaStream_t s)
   ns::cuda::callback_executor ex1{s};
 
   assert(s == ex1.stream());
-  //assert(ns::blocking.possibly == ex1.query(ns::blocking));
   
   {
     int result = 0;
     int expected = 13;
 
-    ex1.execute([&result,expected]
-    {
-      result = expected;
-    });
-
-    assert(cudaStreamSynchronize(s) == cudaSuccess);
-    assert(expected == result);
-  }
-
-  {
-    int result = 0;
-    int expected = 13;
-
-    auto e = ex1.first_execute([&result,expected]
+    auto e = ns::first_execute(ex1, [&result,expected]
     {
       result = expected;
     });
@@ -52,7 +40,7 @@ void test(cudaStream_t s)
     int result1 = 0;
     int expected1 = 13;
     
-    auto e1 = ex1.first_execute([&result1,expected1]
+    auto e1 = ns::first_execute(ex1, [&result1,expected1]
     {
       result1 = expected1;
     });
@@ -73,7 +61,7 @@ void test(cudaStream_t s)
     int result1 = 0;
     int expected1 = 13;
     
-    auto e1 = ex1.first_execute([&result1,expected1]
+    auto e1 = ns::first_execute(ex1, [&result1,expected1]
     {
       result1 = expected1;
     });
@@ -88,7 +76,7 @@ void test(cudaStream_t s)
 
     int result3 = 0;
     int expected3 = 42;
-    ex1.finally_execute(e2, [&result2,expected2,&result3,expected3]
+    ns::finally_execute_after(ex1, e2, [&result2,expected2,&result3,expected3]
     {
       assert(expected2 == result2);
       result3 = expected3;

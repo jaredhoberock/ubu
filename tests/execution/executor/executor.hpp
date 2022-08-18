@@ -1,3 +1,4 @@
+#include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor/executor.hpp>
 
 #undef NDEBUG
@@ -16,38 +17,44 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
-struct executor_with_execute_member
+struct executor_with_execute_after_member
 {
-  bool operator==(const executor_with_execute_member&) const { return true; }
-  bool operator!=(const executor_with_execute_member&) const { return false; }
+  bool operator==(const executor_with_execute_after_member&) const { return true; }
+  bool operator!=(const executor_with_execute_after_member&) const { return false; }
 
-  void execute(auto&& f) const
+  using happening_type = ns::past_event;
+
+  ns::past_event execute_after(ns::past_event, auto&& f) const
   {
     f();
+    return {};
   }
 };
 
 
-struct executor_with_execute_free_function
+struct executor_with_execute_after_free_function
 {
-  bool operator==(const executor_with_execute_free_function&) const { return true; }
-  bool operator!=(const executor_with_execute_free_function&) const { return false; }
+  bool operator==(const executor_with_execute_after_free_function&) const { return true; }
+  bool operator!=(const executor_with_execute_after_free_function&) const { return false; }
+
+  using happening_type = ns::past_event;
 };
 
-void execute(const executor_with_execute_free_function&, auto&& f)
+ns::past_event execute_after(const executor_with_execute_after_free_function&, ns::past_event, auto&& f)
 {
   f();
+  return {};
 }
 
 
 void test()
 {
   {
-    static_assert(ns::executor<executor_with_execute_member>);
+    static_assert(ns::executor<executor_with_execute_after_member>);
   }
 
   {
-    static_assert(ns::executor<executor_with_execute_free_function>);
+    static_assert(ns::executor<executor_with_execute_after_free_function>);
   }
 }
 

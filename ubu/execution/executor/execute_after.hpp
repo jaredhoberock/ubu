@@ -3,13 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../causality/wait.hpp"
-#include "executor.hpp"
-#include "executor_happening.hpp"
-#include "first_execute.hpp"
-#include <concepts>
-#include <functional>
-#include <future>
 #include <utility>
 
 
@@ -50,18 +43,6 @@ struct dispatch_execute_after
   constexpr auto operator()(E&& ex, H&& before, F&& f) const
   {
     return execute_after(std::forward<E>(ex), std::forward<H>(before), std::forward<F>(f));
-  }
-
-  // this dispatch path adapts first_execute
-  template<executor E, happening H, std::invocable F>
-    requires (!has_execute_after_member_function<E&&,H&&,F&&> and !has_execute_after_free_function<E&&,H&&,F&&>)
-  executor_happening_t<E&&> operator()(E&& ex, H&& before, F&& f) const
-  {
-    return first_execute(std::forward<E>(ex), [before=std::move(before), f=std::forward<F>(f)]() mutable
-    {
-      ubu::wait(std::move(before));
-      std::invoke(std::forward<F>(f));
-    });
   }
 };
 

@@ -1,6 +1,6 @@
-#include <ubu/execution/executor/execute.hpp>
+#include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
-#include <ubu/execution/executor/executor_of.hpp>
+#include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/execution/executor/new_thread_executor.hpp>
@@ -25,15 +25,14 @@ void test_new_thread_executor()
 
     ns::new_thread_executor ex;
 
-    std::promise<void> p;
-    auto f = p.get_future();
-    ns::execute(ex, [p = std::move(p), &invoked]() mutable
+    auto before = ns::first_cause(ex);
+
+    auto e = ns::execute_after(ex, std::move(before), [&invoked]
     {
       invoked = true;
-      p.set_value();
     });
 
-    f.wait();
+    ns::wait(e);
     assert(invoked);
   }
 

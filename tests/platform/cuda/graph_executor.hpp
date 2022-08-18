@@ -6,7 +6,6 @@
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
-#include <ubu/execution/executor/execute.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
@@ -52,35 +51,6 @@ void test_equality(ns::cuda::graph_executor ex1)
   assert(ex1 == ex2);
   assert(!(ex1 != ex2));
 }
-
-
-// XXX not clear how to test execute with graph_executor
-//void test_execute(cudaStream_t s, int d)
-//{
-//  using namespace ns;
-//
-//  cuda::kernel_executor ex1{d, s};
-//
-//  result = 0;
-//  int expected = 13;
-//
-//  try
-//  {
-//    ns::execute(ex1,[=] 
-//    {
-//      result = expected;
-//    });
-//
-//    assert(cudaStreamSynchronize(s) == cudaSuccess);
-//    assert(expected == result);
-//  }
-//  catch(std::runtime_error&)
-//  {
-//#if defined(__CUDACC__)
-//    assert(false);
-//#endif
-//  }
-//}
 
 
 void test_first_execute(ns::cuda::graph_executor ex)
@@ -283,7 +253,6 @@ void test_ND_bulk_execute_after(ns::cuda::graph_executor ex, C shape)
 void test(ns::cuda::graph_executor ex)
 {
   test_equality(ex);
-  //test_execute(ex);
   test_first_execute(ex);
   test_execute_after(ex);
   //test_finally_execute_after(ex);
