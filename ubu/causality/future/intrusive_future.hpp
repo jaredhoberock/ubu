@@ -45,7 +45,12 @@ class intrusive_future
       : intrusive_future{std::forward_as_tuple(allocator, std::move(ready), ptr_to_value)}
     {}
 
-    intrusive_future(intrusive_future&&) = default;
+    intrusive_future(intrusive_future&& other) noexcept
+      : resources_{std::move(other.resources_)},
+        maybe_result_{std::move(other.maybe_result_)}
+    {
+      std::get<pointer>(other.resources_) = nullptr;
+    }
 
     ~intrusive_future()
     {
