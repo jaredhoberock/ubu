@@ -4,6 +4,7 @@
 
 #include "executor/associated_executor.hpp"
 #include "executor/bind_executable.hpp"
+#include "executor/bindable_for.hpp"
 #include "executor/bulk_execute_after.hpp"
 #include "executor/dependent_on.hpp"
 #include "executor/executable_on.hpp"
