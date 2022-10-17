@@ -1,6 +1,6 @@
 #pragma once
 
-#include "detail/prologue.hpp"
+#include "../detail/prologue.hpp"
 
 #include "cuda/callback_executor.hpp"
 #include "cuda/device_allocator.hpp"
@@ -17,5 +17,5 @@
 #include "cuda/shmalloc.hpp"
 #include "cuda/thread_id.hpp"
 
-#include "detail/epilogue.hpp"
+#include "../detail/epilogue.hpp"
 
