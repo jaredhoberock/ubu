@@ -29,6 +29,7 @@
 #include "detail/prologue.hpp"
 
 #include "causality.hpp"
+#include "container.hpp"
 #include "coordinate.hpp"
 #include "execution.hpp"
 #include "memory.hpp"
