@@ -6,6 +6,7 @@
 #include "detail/number.hpp"
 #include "rank.hpp"
 #include "same_rank.hpp"
+#include "weakly_congruent.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -87,7 +88,11 @@ constexpr bool are_congruent()
 
 // we use remove_cvref_t because std::integral and std::floating_point don't like references
 template<class T1, class T2, class... Types>
-concept congruent = detail::are_congruent<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>,std::remove_cvref_t<Types>...>();
+concept congruent =
+  weakly_congruent<T1,T2>
+  and (... and weakly_congruent<T1,Types>)
+  and detail::are_congruent<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>,std::remove_cvref_t<Types>...>()
+;
 
 
 } // end ubu

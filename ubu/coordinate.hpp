@@ -10,6 +10,7 @@
 #include "coordinate/point.hpp"
 #include "coordinate/rank.hpp"
 #include "coordinate/to_index.hpp"
+#include "coordinate/weakly_congruent.hpp"
 
 #include "detail/epilogue.hpp"
 
