@@ -4,7 +4,7 @@
 
 #include "../element.hpp"
 #include "../grid_coordinate.hpp"
-#include "../size.hpp"
+#include "../rank.hpp"
 #include "make_ascending_index_range.hpp"
 #include "make_coordinate.hpp"
 #include "subgrid_size.hpp"
@@ -32,7 +32,7 @@ constexpr T compact_row_major_stride_impl(const T& shape, const std::integral au
 template<grid_coordinate T, std::size_t... Is>
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride, std::index_sequence<Is...>)
 {
-  return detail::make_coordinate<T>(detail::compact_row_major_stride_impl(element<Is>(shape), current_stride * detail::subgrid_size(shape, detail::make_ascending_index_range<Is+1,size_v<T>>{}))...);
+  return detail::make_coordinate<T>(detail::compact_row_major_stride_impl(element<Is>(shape), current_stride * detail::subgrid_size(shape, detail::make_ascending_index_range<Is+1,rank_v<T>>{}))...);
 }
 
 
@@ -40,7 +40,7 @@ template<grid_coordinate T>
   requires (!std::integral<T>)
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride)
 {
-  return detail::compact_row_major_stride_impl(shape, current_stride, std::make_index_sequence<size_v<T>>{});
+  return detail::compact_row_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<T>>{});
 }
 
 

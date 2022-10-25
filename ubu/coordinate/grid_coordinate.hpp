@@ -7,7 +7,7 @@
 #include <utility>
 #include "coordinate.hpp"
 #include "element.hpp"
-#include "size.hpp"
+#include "rank.hpp"
 
 
 namespace ubu::detail
@@ -54,7 +54,7 @@ struct is_grid_coordinate
     requires (!std::integral<U> and !std::floating_point<U> and coordinate<T>)
   static constexpr bool test(int)
   {
-    return has_elements_that_are_grid_coordinates<U>(std::make_index_sequence<size_v<U>>{});
+    return has_elements_that_are_grid_coordinates<U>(std::make_index_sequence<rank_v<U>>{});
   }
 
   static constexpr bool test(...)
@@ -80,7 +80,7 @@ concept grid_coordinate = (coordinate<T> and detail::is_grid_coordinate<T>::valu
 
 
 template<class T, std::size_t N>
-concept grid_coordinate_of_size = grid_coordinate<T> and (size_v<T> == N);
+concept grid_coordinate_of_rank = grid_coordinate<T> and (rank_v<T> == N);
 
 
 template<class... Types>

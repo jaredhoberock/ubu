@@ -6,7 +6,7 @@
 #include <utility>
 #include "detail/number.hpp"
 #include "element.hpp"
-#include "size.hpp"
+#include "rank.hpp"
 
 
 namespace ubu::detail
@@ -40,10 +40,10 @@ struct is_coordinate
   }
 
   template<class U = T>
-    requires (!detail::number<U> and detail::has_static_size<U>)
+    requires (!detail::number<U> and detail::has_static_rank<U>)
   static constexpr bool test(int)
   {
-    return has_elements_that_are_coordinates<U>(std::make_index_sequence<size_v<U>>{});
+    return has_elements_that_are_coordinates<U>(std::make_index_sequence<rank_v<U>>{});
   }
 
   static constexpr bool test(...)
@@ -67,7 +67,7 @@ template<class T>
 concept coordinate = detail::is_coordinate<T>::value;
 
 template<class T, std::size_t N>
-concept coordinate_of_size = coordinate<T> and (size_v<T> == N);
+concept coordinate_of_rank = coordinate<T> and (rank_v<T> == N);
 
 
 } // end ubu

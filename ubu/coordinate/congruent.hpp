@@ -4,7 +4,8 @@
 
 #include "coordinate.hpp"
 #include "detail/number.hpp"
-#include "size.hpp"
+#include "rank.hpp"
+#include "same_rank.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -75,11 +76,11 @@ constexpr bool are_congruent()
 
 
 // terminal case 8: neither arguments are numbers but both are coordinates
-//                  but their sizes differ
+//                  but their ranks differ
 template<coordinate T1, coordinate T2>
   requires (not_a_number<T1> and
             not_a_number<T2> and
-            size_v<T1> != size_v<T2>)
+            not same_rank<T1,T2>)
 constexpr bool are_congruent()
 {
   return false;
@@ -90,7 +91,7 @@ constexpr bool are_congruent()
 template<coordinate T1, coordinate T2>
   requires (not_a_number<T1> and
             not_a_number<T2> and
-            size_v<T1> == size_v<T2>)
+            same_rank<T1,T2>)
 constexpr bool are_congruent();
 
 
@@ -104,7 +105,7 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
 template<coordinate T1, coordinate T2, std::size_t Index, std::size_t... Indices>
   requires (not_a_number<T1> and
             not_a_number<T2> and
-            size_v<T1> == size_v<T2>)
+            same_rank<T1,T2>)
 constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
 {
   // check the congruency of the first element of each coordinate and recurse to the rest of the elements
@@ -113,14 +114,14 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices..
 
 
 // recursive case: neither arguments are numbers but both are coordinates
-//                 and their sizes are the same
+//                 and their ranks are the same
 template<coordinate T1, coordinate T2>
   requires (not_a_number<T1> and
             not_a_number<T2> and
-            size_v<T1> == size_v<T2>)
+            same_rank<T1,T2>)
 constexpr bool are_congruent()
 {
-  return are_congruent_recursive_impl<T1,T2>(std::make_index_sequence<size_v<T1>>{});
+  return are_congruent_recursive_impl<T1,T2>(std::make_index_sequence<rank_v<T1>>{});
 }
 
 

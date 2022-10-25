@@ -8,7 +8,7 @@
 #include "coordinate/grid_coordinate.hpp"
 #include "coordinate/grid_size.hpp"
 #include "coordinate/point.hpp"
-#include "coordinate/size.hpp"
+#include "coordinate/rank.hpp"
 #include "coordinate/to_index.hpp"
 
 #include "detail/epilogue.hpp"

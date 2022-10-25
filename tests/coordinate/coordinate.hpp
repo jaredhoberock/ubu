@@ -10,7 +10,7 @@ namespace ns = ubu;
 
 struct has_member_functions
 {
-  static constexpr std::size_t size()
+  static constexpr std::size_t rank()
   {
     return 4;
   }

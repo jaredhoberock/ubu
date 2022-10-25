@@ -5,7 +5,7 @@
 #include "coordinate.hpp"
 #include "element.hpp"
 #include "grid_coordinate.hpp"
-#include "size.hpp"
+#include "rank.hpp"
 #include <array>
 #include <concepts>
 #include <functional>
@@ -187,6 +187,8 @@ class point : public detail::point_base<T,N>
     using iterator = pointer;
     using const_iterator = const_pointer;
 
+    static constexpr std::size_t rank = N;
+
     // default constructor
     point() = default;
 
@@ -308,37 +310,37 @@ class point : public detail::point_base<T,N>
 
     // relational operators
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr bool operator==(const Other& rhs) const
     {
       return equal(*this, rhs, std::make_index_sequence<N>());
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr bool operator!=(const Other& rhs) const
     {
       return !(*this == rhs);
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     bool operator<(const Other& rhs) const
     {
       return lexicographical_compare(std::integral_constant<std::size_t,0>{}, *this, rhs);
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     bool operator>(const Other& rhs) const
     {
       return lexicographical_compare(std::integral_constant<std::size_t,0>{}, rhs, *this);
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     bool operator<=(const Other& rhs) const
     {
       return !(*this > rhs);
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     bool operator>=(const Other& rhs) const
     {
       return !(*this < rhs);
@@ -348,35 +350,35 @@ class point : public detail::point_base<T,N>
 
     // arithmetic assignment operators
     
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point& operator+=(const Other& rhs)
     {
       inplace_transform(rhs, std::plus{}, std::make_index_sequence<N>{});
       return *this;
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point& operator-=(const Other& rhs)
     {
       inplace_transform(rhs, std::minus{}, std::make_index_sequence<N>{});
       return *this;
     }
     
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point& operator*=(const Other& rhs)
     {
       inplace_transform(rhs, std::multiplies{}, std::make_index_sequence<N>{});
       return *this;
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point& operator/=(const Other& rhs)
     {
       inplace_transform(rhs, std::divides{}, std::make_index_sequence<N>{});
       return *this;
     }
 
-    template<grid_coordinate_of_size<N> Other>
+    template<grid_coordinate_of_rank<N> Other>
       requires std::integral<T>
     constexpr point& operator%=(const Other& rhs)
     {
@@ -404,7 +406,7 @@ class point : public detail::point_base<T,N>
 
     // arithmetic operators
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point operator+(const Other& rhs) const
     {
       point result = *this;
@@ -412,7 +414,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point operator-(const Other& rhs) const
     {
       point result = *this;
@@ -420,7 +422,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point operator*(const Other& rhs) const
     {
       point result = *this;
@@ -428,7 +430,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_size<N> Other>
+    template<coordinate_of_rank<N> Other>
     constexpr point operator/(const Other& rhs) const
     {
       point result = *this;
@@ -436,7 +438,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<grid_coordinate_of_size<N> Other>
+    template<grid_coordinate_of_rank<N> Other>
       requires std::integral<T>
     constexpr point operator%(const Other& rhs) const
     {
@@ -489,7 +491,7 @@ class point : public detail::point_base<T,N>
       : point{identity<Indices>(value)...}
     {}
 
-    template<coordinate_of_size<N> C1, coordinate_of_size<N> C2, std::size_t... Indices>
+    template<coordinate_of_rank<N> C1, coordinate_of_rank<N> C2, std::size_t... Indices>
     constexpr static bool equal(const C1& lhs, const C2& rhs, std::index_sequence<Indices...>)
     {
       return (... and (element<Indices>(lhs) == element<Indices>(rhs)));
@@ -498,19 +500,19 @@ class point : public detail::point_base<T,N>
     template<class... Types>
     constexpr static void swallow(Types&&... args) {}
 
-    template<coordinate_of_size<N> C, class BinaryOp, std::size_t... Indices>
+    template<coordinate_of_rank<N> C, class BinaryOp, std::size_t... Indices>
     constexpr void inplace_transform(const C& rhs, BinaryOp op, std::index_sequence<Indices...>)
     {
       swallow(element<Indices>(*this) = op(element<Indices>(*this), element<Indices>(rhs))...);
     }
 
-    template<coordinate_of_size<N> C1, coordinate_of_size<N> C2>
+    template<coordinate_of_rank<N> C1, coordinate_of_rank<N> C2>
     constexpr static bool lexicographical_compare(std::integral_constant<std::size_t,N>, const C1&, const C2&)
     {
       return false;
     }
 
-    template<std::size_t cursor, coordinate_of_size<N> C1, coordinate_of_size<N> C2>
+    template<std::size_t cursor, coordinate_of_rank<N> C1, coordinate_of_rank<N> C2>
     constexpr static bool lexicographical_compare(std::integral_constant<std::size_t,cursor>, const C1& lhs, const C2& rhs)
     {
       if(element<cursor>(lhs) < element<cursor>(rhs)) return true;

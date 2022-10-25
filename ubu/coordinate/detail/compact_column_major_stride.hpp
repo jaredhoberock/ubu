@@ -4,7 +4,7 @@
 
 #include "../grid_coordinate.hpp"
 #include "../element.hpp"
-#include "../size.hpp"
+#include "../rank.hpp"
 #include "make_coordinate.hpp"
 #include "subgrid_size.hpp"
 #include <concepts>
@@ -38,7 +38,7 @@ template<grid_coordinate S>
   requires (!std::integral<S>)
 constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride)
 {
-  return detail::compact_column_major_stride_impl(shape, current_stride, std::make_index_sequence<size_v<S>>{});
+  return detail::compact_column_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<S>>{});
 }
 
 

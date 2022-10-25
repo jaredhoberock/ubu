@@ -29,7 +29,7 @@ struct thread_id
       thread{block_and_thread.y, 0, 0}
   {}
 
-  constexpr static std::size_t size()
+  constexpr static std::size_t rank()
   {
     return 2;
   }

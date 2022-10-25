@@ -3,9 +3,9 @@
 #include "../detail/prologue.hpp"
 
 #include "congruent.hpp"
-#include "element.hpp"
-#include "size.hpp"
 #include "detail/make_coordinate.hpp"
+#include "element.hpp"
+#include "rank.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -45,7 +45,7 @@ template<grid_coordinate T, grid_coordinate Shape, grid_coordinate Stride>
   requires (!std::integral<Shape> and congruent<T,Shape,Stride>)
 constexpr T to_grid_coordinate(const std::integral auto& i, const Shape& shape, const Stride& stride)
 {
-  return detail::to_grid_coordinate_impl<T>(i, shape, stride, std::make_index_sequence<size_v<Shape>>{});
+  return detail::to_grid_coordinate_impl<T>(i, shape, stride, std::make_index_sequence<rank_v<Shape>>{});
 }
 
 

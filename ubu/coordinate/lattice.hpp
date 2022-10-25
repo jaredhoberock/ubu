@@ -7,7 +7,7 @@
 #include "detail/make_coordinate.hpp"
 #include "detail/number.hpp"
 #include "grid_size.hpp"
-#include "size.hpp"
+#include "rank.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
@@ -57,7 +57,7 @@ class lattice
     // returns the number of dimensions spanned by this lattice
     static constexpr std::size_t number_of_dimensions()
     {
-      return size_v<T>;
+      return rank_v<T>;
     }
     
     // variadic constructor
@@ -106,7 +106,7 @@ class lattice
 
     // returns the value of the ith lattice point in lexicographic order
     template<std::integral I>
-      requires (size_v<T> > 1)
+      requires (rank_v<T> > 1)
     constexpr T operator[](I idx) const
     {
       return begin()[idx];
