@@ -51,7 +51,7 @@ constexpr T make_coordinate(Arg&& arg)
 
 // non-scalar case
 template<coordinate T, class... Args>
-  requires (not_a_number<T> and rank_v<T> == sizeof...(Args))
+  requires (not_number<T> and rank_v<T> == sizeof...(Args))
 constexpr T make_coordinate(Args&&... args)
 {
   detail::make_coordinate_impl<T> impl;

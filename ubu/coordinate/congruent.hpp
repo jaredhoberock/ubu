@@ -18,79 +18,27 @@ namespace detail
 {
 
 
-// terminal case 1: both arguments are integers
-template<std::integral T1, std::integral T2>
-constexpr bool are_congruent()
-{
-  return true;
-}
-
-
-// terminal case 2: both arguments are floating point
-template<std::floating_point T1, std::floating_point T2>
-constexpr bool are_congruent()
-{
-  return true;
-}
-
-
-// terminal case 3: the first argument is integral and the second is floating point
-template<std::integral T1, std::floating_point T2>
-constexpr bool are_congruent()
-{
-  return false;
-}
-
-
-// terminal case 4: the first argument is floating point and the second is integral
-template<std::floating_point T1, std::integral T2>
-constexpr bool are_congruent()
-{
-  return false;
-}
-
-
-// terminal case 5: the first argument is a number and the second is not
-template<number T1, not_a_number T2>
-constexpr bool are_congruent()
-{
-  return false;
-}
-
-
-// terminal case 6: the first argument is not a number and the second is a number
-template<not_a_number T1, number T2>
-constexpr bool are_congruent()
-{
-  return false;
-}
-
-
-// terminal case 7: neither arguments are coordinates
+// terminal case 1: both arguments are unrelated types
 template<class T1, class T2>
-  requires (!coordinate<T1> and !coordinate<T2>)
 constexpr bool are_congruent()
 {
   return false;
 }
 
 
-// terminal case 8: neither arguments are numbers but both are coordinates
-//                  but their ranks differ
-template<coordinate T1, coordinate T2>
-  requires (not_a_number<T1> and
-            not_a_number<T2> and
-            not same_rank<T1,T2>)
+// terminal case 2: both arguments are the same kind of number
+template<number T1, number T2>
+  requires same_kind_of_number<T1,T2>
 constexpr bool are_congruent()
 {
-  return false;
+  return true;
 }
 
 
 // forward declaration of recursive case
 template<coordinate T1, coordinate T2>
-  requires (not_a_number<T1> and
-            not_a_number<T2> and
+  requires (not number<T1> and
+            not number<T2> and
             same_rank<T1,T2>)
 constexpr bool are_congruent();
 
@@ -103,8 +51,8 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
 
 
 template<coordinate T1, coordinate T2, std::size_t Index, std::size_t... Indices>
-  requires (not_a_number<T1> and
-            not_a_number<T2> and
+  requires (not number<T1> and
+            not number<T2> and
             same_rank<T1,T2>)
 constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
 {
@@ -116,8 +64,8 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices..
 // recursive case: neither arguments are numbers but both are coordinates
 //                 and their ranks are the same
 template<coordinate T1, coordinate T2>
-  requires (not_a_number<T1> and
-            not_a_number<T2> and
+  requires (not number<T1> and
+            not number<T2> and
             same_rank<T1,T2>)
 constexpr bool are_congruent()
 {

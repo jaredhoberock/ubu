@@ -272,7 +272,7 @@ class lattice_iterator
 
     // non-scalar case
     template<class U = T>
-      requires not_a_number<U>
+      requires not_number<U>
     constexpr static T past_the_end(const lattice<T>& domain)
     {
       T result = domain.origin();
@@ -291,7 +291,7 @@ class lattice_iterator
   private:
     // non-scalar case
     template<class U = T>
-      requires not_a_number<U>
+      requires not_number<U>
     constexpr void increment()
     {
       T begin = domain_.origin();
@@ -323,7 +323,7 @@ class lattice_iterator
 
     // non-scalar case
     template<class U = T>
-      requires not_a_number<U>
+      requires not_number<U>
     constexpr void decrement()
     {
       T begin = domain_.origin();
@@ -355,7 +355,7 @@ class lattice_iterator
 
     // non-scalar case
     template<class U = T>
-      requires not_a_number<U>
+      requires not_number<U>
     constexpr void advance(difference_type n)
     {
       current_ = domain_.origin() + ubu::colexicographic_index_to_grid_coordinate(colexicographic_index() + n, domain_.shape());
