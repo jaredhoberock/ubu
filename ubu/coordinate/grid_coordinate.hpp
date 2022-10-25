@@ -87,6 +87,14 @@ template<class... Types>
 concept are_grid_coordinates = (... and grid_coordinate<Types>);
 
 
+template<class T>
+concept tuple_like_grid_coordinate = (grid_coordinate<T> and not std::integral<T>);
+
+
+template<class... Types>
+concept are_tuple_like_grid_coordinates = (... and tuple_like_grid_coordinate<Types>);
+
+
 } // end ubu
 
 

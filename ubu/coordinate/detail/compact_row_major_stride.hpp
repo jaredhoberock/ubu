@@ -24,8 +24,7 @@ constexpr T compact_row_major_stride_impl(const std::integral auto&, const T& cu
 
 
 // forward declaration for recursive case
-template<grid_coordinate T>
-  requires (!std::integral<T>)
+template<tuple_like_grid_coordinate T>
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride);
 
 
@@ -36,8 +35,7 @@ constexpr T compact_row_major_stride_impl(const T& shape, const std::integral au
 }
 
 
-template<grid_coordinate T>
-  requires (!std::integral<T>)
+template<tuple_like_grid_coordinate T>
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride)
 {
   return detail::compact_row_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<T>>{});

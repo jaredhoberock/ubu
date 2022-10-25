@@ -21,8 +21,8 @@ constexpr T to_grid_coordinate(const std::integral auto& i, const std::integral 
 }
 
 
-template<grid_coordinate T, grid_coordinate Shape, grid_coordinate Stride>
-  requires (!std::integral<Shape> and congruent<T,Shape,Stride>)
+template<grid_coordinate T, tuple_like_grid_coordinate Shape, tuple_like_grid_coordinate Stride>
+  requires congruent<T,Shape,Stride>
 constexpr T to_grid_coordinate(const std::integral auto& i, const Shape& shape, const Stride& stride);
 
 
@@ -30,8 +30,8 @@ namespace detail
 {
 
 
-template<grid_coordinate T, grid_coordinate Shape, grid_coordinate Stride, std::size_t... Is>
-  requires (!std::integral<Shape> and congruent<T,Shape,Stride>)
+template<grid_coordinate T, tuple_like_grid_coordinate Shape, tuple_like_grid_coordinate Stride, std::size_t... Is>
+  requires congruent<T,Shape,Stride>
 constexpr T to_grid_coordinate_impl(const std::integral auto& i, const Shape& shape, const Stride& stride, std::index_sequence<Is...>)
 {
   return detail::make_coordinate<T>(ubu::to_grid_coordinate<element_t<Is, T>>(i, element<Is>(shape), element<Is>(stride))...);
@@ -41,8 +41,8 @@ constexpr T to_grid_coordinate_impl(const std::integral auto& i, const Shape& sh
 } // end detail
 
 
-template<grid_coordinate T, grid_coordinate Shape, grid_coordinate Stride>
-  requires (!std::integral<Shape> and congruent<T,Shape,Stride>)
+template<grid_coordinate T, tuple_like_grid_coordinate Shape, tuple_like_grid_coordinate Stride>
+  requires congruent<T,Shape,Stride>
 constexpr T to_grid_coordinate(const std::integral auto& i, const Shape& shape, const Stride& stride)
 {
   return detail::to_grid_coordinate_impl<T>(i, shape, stride, std::make_index_sequence<rank_v<Shape>>{});

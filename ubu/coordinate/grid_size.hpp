@@ -23,8 +23,7 @@ constexpr std::size_t grid_size(const std::integral auto& grid_shape)
 
 
 // forward declaration of non-scalar case
-template<grid_coordinate T>
-  requires (!std::integral<T>)
+template<tuple_like_grid_coordinate T>
 constexpr std::size_t grid_size(const T& grid_shape);
 
 
@@ -45,8 +44,7 @@ constexpr point<std::size_t, rank_v<T>> to_tuple_of_sizes(const T& grid_shape, s
 
 
 // non-scalar case
-template<grid_coordinate T>
-  requires (!std::integral<T>)
+template<tuple_like_grid_coordinate T>
 constexpr std::size_t grid_size(const T& grid_shape)
 {
   // transform grid_shape into a tuple of sizes

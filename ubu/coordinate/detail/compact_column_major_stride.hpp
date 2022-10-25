@@ -22,8 +22,7 @@ constexpr T compact_column_major_stride_impl(const std::integral auto& shape, co
 }
 
 
-template<grid_coordinate S>
-  requires (!std::integral<S>)
+template<tuple_like_grid_coordinate S>
 constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride);
 
 
@@ -34,8 +33,7 @@ constexpr S compact_column_major_stride_impl(const S& shape, const std::integral
 }
 
 
-template<grid_coordinate S>
-  requires (!std::integral<S>)
+template<tuple_like_grid_coordinate S>
 constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride)
 {
   return detail::compact_column_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<S>>{});
