@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "colexicographic_index.hpp"
-#include "colexicographic_index_to_grid_coordinate.hpp"
+#include "colexicographic_index_to_coordinate.hpp"
 #include "detail/make_coordinate.hpp"
 #include "detail/number.hpp"
 #include "grid_size.hpp"
@@ -358,7 +358,7 @@ class lattice_iterator
       requires not_number<U>
     constexpr void advance(difference_type n)
     {
-      current_ = domain_.origin() + ubu::colexicographic_index_to_grid_coordinate(colexicographic_index() + n, domain_.shape());
+      current_ = domain_.origin() + ubu::colexicographic_index_to_coordinate(colexicographic_index() + n, domain_.shape());
     }
 
     // scalar case

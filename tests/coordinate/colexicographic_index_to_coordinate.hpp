@@ -1,11 +1,11 @@
-#include <ubu/coordinate/colexicographic_index_to_grid_coordinate.hpp>
+#include <ubu/coordinate/colexicographic_index_to_coordinate.hpp>
 #include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 
-void test_colexicographic_index_to_grid_coordinate()
+void test_colexicographic_index_to_coordinate()
 {
   namespace ns = ubu;
 
@@ -18,7 +18,7 @@ void test_colexicographic_index_to_grid_coordinate()
     {
       int expected = coord;
 
-      int result = ns::colexicographic_index_to_grid_coordinate(index, shape);
+      int result = ns::colexicographic_index_to_coordinate(index, shape);
 
       assert(expected == result);
     }
@@ -34,7 +34,7 @@ void test_colexicographic_index_to_grid_coordinate()
       for(int j = 0; j < shape[1]; ++j, ++index)
       {
         ns::int2 expected{i,j};
-        ns::int2 result = ns::colexicographic_index_to_grid_coordinate(index, shape);
+        ns::int2 result = ns::colexicographic_index_to_coordinate(index, shape);
 
         assert(expected == result);
       }
@@ -53,7 +53,7 @@ void test_colexicographic_index_to_grid_coordinate()
         for(int k = 0; k < shape[2]; ++k, ++index)
         {
           ns::int3 expected{i,j,k};
-          ns::int3 result = ns::colexicographic_index_to_grid_coordinate(index, shape);
+          ns::int3 result = ns::colexicographic_index_to_coordinate(index, shape);
 
           assert(expected == result);
         }
@@ -80,7 +80,7 @@ void test_colexicographic_index_to_grid_coordinate()
               using coord_type = std::pair<ns::int2, ns::int3>;
 
               coord_type expected{{i,j}, {x,y,z}};
-              coord_type result = ns::colexicographic_index_to_grid_coordinate(index, shape);
+              coord_type result = ns::colexicographic_index_to_coordinate(index, shape);
 
               assert(expected == result);
             }

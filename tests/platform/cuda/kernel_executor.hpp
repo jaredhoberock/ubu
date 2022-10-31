@@ -1,7 +1,7 @@
 #include <ubu/causality/first_cause.hpp>
 #include <ubu/causality/wait.hpp>
 #include <ubu/coordinate/colexicographic_index.hpp>
-#include <ubu/coordinate/colexicographic_index_to_grid_coordinate.hpp>
+#include <ubu/coordinate/colexicographic_index_to_coordinate.hpp>
 #include <ubu/coordinate/grid_coordinate.hpp>
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
@@ -236,7 +236,7 @@ void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
     cuda::event e = ns::bulk_execute_after(ex1, before, shape, [=](C coord)
     {
       int i = colexicographic_index(coord, shape);
-      int6 a = colexicographic_index_to_grid_coordinate(i, bulk_result_shape);
+      int6 a = colexicographic_index_to_coordinate(i, bulk_result_shape);
 
       bulk_result[a[0]][a[1]][a[2]][a[3]][a[4]][a[5]] = i;
     });

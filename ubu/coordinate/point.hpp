@@ -11,6 +11,7 @@
 #include <functional>
 #include <iostream>
 #include <type_traits>
+#include <tuple>
 #include <utility>
 
 
@@ -232,6 +233,28 @@ class point : public detail::point_base<T,N>
     constexpr static size_type size()
     {
       return N;
+    }
+
+    // tuple-like interface
+    template<std::size_t i>
+      requires (i < N)
+    friend constexpr T& get(point& self)
+    {
+      return self[i];
+    }
+
+    template<std::size_t i>
+      requires (i < N)
+    friend constexpr const T& get(const point& self)
+    {
+      return self[i];
+    }
+
+    template<std::size_t i>
+      requires (i < N)
+    friend constexpr T&& get(point&& self)
+    {
+      return std::move(self[i]);
     }
 
 
@@ -641,6 +664,21 @@ using double10 = point<double,10>;
 
 
 } // end ubu
+
+
+namespace std
+{
+
+template<class T, size_t N>
+struct tuple_size<ubu::point<T,N>> : std::integral_constant<size_t,N> {};
+
+template<std::size_t I, class T, size_t N>
+struct tuple_element<I,ubu::point<T,N>>
+{
+  using type = T;
+};
+
+} // end std
 
 
 #include "../detail/epilogue.hpp"
