@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../coordinate.hpp"
 #include "../rank.hpp"
-#include "number.hpp"
 #include <concepts>
 #include <utility>
 
@@ -51,7 +51,7 @@ constexpr T make_coordinate(Arg&& arg)
 
 // non-scalar case
 template<coordinate T, class... Args>
-  requires (not_number<T> and rank_v<T> == sizeof...(Args))
+  requires (not std::integral<T> and rank_v<T> == sizeof...(Args))
 constexpr T make_coordinate(Args&&... args)
 {
   detail::make_coordinate_impl<T> impl;

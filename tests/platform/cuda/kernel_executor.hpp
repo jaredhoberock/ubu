@@ -2,7 +2,7 @@
 #include <ubu/causality/wait.hpp>
 #include <ubu/coordinate/colexicographic_index.hpp>
 #include <ubu/coordinate/colexicographic_index_to_coordinate.hpp>
-#include <ubu/coordinate/grid_coordinate.hpp>
+#include <ubu/coordinate/coordinate.hpp>
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
@@ -220,7 +220,7 @@ void test_native_bulk_execute_after(cudaStream_t s, int d)
 }
 
 
-template<ns::grid_coordinate C>
+template<ns::coordinate C>
 void test_ND_bulk_execute_after(cudaStream_t s, int d, C shape)
 {
   using namespace ns;
@@ -295,7 +295,7 @@ void test_on_new_stream()
 
 void test_concepts()
 {
-  static_assert(ns::grid_coordinate<ns::cuda::kernel_executor::coordinate_type>);
+  static_assert(ns::coordinate<ns::cuda::kernel_executor::coordinate_type>);
   static_assert(std::same_as<ns::cuda::kernel_executor::coordinate_type, ns::executor_coordinate_t<ns::cuda::kernel_executor>>);
 }
 

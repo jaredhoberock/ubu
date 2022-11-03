@@ -133,7 +133,7 @@ namespace detail
 
 
 template<class T>
-concept has_static_rank = requires
+concept static_rank = requires
 {
   rank.operator()<T>();
 };
@@ -142,7 +142,7 @@ concept has_static_rank = requires
 } // end detail
 
 
-template<detail::has_static_rank T>
+template<detail::static_rank T>
 static constexpr auto rank_v = rank.operator()<T>();
 
 

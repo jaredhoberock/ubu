@@ -11,11 +11,8 @@ void test_weakly_congruent()
   static_assert(weakly_congruent<int,int>);
   static_assert(weakly_congruent<int,unsigned int>);
   static_assert(weakly_congruent<unsigned int,int>);
-  static_assert(weakly_congruent<float,float>);
-  static_assert(weakly_congruent<double,double>);
-  static_assert(weakly_congruent<double,float>);
-  static_assert(weakly_congruent<float,double>);
   static_assert(weakly_congruent<char, int>);
+  static_assert(weakly_congruent<std::array<int,1>, int>);
 
   // test some weakly congruent coordinates of different rank
   static_assert(weakly_congruent<int, std::pair<int,int>>);
@@ -48,7 +45,7 @@ void test_weakly_congruent()
   static_assert(!weakly_congruent<int*,int*>);
   static_assert(!weakly_congruent<float2,double3>);
   static_assert(!weakly_congruent<uint3, uint2x3>);
-  static_assert(!weakly_congruent<std::array<int,1>, int>);
+  static_assert(!weakly_congruent<std::array<int,2>, int>);
   static_assert(!weakly_congruent<int&, float>);
 }
 

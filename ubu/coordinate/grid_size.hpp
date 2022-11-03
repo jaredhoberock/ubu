@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
+#include "coordinate.hpp"
 #include "element.hpp"
-#include "grid_coordinate.hpp"
 #include "point.hpp"
 #include "rank.hpp"
 #include <concepts>
@@ -16,14 +16,15 @@ namespace ubu
 
 
 // scalar case
-constexpr std::size_t grid_size(const std::integral auto& grid_shape)
+template<coordinate_of_rank<1> C>
+constexpr std::size_t grid_size(const C& grid_shape)
 {
-  return static_cast<std::size_t>(grid_shape);
+  return static_cast<std::size_t>(element<0>(grid_shape));
 }
 
 
 // forward declaration of non-scalar case
-template<tuple_like_grid_coordinate T>
+template<tuple_like_coordinate T>
 constexpr std::size_t grid_size(const T& grid_shape);
 
 
@@ -31,9 +32,9 @@ namespace detail
 {
 
 
-// this function takes a grid_coordinate, calls grid_size on each of its elements,
+// this function takes a coordinate, calls grid_size on each of its elements,
 // and returns a new point<size_t> whose elements are the results
-template<grid_coordinate T, std::size_t... Indices>
+template<coordinate T, std::size_t... Indices>
 constexpr point<std::size_t, rank_v<T>> to_tuple_of_sizes(const T& grid_shape, std::index_sequence<Indices...>)
 {
   return {grid_size(element<Indices>(grid_shape))...};
@@ -44,7 +45,7 @@ constexpr point<std::size_t, rank_v<T>> to_tuple_of_sizes(const T& grid_shape, s
 
 
 // non-scalar case
-template<tuple_like_grid_coordinate T>
+template<tuple_like_coordinate T>
 constexpr std::size_t grid_size(const T& grid_shape)
 {
   // transform grid_shape into a tuple of sizes

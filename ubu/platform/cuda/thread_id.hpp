@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/grid_coordinate.hpp"
+#include "../../coordinate/coordinate.hpp"
 #include "../../coordinate/point.hpp"
 #include <vector_types.h>
 

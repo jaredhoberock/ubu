@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/grid_coordinate.hpp"
+#include "../../coordinate/coordinate.hpp"
 #include "../../detail/for_each_arg.hpp"
 #include "../../execution/executor/associated_executor.hpp"
 #include "../../execution/executor/bulk_execute_after.hpp"
@@ -121,7 +121,7 @@ class intrusive_future
     // invocable<S, T>
     // requires copyable<T>
     // XXX we should pass f a (raw) reference to the value rather than a pointer
-    template<executor Ex, grid_coordinate S, std::regular_invocable<S,pointer> F,
+    template<executor Ex, coordinate S, std::regular_invocable<S,pointer> F,
              class Self = intrusive_future
             >
     intrusive_future then_bulk_execute(const Ex& ex, S grid_shape, F function) &&

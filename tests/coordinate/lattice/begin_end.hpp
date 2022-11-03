@@ -34,6 +34,12 @@ void test_begin_end()
     {
       auto result = *i;
       auto expected = l[linear_idx];
+      if(expected != result)
+      {
+        std::cout << "linear_idx: " << linear_idx << std::endl;
+        std::cout << "expected: " << expected << std::endl;
+        std::cout << "result: " << result << std::endl;
+      }
       assert(expected == result);
     }
   }

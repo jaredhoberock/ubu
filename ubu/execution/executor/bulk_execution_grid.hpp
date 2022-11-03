@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/grid_coordinate.hpp"
+#include "../../coordinate/coordinate.hpp"
 #include "../../coordinate/grid_size.hpp"
 #include "executor.hpp"
 #include "executor_happening.hpp"
@@ -17,7 +17,7 @@ namespace detail
 {
 
 
-template<grid_coordinate C>
+template<coordinate C>
 struct bulk_invocable_archetype
 {
   void operator()(C) const;
@@ -54,7 +54,7 @@ concept has_bulk_execution_grid_member_function =
   executor<E>
   and requires(E ex, G grid_shape)
   {
-    {ex.bulk_execution_grid(grid_shape)} -> grid_coordinate;
+    {ex.bulk_execution_grid(grid_shape)} -> coordinate;
 
     requires has_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(grid_shape))>;
   }
@@ -65,7 +65,7 @@ concept has_bulk_execution_grid_free_function =
   executor<E> and
   requires(E ex, G grid_shape)
   {
-    {bulk_execution_grid(ex,grid_shape)} -> grid_coordinate;
+    {bulk_execution_grid(ex,grid_shape)} -> coordinate;
 
     requires has_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,grid_shape))>;
   }
@@ -76,7 +76,7 @@ concept has_bulk_execution_grid_free_function =
 struct dispatch_bulk_execution_grid
 {
   // this path calls the member function
-  template<executor E, grid_coordinate G>
+  template<executor E, coordinate G>
     requires has_bulk_execution_grid_member_function<E&&,G>
   constexpr auto operator()(E&& ex, G grid_shape) const
   {
@@ -84,7 +84,7 @@ struct dispatch_bulk_execution_grid
   }
 
   // this path calls the free function
-  template<executor E, grid_coordinate G>
+  template<executor E, coordinate G>
     requires (!has_bulk_execution_grid_member_function<E&&,G> and
                has_bulk_execution_grid_free_function<E&&,G>)
   constexpr auto operator()(E&& ex, G grid_shape) const
@@ -92,7 +92,7 @@ struct dispatch_bulk_execution_grid
     return bulk_execution_grid(std::forward<E>(ex), grid_shape);
   }
 
-  template<executor E, grid_coordinate G>
+  template<executor E, coordinate G>
     requires (!has_bulk_execution_grid_member_function<E&&,G> and
               !has_bulk_execution_grid_free_function<E&&,G>)
   constexpr auto operator()(E&& ex, G grid_shape) const

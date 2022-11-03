@@ -3,10 +3,10 @@
 #include "../detail/prologue.hpp"
 
 #include "congruent.hpp"
+#include "coordinate.hpp"
 #include "detail/compact_row_major_stride.hpp"
 #include "detail/index_to_coordinate.hpp"
 #include "detail/tuple_algorithm.hpp"
-#include "grid_coordinate.hpp"
 #include "weakly_congruent.hpp"
 #include <concepts>
 
@@ -17,7 +17,7 @@ namespace ubu
 
 // precondition:  is_coordinate_into(coord,shape)
 // postcondition: is_natural_coordinate_into(result,shape)
-template<grid_coordinate C, grid_coordinate S>
+template<coordinate C, coordinate S>
   requires congruent<C,S>
 constexpr C colexicographic_index_to_coordinate(const C& coord, const S& shape)
 {
@@ -27,7 +27,7 @@ constexpr C colexicographic_index_to_coordinate(const C& coord, const S& shape)
 
 // precondition:  is_coordinate_into(coord,shape)
 // postcondition: is_natural_coordinate_into(result,shape)
-template<grid_coordinate C, grid_coordinate S>
+template<coordinate C, coordinate S>
   requires weakly_congruent<C,S>
 constexpr congruent<S> auto colexicographic_index_to_coordinate(const C& coord, const S& shape)
 {

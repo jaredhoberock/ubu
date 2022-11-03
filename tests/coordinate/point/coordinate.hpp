@@ -1,53 +1,50 @@
 #include <ubu/coordinate/coordinate.hpp>
 #include <ubu/coordinate/point.hpp>
 
+namespace ns = ubu;
+
 void test_coordinate()
 {
-  using namespace ubu;
+  static_assert(ns::coordinate<ns::point<char,1>>);
+  static_assert(ns::coordinate<ns::point<char,2>>);
+  static_assert(ns::coordinate<ns::point<char,3>>);
+  static_assert(ns::coordinate<ns::point<char,4>>);
+  static_assert(ns::coordinate<ns::point<char,5>>);
 
-  static_assert(coordinate<point<char,1>>);
-  static_assert(coordinate<point<char,2>>);
-  static_assert(coordinate<point<char,3>>);
-  static_assert(coordinate<point<char,4>>);
+  static_assert(ns::coordinate<ns::point<unsigned char, 1>>);
+  static_assert(ns::coordinate<ns::point<unsigned char, 2>>);
+  static_assert(ns::coordinate<ns::point<unsigned char, 3>>);
+  static_assert(ns::coordinate<ns::point<unsigned char, 4>>);
+  static_assert(ns::coordinate<ns::point<unsigned char, 5>>);
 
-  static_assert(coordinate<point<unsigned char,1>>);
-  static_assert(coordinate<point<unsigned char,2>>);
-  static_assert(coordinate<point<unsigned char,3>>);
-  static_assert(coordinate<point<unsigned char,4>>);
+  static_assert(ns::coordinate<ns::int1>);
+  static_assert(ns::coordinate<ns::int2>);
+  static_assert(ns::coordinate<ns::int3>);
+  static_assert(ns::coordinate<ns::int4>);
+  static_assert(ns::coordinate<ns::int5>);
 
-  static_assert(coordinate<point<short,1>>);
-  static_assert(coordinate<point<short,2>>);
-  static_assert(coordinate<point<short,3>>);
-  static_assert(coordinate<point<short,4>>);
+  static_assert(ns::coordinate<ns::uint1>);
+  static_assert(ns::coordinate<ns::uint2>);
+  static_assert(ns::coordinate<ns::uint3>);
+  static_assert(ns::coordinate<ns::uint4>);
+  static_assert(ns::coordinate<ns::uint5>);
 
-  static_assert(coordinate<point<unsigned short,1>>);
-  static_assert(coordinate<point<unsigned short,2>>);
-  static_assert(coordinate<point<unsigned short,3>>);
-  static_assert(coordinate<point<unsigned short,4>>);
+  static_assert(ns::coordinate<ns::size1>);
+  static_assert(ns::coordinate<ns::size2>);
+  static_assert(ns::coordinate<ns::size3>);
+  static_assert(ns::coordinate<ns::size4>);
+  static_assert(ns::coordinate<ns::size5>);
 
-  static_assert(coordinate<point<int,1>>);
-  static_assert(coordinate<point<int,2>>);
-  static_assert(coordinate<point<int,3>>);
-  static_assert(coordinate<point<int,4>>);
+  static_assert(not ns::coordinate<ns::float1>);
+  static_assert(not ns::coordinate<ns::float2>);
+  static_assert(not ns::coordinate<ns::float3>);
+  static_assert(not ns::coordinate<ns::float4>);
+  static_assert(not ns::coordinate<ns::float5>);
 
-  static_assert(coordinate<point<unsigned int,1>>);
-  static_assert(coordinate<point<unsigned int,2>>);
-  static_assert(coordinate<point<unsigned int,3>>);
-  static_assert(coordinate<point<unsigned int,4>>);
-
-  static_assert(coordinate<point<std::size_t,1>>);
-  static_assert(coordinate<point<std::size_t,2>>);
-  static_assert(coordinate<point<std::size_t,3>>);
-  static_assert(coordinate<point<std::size_t,4>>);
-
-  static_assert(coordinate<point<float,1>>);
-  static_assert(coordinate<point<float,2>>);
-  static_assert(coordinate<point<float,3>>);
-  static_assert(coordinate<point<float,4>>);
-
-  static_assert(coordinate<point<double,1>>);
-  static_assert(coordinate<point<double,2>>);
-  static_assert(coordinate<point<double,3>>);
-  static_assert(coordinate<point<double,4>>);
+  static_assert(not ns::coordinate<ns::double1>);
+  static_assert(not ns::coordinate<ns::double2>);
+  static_assert(not ns::coordinate<ns::double3>);
+  static_assert(not ns::coordinate<ns::double4>);
+  static_assert(not ns::coordinate<ns::double5>);
 }
 

@@ -2,9 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "coordinate.hpp"
+#include "detail/tuple_algorithm.hpp"
 #include "element.hpp"
-#include "grid_coordinate.hpp"
 #include "rank.hpp"
 #include <array>
 #include <concepts>
@@ -17,8 +16,6 @@
 
 namespace ubu
 {
-
-
 namespace detail
 {
 
@@ -49,6 +46,27 @@ class point_base
     {
       return elements_.data();
     }
+
+    template<std::size_t i>
+      requires (i < N)
+    constexpr T& element()
+    {
+      return elements_[i];
+    }
+
+    template<std::size_t i>
+      requires (i < N)
+    constexpr const T& element() const
+    {
+      return elements_[i];
+    }
+
+    template<std::size_t i>
+      requires (i < N)
+    constexpr T&& element() &&
+    {
+      return std::move(elements_[i]);
+    }
 };
 
 
@@ -76,6 +94,27 @@ class point_base<T,1>
     constexpr const T* data() const
     {
       return &x;
+    }
+
+    template<std::size_t i>
+      requires (i == 0)
+    constexpr T& element()
+    {
+      return x;
+    }
+
+    template<std::size_t i>
+      requires (i == 0)
+    constexpr const T& element() const
+    {
+      return x;
+    }
+
+    template<std::size_t i>
+      requires (i == 0)
+    constexpr T&& element() &&
+    {
+      return x;
     }
 };
 
@@ -105,6 +144,30 @@ class point_base<T,2>
     {
       return &x;
     }
+
+    template<std::size_t i>
+      requires (i < 2)
+    constexpr T& element()
+    {
+      if constexpr (i == 0) return x;
+      return y;
+    }
+
+    template<std::size_t i>
+      requires (i < 2)
+    constexpr const T& element() const
+    {
+      if constexpr (i == 0) return x;
+      return y;
+    }
+
+    template<std::size_t i>
+      requires (i < 2)
+    constexpr T&& element() &&
+    {
+      if constexpr (i == 0) return std::move(x);
+      return std::move(y);
+    }
 };
 
 
@@ -133,6 +196,33 @@ class point_base<T,3>
     constexpr const T* data() const
     {
       return &x;
+    }
+
+    template<std::size_t i>
+      requires (i < 3)
+    constexpr T& element()
+    {
+      if constexpr (i == 0) return x;
+      else if constexpr (i == 1) return y;
+      return z;
+    }
+
+    template<std::size_t i>
+      requires (i < 3)
+    constexpr const T& element() const
+    {
+      if constexpr (i == 0) return x;
+      else if constexpr (i == 1) return y;
+      return z;
+    }
+
+    template<std::size_t i>
+      requires (i < 3)
+    constexpr T&& element() &&
+    {
+      if constexpr (i == 0) return std::move(x);
+      else if constexpr (i == 1) std::move(y);
+      else return std::move(z);
     }
 };
 
@@ -164,10 +254,73 @@ class point_base<T,4>
     {
       return &x;
     }
+
+    template<std::size_t i>
+      requires (i < 4)
+    constexpr T& element()
+    {
+      if constexpr (i == 0) return x;
+      else if constexpr (i == 1) return y;
+      else if constexpr (i == 2) return z;
+      return w;
+    }
+
+    template<std::size_t i>
+      requires (i < 4)
+    constexpr const T& element() const
+    {
+      if constexpr (i == 0) return x;
+      else if constexpr (i == 1) return y;
+      else if constexpr (i == 2) return z;
+      return w;
+    }
+
+    template<std::size_t i>
+      requires (i < 4)
+    constexpr T&& element() &&
+    {
+      if constexpr (i == 0) return std::move(x);
+      else if constexpr (i == 1) std::move(y);
+      else if constexpr (i == 2) std::move(z);
+      return std::move(w);
+    }
+};
+
+
+template<class TupleLike, class Indices>
+struct has_homogeneous_tuple_elements;
+
+template<class TupleLike, std::size_t Zero, std::size_t... I>
+struct has_homogeneous_tuple_elements<TupleLike, std::index_sequence<Zero,I...>>
+{
+  using tuple_type = std::remove_cvref_t<TupleLike>;
+
+  constexpr static bool value =
+    (... and std::same_as<std::tuple_element_t<Zero,tuple_type>, std::tuple_element_t<I,tuple_type>>)
+  ;
 };
 
 
 } // end detail
+
+
+// XXX might also want to insist that the tuple elements have math operations
+template<class T>
+concept point_like =
+  detail::tuple_like<T> and
+  detail::has_homogeneous_tuple_elements<T, std::make_index_sequence<rank_v<T>>>::value
+;
+
+
+template<class T, std::size_t N>
+concept point_like_of_rank = 
+  point_like<T>
+  and (rank_v<T> == N)
+;
+
+
+template<point_like T>
+using point_element_t = std::tuple_element_t<0,std::remove_cvref_t<T>>;
 
 
 template<class T, std::size_t N>
@@ -240,21 +393,21 @@ class point : public detail::point_base<T,N>
       requires (i < N)
     friend constexpr T& get(point& self)
     {
-      return self[i];
+      return self.template element<i>();
     }
 
     template<std::size_t i>
       requires (i < N)
     friend constexpr const T& get(const point& self)
     {
-      return self[i];
+      return self.template element<i>();
     }
 
     template<std::size_t i>
       requires (i < N)
     friend constexpr T&& get(point&& self)
     {
-      return std::move(self[i]);
+      return std::move(self.template element<i>());
     }
 
 
@@ -333,37 +486,37 @@ class point : public detail::point_base<T,N>
 
     // relational operators
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr bool operator==(const Other& rhs) const
     {
-      return equal(*this, rhs, std::make_index_sequence<N>());
+      return detail::tuple_equal(*this, rhs);
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr bool operator!=(const Other& rhs) const
     {
       return !(*this == rhs);
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     bool operator<(const Other& rhs) const
     {
-      return lexicographical_compare(std::integral_constant<std::size_t,0>{}, *this, rhs);
+      return detail::tuple_lexicographical_compare(*this, rhs);
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     bool operator>(const Other& rhs) const
     {
-      return lexicographical_compare(std::integral_constant<std::size_t,0>{}, rhs, *this);
+      return detail::tuple_lexicographical_compare(rhs, *this);
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     bool operator<=(const Other& rhs) const
     {
       return !(*this > rhs);
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     bool operator>=(const Other& rhs) const
     {
       return !(*this < rhs);
@@ -373,39 +526,39 @@ class point : public detail::point_base<T,N>
 
     // arithmetic assignment operators
     
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point& operator+=(const Other& rhs)
     {
-      inplace_transform(rhs, std::plus{}, std::make_index_sequence<N>{});
+      detail::tuple_inplace_transform(std::plus{}, *this, rhs);
       return *this;
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point& operator-=(const Other& rhs)
     {
-      inplace_transform(rhs, std::minus{}, std::make_index_sequence<N>{});
+      detail::tuple_inplace_transform(std::minus{}, *this, rhs);
       return *this;
     }
     
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point& operator*=(const Other& rhs)
     {
-      inplace_transform(rhs, std::multiplies{}, std::make_index_sequence<N>{});
+      detail::tuple_inplace_transform(std::multiplies{}, *this, rhs);
       return *this;
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point& operator/=(const Other& rhs)
     {
-      inplace_transform(rhs, std::divides{}, std::make_index_sequence<N>{});
+      detail::tuple_inplace_transform(std::divides{}, *this, rhs);
       return *this;
     }
 
-    template<grid_coordinate_of_rank<N> Other>
-      requires std::integral<T>
+    template<point_like_of_rank<N> Other>
+      requires (std::integral<T> and std::integral<point_element_t<Other>>)
     constexpr point& operator%=(const Other& rhs)
     {
-      inplace_transform(rhs, std::modulus{}, std::make_index_sequence<N>{});
+      detail::tuple_inplace_transform(std::modulus{}, *this, rhs);
       return *this;
     }
 
@@ -429,7 +582,7 @@ class point : public detail::point_base<T,N>
 
     // arithmetic operators
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point operator+(const Other& rhs) const
     {
       point result = *this;
@@ -437,7 +590,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point operator-(const Other& rhs) const
     {
       point result = *this;
@@ -445,7 +598,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point operator*(const Other& rhs) const
     {
       point result = *this;
@@ -453,7 +606,7 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<coordinate_of_rank<N> Other>
+    template<point_like_of_rank<N> Other>
     constexpr point operator/(const Other& rhs) const
     {
       point result = *this;
@@ -461,8 +614,8 @@ class point : public detail::point_base<T,N>
       return result;
     }
 
-    template<grid_coordinate_of_rank<N> Other>
-      requires std::integral<T>
+    template<point_like_of_rank<N> Other>
+      requires (std::integral<T> and std::integral<point_element_t<Other>>)
     constexpr point operator%(const Other& rhs) const
     {
       point result = *this;
@@ -475,22 +628,24 @@ class point : public detail::point_base<T,N>
 
     constexpr T product() const
     {
-      return product_impl(*this, std::make_index_sequence<N>{});
+      return detail::tuple_fold([](const T& partial_product, const T& factor)
+      {
+        return factor * partial_product;
+      }, *this);
     }
 
     constexpr T sum() const
     {
-      return sum_impl(*this, std::make_index_sequence<N>{});
+      return detail::tuple_fold([](const T& partial_sum, const T& summand)
+      {
+        return summand + partial_sum;
+      }, *this);
     }
 
 
     friend std::ostream& operator<<(std::ostream& os, const point& self)
     {
-      os << "{";
-      self.output_elements(os, ", ", std::make_index_sequence<N>{});
-      os << "}";
-
-      return os;
+      return detail::tuple_output(os, "{", "}", ", ", self);
     }
 
   private:
@@ -513,84 +668,6 @@ class point : public detail::point_base<T,N>
     constexpr point(OtherT value, std::index_sequence<Indices...>)
       : point{identity<Indices>(value)...}
     {}
-
-    template<coordinate_of_rank<N> C1, coordinate_of_rank<N> C2, std::size_t... Indices>
-    constexpr static bool equal(const C1& lhs, const C2& rhs, std::index_sequence<Indices...>)
-    {
-      return (... and (element<Indices>(lhs) == element<Indices>(rhs)));
-    }
-
-    template<class... Types>
-    constexpr static void swallow(Types&&... args) {}
-
-    template<coordinate_of_rank<N> C, class BinaryOp, std::size_t... Indices>
-    constexpr void inplace_transform(const C& rhs, BinaryOp op, std::index_sequence<Indices...>)
-    {
-      swallow(element<Indices>(*this) = op(element<Indices>(*this), element<Indices>(rhs))...);
-    }
-
-    template<coordinate_of_rank<N> C1, coordinate_of_rank<N> C2>
-    constexpr static bool lexicographical_compare(std::integral_constant<std::size_t,N>, const C1&, const C2&)
-    {
-      return false;
-    }
-
-    template<std::size_t cursor, coordinate_of_rank<N> C1, coordinate_of_rank<N> C2>
-    constexpr static bool lexicographical_compare(std::integral_constant<std::size_t,cursor>, const C1& lhs, const C2& rhs)
-    {
-      if(element<cursor>(lhs) < element<cursor>(rhs)) return true;
-
-      if(element<cursor>(rhs) < element<cursor>(lhs)) return false;
-
-      return lexicographical_compare(std::integral_constant<std::size_t,cursor+1>{}, lhs, rhs);
-    }
-
-    template<class Arg>
-    static void output_elements(std::ostream& os, const char*, const Arg& arg)
-    {
-      os << arg;
-    }
-
-    template<class Arg, class... Args>
-    static void output_elements(std::ostream& os, const char* delimiter, const Arg& arg1, const Args&... args)
-    {
-      os << arg1 << delimiter;
-
-      output_elements(os, delimiter, args...);
-    }
-
-    template<std::size_t... Indices>
-    void output_elements(std::ostream& os, const char* delimiter, std::index_sequence<Indices...>) const
-    {
-      output_elements(os, delimiter, (*this)[Indices]...);
-    }
-
-
-    // XXX these reduction implementations deserve to be generalized and live somewhere common
-    template<class... Args>
-    constexpr static T product_impl(const T& arg1, const Args&... args)
-    {
-      return (arg1 * ... * args);
-    }
-
-    template<std::size_t... Indices>
-    constexpr static T product_impl(const point& p, std::index_sequence<Indices...>)
-    {
-      return product_impl(p[Indices]...);
-    }
-
-
-    template<class... Args>
-    constexpr static T sum_impl(const T& arg1, const Args&... args)
-    {
-      return (arg1 + ... + args);
-    }
-
-    template<std::size_t... Indices>
-    constexpr static T sum_impl(const point& p, std::index_sequence<Indices...>)
-    {
-      return sum_impl(p[Indices]...);
-    }
 };
 
 
@@ -668,6 +745,8 @@ using double10 = point<double,10>;
 
 namespace std
 {
+
+// additional tuple-like interface
 
 template<class T, size_t N>
 struct tuple_size<ubu::point<T,N>> : std::integral_constant<size_t,N> {};

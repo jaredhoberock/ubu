@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../congruent.hpp"
-#include "../grid_coordinate.hpp"
+#include "../coordinate.hpp"
 #include "../weakly_congruent.hpp"
 #include "tuple_algorithm.hpp"
 
@@ -20,7 +20,7 @@ constexpr std::integral auto index_to_coordinate(const I& idx, const S& shape, c
   return (idx / stride) % shape;
 }
 
-template<std::integral I, ubu::tuple_like_grid_coordinate S, ubu::tuple_like_grid_coordinate D>
+template<std::integral I, ubu::tuple_like_coordinate S, ubu::tuple_like_coordinate D>
   requires (ubu::weakly_congruent<I,S> and ubu::congruent<S,D>)
 constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
@@ -30,7 +30,7 @@ constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shap
   }, shape, stride);
 }
 
-template<ubu::tuple_like_grid_coordinate I, ubu::tuple_like_grid_coordinate S, ubu::tuple_like_grid_coordinate D>
+template<ubu::tuple_like_coordinate I, ubu::tuple_like_coordinate S, ubu::tuple_like_coordinate D>
   requires (ubu::weakly_congruent<I,S> and ubu::congruent<S,D>)
 constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {

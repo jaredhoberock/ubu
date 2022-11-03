@@ -2,11 +2,12 @@
 
 #include "../detail/prologue.hpp"
 
-#include <type_traits>
-#include <utility>
-#include "detail/number.hpp"
+#include "detail/tuple_algorithm.hpp"
 #include "element.hpp"
 #include "rank.hpp"
+#include <concepts>
+#include <type_traits>
+#include <utility>
 
 
 namespace ubu::detail
@@ -17,30 +18,41 @@ template<class T>
 struct is_coordinate;
 
 
-template<std::size_t I, class T>
-concept element_is_a_coordinate = (requires(T x) { ubu::element<I>(x); } and is_coordinate<element_t<I,T>>::value);
-
-
 // check T for elements 0... N-1, and make sure that each one is itself a coordinate
 template<class T, std::size_t... I>
 constexpr bool has_elements_that_are_coordinates(std::index_sequence<I...>)
 {
-  return (... && element_is_a_coordinate<I,T>);
+  return (... and is_coordinate<element_t<I,T>>::value);
 }
+
+
+template<class T>
+concept rank_one_coordinate =
+  static_rank<T>
+  and (rank_v<T> == 1)
+  and std::integral<element_t<0,T>>
+;
+
+
+template<class T>
+concept static_rank_greater_than_one =
+  static_rank<T>
+  and (rank_v<T> > 1)
+;
 
 
 template<class T>
 struct is_coordinate
 {
   template<class U = T>
-    requires detail::number<U>
+    requires rank_one_coordinate<U>
   static constexpr bool test(int)
   {
     return true;
   }
 
   template<class U = T>
-    requires (!detail::number<U> and detail::has_static_rank<U>)
+    requires static_rank_greater_than_one<U>
   static constexpr bool test(int)
   {
     return has_elements_that_are_coordinates<U>(std::make_index_sequence<rank_v<U>>{});
@@ -66,8 +78,18 @@ namespace ubu
 template<class T>
 concept coordinate = detail::is_coordinate<T>::value;
 
+template<class... Types>
+concept are_coordinates = (... and coordinate<Types>);
+
 template<class T, std::size_t N>
 concept coordinate_of_rank = coordinate<T> and (rank_v<T> == N);
+
+
+template<class T>
+concept tuple_like_coordinate = coordinate<T> and (rank_v<T> > 1);
+
+template<class... Types>
+concept are_tuple_like_coordinates = (... and tuple_like_coordinate<Types>);
 
 
 } // end ubu

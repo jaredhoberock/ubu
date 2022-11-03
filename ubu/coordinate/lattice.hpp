@@ -4,6 +4,7 @@
 
 #include "colexicographic_index.hpp"
 #include "colexicographic_index_to_coordinate.hpp"
+#include "coordinate.hpp"
 #include "detail/make_coordinate.hpp"
 #include "detail/number.hpp"
 #include "grid_size.hpp"
@@ -21,13 +22,13 @@ namespace detail
 {
 
 
-template<grid_coordinate T> class lattice_iterator;
+template<coordinate T> class lattice_iterator;
 
 
 } // end detail
 
 
-template<grid_coordinate T>
+template<coordinate T>
 class lattice
 {
   public:
@@ -156,7 +157,7 @@ namespace detail
 {
 
 
-template<grid_coordinate T>
+template<coordinate T>
 class lattice_iterator
 {
   public:

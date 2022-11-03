@@ -14,12 +14,46 @@ namespace ubu::detail
 {
 
 
-template<class T>
-concept tuple_like = requires
+template<class T, std::size_t N>
+concept has_tuple_element =
+  requires(T t)
+  {
+    typename std::tuple_element_t<N, std::remove_const_t<T>>;
+
+    // XXX WAR circle bug:
+    // https://godbolt.org/z/McoW5ez6o
+    //
+    //{ get<N>(t) } -> std::convertible_to<const std::tuple_element_t<N, T>&>;
+  }
+;
+
+
+template<class T, std::size_t... I>
+constexpr bool has_tuple_elements(std::index_sequence<I...>)
 {
-  // XXX these aren't complete requirements, but they're good enough to detect the tuple-like types below
-  { std::tuple_size_v<std::remove_cvref_t<T>> } -> std::convertible_to<std::size_t>;
-};
+  return (... and has_tuple_element<T,I>);
+}
+
+
+template<class T>
+concept tuple_like_impl =
+  not std::is_reference_v<T>
+  and requires(T t)
+  {
+    typename std::tuple_size<T>::type;
+
+    requires std::derived_from<
+      std::tuple_size<T>,
+      std::integral_constant<std::size_t, std::tuple_size_v<T>>
+    >;
+
+  }
+  and has_tuple_elements<T>(std::make_index_sequence<std::tuple_size_v<T>>{})
+;
+
+
+template<class T>
+concept tuple_like = tuple_like_impl<std::remove_cvref_t<T>>;
 
 
 static_assert(tuple_like<std::tuple<>>);
@@ -28,6 +62,8 @@ static_assert(tuple_like<std::tuple<int>>);
 static_assert(tuple_like<std::tuple<int,int,int>>);
 static_assert(tuple_like<std::tuple<int,int,int,float>>);
 static_assert(tuple_like<std::array<int,10>>);
+static_assert(not tuple_like<int>);
+static_assert(not tuple_like<float>);
 
 
 template<class T1, class... Ts>
@@ -366,6 +402,16 @@ constexpr bool tuple_equal(const T1& t1, const T2& t2, Op eq)
 }
 
 
+template<tuple_like T1, tuple_like T2>
+constexpr decltype(auto) tuple_equal(const T1& t1, const T2& t2)
+{
+  return tuple_equal(t1, t2, [](const auto& lhs, const auto& rhs)
+  {
+    return lhs == rhs;
+  });
+}
+
+
 template<tuple_like T, tuple_zipper_r<bool,T> P>
 constexpr bool tuple_all(const T& t, const P& pred)
 {
@@ -375,6 +421,88 @@ constexpr bool tuple_all(const T& t, const P& pred)
   };
 
   return tuple_fold(folder, t);
+}
+
+
+template<class... Args>
+void discard_args(Args&&...) {}
+
+
+template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> F, std::size_t... I>
+  requires (sizeof...(I) == std::tuple_size_v<T1>)
+constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::index_sequence<I...>)
+{
+  discard_args(get<I>(t1) = std::forward<F>(f)(get<I>(t1), get<I>(t2))...);
+}
+
+
+template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> F>
+constexpr void tuple_inplace_transform(F&& f, T1& t1, const T2& t2)
+{
+  constexpr std::size_t N = std::tuple_size_v<T1>;
+  return tuple_inplace_transform_impl(std::forward<F>(f), t1, t2, std::make_index_sequence<N>{});
+}
+
+
+template<tuple_like T1, tuple_like T2>
+  requires same_tuple_size<T1,T2>
+constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, std::tuple_size_v<T1>>, const T1& t1, const T2& t2)
+{
+  return false;
+}
+
+
+template<std::size_t cursor, tuple_like T1, tuple_like T2>
+  requires (same_tuple_size<T1,T2> and cursor != std::tuple_size_v<T1>)
+constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, cursor>, const T1& t1, const T2& t2)
+{
+  if(get<cursor>(t1) < get<cursor>(t2)) return true;
+  
+  if(get<cursor>(t2) < get<cursor>(t1)) return false;
+  
+  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,cursor+1>{}, t1, t2);
+}
+
+
+template<tuple_like T1, tuple_like T2>
+  requires same_tuple_size<T1,T2>
+constexpr bool tuple_lexicographical_compare(const T1& t1, const T2& t2)
+{
+  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,0>{}, t1, t2);
+}
+
+
+template<class Arg>
+constexpr void output_args(std::ostream& os, const char*, const Arg& arg)
+{
+  os << arg;
+}
+
+template<class Arg, class... Args>
+constexpr void output_args(std::ostream& os, const char* delimiter, const Arg& arg1, const Args&... args)
+{
+  os << arg1 << delimiter;
+
+  output_args(os, delimiter, args...);
+}
+
+template<tuple_like T, std::size_t... Indices>
+  requires (sizeof...(Indices) == std::tuple_size_v<T>)
+constexpr std::ostream& tuple_output_impl(std::ostream& os, const char* delimiter, const T& t, std::index_sequence<Indices...>)
+{
+  output_args(os, delimiter, get<Indices>(t)...);
+  return os;
+}
+
+
+template<tuple_like T>
+constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, const char* end_tuple, const char* delimiter, const T& t)
+{
+  os << begin_tuple;
+  tuple_output_impl(os, delimiter, t, std::make_index_sequence<std::tuple_size_v<T>>{});
+  os << end_tuple;
+
+  return os;
 }
 
 

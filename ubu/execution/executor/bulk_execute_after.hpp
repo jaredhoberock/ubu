@@ -102,7 +102,7 @@ class dispatch_bulk_execute_after
 
 
   private:
-    template<executor E, happening H, grid_coordinate G, std::regular_invocable<G> F>
+    template<executor E, happening H, coordinate G, std::regular_invocable<G> F>
       requires (!std::same_as<executor_coordinate_t<E&&>,G>)
     constexpr auto non_native_bulk_execute_after(E&& executor, H&& before, G grid_shape, F&& function) const
     {
@@ -131,7 +131,7 @@ class dispatch_bulk_execute_after
   public:
     // this default path maps a request for bulk execution in a non-native coordinate system
     // to a bulk_execute_after in the executor's native coordinate system
-    template<executor E, happening H, grid_coordinate G, std::regular_invocable<G> F>
+    template<executor E, happening H, coordinate G, std::regular_invocable<G> F>
       requires (!has_bulk_execute_after_member_function<E&&,H&&,G,F&&> and
                 !has_bulk_execute_after_free_function<E&&,H&&,G,F&&> and
                 !std::same_as<executor_coordinate_t<E&&>,G>)
@@ -173,7 +173,7 @@ class dispatch_bulk_execute_after
 
 
     // this default adapts an executor without a bulk_execute_after function
-    template<executor E, happening H, grid_coordinate G, std::regular_invocable<G> F>
+    template<executor E, happening H, coordinate G, std::regular_invocable<G> F>
       requires (!has_bulk_execute_after_member_function<E&&,H&&,G,F&&> and
                 !has_bulk_execute_after_free_function<E&&,H&&,G,F&&>)
     auto operator()(const E& ex, H&& before, G grid_shape, F&& function) const

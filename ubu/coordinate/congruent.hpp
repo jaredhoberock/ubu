@@ -3,12 +3,11 @@
 #include "../detail/prologue.hpp"
 
 #include "coordinate.hpp"
-#include "detail/number.hpp"
 #include "rank.hpp"
 #include "same_rank.hpp"
 #include "weakly_congruent.hpp"
 #include <concepts>
-#include <type_traits>
+#include <utility>
 
 
 namespace ubu
@@ -27,9 +26,8 @@ constexpr bool are_congruent()
 }
 
 
-// terminal case 2: both arguments are the same kind of number
-template<number T1, number T2>
-  requires same_kind_of_number<T1,T2>
+// terminal case 2: both arguments are rank 1 coordinates
+template<coordinate_of_rank<1> T1, coordinate_of_rank<1> T2>
 constexpr bool are_congruent()
 {
   return true;
@@ -37,24 +35,21 @@ constexpr bool are_congruent()
 
 
 // forward declaration of recursive case
-template<coordinate T1, coordinate T2>
-  requires (not number<T1> and
-            not number<T2> and
-            same_rank<T1,T2>)
+template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+  requires same_rank<T1,T2>
 constexpr bool are_congruent();
 
 
-template<coordinate T1, coordinate T2>
+template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+  requires same_rank<T1,T2>
 constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
 {
   return true;
 }
 
 
-template<coordinate T1, coordinate T2, std::size_t Index, std::size_t... Indices>
-  requires (not number<T1> and
-            not number<T2> and
-            same_rank<T1,T2>)
+template<tuple_like_coordinate T1, tuple_like_coordinate T2, std::size_t Index, std::size_t... Indices>
+  requires same_rank<T1,T2>
 constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
 {
   // check the congruency of the first element of each coordinate and recurse to the rest of the elements
@@ -62,12 +57,10 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices..
 }
 
 
-// recursive case: neither arguments are numbers but both are coordinates
+// recursive case: neither arguments are rank 1 but both are coordinates
 //                 and their ranks are the same
-template<coordinate T1, coordinate T2>
-  requires (not number<T1> and
-            not number<T2> and
-            same_rank<T1,T2>)
+template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+  requires same_rank<T1,T2>
 constexpr bool are_congruent()
 {
   return are_congruent_recursive_impl<T1,T2>(std::make_index_sequence<rank_v<T1>>{});
@@ -86,12 +79,11 @@ constexpr bool are_congruent()
 } // end detail
 
 
-// we use remove_cvref_t because std::integral and std::floating_point don't like references
 template<class T1, class T2, class... Types>
 concept congruent =
   weakly_congruent<T1,T2>
   and (... and weakly_congruent<T1,Types>)
-  and detail::are_congruent<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>,std::remove_cvref_t<Types>...>()
+  and detail::are_congruent<T1,T2,Types...>()
 ;
 
 
