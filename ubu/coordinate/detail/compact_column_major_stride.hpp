@@ -15,26 +15,26 @@ namespace ubu::detail
 {
 
 
-template<std::integral T>
-constexpr T compact_column_major_stride_impl(const std::integral auto& shape, const T& current_stride)
+template<scalar_coordinate T>
+constexpr T compact_column_major_stride_impl(const scalar_coordinate auto& shape, const T& current_stride)
 {
-  return current_stride;
+  return element<0>(current_stride);
 }
 
 
-template<tuple_like_coordinate S>
-constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride);
+template<nonscalar_coordinate S>
+constexpr S compact_column_major_stride_impl(const S& shape, const scalar_coordinate auto& current_stride);
 
 
 template<coordinate S, std::size_t... Is>
-constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride, std::index_sequence<Is...>)
+constexpr S compact_column_major_stride_impl(const S& shape, const scalar_coordinate auto& current_stride, std::index_sequence<Is...>)
 {
   return detail::make_coordinate<S>(detail::compact_column_major_stride_impl(element<Is>(shape), current_stride * detail::subgrid_size(shape, std::make_index_sequence<Is>{}))...);
 }
 
 
-template<tuple_like_coordinate S>
-constexpr S compact_column_major_stride_impl(const S& shape, const std::integral auto& current_stride)
+template<nonscalar_coordinate S>
+constexpr S compact_column_major_stride_impl(const S& shape, const scalar_coordinate auto& current_stride)
 {
   return detail::compact_column_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<S>>{});
 }

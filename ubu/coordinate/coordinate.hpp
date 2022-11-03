@@ -10,28 +10,32 @@
 #include <utility>
 
 
-namespace ubu::detail
+namespace ubu
 {
 
 
 template<class T>
-struct is_coordinate;
+concept scalar_coordinate =
+  detail::static_rank<T>
+  and (rank_v<T> == 1)
+  and std::integral<element_t<0,T>>
+;
+
+
+namespace detail
+{
+
+
+template<class T>
+struct is_nonscalar_coordinate;
 
 
 // check T for elements 0... N-1, and make sure that each one is itself a coordinate
 template<class T, std::size_t... I>
 constexpr bool has_elements_that_are_coordinates(std::index_sequence<I...>)
 {
-  return (... and is_coordinate<element_t<I,T>>::value);
+  return (... and (scalar_coordinate<element_t<I,T>> or is_nonscalar_coordinate<element_t<I,T>>::value));
 }
-
-
-template<class T>
-concept rank_one_coordinate =
-  static_rank<T>
-  and (rank_v<T> == 1)
-  and std::integral<element_t<0,T>>
-;
 
 
 template<class T>
@@ -42,15 +46,8 @@ concept static_rank_greater_than_one =
 
 
 template<class T>
-struct is_coordinate
+struct is_nonscalar_coordinate
 {
-  template<class U = T>
-    requires rank_one_coordinate<U>
-  static constexpr bool test(int)
-  {
-    return true;
-  }
-
   template<class U = T>
     requires static_rank_greater_than_one<U>
   static constexpr bool test(int)
@@ -67,29 +64,26 @@ struct is_coordinate
 };
 
 
-} // end ubu::detail
+} // end detail
 
 
-namespace ubu
-{
-
-
-// coordinate is a recursive concept, so we need to implement it with traditional SFINAE techniques
+// nonscalar_coordinate is a recursive concept, so we need to implement it with traditional SFINAE techniques
 template<class T>
-concept coordinate = detail::is_coordinate<T>::value;
+concept nonscalar_coordinate = detail::is_nonscalar_coordinate<T>::value;
+
+
+// a coordinate is either a scalar or nonscalar coordinate
+template<class T>
+concept coordinate = scalar_coordinate<T> or nonscalar_coordinate<T>;
 
 template<class... Types>
-concept are_coordinates = (... and coordinate<Types>);
+concept coordinates = (... and coordinate<Types>);
 
 template<class T, std::size_t N>
 concept coordinate_of_rank = coordinate<T> and (rank_v<T> == N);
 
-
-template<class T>
-concept tuple_like_coordinate = coordinate<T> and (rank_v<T> > 1);
-
 template<class... Types>
-concept are_tuple_like_coordinates = (... and tuple_like_coordinate<Types>);
+concept nonscalar_coordinates = (... and nonscalar_coordinate<Types>);
 
 
 } // end ubu

@@ -26,8 +26,7 @@ constexpr std::size_t to_index(const std::integral auto& coord, const std::integ
 
 // forward declaration of the recursive case of to_index
 template<class T1, class T2, class T3>
-  requires (are_tuple_like_coordinates<T1,T2,T3> and
-            congruent<T1,T2,T3>)
+  requires (nonscalar_coordinates<T1,T2,T3> and congruent<T1,T2,T3>)
 constexpr std::size_t to_index(const T1& coord, const T2& shape, const T3& stride);
 
 
@@ -37,8 +36,7 @@ namespace detail
 
 
 template<class T1, class T2, class T3>
-  requires (are_tuple_like_coordinates<T1,T2,T3> and
-            congruent<T1,T2,T3>)
+  requires (nonscalar_coordinates<T1,T2,T3> and congruent<T1,T2,T3>)
 constexpr std::size_t to_index_impl(const T1& coord, const T2& shape, const T3& stride, std::index_sequence<>)
 {
   return 0;
@@ -46,8 +44,7 @@ constexpr std::size_t to_index_impl(const T1& coord, const T2& shape, const T3& 
 
 
 template<class T1, class T2, class T3, std::size_t i0, std::size_t... is>
-  requires (are_tuple_like_coordinates<T1,T2,T3> and
-            congruent<T1,T2,T3>)
+  requires (nonscalar_coordinates<T1,T2,T3> and congruent<T1,T2,T3>)
 constexpr std::size_t to_index_impl(const T1& coord, const T2& shape, const T3& stride, std::index_sequence<i0,is...>)
 {
   return ubu::to_index(element<i0>(coord), element<i0>(shape), element<i0>(stride))
@@ -60,8 +57,7 @@ constexpr std::size_t to_index_impl(const T1& coord, const T2& shape, const T3& 
 
 
 template<class T1, class T2, class T3>
-  requires (are_tuple_like_coordinates<T1,T2,T3> and
-            congruent<T1,T2,T3>)
+  requires (nonscalar_coordinates<T1,T2,T3> and congruent<T1,T2,T3>)
 constexpr std::size_t to_index(const T1& coord, const T2& shape, const T3& stride)
 {
   return detail::to_index_impl(coord, shape, stride, std::make_index_sequence<rank_v<T1>>{});

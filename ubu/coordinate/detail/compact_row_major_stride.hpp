@@ -16,15 +16,15 @@ namespace ubu::detail
 {
 
 
-template<std::integral T>
+template<scalar_coordinate T>
 constexpr T compact_row_major_stride_impl(const std::integral auto&, const T& current_stride)
 {
-  return current_stride;
+  return element<0>(current_stride);
 }
 
 
 // forward declaration for recursive case
-template<tuple_like_coordinate T>
+template<nonscalar_coordinate T>
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride);
 
 
@@ -35,7 +35,7 @@ constexpr T compact_row_major_stride_impl(const T& shape, const std::integral au
 }
 
 
-template<tuple_like_coordinate T>
+template<nonscalar_coordinate T>
 constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride)
 {
   return detail::compact_row_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<T>>{});

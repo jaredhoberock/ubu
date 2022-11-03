@@ -14,15 +14,15 @@ namespace ubu::detail
 
 // index_to_coordinate inverts the coordinate mapping of a layout 
 
-template<std::integral I, std::integral S, std::integral D>
+template<scalar_coordinate I, scalar_coordinate S, scalar_coordinate D>
 constexpr std::integral auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
-  return (idx / stride) % shape;
+  return (element<0>(idx) / element<0>(stride)) % element<0>(shape);
 }
 
-template<std::integral I, ubu::tuple_like_coordinate S, ubu::tuple_like_coordinate D>
-  requires (ubu::weakly_congruent<I,S> and ubu::congruent<S,D>)
-constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
+template<scalar_coordinate I, nonscalar_coordinate S, nonscalar_coordinate D>
+  requires (weakly_congruent<I,S> and congruent<S,D>)
+constexpr congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
   return detail::tuple_zip_with([&](auto& s, auto& d)
   {
@@ -30,16 +30,15 @@ constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shap
   }, shape, stride);
 }
 
-template<ubu::tuple_like_coordinate I, ubu::tuple_like_coordinate S, ubu::tuple_like_coordinate D>
-  requires (ubu::weakly_congruent<I,S> and ubu::congruent<S,D>)
-constexpr ubu::congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
+template<nonscalar_coordinate I, nonscalar_coordinate S, nonscalar_coordinate D>
+  requires (weakly_congruent<I,S> and congruent<S,D>)
+constexpr congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
   return detail::tuple_zip_with([](auto& i, auto& s, auto& d)
   {
     return detail::index_to_coordinate(i,s,d);
   }, idx, shape, stride);
 }
-
 
 
 } // end ubu::detail

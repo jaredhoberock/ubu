@@ -26,8 +26,8 @@ constexpr bool are_congruent()
 }
 
 
-// terminal case 2: both arguments are rank 1 coordinates
-template<coordinate_of_rank<1> T1, coordinate_of_rank<1> T2>
+// terminal case 2: both arguments are scalar coordinates
+template<scalar_coordinate T1, scalar_coordinate T2>
 constexpr bool are_congruent()
 {
   return true;
@@ -35,12 +35,12 @@ constexpr bool are_congruent()
 
 
 // forward declaration of recursive case
-template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+template<nonscalar_coordinate T1, nonscalar_coordinate T2>
   requires same_rank<T1,T2>
 constexpr bool are_congruent();
 
 
-template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+template<nonscalar_coordinate T1, nonscalar_coordinate T2>
   requires same_rank<T1,T2>
 constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
 {
@@ -48,7 +48,7 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
 }
 
 
-template<tuple_like_coordinate T1, tuple_like_coordinate T2, std::size_t Index, std::size_t... Indices>
+template<nonscalar_coordinate T1, nonscalar_coordinate T2, std::size_t Index, std::size_t... Indices>
   requires same_rank<T1,T2>
 constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
 {
@@ -57,9 +57,8 @@ constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices..
 }
 
 
-// recursive case: neither arguments are rank 1 but both are coordinates
-//                 and their ranks are the same
-template<tuple_like_coordinate T1, tuple_like_coordinate T2>
+// recursive case: both arguments are nonscalar and their ranks are the same
+template<nonscalar_coordinate T1, nonscalar_coordinate T2>
   requires same_rank<T1,T2>
 constexpr bool are_congruent()
 {

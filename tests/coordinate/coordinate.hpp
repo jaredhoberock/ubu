@@ -17,10 +17,10 @@ void test_coordinate()
   static_assert(ns::coordinate<std::tuple<char>>);
   static_assert(ns::coordinate<ns::point<int,1>>);
   static_assert(ns::coordinate<std::tuple<int&>>);
-  static_assert(ns::are_coordinates<int, unsigned int, std::size_t, std::tuple<char>>);
-  static_assert(ns::are_coordinates<int, unsigned int, std::size_t, std::tuple<char>, ns::point<int,1>>);
-  static_assert(ns::are_coordinates<int, unsigned int&, const std::size_t&, std::tuple<char&>>);
-  static_assert(ns::are_coordinates<int, unsigned int&, const std::size_t&, std::tuple<char&>, ns::point<int,1>&&>);
+  static_assert(ns::coordinates<int, unsigned int, std::size_t, std::tuple<char>>);
+  static_assert(ns::coordinates<int, unsigned int, std::size_t, std::tuple<char>, ns::point<int,1>>);
+  static_assert(ns::coordinates<int, unsigned int&, const std::size_t&, std::tuple<char&>>);
+  static_assert(ns::coordinates<int, unsigned int&, const std::size_t&, std::tuple<char&>, ns::point<int,1>&&>);
 
   using int2 = std::pair<int,int>;
   using uint3 = std::tuple<unsigned int, unsigned int, unsigned int>;
@@ -53,7 +53,7 @@ void test_coordinate()
   static_assert(!ns::coordinate<double3>);
   static_assert(!ns::coordinate<ns::double3>, "Error.");
   static_assert(!ns::coordinate<int*>);
-  static_assert(!ns::are_coordinates<int,float>);
-  static_assert(!ns::are_coordinates<int&,float>);
+  static_assert(!ns::coordinates<int,float>);
+  static_assert(!ns::coordinates<int&,float>);
 }
 
