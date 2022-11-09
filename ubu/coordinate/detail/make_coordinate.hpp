@@ -5,6 +5,7 @@
 #include "../coordinate.hpp"
 #include "../rank.hpp"
 #include <concepts>
+#include <cstdint>
 #include <utility>
 
 
@@ -29,7 +30,7 @@ struct make_coordinate_impl
 
 
 // specialization for std::array, which requires the weird doubly-nested brace syntax
-template<class T, size_t n>
+template<class T, std::size_t n>
 struct make_coordinate_impl<std::array<T,n>>
 {
   template<class... Args>
