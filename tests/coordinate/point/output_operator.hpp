@@ -25,9 +25,9 @@ template<class T, class... Types>
 void test(Types... args)
 {
   std::ostringstream expected;
-  expected << "{";
+  expected << "(";
   output_all(expected, ", ", static_cast<T>(args)...);
-  expected << "}";
+  expected << ")";
 
   using namespace ubu;
 

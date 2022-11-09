@@ -628,24 +628,24 @@ class point : public detail::point_base<T,N>
 
     constexpr T product() const
     {
-      return detail::tuple_fold([](const T& partial_product, const T& factor)
+      return detail::tuple_fold(*this, [](const T& partial_product, const T& factor)
       {
         return factor * partial_product;
-      }, *this);
+      });
     }
 
     constexpr T sum() const
     {
-      return detail::tuple_fold([](const T& partial_sum, const T& summand)
+      return detail::tuple_fold(*this, [](const T& partial_sum, const T& summand)
       {
         return summand + partial_sum;
-      }, *this);
+      });
     }
 
 
     friend std::ostream& operator<<(std::ostream& os, const point& self)
     {
-      return detail::tuple_output(os, "{", "}", ", ", self);
+      return detail::tuple_output(os, self);
     }
 
   private:

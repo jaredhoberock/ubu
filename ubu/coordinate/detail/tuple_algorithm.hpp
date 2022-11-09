@@ -185,24 +185,17 @@ template<class Hint, class... Types>
 using smart_tuple = typename rebind_tuple_like<std::remove_cvref_t<Hint>,Types...>::type;
 
 
-template<class F, class Arg>
-constexpr decltype(auto) fold_args(F&&, Arg&& arg)
+template<class F, class I>
+constexpr I fold_args(F, I init)
 {
-  return std::forward<Arg>(arg);
+  return init;
 }
 
-template<class F, class Arg1, class Arg2>
-  requires std::invocable<F&&,Arg1&&,Arg2&&>
-constexpr decltype(auto) fold_args(F&& op, Arg1&& arg1, Arg2&& arg2)
-{
-  return std::invoke(std::forward<F>(op), std::forward<Arg1>(arg1), std::forward<Arg2>(arg2));
-}
 
-template<class F, class Arg1, class Arg2, class... Args>
-  requires std::invocable<F&&,Arg1&&,Arg2&&>
-constexpr decltype(auto) fold_args(F&& op, Arg1&& arg1, Arg2&& arg2, Args&&... args)
+template<class F, class I, class Arg, class... Args>
+constexpr auto fold_args(F f, I init, Arg arg, Args... args)
 {
-  return fold_args(std::forward<F>(op), std::invoke(std::forward<F>(op),std::forward<Arg1>(arg1), std::forward<Arg2>(arg2)), std::forward<Args>(args)...);
+  return fold_args(f, f(fold_args(f, init), arg), args...);
 }
 
 
@@ -215,28 +208,28 @@ concept foldable_with =
 ;
 
 
-template<class F, tuple_like T, std::size_t... I>
-constexpr decltype(auto) tuple_fold_impl(F&& f, T&& t, std::index_sequence<I...>)
+template<std::size_t... I, tuple_like T, class F>
+constexpr decltype(auto) tuple_fold_impl(std::index_sequence<I...>, T&& t, F&& f)
 {
   return fold_args(std::forward<F>(f), get<I>(std::forward<T>(t))...);
 }
 
 
-template<class F, tuple_like T>
-constexpr auto tuple_fold(F&& f, T&& t)
+template<tuple_like T, class F>
+constexpr auto tuple_fold(T&& t, F&& f)
 {
   constexpr std::size_t n = std::tuple_size_v<std::remove_cvref_t<T>>;
   auto indices = std::make_index_sequence<n>();
-  return tuple_fold_impl(std::forward<F>(f), std::forward<T>(t), indices);
+  return tuple_fold_impl(indices, std::forward<T>(t), std::forward<F>(f));
 }
 
 
 template<class F, class T>
 concept tuple_folder =
   tuple_like<T>
-  and requires(F f, T t)
+  and requires(T t, F f)
   {
-    tuple_fold(f,t);
+    tuple_fold(t,f);
   }
 ;
 
@@ -405,7 +398,7 @@ using tuple_zip_with_result_t = decltype(tuple_zip_with(std::declval<F>(), std::
 template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> Op1, tuple_folder<tuple_zip_with_result_t<Op1,T1,T2>> Op2>
 constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
-  return tuple_fold(plus, tuple_zip_with(star, t1, t2));
+  return tuple_fold(tuple_zip_with(star, t1, t2), plus);
 }
 
 
@@ -435,7 +428,7 @@ constexpr bool tuple_all(const T& t, const P& pred)
     return partial_result and pred(element);
   };
 
-  return tuple_fold(folder, t);
+  return tuple_fold(t, folder);
 }
 
 
@@ -524,7 +517,7 @@ constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, 
 template<tuple_like T>
 constexpr std::ostream& tuple_output(std::ostream& os, const T& t)
 {
-  return tuple_output(os, "(", ")", ",", t);
+  return tuple_output(os, "(", ")", ", ", t);
 }
 
 
