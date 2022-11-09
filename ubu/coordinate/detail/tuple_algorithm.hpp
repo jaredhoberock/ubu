@@ -373,6 +373,21 @@ struct tuple_similar_to
 };
 
 
+template<std::size_t... I, tuple_like T, class Arg>
+constexpr tuple_like auto tuple_append_impl(std::index_sequence<I...>, const T& t, Arg&& arg)
+{
+  return make_tuple_like<tuple_similar_to<T>::template tuple>(get<I>(t)..., std::forward<Arg>(arg));
+}
+
+template<tuple_like T, class Arg>
+constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
+{
+  constexpr std::size_t N = std::tuple_size_v<T>;
+  constexpr auto indices = std::make_index_sequence<N>{};
+  return tuple_append_impl(indices, t, std::forward<Arg>(arg));
+}
+
+
 // this function zips the tuples by applying function f, and then returns the results of f as a smart_tuple
 template<class F, tuple_like T, tuple_like... Ts>
   requires tuple_zipper<F,T,Ts...>
@@ -503,6 +518,13 @@ constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, 
   os << end_tuple;
 
   return os;
+}
+
+
+template<tuple_like T>
+constexpr std::ostream& tuple_output(std::ostream& os, const T& t)
+{
+  return tuple_output(os, "(", ")", ",", t);
 }
 
 
