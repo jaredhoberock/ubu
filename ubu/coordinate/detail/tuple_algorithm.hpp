@@ -234,6 +234,22 @@ concept tuple_folder =
 ;
 
 
+// tuple_fold with init parameter
+template<std::size_t... Is, class I, tuple_like T, class F>
+constexpr auto tuple_fold_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
+{
+  return fold_args(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
+}
+
+template<class I, tuple_like T, class F>
+constexpr auto tuple_fold(I&& init, T&& t, F&& f)
+{
+  constexpr std::size_t n = std::tuple_size_v<std::remove_cvref_t<T>>;
+  auto indices = std::make_index_sequence<n>();
+  return tuple_fold_impl(indices, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+}
+
+
 template<class F, std::size_t I, class... Tuples>
 concept invocable_on_element =
   (... and tuple_like<Tuples>)
