@@ -513,6 +513,101 @@ constexpr bool tuple_lexicographical_compare(const T1& t1, const T2& t2)
 }
 
 
+template<tuple_like T, std::size_t Zero, std::size_t... I>
+constexpr bool tuple_elements_have_same_tuple_size(std::index_sequence<Zero,I...>)
+{
+  using tuple_type = std::remove_cvref_t<T>;
+
+  return same_tuple_size<
+    std::tuple_element_t<0, tuple_type>,
+    std::tuple_element_t<I, tuple_type>...
+  >;
+}
+
+
+// treats the tuple t as a matrix and returns the Ith element of the Jth element of t
+template<std::size_t I, std::size_t J, tuple_like T>
+decltype(auto) get2d(T&& t)
+{
+  return get<I>(get<J>(std::forward<T>(t)));
+}
+
+
+template<std::size_t Row, std::size_t... Col, tuple_like T>
+tuple_like auto tuple_unzip_row_impl(std::index_sequence<Col...>, T&& t)
+{
+  return make_tuple_like<tuple_similar_to<T>::template tuple>(get2d<Row,Col>(std::forward<T>(t))...);
+}
+
+
+template<std::size_t Row, tuple_like T>
+tuple_like auto tuple_unzip_row(T&& t)
+{
+  return tuple_unzip_row_impl<Row>(tuple_indices<T>, std::forward<T>(t));
+}
+
+
+template<std::size_t... Row, tuple_like T>
+tuple_like auto tuple_unzip_impl(std::index_sequence<Row...>, T&& t)
+{
+  using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
+  
+  return make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
+  (
+    tuple_unzip_row<Row>(std::forward<T>(t))...
+  );
+}
+
+
+// an unzippable_tuple_like it a tuple whose elements are each a tuple of size K
+template<class T>
+concept unzippable_tuple_like =
+  tuple_like<T>
+  and tuple_elements_have_same_tuple_size<T>(tuple_indices<T>);
+;
+
+
+// tuple_unzip takes a M-size tuple of N-size tuples (i.e., a matrix) and returns an N-size tuple of M-size tuples
+// in other words, it returns the transpose of the matrix
+//
+// this probably has an elegant solution with tuple_zip_with or tuple_fold, but I don't know what it is
+template<tuple_like T>
+  requires unzippable_tuple_like<T>
+tuple_like auto tuple_unzip(T&& t)
+{
+  using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
+
+  return tuple_unzip_impl(tuple_indices<inner_tuple_type>, std::forward<T>(t));
+}
+
+
+// the following concrete example demonstrates how tuple_unzip works with a tuple of pairs
+
+//struct a{};
+//struct b{};
+//struct c{};
+//struct d{};
+//struct e{};
+//struct f{};
+
+//pair<tuple<a,b,c>, tuple<d,e,f>> tuple_unzip(tuple<pair<a,d>, pair<b,e>, pair<c,f>> t)
+//{
+//  using outer_tuple_type = decltype(t);
+//  using inner_tuple_type = std::tuple_element_t<0,outer_tuple_type>;
+//
+//  // the idea is that t is a matrix and unzip is a transpose
+//
+//  // below, the column index goes from [0, 3), which are the indices of the outer tuple type
+//  // the row index goes from [0, 2), which are the indices of the inner tuple type
+//
+//  return make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
+//  (
+//    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<0>(get<0>(t)), get<0>(get<1>(t)), get<0>(get<2>(t))),
+//    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
+//  );
+//}
+
+
 template<class Arg>
 constexpr void output_args(std::ostream& os, const char*, const Arg& arg)
 {
