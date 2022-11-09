@@ -24,20 +24,20 @@ template<scalar_coordinate I, nonscalar_coordinate S, nonscalar_coordinate D>
   requires (weakly_congruent<I,S> and congruent<S,D>)
 constexpr congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
-  return detail::tuple_zip_with([&](auto& s, auto& d)
+  return detail::tuple_zip_with(shape, stride, [&](auto& s, auto& d)
   {
     return detail::index_to_coordinate(idx,s,d);
-  }, shape, stride);
+  });
 }
 
 template<nonscalar_coordinate I, nonscalar_coordinate S, nonscalar_coordinate D>
   requires (weakly_congruent<I,S> and congruent<S,D>)
 constexpr congruent<S> auto index_to_coordinate(const I& idx, const S& shape, const D& stride)
 {
-  return detail::tuple_zip_with([](auto& i, auto& s, auto& d)
+  return detail::tuple_zip_with(idx, shape, stride, [](auto& i, auto& s, auto& d)
   {
     return detail::index_to_coordinate(i,s,d);
-  }, idx, shape, stride);
+  });
 }
 
 

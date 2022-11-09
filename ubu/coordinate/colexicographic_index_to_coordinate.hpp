@@ -37,10 +37,10 @@ constexpr congruent<S> auto colexicographic_index_to_coordinate(const C& coord, 
   }
   else
   {
-    return detail::tuple_zip_with([](auto& c, auto& s)
+    return detail::tuple_zip_with(coord, shape, [](auto& c, auto& s)
     {
       return colexicographic_index_to_coordinate(c,s);
-    }, coord, shape);
+    });
   }
 }
 
