@@ -66,6 +66,10 @@ static_assert(not tuple_like<int>);
 static_assert(not tuple_like<float>);
 
 
+template<tuple_like T>
+constexpr auto tuple_indices = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
+
+
 template<class T1, class... Ts>
 concept same_tuple_size = 
   tuple_like<T1>
@@ -218,9 +222,7 @@ constexpr decltype(auto) tuple_fold_impl(std::index_sequence<I...>, T&& t, F&& f
 template<tuple_like T, class F>
 constexpr auto tuple_fold(T&& t, F&& f)
 {
-  constexpr std::size_t n = std::tuple_size_v<std::remove_cvref_t<T>>;
-  auto indices = std::make_index_sequence<n>();
-  return tuple_fold_impl(indices, std::forward<T>(t), std::forward<F>(f));
+  return tuple_fold_impl(tuple_indices<T>, std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -244,9 +246,7 @@ constexpr auto tuple_fold_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& 
 template<class I, tuple_like T, class F>
 constexpr auto tuple_fold(I&& init, T&& t, F&& f)
 {
-  constexpr std::size_t n = std::tuple_size_v<std::remove_cvref_t<T>>;
-  auto indices = std::make_index_sequence<n>();
-  return tuple_fold_impl(indices, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return tuple_fold_impl(tuple_indices<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -280,9 +280,7 @@ template<class F, tuple_like Tuple1, tuple_like... Tuples>
   requires same_tuple_size<Tuple1,Tuples...>
 constexpr bool is_invocable_elementwise()
 {
-  constexpr int n = std::tuple_size_v<std::remove_cvref_t<Tuple1>>;
-  auto indices = std::make_index_sequence<n>();
-  return is_invocable_elementwise_impl<F,Tuple1,Tuples...>(indices);
+  return is_invocable_elementwise_impl<F,Tuple1,Tuples...>(tuple_indices<Tuple1>);
 }
 
 
@@ -319,9 +317,7 @@ template<class R, class F, tuple_like Tuple1, tuple_like... Tuples>
   requires same_tuple_size<Tuple1,Tuples...>
 constexpr bool is_invocable_r_elementwise()
 {
-  constexpr int n = std::tuple_size_v<std::remove_cvref_t<Tuple1>>;
-  auto indices = std::make_index_sequence<n>();
-  return is_invocable_r_elementwise_impl<R,F,Tuple1,Tuples...>(indices);
+  return is_invocable_r_elementwise_impl<R,F,Tuple1,Tuples...>(tuple_indices<Tuple1>);
 }
 
 
@@ -364,9 +360,7 @@ template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, st
   requires tuple_zipper<F,T,Ts...>
 constexpr auto tuple_zip_with_r(F&& f, T&& t, Ts&&... ts)
 {
-  constexpr std::size_t n = std::tuple_size_v<std::remove_cvref_t<T>>;
-  auto indices = std::make_index_sequence<n>();
-  return tuple_zip_with_r_impl<R>(indices, std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...);
+  return tuple_zip_with_r_impl<R>(tuple_indices<T>, std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...);
 }
 
 
@@ -383,17 +377,15 @@ struct tuple_similar_to
 
 
 template<std::size_t... I, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_append_impl(std::index_sequence<I...>, const T& t, Arg&& arg)
+constexpr tuple_like auto tuple_append_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
-  return make_tuple_like<tuple_similar_to<T>::template tuple>(get<I>(t)..., std::forward<Arg>(arg));
+  return make_tuple_like<tuple_similar_to<T>::template tuple>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
 }
 
 template<tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
 {
-  constexpr std::size_t N = std::tuple_size_v<T>;
-  constexpr auto indices = std::make_index_sequence<N>{};
-  return tuple_append_impl(indices, t, std::forward<Arg>(arg));
+  return tuple_append_impl(tuple_indices<T>, t, std::forward<Arg>(arg));
 }
 
 
@@ -489,8 +481,7 @@ constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::in
 template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> F>
 constexpr void tuple_inplace_transform(F&& f, T1& t1, const T2& t2)
 {
-  constexpr std::size_t N = std::tuple_size_v<T1>;
-  return tuple_inplace_transform_impl(std::forward<F>(f), t1, t2, std::make_index_sequence<N>{});
+  return tuple_inplace_transform_impl(std::forward<F>(f), t1, t2, tuple_indices<T1>);
 }
 
 
@@ -549,7 +540,7 @@ template<tuple_like T>
 constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, const char* end_tuple, const char* delimiter, const T& t)
 {
   os << begin_tuple;
-  tuple_output_impl(os, delimiter, t, std::make_index_sequence<std::tuple_size_v<T>>{});
+  tuple_output_impl(os, delimiter, t, tuple_indices<T>);
   os << end_tuple;
 
   return os;
