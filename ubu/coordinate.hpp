@@ -16,7 +16,6 @@
 #include "coordinate/rank.hpp"
 #include "coordinate/same_rank.hpp"
 #include "coordinate/to_index.hpp"
-#include "coordinate/to_natural_coordinate.hpp"
 #include "coordinate/weakly_congruent.hpp"
 
 #include "detail/epilogue.hpp"
