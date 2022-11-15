@@ -271,22 +271,9 @@ class lattice_iterator
       return !(rhs > *this);
     }
 
-    // non-scalar case
-    template<class U = T>
-      requires not_number<U>
     constexpr static T past_the_end(const lattice<T>& domain)
     {
-      T result = domain.origin();
-      result[0] = domain.origin()[0] + domain.shape()[0];
-      return result;
-    }
-
-    // scalar case
-    template<class U = T>
-      requires number<U>
-    constexpr static T past_the_end(const lattice<T>& domain)
-    {
-      return domain.origin() + domain.shape();
+      return domain.origin() + colexicographic_index_to_coordinate(domain.size(), domain.shape());
     }
 
   private:
