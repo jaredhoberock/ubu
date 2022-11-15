@@ -122,6 +122,25 @@ constexpr Tuple<Args...> make_tuple_like(const Args&... args)
 }
 
 
+// checks whether a list of types are all the same type
+template<class Type, class... Types>
+constexpr bool are_all_same()
+{
+  return (... and std::same_as<Type,Types>);
+}
+
+template<class... Types>
+  requires (sizeof...(Types) < 2)
+constexpr bool are_all_same()
+{
+  return true;
+}
+
+template<class... Types>
+concept all_same = are_all_same<Types...>();
+
+
+// checks whether some template can be instantiated with some list of types
 template<template<class...> class Template, class... Types>
 concept instantiatable = requires
 {
@@ -129,6 +148,8 @@ concept instantiatable = requires
 };
 
 
+// checks whether some type is an instance of some template instantiated with some list of types
+// and those types can be rebound with some other list of new types
 template<class T, class... Types>
 struct is_rebindable_with : std::false_type {};
 
@@ -140,53 +161,108 @@ template<class T, class... NewTypes>
 concept rebindable_with = is_rebindable_with<T,NewTypes...>::value;
 
 
+// checks whether some type is an instance of some template similar to std::array
+template<class T>
+struct instantiated_like_std_array_impl : std::false_type {};
+
+template<template <class,std::size_t> class Array, class T, std::size_t N>
+struct instantiated_like_std_array_impl<Array<T,N>> : std::true_type {};
+
+template<class T>
+concept instantiated_like_std_array = instantiated_like_std_array_impl<T>::value;
+
+
+// checks whether some type is an instance of some template similar to std::array
+// and can be rebound like std::array using the list of Types...
+template<class T, class... Types>
+concept rebindable_like_std_array =
+  instantiated_like_std_array<T>
+  and all_same<Types...>
+;
+
+
+// takes a type that was instantiated similar to std::array<T,N> and rebinds T and N to different values
+template<class A, class NewT, std::size_t NewN>
+struct rebind_std_array_like;
+
+template<template<class, std::size_t> class ArrayLike, class OldType, std::size_t OldN, class NewType, std::size_t NewN>
+struct rebind_std_array_like<ArrayLike<OldType,OldN>, NewType, NewN>
+{
+  using type = ArrayLike<NewType,NewN>;
+};
+
+
+// takes a type that is an instance of some template with some list of types and rebinds that template with
+// some other list of types
 template<class T, class... NewTypes>
-concept tuple_like_rebindable_with = (tuple_like<T> and rebindable_with<T,NewTypes...>);
+struct rebind_template;
+
+template<template<class...> class Template, class... OldTypes, class... NewTypes>
+struct rebind_template<Template<OldTypes...>, NewTypes...>
+{
+  using type = Template<NewTypes...>;
+};
 
 
-template<class MaybeTupleLike, class... NewTypes>
+// takes a tuple_like types and rebinds the types of its elements
+// the result is a new tuple_like type
+template<tuple_like T, class... NewTypes>
 struct rebind_tuple_like;
 
 
-// case 0: T is not tuple_like and there are two types to bind
-// use a std::pair
-template<class T, class... NewTypes>
-  requires (not tuple_like<T> and sizeof...(NewTypes) == 2)
+// case 0: the tuple_like can be rebound with NewTypes... directly
+template<tuple_like T, class... NewTypes>
+  requires rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+struct rebind_tuple_like<T, NewTypes...>
+{
+  using type = typename rebind_template<std::remove_cvref_t<T>, NewTypes...>::type;
+};
+
+
+// case 1: the tuple_like can't be rebound with NewTypes... directly but the tuple_like can be rebound like a std::array
+// rebind T like a std::array
+template<tuple_like T, class... NewTypes>
+  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+            and rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>)
+struct rebind_tuple_like<T,NewTypes...>
+{
+  using old_array_type = std::remove_cvref_t<T>;
+
+  // since all the types in NewTypes... are the same, the value type of the new array_like is the first type in this list
+  // however, it's possible that the list NewTypes... is empty
+  // in this case, just use the old value_type as the value type of the new array
+  using new_value_type = std::tuple_element_t<0, std::tuple<NewTypes..., typename old_array_type::value_type>>;
+
+  using type = typename rebind_std_array_like<old_array_type, new_value_type, sizeof...(NewTypes)>::type;
+};
+
+
+// case 2: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
+// and the number of NewTypes is 2, use a std::pair
+template<tuple_like T, class... NewTypes>
+  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+            and not rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>
+            and sizeof...(NewTypes) == 2)
 struct rebind_tuple_like<T,NewTypes...>
 {
   using type = std::pair<NewTypes...>;
 };
 
 
-// case 1: T is not tuple_like and there are some number other than two types to bind
-// use a std::tuple
-template<class T, class... NewTypes>
-  requires (not tuple_like<T> and sizeof...(NewTypes) != 2)
+// case 3: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
+// the number of NewTypes is not 2, use a std::tuple
+template<tuple_like T, class... NewTypes>
+  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+            and not rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>
+            and sizeof...(NewTypes) != 2)
 struct rebind_tuple_like<T,NewTypes...>
 {
   using type = std::tuple<NewTypes...>;
 };
 
-// case 2: T is tuple_like and bindable like a tuple and there are heterogeneous types to bind
-template<template<class...> class TupleLike, class... OldTypes, class... NewTypes>
-  requires tuple_like_rebindable_with<TupleLike<OldTypes...>, NewTypes...>
-struct rebind_tuple_like<TupleLike<OldTypes...>, NewTypes...>
-{
-  using type = TupleLike<NewTypes...>;
-};
 
-// case 3: T is tuple_like and bindable like an array and there are homogeneous types to bind
-// (i.e. T is array_like)
-template<template<class,std::size_t> class ArrayLike, class OldType, std::size_t N, class NewType, class... NewTypes>
-  requires (tuple_like<ArrayLike<OldType,N>> and (std::same_as<NewType,NewTypes> and ...))
-struct rebind_tuple_like<ArrayLike<OldType,N>, NewType, NewTypes...>
-{
-  using type = ArrayLike<NewType, 1 + sizeof...(NewTypes)>;
-};
-
-
-template<class Hint, class... Types>
-using smart_tuple = typename rebind_tuple_like<std::remove_cvref_t<Hint>,Types...>::type;
+template<tuple_like Example, class... Types>
+using smart_tuple = typename rebind_tuple_like<Example,Types...>::type;
 
 
 template<class F, class I>
@@ -376,10 +452,19 @@ struct tuple_similar_to
 };
 
 
+// this makes a new tuple_like similar to an Example tuple_like
+// the value of the first argument is discarded
+template<tuple_like Example, class... Args>
+constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
+{
+  return make_tuple_like<tuple_similar_to<Example>::template tuple>(std::forward<Args>(args)...);
+}
+
+
 template<std::size_t... I, tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
-  return make_tuple_like<tuple_similar_to<T>::template tuple>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
+  return make_tuple_similar_to<T>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
 }
 
 template<tuple_like T, class Arg>
@@ -600,7 +685,7 @@ tuple_like auto tuple_unzip(T&& t)
 //  // below, the column index goes from [0, 3), which are the indices of the outer tuple type
 //  // the row index goes from [0, 2), which are the indices of the inner tuple type
 //
-//  return make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
+//  return make_tuple_similar_to<inner_tuple_type>
 //  (
 //    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<0>(get<0>(t)), get<0>(get<1>(t)), get<0>(get<2>(t))),
 //    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
