@@ -6,6 +6,7 @@
 #include "coordinate/colexicographic_index_to_coordinate.hpp"
 #include "coordinate/congruent.hpp"
 #include "coordinate/coordinate.hpp"
+#include "coordinate/coordinate_divide.hpp"
 #include "coordinate/element.hpp"
 #include "coordinate/grid_size.hpp"
 #include "coordinate/lattice.hpp"

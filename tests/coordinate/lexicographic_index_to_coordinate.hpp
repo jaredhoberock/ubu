@@ -76,10 +76,8 @@ void test_lexicographic_index_to_coordinate()
           {
             for(int i = 0; i < shape.first[0]; ++i, ++index)
             {
-              using coord_type = std::pair<ns::int2, ns::int3>;
-
               std::pair<ns::int2,ns::int3> expected{{i,j}, {x,y,z}};
-              coord_type result = ns::lexicographic_index_to_coordinate(index, shape);
+              std::pair<ns::int2,ns::int3> result = ns::lexicographic_index_to_coordinate(index, shape);
 
               assert(expected == result);
             }
