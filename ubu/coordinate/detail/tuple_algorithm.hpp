@@ -461,16 +461,22 @@ constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
 }
 
 
-template<std::size_t... I, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_append_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
+template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
+constexpr tuple_like auto tuple_append_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
-  return make_tuple_similar_to<T>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
+  return make_tuple_similar_to<Example>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
+}
+
+template<tuple_like Example, tuple_like T, class Arg>
+constexpr tuple_like auto tuple_append_similar_to(T&& t, Arg&& arg)
+{
+  return tuple_append_similar_to_impl<Example>(tuple_indices<T>, std::forward<T>(t), std::forward<Arg>(arg));
 }
 
 template<tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
 {
-  return tuple_append_impl(tuple_indices<T>, t, std::forward<Arg>(arg));
+  return tuple_append_similar_to<T>(t, std::forward<Arg>(arg));
 }
 
 
