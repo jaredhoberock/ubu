@@ -2,6 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
+#include "colexicographic_decrement.hpp"
+#include "colexicographic_increment.hpp"
 #include "colexicographic_index.hpp"
 #include "colexicographic_index_to_coordinate.hpp"
 #include "coordinate.hpp"
@@ -22,7 +24,7 @@ namespace detail
 {
 
 
-template<coordinate T> class lattice_iterator;
+template<coordinate T> class colexicographic_iterator;
 
 
 } // end detail
@@ -35,7 +37,7 @@ class lattice
     using size_type  = std::size_t;
     using value_type = T;
     using reference  = value_type;
-    using iterator   = detail::lattice_iterator<T>;
+    using iterator   = detail::colexicographic_iterator<T>;
 
     // default constructor
     lattice() = default;
@@ -158,7 +160,7 @@ namespace detail
 
 
 template<coordinate T>
-class lattice_iterator
+class colexicographic_iterator
 {
   public:
     using iterator_category = std::random_access_iterator_tag;
@@ -167,13 +169,13 @@ class lattice_iterator
     using pointer = void;
     using reference = value_type;
 
-    constexpr lattice_iterator(const lattice<T>& domain, T current)
+    constexpr colexicographic_iterator(const lattice<T>& domain, T current)
       : domain_{domain},
         current_{current}
     {}
 
-    constexpr explicit lattice_iterator(const lattice<T>& domain)
-      : lattice_iterator{domain, domain.origin()}
+    constexpr explicit colexicographic_iterator(const lattice<T>& domain)
+      : colexicographic_iterator{domain, domain.origin()}
     {}
 
     constexpr reference operator*() const
@@ -183,90 +185,90 @@ class lattice_iterator
 
     constexpr reference operator[](difference_type n) const
     {
-      lattice_iterator tmp = *this + n;
+      colexicographic_iterator tmp = *this + n;
       return *tmp;
     }
 
-    constexpr lattice_iterator& operator++()
+    constexpr colexicographic_iterator& operator++()
     {
       increment();
       return *this;
     }
 
-    constexpr lattice_iterator operator++(int)
+    constexpr colexicographic_iterator operator++(int)
     {
-      lattice_iterator result = *this;
+      colexicographic_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr lattice_iterator& operator--()
+    constexpr colexicographic_iterator& operator--()
     {
       decrement();
       return *this;
     }
 
-    constexpr lattice_iterator operator--(int)
+    constexpr colexicographic_iterator operator--(int)
     {
-      lattice_iterator result = *this;
+      colexicographic_iterator result = *this;
       --(*this);
       return result;
     }
 
-    constexpr lattice_iterator operator+(difference_type n) const
+    constexpr colexicographic_iterator operator+(difference_type n) const
     {
-      lattice_iterator result{*this};
+      colexicographic_iterator result{*this};
       return result += n;
     }
 
-    constexpr lattice_iterator& operator+=(difference_type n)
+    constexpr colexicographic_iterator& operator+=(difference_type n)
     {
       advance(n);
       return *this;
     }
 
-    constexpr lattice_iterator& operator-=(difference_type n)
+    constexpr colexicographic_iterator& operator-=(difference_type n)
     {
       return *this += -n;
     }
 
-    constexpr lattice_iterator operator-(difference_type n) const
+    constexpr colexicographic_iterator operator-(difference_type n) const
     {
-      lattice_iterator result{*this};
+      colexicographic_iterator result{*this};
       return result -= n;
     }
 
-    constexpr difference_type operator-(const lattice_iterator& rhs) const
+    constexpr difference_type operator-(const colexicographic_iterator& rhs) const
     {
       return colexicographic_index() - rhs.colexicographic_index();
     }
 
-    constexpr bool operator==(const lattice_iterator& rhs) const
+    constexpr bool operator==(const colexicographic_iterator& rhs) const
     {
       return current_ == rhs.current_;
     }
 
-    constexpr bool operator!=(const lattice_iterator& rhs) const
+    constexpr bool operator!=(const colexicographic_iterator& rhs) const
     {
       return !(*this == rhs);
     }
 
-    constexpr bool operator<(const lattice_iterator& rhs) const
+    constexpr bool operator<(const colexicographic_iterator& rhs) const
     {
       return current_ < rhs.current_;
     }
 
-    constexpr bool operator<=(const lattice_iterator& rhs) const
+    constexpr bool operator<=(const colexicographic_iterator& rhs) const
     {
       return !(rhs < *this);
     }
 
-    constexpr bool operator>(const lattice_iterator& rhs) const
+    constexpr bool operator>(const colexicographic_iterator& rhs) const
     {
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const lattice_iterator &rhs) const
+    constexpr bool operator>=(const colexicographic_iterator &rhs) const
     {
       return !(rhs > *this);
     }
@@ -277,69 +279,15 @@ class lattice_iterator
     }
 
   private:
-    // non-scalar case
-    template<class U = T>
-      requires not_number<U>
     constexpr void increment()
     {
-      T begin = domain_.origin();
-      T end   = begin + domain_.shape();
-
-      for(int i = domain_.number_of_dimensions(); i-- > 0;)
-      {
-        ++current_[i];
-
-        if(begin[i] <= current_[i] and current_[i] < end[i])
-        {
-          return;
-        }
-        else if(i > 0)
-        {
-          // don't roll the final dimension over to the origin
-          current_[i] = begin[i];
-        }
-      }
+      colexicographic_increment(current_, domain_.origin(), domain_.origin() + domain_.shape());
     }
 
-    // scalar case
-    template<class U = T>
-      requires number<U>
-    constexpr void increment()
-    {
-      ++current_;
-    }
-
-    // non-scalar case
-    template<class U = T>
-      requires not_number<U>
     constexpr void decrement()
     {
-      T begin = domain_.origin();
-      T end   = begin + domain_.shape();
-
-      for(int i = domain_.number_of_dimensions(); i-- > 0;)
-      {
-        --current_[i];
-
-        if(begin[i] <= current_[i])
-        {
-          return;
-        }
-        else
-        {
-          current_[i] = end[i] - 1;
-        }
-      }
+      colexicographic_decrement(current_, domain_.origin(), domain_.origin() + domain_.shape());
     }
-
-    // scalar case
-    template<class U = T>
-      requires number<U>
-    constexpr void decrement()
-    {
-      --current_;
-    }
-
 
     // non-scalar case
     template<class U = T>
