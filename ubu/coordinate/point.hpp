@@ -324,7 +324,6 @@ using point_element_t = std::tuple_element_t<0,std::remove_cvref_t<T>>;
 
 
 template<class T, std::size_t N>
-  requires (N > 0)
 class point : public detail::point_base<T,N>
 {
   private:
