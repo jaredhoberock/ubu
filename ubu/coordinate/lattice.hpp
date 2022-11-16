@@ -9,7 +9,6 @@
 #include "coordinate.hpp"
 #include "coordinate_sum.hpp"
 #include "detail/make_coordinate.hpp"
-#include "detail/number.hpp"
 #include "grid_size.hpp"
 #include "rank.hpp"
 #include <concepts>
@@ -297,23 +296,10 @@ class colexicographic_iterator
       colexicographic_decrement(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
-    // non-scalar case
-    template<class U = T>
-      requires not_number<U>
     constexpr void advance(difference_type n)
     {
       current_ = coordinate_sum(domain_.origin(), colexicographic_index_to_coordinate(colexicographic_index() + n, domain_.shape()));
     }
-
-    // scalar case
-    template<class U = T>
-      requires number<U>
-    constexpr void advance(difference_type n)
-    {
-      current_ += n;
-      return *this;
-    }
-
 
     constexpr difference_type colexicographic_index() const
     {
