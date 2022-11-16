@@ -4,7 +4,7 @@
 
 #include "../../coordinate/coordinate.hpp"
 #include "../../coordinate/point.hpp"
-#include <vector_types.h>
+#include <iostream>
 
 
 namespace ubu::cuda
@@ -32,6 +32,41 @@ struct thread_id
   constexpr static std::size_t rank()
   {
     return 2;
+  }
+
+  constexpr bool operator==(const thread_id& rhs) const
+  {
+    return block == rhs.block and thread == rhs.thread;
+  }
+
+  constexpr bool operator!=(const thread_id& rhs) const
+  {
+    return !(*this == rhs);
+  }
+
+  // tuple-like interface
+  template<std::size_t i>
+    requires (i < 2)
+  friend constexpr int3& get(thread_id& self)
+  {
+    if constexpr (i == 0) return self.block;
+    return self.thread;
+  }
+
+  template<std::size_t i>
+    requires (i < 2)
+  friend constexpr const int3& get(const thread_id& self)
+  {
+    if constexpr (i == 0) return self.block;
+    return self.thread;
+  }
+
+  template<std::size_t i>
+    requires (i < 2)
+  friend constexpr int3&& get(thread_id&& self)
+  {
+    if constexpr (i == 0) return std::move(self.block);
+    return std::move(self.thread);
   }
 };
 
@@ -66,7 +101,30 @@ constexpr int3& element<1>(thread_id& t)
 }
 
 
+std::ostream& operator<<(std::ostream& os, const thread_id& id)
+{
+  return os << "(" << id.block << ", " << id.thread << ")";
+}
+
+
 } // end ubu::cuda
+
+
+namespace std
+{
+
+// additional tuple-like interface
+
+template<>
+struct tuple_size<ubu::cuda::thread_id> : std::integral_constant<size_t,2> {};
+
+template<std::size_t I>
+struct tuple_element<I,ubu::cuda::thread_id>
+{
+  using type = ubu::int3;
+};
+
+} // end std
 
 
 #include "../../detail/epilogue.hpp"
