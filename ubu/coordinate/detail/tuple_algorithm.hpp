@@ -210,19 +210,46 @@ template<tuple_like T, class... NewTypes>
 struct rebind_tuple_like;
 
 
-// case 0: the tuple_like can be rebound with NewTypes... directly
+template<tuple_like T, class... Types, std::size_t... I>
+constexpr bool are_tuple_elements_same_as(std::index_sequence<I...>)
+{
+  return (... and std::same_as<std::tuple_element_t<I, std::remove_cvref_t<T>>, Types>);
+}
+
+
+template<class T, class... Types>
+concept tuple_elements_same_as =
+  tuple_like<T>
+  and (std::tuple_size_v<std::remove_cvref_t<T>> == sizeof...(Types))
+  and are_tuple_elements_same_as<T,Types...>(tuple_indices<T>)
+;
+
+
+// case 0: the tuple_like's element types are the same as the types in NewTypes...
+// there's no need to rebind to a new type
 template<tuple_like T, class... NewTypes>
-  requires rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+  requires tuple_elements_same_as<T, NewTypes...>
+struct rebind_tuple_like<T, NewTypes...>
+{
+  using type = std::remove_cvref_t<T>;
+};
+
+
+// case 1: the tuple_like can be rebound with NewTypes... directly
+template<tuple_like T, class... NewTypes>
+  requires (not tuple_elements_same_as<T, NewTypes...>
+            and rebindable_with<std::remove_cvref_t<T>, NewTypes...>)
 struct rebind_tuple_like<T, NewTypes...>
 {
   using type = typename rebind_template<std::remove_cvref_t<T>, NewTypes...>::type;
 };
 
 
-// case 1: the tuple_like can't be rebound with NewTypes... directly but the tuple_like can be rebound like a std::array
+// case 2: the tuple_like can't be rebound with NewTypes... directly but the tuple_like can be rebound like a std::array
 // rebind T like a std::array
 template<tuple_like T, class... NewTypes>
-  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+  requires (not tuple_elements_same_as<T, NewTypes...>
+            and not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
             and rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>)
 struct rebind_tuple_like<T,NewTypes...>
 {
@@ -237,10 +264,11 @@ struct rebind_tuple_like<T,NewTypes...>
 };
 
 
-// case 2: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
+// case 3: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
 // and the number of NewTypes is 2, use a std::pair
 template<tuple_like T, class... NewTypes>
-  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+  requires (not tuple_elements_same_as<T, NewTypes...>
+            and not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
             and not rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>
             and sizeof...(NewTypes) == 2)
 struct rebind_tuple_like<T,NewTypes...>
@@ -249,10 +277,11 @@ struct rebind_tuple_like<T,NewTypes...>
 };
 
 
-// case 3: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
+// case 4: the tuple_like cannot be rebound with NewTypes... directly and is not std::array-like
 // the number of NewTypes is not 2, use a std::tuple
 template<tuple_like T, class... NewTypes>
-  requires (not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
+  requires (not tuple_elements_same_as<T, NewTypes...>
+            and not rebindable_with<std::remove_cvref_t<T>, NewTypes...>
             and not rebindable_like_std_array<std::remove_cvref_t<T>, NewTypes...>
             and sizeof...(NewTypes) != 2)
 struct rebind_tuple_like<T,NewTypes...>
