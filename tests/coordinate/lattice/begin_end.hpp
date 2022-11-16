@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <ubu/coordinate/lattice.hpp>
 #include <ubu/coordinate/point.hpp>
 
@@ -21,6 +22,8 @@ void test_begin_end()
       auto expected = l[linear_idx];
       assert(expected == result);
     }
+
+    assert(std::is_sorted(l.begin(), l.end()));
   }
 
   {
@@ -42,6 +45,8 @@ void test_begin_end()
       }
       assert(expected == result);
     }
+
+    assert(std::is_sorted(l.begin(), l.end()));
   }
 
   {
@@ -57,6 +62,8 @@ void test_begin_end()
       auto expected = l[linear_idx];
       assert(expected == result);
     }
+
+    assert(std::is_sorted(l.begin(), l.end()));
   }
 }
 
