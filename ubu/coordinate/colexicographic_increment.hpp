@@ -4,6 +4,7 @@
 
 #include "coordinate.hpp"
 #include "element.hpp"
+#include "rank.hpp"
 #include "zero.hpp"
 
 
@@ -39,13 +40,13 @@ constexpr void colexicographic_increment_impl(C& coord, const C& origin, const C
   }
 
   // roll over the Ith element to the origin
-  if constexpr (I > 0)
+  if constexpr (I < rank_v<C> - 1)
   {
-    // note that we don't roll the final (0th) dimension over to the origin
+    // note that we don't roll the final (rank-1) dimension over to the origin
     element<I>(coord) = element<I>(origin);
 
-    // continue recursion towards the left
-    colexicographic_increment_impl<I-1>(coord, origin, end);
+    // continue recursion towards the right
+    colexicographic_increment_impl<I+1>(coord, origin, end);
   }
 }
 
@@ -56,7 +57,7 @@ constexpr void colexicographic_increment_impl(C& coord, const C& origin, const C
 template<nonscalar_coordinate C>
 constexpr void colexicographic_increment(C& coord, const C& origin, const C& end)
 {
-  return detail::colexicographic_increment_impl<rank_v<C> - 1>(coord, origin, end);
+  return detail::colexicographic_increment_impl<0>(coord, origin, end);
 }
 
 

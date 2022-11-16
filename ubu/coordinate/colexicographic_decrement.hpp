@@ -4,6 +4,7 @@
 
 #include "coordinate.hpp"
 #include "element.hpp"
+#include "rank.hpp"
 #include "zero.hpp"
 
 
@@ -44,10 +45,10 @@ constexpr void colexicographic_decrement_impl(C& coord, const C& origin, const C
   // decrement the element one more time to offset us one from the end
   colexicographic_decrement(element<I>(coord), element<I>(origin), element<I>(end));
 
-  if constexpr (I > 0)
+  if constexpr (I > rank_v<C> - 1)
   {
-    // continue recursion towards the left
-    colexicographic_increment_impl<I-1>(coord, origin, end);
+    // continue recursion towards the right
+    colexicographic_decrement_impl<I+1>(coord, origin, end);
   }
 }
 
@@ -58,7 +59,7 @@ constexpr void colexicographic_decrement_impl(C& coord, const C& origin, const C
 template<nonscalar_coordinate C>
 constexpr void colexicographic_decrement(C& coord, const C& origin, const C& end)
 {
-  return detail::colexicographic_decrement_impl<rank_v<C> - 1>(coord, origin, end);
+  return detail::colexicographic_decrement_impl<0>(coord, origin, end);
 }
 
 

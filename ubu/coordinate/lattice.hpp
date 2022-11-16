@@ -2,10 +2,10 @@
 
 #include "../detail/prologue.hpp"
 
-#include "colexicographic_decrement.hpp"
-#include "colexicographic_increment.hpp"
-#include "colexicographic_index.hpp"
-#include "colexicographic_index_to_coordinate.hpp"
+#include "lexicographic_decrement.hpp"
+#include "lexicographic_increment.hpp"
+#include "lexicographic_index.hpp"
+#include "lexicographic_index_to_coordinate.hpp"
 #include "coordinate.hpp"
 #include "coordinate_sum.hpp"
 #include "detail/make_coordinate.hpp"
@@ -24,7 +24,7 @@ namespace detail
 {
 
 
-template<coordinate T> class colexicographic_iterator;
+template<coordinate T> class lexicographic_iterator;
 
 
 } // end detail
@@ -36,7 +36,7 @@ class lattice
   public:
     using value_type = T;
     using reference  = value_type;
-    using iterator   = detail::colexicographic_iterator<T>;
+    using iterator   = detail::lexicographic_iterator<T>;
 
     // default constructor
     lattice() = default;
@@ -159,7 +159,7 @@ namespace detail
 
 
 template<coordinate T>
-class colexicographic_iterator
+class lexicographic_iterator
 {
   public:
     using iterator_category = std::random_access_iterator_tag;
@@ -168,13 +168,13 @@ class colexicographic_iterator
     using pointer = void;
     using reference = value_type;
 
-    constexpr colexicographic_iterator(const lattice<T>& domain, T current)
+    constexpr lexicographic_iterator(const lattice<T>& domain, T current)
       : domain_{domain},
         current_{current}
     {}
 
-    constexpr explicit colexicographic_iterator(const lattice<T>& domain)
-      : colexicographic_iterator{domain, domain.origin()}
+    constexpr explicit lexicographic_iterator(const lattice<T>& domain)
+      : lexicographic_iterator{domain, domain.origin()}
     {}
 
     constexpr reference operator*() const
@@ -184,102 +184,102 @@ class colexicographic_iterator
 
     constexpr reference operator[](difference_type n) const
     {
-      colexicographic_iterator tmp = *this + n;
+      lexicographic_iterator tmp = *this + n;
       return *tmp;
     }
 
-    constexpr colexicographic_iterator& operator++()
+    constexpr lexicographic_iterator& operator++()
     {
       increment();
       return *this;
     }
 
-    constexpr colexicographic_iterator operator++(int)
+    constexpr lexicographic_iterator operator++(int)
     {
-      colexicographic_iterator result = *this;
+      lexicographic_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr colexicographic_iterator& operator--()
+    constexpr lexicographic_iterator& operator--()
     {
       decrement();
       return *this;
     }
 
-    constexpr colexicographic_iterator operator--(int)
+    constexpr lexicographic_iterator operator--(int)
     {
-      colexicographic_iterator result = *this;
+      lexicographic_iterator result = *this;
       --(*this);
       return result;
     }
 
-    constexpr colexicographic_iterator operator+(difference_type n) const
+    constexpr lexicographic_iterator operator+(difference_type n) const
     {
-      colexicographic_iterator result{*this};
+      lexicographic_iterator result{*this};
       return result += n;
     }
 
-    constexpr colexicographic_iterator& operator+=(difference_type n)
+    constexpr lexicographic_iterator& operator+=(difference_type n)
     {
       advance(n);
       return *this;
     }
 
-    constexpr colexicographic_iterator& operator-=(difference_type n)
+    constexpr lexicographic_iterator& operator-=(difference_type n)
     {
       return *this += -n;
     }
 
-    constexpr colexicographic_iterator operator-(difference_type n) const
+    constexpr lexicographic_iterator operator-(difference_type n) const
     {
-      colexicographic_iterator result{*this};
+      lexicographic_iterator result{*this};
       return result -= n;
     }
 
-    constexpr difference_type operator-(const colexicographic_iterator& rhs) const
+    constexpr difference_type operator-(const lexicographic_iterator& rhs) const
     {
-      return colexicographic_index() - rhs.colexicographic_index();
+      return lexicographic_index() - rhs.lexicographic_index();
     }
 
-    constexpr bool operator==(const colexicographic_iterator& rhs) const
+    constexpr bool operator==(const lexicographic_iterator& rhs) const
     {
       return current_ == rhs.current_;
     }
 
-    constexpr bool operator!=(const colexicographic_iterator& rhs) const
+    constexpr bool operator!=(const lexicographic_iterator& rhs) const
     {
       return !(*this == rhs);
     }
 
-    constexpr bool operator<(const colexicographic_iterator& rhs) const
+    constexpr bool operator<(const lexicographic_iterator& rhs) const
     {
       return current_ < rhs.current_;
     }
 
-    constexpr bool operator<=(const colexicographic_iterator& rhs) const
+    constexpr bool operator<=(const lexicographic_iterator& rhs) const
     {
       return !(rhs < *this);
     }
 
-    constexpr bool operator>(const colexicographic_iterator& rhs) const
+    constexpr bool operator>(const lexicographic_iterator& rhs) const
     {
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const colexicographic_iterator &rhs) const
+    constexpr bool operator>=(const lexicographic_iterator &rhs) const
     {
       return !(rhs > *this);
     }
 
     constexpr static T past_the_end(const lattice<T>& domain)
     {
-      // colexicographic_index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
-      T final_coordinate = colexicographic_index_to_coordinate(domain.size() - 1, domain.shape());
+      // lexicographic_index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
+      T final_coordinate = lexicographic_index_to_coordinate(domain.size() - 1, domain.shape());
 
-      // unlike colexicographic_index_to_coordinate, colexicographic_increment does not roll over at domain.shape()
+      // unlike lexicographic_index_to_coordinate, lexicographic_increment does not roll over at domain.shape()
       // increment the final coordinate in the shape so that we're past the end
-      colexicographic_increment(final_coordinate, domain.shape());
+      lexicographic_increment(final_coordinate, domain.shape());
 
       // offset from the origin
       return coordinate_sum(domain.origin(), final_coordinate);
@@ -288,20 +288,20 @@ class colexicographic_iterator
   private:
     constexpr void increment()
     {
-      colexicographic_increment(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
+      lexicographic_increment(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     constexpr void decrement()
     {
-      colexicographic_decrement(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
+      lexicographic_decrement(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     constexpr void advance(difference_type n)
     {
-      current_ = coordinate_sum(domain_.origin(), colexicographic_index_to_coordinate(colexicographic_index() + n, domain_.shape()));
+      current_ = coordinate_sum(domain_.origin(), lexicographic_index_to_coordinate(lexicographic_index() + n, domain_.shape()));
     }
 
-    constexpr difference_type colexicographic_index() const
+    constexpr difference_type lexicographic_index() const
     {
       if(is_past_the_end())
       {
@@ -312,7 +312,7 @@ class colexicographic_iterator
       // 0-based indices along each axis
       T idx = current_ - domain_.origin();
 
-      return ubu::colexicographic_index(idx, domain_.shape());
+      return ubu::lexicographic_index(idx, domain_.shape());
     }
 
 
