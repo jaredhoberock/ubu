@@ -7,6 +7,7 @@
 #include "colexicographic_index.hpp"
 #include "colexicographic_index_to_coordinate.hpp"
 #include "coordinate.hpp"
+#include "coordinate_sum.hpp"
 #include "detail/make_coordinate.hpp"
 #include "detail/number.hpp"
 #include "grid_size.hpp"
@@ -34,7 +35,6 @@ template<coordinate T>
 class lattice
 {
   public:
-    using size_type  = std::size_t;
     using value_type = T;
     using reference  = value_type;
     using iterator   = detail::colexicographic_iterator<T>;
@@ -90,7 +90,7 @@ class lattice
     }
 
     // returns the number of lattice points
-    constexpr size_type size() const
+    constexpr std::integral auto size() const
     {
       return ubu::grid_size(shape());
     }
@@ -275,18 +275,26 @@ class colexicographic_iterator
 
     constexpr static T past_the_end(const lattice<T>& domain)
     {
-      return domain.origin() + colexicographic_index_to_coordinate(domain.size(), domain.shape());
+      // colexicographic_index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
+      T final_coordinate = colexicographic_index_to_coordinate(domain.size() - 1, domain.shape());
+
+      // unlike colexicographic_index_to_coordinate, colexicographic_increment does not roll over at domain.shape()
+      // increment the final coordinate in the shape so that we're past the end
+      colexicographic_increment(final_coordinate, domain.shape());
+
+      // offset from the origin
+      return coordinate_sum(domain.origin(), final_coordinate);
     }
 
   private:
     constexpr void increment()
     {
-      colexicographic_increment(current_, domain_.origin(), domain_.origin() + domain_.shape());
+      colexicographic_increment(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     constexpr void decrement()
     {
-      colexicographic_decrement(current_, domain_.origin(), domain_.origin() + domain_.shape());
+      colexicographic_decrement(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     // non-scalar case
@@ -294,7 +302,7 @@ class colexicographic_iterator
       requires not_number<U>
     constexpr void advance(difference_type n)
     {
-      current_ = domain_.origin() + ubu::colexicographic_index_to_coordinate(colexicographic_index() + n, domain_.shape());
+      current_ = coordinate_sum(domain_.origin(), colexicographic_index_to_coordinate(colexicographic_index() + n, domain_.shape()));
     }
 
     // scalar case
@@ -324,8 +332,7 @@ class colexicographic_iterator
 
     constexpr bool is_past_the_end() const
     {
-      auto end = domain_.origin() + domain_.shape();
-      return !(current_[0] < end[0]);
+      return current_ == past_the_end(domain_);
     }
 
     lattice<T> domain_;
