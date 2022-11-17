@@ -17,6 +17,7 @@
 #include "coordinate/lexicographic_increment.hpp"
 #include "coordinate/lexicographic_index.hpp"
 #include "coordinate/lexicographic_index_to_coordinate.hpp"
+#include "coordinate/lexicographic_lift.hpp"
 #include "coordinate/point.hpp"
 #include "coordinate/rank.hpp"
 #include "coordinate/same_rank.hpp"

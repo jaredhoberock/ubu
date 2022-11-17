@@ -4,8 +4,7 @@
 
 #include "congruent.hpp"
 #include "coordinate.hpp"
-#include "detail/compact_row_major_stride.hpp"
-#include "detail/index_to_coordinate.hpp"
+#include "lexicographic_lift.hpp"
 
 
 namespace ubu
@@ -15,30 +14,11 @@ namespace ubu
 // precondition:  is_coordinate_into(coord,shape)
 // postcondition: is_natural_coordinate_into(result,shape)
 template<coordinate C, coordinate S>
-  requires congruent<C,S>
-constexpr C lexicographic_index_to_coordinate(const C& coord, const S& shape)
-{
-  return coord;
-}
-
-
-// precondition:  is_coordinate_into(coord,shape)
-// postcondition: is_natural_coordinate_into(result,shape)
-template<coordinate C, coordinate S>
   requires weakly_congruent<C,S>
 constexpr congruent<S> auto lexicographic_index_to_coordinate(const C& coord, const S& shape)
 {
-  if constexpr(std::integral<C>)
-  {
-    return detail::index_to_coordinate(coord, shape, detail::compact_row_major_stride(shape));
-  }
-  else
-  {
-    return detail::tuple_zip_with(coord, shape, [](auto& c, auto& s)
-    {
-      return lexicographic_index_to_coordinate(c,s);
-    });
-  }
+  auto [_, remainder] = lexicographic_lift(coord, shape);
+  return remainder;
 }
 
 
