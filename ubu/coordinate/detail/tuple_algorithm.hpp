@@ -572,6 +572,20 @@ constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
 }
 
 
+template<tuple_like T, std::size_t... I>
+  requires (std::tuple_size_v<T> == sizeof...(I))
+constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T& t)
+{
+  return make_tuple_similar_to<T>(get<I>(t)...);
+}
+
+template<tuple_like T>
+constexpr tuple_like auto tuple_reverse(const T& t)
+{
+  return tuple_reverse_impl(reversed_tuple_indices<T>, t);
+}
+
+
 // tuple_zip_with zips the tuples by applying function f, and then returns the results of f as a smart_tuple
 
 // 1-argument tuple_zip_with
@@ -704,6 +718,22 @@ constexpr bool tuple_lexicographical_compare(const T1& t1, const T2& t2)
 }
 
 
+template<tuple_like T1, tuple_like T2, class C>
+  requires same_tuple_size<T1,T2>
+constexpr bool tuple_colexicographical_compare(const T1& t1, const T2& t2, const C& compare)
+{
+  return tuple_lexicographical_compare(tuple_reverse(t1), tuple_reverse(t2), compare);
+}
+
+
+template<tuple_like T1, tuple_like T2>
+  requires same_tuple_size<T1,T2>
+constexpr bool tuple_colexicographical_compare(const T1& t1, const T2& t2)
+{
+  return tuple_colexicographical_compare(t1, t2, std::less{});
+}
+
+
 template<tuple_like T, std::size_t Zero, std::size_t... I>
 constexpr bool tuple_elements_have_same_tuple_size(std::index_sequence<Zero,I...>)
 {
@@ -797,20 +827,6 @@ tuple_like auto tuple_unzip(T&& t)
 //    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
 //  );
 //}
-
-
-template<tuple_like T, std::size_t... I>
-  requires (std::tuple_size_v<T> == sizeof...(I))
-constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T& t)
-{
-  return make_tuple_similar_to<T>(get<I>(t)...);
-}
-
-template<tuple_like T>
-constexpr tuple_like auto tuple_reverse(const T& t)
-{
-  return tuple_reverse_impl(reversed_tuple_indices<T>, t);
-}
 
 
 template<class Arg>
