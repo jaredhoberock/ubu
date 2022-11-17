@@ -668,23 +668,31 @@ constexpr void tuple_inplace_transform(F&& f, T1& t1, const T2& t2)
 }
 
 
-template<tuple_like T1, tuple_like T2>
+template<tuple_like T1, tuple_like T2, class C>
   requires same_tuple_size<T1,T2>
-constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, std::tuple_size_v<T1>>, const T1& t1, const T2& t2)
+constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, std::tuple_size_v<T1>>, const T1&, const T2&, const C&)
 {
   return false;
 }
 
 
-template<std::size_t cursor, tuple_like T1, tuple_like T2>
+template<std::size_t cursor, tuple_like T1, tuple_like T2, class C>
   requires (same_tuple_size<T1,T2> and cursor != std::tuple_size_v<T1>)
-constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, cursor>, const T1& t1, const T2& t2)
+constexpr bool tuple_lexicographical_compare_impl(std::integral_constant<std::size_t, cursor>, const T1& t1, const T2& t2, const C& compare)
 {
-  if(get<cursor>(t1) < get<cursor>(t2)) return true;
+  if(compare(get<cursor>(t1), get<cursor>(t2))) return true;
   
-  if(get<cursor>(t2) < get<cursor>(t1)) return false;
+  if(compare(get<cursor>(t2), get<cursor>(t1))) return false;
   
-  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,cursor+1>{}, t1, t2);
+  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,cursor+1>{}, t1, t2, compare);
+}
+
+
+template<tuple_like T1, tuple_like T2, class C>
+  requires same_tuple_size<T1,T2>
+constexpr bool tuple_lexicographical_compare(const T1& t1, const T2& t2, const C& compare)
+{
+  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,0>{}, t1, t2, compare);
 }
 
 
@@ -692,7 +700,7 @@ template<tuple_like T1, tuple_like T2>
   requires same_tuple_size<T1,T2>
 constexpr bool tuple_lexicographical_compare(const T1& t1, const T2& t2)
 {
-  return tuple_lexicographical_compare_impl(std::integral_constant<std::size_t,0>{}, t1, t2);
+  return tuple_lexicographical_compare(t1, t2, std::less{});
 }
 
 
