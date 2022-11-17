@@ -2,9 +2,9 @@
 
 #include "../detail/prologue.hpp"
 
+#include "colexicographic_lift.hpp"
 #include "congruent.hpp"
 #include "coordinate.hpp"
-#include "coordinate_divide.hpp"
 
 
 namespace ubu
@@ -17,7 +17,7 @@ template<coordinate C, coordinate S>
   requires weakly_congruent<C,S>
 constexpr congruent<S> auto colexicographic_index_to_coordinate(const C& coord, const S& shape)
 {
-  auto [_, remainder] = coordinate_divide(coord, shape);
+  auto [_, remainder] = colexicographic_lift(coord, shape);
   return remainder;
 }
 

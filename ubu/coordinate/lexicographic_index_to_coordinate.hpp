@@ -12,9 +12,6 @@ namespace ubu
 {
 
 
-// XXX ideally, this would be something like coordinate_divide(reverse(coord), reverse(shape))
-
-
 // precondition:  is_coordinate_into(coord,shape)
 // postcondition: is_natural_coordinate_into(result,shape)
 template<coordinate C, coordinate S>
