@@ -506,7 +506,7 @@ class point : public detail::point_base<T,N>
     template<point_like_of_rank<N> Other>
     bool operator>(const Other& rhs) const
     {
-      return detail::tuple_lexicographical_compare(rhs, *this);
+      return rhs < *this;
     }
 
     template<point_like_of_rank<N> Other>
