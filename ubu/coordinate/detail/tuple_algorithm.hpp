@@ -70,6 +70,16 @@ template<tuple_like T>
 constexpr auto tuple_indices = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
 
 
+template<std::size_t... I>
+constexpr auto reversed_tuple_indices_impl(std::index_sequence<I...>)
+{
+  return std::index_sequence<(sizeof...(I) - 1 - I)...>{};
+}
+
+template<tuple_like T>
+constexpr auto reversed_tuple_indices = reversed_tuple_indices_impl(tuple_indices<T>);
+
+
 template<class T1, class... Ts>
 concept same_tuple_size = 
   tuple_like<T1>
@@ -317,6 +327,21 @@ concept foldable_with =
 ;
 
 
+template<class F, class I>
+constexpr I fold_args_right(F, I init)
+{
+  return init;
+}
+
+
+template<class F, class I, class Arg, class... Args>
+constexpr auto fold_args_right(F f, I init, Arg arg, Args... args)
+{
+  return fold_args_right(f, f(fold_args_right(f, init, args...), arg));
+}
+
+
+// tuple_fold
 template<std::size_t... I, tuple_like T, class F>
 constexpr decltype(auto) tuple_fold_impl(std::index_sequence<I...>, T&& t, F&& f)
 {
@@ -328,6 +353,21 @@ template<tuple_like T, class F>
 constexpr auto tuple_fold(T&& t, F&& f)
 {
   return tuple_fold_impl(tuple_indices<T>, std::forward<T>(t), std::forward<F>(f));
+}
+
+
+// tuple_fold_right
+template<std::size_t... I, class Init, tuple_like T, class F>
+constexpr decltype(auto) tuple_fold_right_impl(std::index_sequence<I...>, Init&& init, T&& t, F&& f)
+{
+  return fold_args_right(std::forward<F>(f), std::forward<Init>(init), get<I>(std::forward<T>(t))...);
+}
+
+
+template<class I, tuple_like T, class F>
+constexpr auto tuple_fold_right(I&& init, T&& t, F&& f)
+{
+  return tuple_fold_right_impl(tuple_indices<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -490,6 +530,28 @@ constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
 }
 
 
+// tuple_prepend_similar_to
+template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
+constexpr tuple_like auto tuple_prepend_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
+{
+  return make_tuple_similar_to<Example>(std::forward<Arg>(arg), get<I>(std::forward<T>(t))...);
+}
+
+template<tuple_like Example, tuple_like T, class Arg>
+constexpr tuple_like auto tuple_prepend_similar_to(T&& t, Arg&& arg)
+{
+  return tuple_prepend_similar_to_impl<Example>(tuple_indices<T>, std::forward<T>(t), std::forward<Arg>(arg));
+}
+
+
+// tuple_prepend
+template<tuple_like T, class Arg>
+constexpr tuple_like auto tuple_prepend(const T& t, Arg&& arg)
+{
+  return tuple_prepend_similar_to<T>(t, std::forward<Arg>(arg));
+}
+
+// tuple_append_similar_to
 template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
@@ -502,6 +564,7 @@ constexpr tuple_like auto tuple_append_similar_to(T&& t, Arg&& arg)
   return tuple_append_similar_to_impl<Example>(tuple_indices<T>, std::forward<T>(t), std::forward<Arg>(arg));
 }
 
+// tuple_append
 template<tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
 {
@@ -726,6 +789,20 @@ tuple_like auto tuple_unzip(T&& t)
 //    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
 //  );
 //}
+
+
+template<tuple_like T, std::size_t... I>
+  requires (std::tuple_size_v<T> == sizeof...(I))
+constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T& t)
+{
+  return make_tuple_similar_to<T>(get<I>(t)...);
+}
+
+template<tuple_like T>
+constexpr tuple_like auto tuple_reverse(const T& t)
+{
+  return tuple_reverse_impl(reversed_tuple_indices<T>, t);
+}
 
 
 template<class Arg>
