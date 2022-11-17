@@ -42,7 +42,7 @@ constexpr coordinate auto coordinate_divide(const C1& dividend, const C2& diviso
 template<scalar_coordinate C1, nonscalar_coordinate C2>
 constexpr coordinate auto coordinate_divide(const C1& dividend, const C2& divisor)
 {
-  return detail::tuple_fold(std::make_pair(dividend, std::make_tuple()), divisor, [&](auto prev, auto s)
+  return detail::tuple_fold(std::make_pair(dividend, std::make_tuple()), divisor, [](auto prev, auto s)
   {
     auto [prev_quotient, prev_remainder] = prev;
     auto [quotient, remainder] = coordinate_divide(prev_quotient, s);
