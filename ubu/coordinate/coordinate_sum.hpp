@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "congruent.hpp"
 #include "coordinate.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include "element.hpp"

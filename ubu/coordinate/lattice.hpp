@@ -1,16 +1,14 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-
-#include "lexicographic_decrement.hpp"
-#include "lexicographic_increment.hpp"
-#include "lexicographic_index.hpp"
-#include "lexicographic_index_to_coordinate.hpp"
-#include "coordinate.hpp"
-#include "coordinate_sum.hpp"
-#include "detail/make_coordinate.hpp"
-#include "grid_size.hpp"
-#include "rank.hpp"
+#include <ubu/coordinate/coordinate.hpp>
+#include <ubu/coordinate/coordinate_sum.hpp>
+#include <ubu/coordinate/coordinate_to_index.hpp>
+#include <ubu/coordinate/decrement_coordinate.hpp>
+#include <ubu/coordinate/detail/make_coordinate.hpp>
+#include <ubu/coordinate/grid_size.hpp>
+#include <ubu/coordinate/increment_coordinate.hpp>
+#include <ubu/coordinate/index_to_coordinate.hpp>
+#include <ubu/coordinate/rank.hpp>
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
@@ -18,13 +16,11 @@
 
 namespace ubu
 {
-
-
 namespace detail
 {
 
 
-template<coordinate T> class lexicographic_iterator;
+template<coordinate T> class lattice_iterator;
 
 
 } // end detail
@@ -36,7 +32,7 @@ class lattice
   public:
     using value_type = T;
     using reference  = value_type;
-    using iterator   = detail::lexicographic_iterator<T>;
+    using iterator   = detail::lattice_iterator<T>;
 
     // default constructor
     lattice() = default;
@@ -64,6 +60,7 @@ class lattice
     
     // variadic constructor
     // creates a new lattice at the origin with the given dimensions
+    // XXX get rid of this ctor
     template<std::integral I1, std::integral... Is>
       requires (std::constructible_from<T, I1, Is...> and sizeof...(Is) == (lattice::number_of_dimensions() - 1))
     constexpr explicit lattice(const I1& size1, const Is&... sizes)
@@ -135,7 +132,7 @@ class lattice
 
     constexpr iterator end() const
     {
-      return iterator{*this, iterator::past_the_end(*this)};
+      return iterator{*this, iterator::end_value(*this)};
     }
 
     constexpr bool operator==(const lattice& other) const
@@ -159,7 +156,7 @@ namespace detail
 
 
 template<coordinate T>
-class lexicographic_iterator
+class lattice_iterator
 {
   public:
     using iterator_category = std::random_access_iterator_tag;
@@ -168,13 +165,13 @@ class lexicographic_iterator
     using pointer = void;
     using reference = value_type;
 
-    constexpr lexicographic_iterator(const lattice<T>& domain, T current)
+    constexpr lattice_iterator(const lattice<T>& domain, T current)
       : domain_{domain},
         current_{current}
     {}
 
-    constexpr explicit lexicographic_iterator(const lattice<T>& domain)
-      : lexicographic_iterator{domain, domain.origin()}
+    constexpr explicit lattice_iterator(const lattice<T>& domain)
+      : lattice_iterator{domain, domain.origin()}
     {}
 
     constexpr reference operator*() const
@@ -184,141 +181,142 @@ class lexicographic_iterator
 
     constexpr reference operator[](difference_type n) const
     {
-      lexicographic_iterator tmp = *this + n;
+      lattice_iterator tmp = *this + n;
       return *tmp;
     }
 
-    constexpr lexicographic_iterator& operator++()
+    constexpr lattice_iterator& operator++()
     {
       increment();
       return *this;
     }
 
-    constexpr lexicographic_iterator operator++(int)
+    constexpr lattice_iterator operator++(int)
     {
-      lexicographic_iterator result = *this;
+      lattice_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr lexicographic_iterator& operator--()
+    constexpr lattice_iterator& operator--()
     {
       decrement();
       return *this;
     }
 
-    constexpr lexicographic_iterator operator--(int)
+    constexpr lattice_iterator operator--(int)
     {
-      lexicographic_iterator result = *this;
+      lattice_iterator result = *this;
       --(*this);
       return result;
     }
 
-    constexpr lexicographic_iterator operator+(difference_type n) const
+    constexpr lattice_iterator operator+(difference_type n) const
     {
-      lexicographic_iterator result{*this};
+      lattice_iterator result{*this};
       return result += n;
     }
 
-    constexpr lexicographic_iterator& operator+=(difference_type n)
+    constexpr lattice_iterator& operator+=(difference_type n)
     {
       advance(n);
       return *this;
     }
 
-    constexpr lexicographic_iterator& operator-=(difference_type n)
+    constexpr lattice_iterator& operator-=(difference_type n)
     {
       return *this += -n;
     }
 
-    constexpr lexicographic_iterator operator-(difference_type n) const
+    constexpr lattice_iterator operator-(difference_type n) const
     {
-      lexicographic_iterator result{*this};
+      lattice_iterator result{*this};
       return result -= n;
     }
 
-    constexpr difference_type operator-(const lexicographic_iterator& rhs) const
+    constexpr difference_type operator-(const lattice_iterator& rhs) const
     {
-      return lexicographic_index() - rhs.lexicographic_index();
+      return index() - rhs.index();
     }
 
-    constexpr bool operator==(const lexicographic_iterator& rhs) const
+    constexpr bool operator==(const lattice_iterator& rhs) const
     {
       return current_ == rhs.current_;
     }
 
-    constexpr bool operator!=(const lexicographic_iterator& rhs) const
+    constexpr bool operator!=(const lattice_iterator& rhs) const
     {
       return !(*this == rhs);
     }
 
-    constexpr bool operator<(const lexicographic_iterator& rhs) const
+    constexpr bool operator<(const lattice_iterator& rhs) const
     {
       return current_ < rhs.current_;
     }
 
-    constexpr bool operator<=(const lexicographic_iterator& rhs) const
+    constexpr bool operator<=(const lattice_iterator& rhs) const
     {
       return !(rhs < *this);
     }
 
-    constexpr bool operator>(const lexicographic_iterator& rhs) const
+    constexpr bool operator>(const lattice_iterator& rhs) const
     {
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const lexicographic_iterator &rhs) const
+    constexpr bool operator>=(const lattice_iterator &rhs) const
     {
       return !(rhs > *this);
     }
 
-    constexpr static T past_the_end(const lattice<T>& domain)
+    constexpr static T end_value(const lattice<T>& domain)
     {
-      // lexicographic_index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
-      T final_coordinate = lexicographic_index_to_coordinate(domain.size() - 1, domain.shape());
+      // index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
+      T final_coordinate = index_to_coordinate(domain.size() - 1, domain.shape());
 
-      // unlike lexicographic_index_to_coordinate, lexicographic_increment does not roll over at domain.shape()
-      // increment the final coordinate in the shape so that we're past the end
-      lexicographic_increment(final_coordinate, domain.shape());
+      // unlike index_to_coordinate, increment_coordinate does not roll over at domain.shape()
+      // increment the final coordinate in the shape so that we're at the end
+      increment_coordinate(final_coordinate, domain.shape());
 
-      // offset from the origin
+      // add the offset from the origin
       return coordinate_sum(domain.origin(), final_coordinate);
     }
 
   private:
     constexpr void increment()
     {
-      lexicographic_increment(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
+      increment_coordinate(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     constexpr void decrement()
     {
-      lexicographic_decrement(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
+      decrement_coordinate(current_, domain_.origin(), coordinate_sum(domain_.origin(), domain_.shape()));
     }
 
     constexpr void advance(difference_type n)
     {
-      current_ = coordinate_sum(domain_.origin(), lexicographic_index_to_coordinate(lexicographic_index() + n, domain_.shape()));
+      current_ = coordinate_sum(domain_.origin(), index_to_coordinate(index() + n, domain_.shape()));
     }
 
-    constexpr difference_type lexicographic_index() const
+    constexpr difference_type index() const
     {
-      if(is_past_the_end())
+      if(is_at_the_end())
       {
         return domain_.size();
       }
 
       // subtract the origin from current to get
       // 0-based indices along each axis
-      T idx = current_ - domain_.origin();
+      // XXX this needs to be coordinate_difference or something rather than minus
+      T coord = current_ - domain_.origin();
 
-      return ubu::lexicographic_index(idx, domain_.shape());
+      return coordinate_to_index(coord, domain_.shape());
     }
 
 
-    constexpr bool is_past_the_end() const
+    constexpr bool is_at_the_end() const
     {
-      return current_ == past_the_end(domain_);
+      return current_ == end_value(domain_);
     }
 
     lattice<T> domain_;
@@ -327,10 +325,5 @@ class lexicographic_iterator
 
 
 } // end detail
-
-
 } // end ubu
-
-
-#include "../detail/epilogue.hpp"
 

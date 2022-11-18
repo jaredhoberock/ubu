@@ -4,11 +4,12 @@
 
 #include "../coordinate.hpp"
 #include "../element.hpp"
+#include "../grid_size.hpp"
 #include "../rank.hpp"
-#include "make_ascending_index_range.hpp"
-#include "make_coordinate.hpp"
-#include "subgrid_size.hpp"
+#include "../same_rank.hpp"
+#include "tuple_algorithm.hpp"
 #include <concepts>
+#include <tuple>
 #include <utility>
 
 
@@ -16,36 +17,41 @@ namespace ubu::detail
 {
 
 
-template<scalar_coordinate T>
-constexpr T compact_row_major_stride_impl(const std::integral auto&, const T& current_stride)
+template<scalar_coordinate D, scalar_coordinate S>
+constexpr D compact_row_major_stride_impl(const D& current_stride, const S&)
 {
   return element<0>(current_stride);
 }
 
-
-// forward declaration for recursive case
-template<nonscalar_coordinate T>
-constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride);
-
-
-template<coordinate T, std::size_t... Is>
-constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride, std::index_sequence<Is...>)
+template<nonscalar_coordinate D, nonscalar_coordinate S>
+  requires same_rank<D,S>
+constexpr S compact_row_major_stride_impl(const D& current_stride, const S& shape)
 {
-  return detail::make_coordinate<T>(detail::compact_row_major_stride_impl(element<Is>(shape), current_stride * detail::subgrid_size(shape, detail::make_ascending_index_range<Is+1,rank_v<T>>{}))...);
+  return detail::tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
+  {
+    return compact_row_major_stride_impl(cs, s);
+  });
+}
+
+template<scalar_coordinate D, nonscalar_coordinate S>
+constexpr S compact_row_major_stride_impl(const D& current_stride, const S& shape)
+{
+  auto [_,result] = detail::tuple_fold_right(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
+  {
+    auto [current_stride, prev_result] = prev;
+    auto result = detail::tuple_prepend_similar_to<S>(prev_result, compact_row_major_stride_impl(current_stride, s));
+
+    return std::pair{current_stride * grid_size(s), result};
+  });
+
+  return result;
 }
 
 
-template<nonscalar_coordinate T>
-constexpr T compact_row_major_stride_impl(const T& shape, const std::integral auto& current_stride)
+template<coordinate S>
+constexpr S compact_row_major_stride(const S& shape)
 {
-  return detail::compact_row_major_stride_impl(shape, current_stride, std::make_index_sequence<rank_v<T>>{});
-}
-
-
-template<coordinate T>
-constexpr T compact_row_major_stride(const T& shape)
-{
-  return detail::compact_row_major_stride_impl(shape, 1);
+  return compact_row_major_stride_impl(1, shape);
 }
   
 
@@ -53,3 +59,4 @@ constexpr T compact_row_major_stride(const T& shape)
 
 
 #include "../../detail/epilogue.hpp"
+
