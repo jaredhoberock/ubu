@@ -20,11 +20,11 @@ struct thread_id
 
   thread_id(const thread_id&) = default;
 
-  thread_id(int3 b, int3 t)
+  constexpr thread_id(int3 b, int3 t)
     : block{b}, thread{t}
   {}
 
-  thread_id(int2 block_and_thread)
+  constexpr thread_id(int2 block_and_thread)
     : block{block_and_thread.x, 0, 0},
       thread{block_and_thread.y, 0, 0}
   {}
@@ -34,15 +34,7 @@ struct thread_id
     return 2;
   }
 
-  constexpr bool operator==(const thread_id& rhs) const
-  {
-    return block == rhs.block and thread == rhs.thread;
-  }
-
-  constexpr bool operator!=(const thread_id& rhs) const
-  {
-    return !(*this == rhs);
-  }
+  auto operator<=>(const thread_id&) const = default;
 
   // tuple-like interface
   template<std::size_t i>
