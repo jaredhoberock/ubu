@@ -2,8 +2,6 @@
 
 #include "detail/prologue.hpp"
 
-#include "coordinate/colexicographic_decrement.hpp"
-#include "coordinate/colexicographic_increment.hpp"
 #include "coordinate/colexicographic_index.hpp"
 #include "coordinate/colexicographic_index_to_coordinate.hpp"
 #include "coordinate/colexicographic_lift.hpp"
@@ -17,8 +15,6 @@
 #include "coordinate/increment_coordinate.hpp"
 #include "coordinate/index_to_coordinate.hpp"
 #include "coordinate/lattice.hpp"
-#include "coordinate/lexicographic_decrement.hpp"
-#include "coordinate/lexicographic_increment.hpp"
 #include "coordinate/lexicographic_index.hpp"
 #include "coordinate/lexicographic_index_to_coordinate.hpp"
 #include "coordinate/lexicographic_lift.hpp"
