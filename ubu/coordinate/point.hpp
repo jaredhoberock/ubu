@@ -498,29 +498,36 @@ class point : public detail::point_base<T,N>
     }
 
     template<point_like_of_rank<N> Other>
-    bool operator<(const Other& rhs) const
+    constexpr bool operator<(const Other& rhs) const
     {
       return detail::tuple_lexicographical_compare(*this, rhs);
     }
 
     template<point_like_of_rank<N> Other>
-    bool operator>(const Other& rhs) const
+    constexpr bool operator>(const Other& rhs) const
     {
       return rhs < *this;
     }
 
     template<point_like_of_rank<N> Other>
-    bool operator<=(const Other& rhs) const
+    constexpr bool operator<=(const Other& rhs) const
     {
       return !(*this > rhs);
     }
 
     template<point_like_of_rank<N> Other>
-    bool operator>=(const Other& rhs) const
+    constexpr bool operator>=(const Other& rhs) const
     {
       return !(*this < rhs);
     }
-    
+
+    template<point_like_of_rank<N> Other>
+    constexpr std::strong_ordering operator<=>(const Other& rhs) const
+    {
+      if(*this < rhs) return std::strong_ordering::less;
+      else if(*this > rhs) return std::strong_ordering::greater;
+      return std::strong_ordering::equal;
+    }
 
 
     // arithmetic assignment operators
