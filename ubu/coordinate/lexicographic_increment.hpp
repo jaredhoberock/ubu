@@ -4,7 +4,7 @@
 
 #include "coordinate.hpp"
 #include "element.hpp"
-#include "zero.hpp"
+#include "zeros.hpp"
 
 
 namespace ubu
@@ -63,7 +63,7 @@ constexpr void lexicographic_increment(C& coord, const C& origin, const C& end)
 template<coordinate C>
 constexpr void lexicographic_increment(C& coord, const C& shape)
 {
-  return lexicographic_increment(coord, zero<C>, shape);
+  return lexicographic_increment(coord, zeros<C>, shape);
 }
 
 

@@ -4,7 +4,7 @@
 
 #include "coordinate.hpp"
 #include "element.hpp"
-#include "zero.hpp"
+#include "zeros.hpp"
 
 
 namespace ubu
@@ -65,7 +65,7 @@ constexpr void lexicographic_decrement(C& coord, const C& origin, const C& end)
 template<coordinate C>
 constexpr void lexicographic_decrement(C& coord, const C& shape)
 {
-  return lexicographic_decrement(coord, zero<C>, shape);
+  return lexicographic_decrement(coord, zeros<C>, shape);
 }
 
 

@@ -23,6 +23,7 @@
 #include "coordinate/same_rank.hpp"
 #include "coordinate/to_index.hpp"
 #include "coordinate/weakly_congruent.hpp"
+#include "coordinate/zeros.hpp"
 
 #include "detail/epilogue.hpp"
 

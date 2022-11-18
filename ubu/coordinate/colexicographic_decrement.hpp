@@ -5,7 +5,7 @@
 #include "coordinate.hpp"
 #include "element.hpp"
 #include "rank.hpp"
-#include "zero.hpp"
+#include "zeros.hpp"
 
 
 namespace ubu
@@ -66,7 +66,7 @@ constexpr void colexicographic_decrement(C& coord, const C& origin, const C& end
 template<coordinate C>
 constexpr void colexicographic_decrement(C& coord, const C& shape)
 {
-  return colexicographic_decrement(coord, zero<C>, shape);
+  return colexicographic_decrement(coord, zeros<C>, shape);
 }
 
 

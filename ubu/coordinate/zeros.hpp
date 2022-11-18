@@ -14,20 +14,20 @@ namespace detail
 
 
 template<scalar_coordinate T>
-constexpr T zero()
+constexpr T zeros_impl()
 {
   return 0;
 }
 
 
 template<nonscalar_coordinate T>
-constexpr T zero()
+constexpr T zeros_impl()
 {
   T result{};
 
-  for_each_tuple_element([](auto& element)
+  detail::for_each_tuple_element([](auto& element)
   {
-    element = zero<std::remove_cvref_t<decltype(element)>>();
+    element = zeros_impl<std::remove_cvref_t<decltype(element)>>();
   }, result);
 
   return result;
@@ -38,7 +38,7 @@ constexpr T zero()
 
 
 template<coordinate T>
-constexpr T zero = detail::zero<T>();
+constexpr std::remove_cvref_t<T> zeros = detail::zeros_impl<std::remove_cvref_t<T>>();
 
 
 } // end ubu
