@@ -58,29 +58,29 @@ struct dispatch_element
     return std::forward<T>(num);
   }
 
-  // else, when T has operator bracket obj[i], return that
-  template<class T>
-    requires(!has_element_free_function<i,T&&> and 
-             !has_element_free_function<i,T&&> and
-             !number<T&&> and
-             has_operator_bracket<T&&,std::size_t>)
-  constexpr auto operator()(T&& arg) const
-    -> decltype(std::forward<T>(arg)[i])
-  {
-    return std::forward<T>(arg)[i];
-  }
-
   // else, when T has get<i>(arg), return that
   template<class T>
     requires(!has_element_free_function<i,T&&> and 
              !has_element_free_function<i,T&&> and
              !number<T&&> and
-             !has_operator_bracket<T&&,std::size_t> and
              has_get<i,T&&>)
   constexpr auto operator()(T&& arg) const
     -> decltype(get<i>(std::forward<T>(arg)))
   {
     return get<i>(std::forward<T>(arg));
+  }
+
+  // else, when T has operator bracket obj[i], return that
+  template<class T>
+    requires(!has_element_free_function<i,T&&> and 
+             !has_element_free_function<i,T&&> and
+             !number<T&&> and
+             !has_get<i,T&&> and
+             has_operator_bracket<T&&,std::size_t>)
+  constexpr auto operator()(T&& arg) const
+    -> decltype(std::forward<T>(arg)[i])
+  {
+    return std::forward<T>(arg)[i];
   }
 };
 
