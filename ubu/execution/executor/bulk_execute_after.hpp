@@ -3,8 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../coordinate/colexicographic_index.hpp"
-#include "../../coordinate/colexicographic_lift.hpp"
+#include "../../coordinate/coordinate_to_index.hpp"
 #include "../../coordinate/lattice.hpp"
 #include "../../coordinate/point.hpp"
 #include "bulk_execution_grid.hpp"
@@ -116,12 +115,12 @@ class dispatch_bulk_execute_after
       return (*this)(std::forward<E>(executor), std::forward<H>(before), native_grid_shape, [=](executor_coordinate_t<E> native_coord)
       {
         // map the native coordinate to a linear index
-        std::size_t i = colexicographic_index(native_coord, native_grid_shape);
+        std::size_t i = coordinate_to_index(native_coord, native_grid_shape);
         
         // if coord is one of the coordinates that the user asked for, invoke the function
         if(i < grid.size())
         {
-          G coord = colexicographic_lift(i, grid_shape);
+          G coord = grid[i];
 
           std::invoke(function,coord);
         }

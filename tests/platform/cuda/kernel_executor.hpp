@@ -1,6 +1,7 @@
 #include <ubu/causality.hpp>
-#include <ubu/coordinate/lexicographic_index.hpp>
+#include <ubu/coordinate/detail/compact_row_major_stride.hpp>
 #include <ubu/coordinate/lexicographic_lift.hpp>
+#include <ubu/coordinate/to_index.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/executor.hpp>
@@ -237,7 +238,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
 
     cuda::event e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
-      int i = lexicographic_index(coord, shape);
+      int i = to_index(coord, shape, detail::compact_row_major_stride(shape));
       int6 c = lexicographic_lift(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
