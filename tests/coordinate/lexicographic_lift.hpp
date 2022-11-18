@@ -1,11 +1,11 @@
-#include <ubu/coordinate/lexicographic_index_to_coordinate.hpp>
+#include <ubu/coordinate/lexicographic_lift.hpp>
 #include <ubu/coordinate/point.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
 
-void test_lexicographic_index_to_coordinate()
+void test_lexicographic_lift()
 {
   namespace ns = ubu;
 
@@ -17,7 +17,7 @@ void test_lexicographic_index_to_coordinate()
     for(int i = 0; i < shape; ++i, ++index)
     {
       int expected = i;
-      int result = ns::lexicographic_index_to_coordinate(index, shape);
+      int result = ns::lexicographic_lift(index, shape);
 
       assert(expected == result);
     }
@@ -33,7 +33,7 @@ void test_lexicographic_index_to_coordinate()
       for(int j = 0; j < shape[1]; ++j, ++index)
       {
         ns::int2 expected{i,j};
-        ns::int2 result = ns::lexicographic_index_to_coordinate(index, shape);
+        ns::int2 result = ns::lexicographic_lift(index, shape);
 
         assert(expected == result);
       }
@@ -52,7 +52,7 @@ void test_lexicographic_index_to_coordinate()
         for(int k = 0; k < shape[2]; ++k, ++index)
         {
           ns::int3 expected{i,j,k};
-          ns::int3 result = ns::lexicographic_index_to_coordinate(index, shape);
+          ns::int3 result = ns::lexicographic_lift(index, shape);
 
           assert(expected == result);
         }
@@ -77,7 +77,7 @@ void test_lexicographic_index_to_coordinate()
             for(int z = 0; z < shape.second[2]; ++z, ++index)
             {
               std::pair<ns::int2,ns::int3> expected{{i,j}, {x,y,z}};
-              std::pair<ns::int2,ns::int3> result = ns::lexicographic_index_to_coordinate(index, shape);
+              std::pair<ns::int2,ns::int3> result = ns::lexicographic_lift(index, shape);
 
               assert(expected == result);
             }

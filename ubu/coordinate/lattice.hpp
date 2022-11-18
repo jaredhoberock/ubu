@@ -4,7 +4,6 @@
 #include <ubu/coordinate/coordinate_sum.hpp>
 #include <ubu/coordinate/coordinate_to_index.hpp>
 #include <ubu/coordinate/decrement_coordinate.hpp>
-#include <ubu/coordinate/detail/make_coordinate.hpp>
 #include <ubu/coordinate/grid_size.hpp>
 #include <ubu/coordinate/increment_coordinate.hpp>
 #include <ubu/coordinate/index_to_coordinate.hpp>
@@ -57,15 +56,6 @@ class lattice
     {
       return rank_v<T>;
     }
-    
-    // variadic constructor
-    // creates a new lattice at the origin with the given dimensions
-    // XXX get rid of this ctor
-    template<std::integral I1, std::integral... Is>
-      requires (std::constructible_from<T, I1, Is...> and sizeof...(Is) == (lattice::number_of_dimensions() - 1))
-    constexpr explicit lattice(const I1& size1, const Is&... sizes)
-      : lattice{detail::make_coordinate<T>(size1, sizes...)}
-    {}
 
     // returns the value of the smallest lattice point
     constexpr T origin() const
@@ -115,14 +105,6 @@ class lattice
     constexpr void reshape(const T& shape)
     {
       shape_ = shape;
-    }
-
-    // reshape does not move the origin
-    template<std::integral I1, std::integral... Is>
-      requires std::constructible_from<value_type, I1, Is...>
-    constexpr void reshape(const I1& size1, const Is&... sizes)
-    {
-      reshape(detail::make_coordinate<T>(size1, sizes...));
     }
 
     constexpr iterator begin() const

@@ -4,7 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "../../coordinate/colexicographic_index.hpp"
-#include "../../coordinate/colexicographic_index_to_coordinate.hpp"
+#include "../../coordinate/colexicographic_lift.hpp"
 #include "../../coordinate/lattice.hpp"
 #include "../../coordinate/point.hpp"
 #include "bulk_execution_grid.hpp"
@@ -121,7 +121,7 @@ class dispatch_bulk_execute_after
         // if coord is one of the coordinates that the user asked for, invoke the function
         if(i < grid.size())
         {
-          G coord = colexicographic_index_to_coordinate(i, grid_shape);
+          G coord = colexicographic_lift(i, grid_shape);
 
           std::invoke(function,coord);
         }

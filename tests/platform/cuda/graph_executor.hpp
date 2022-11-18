@@ -1,6 +1,6 @@
 #include <ubu/causality.hpp>
 #include <ubu/coordinate/lexicographic_index.hpp>
-#include <ubu/coordinate/lexicographic_index_to_coordinate.hpp>
+#include <ubu/coordinate/lexicographic_lift.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/executor.hpp>
@@ -204,7 +204,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
     auto e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
       int i = lexicographic_index(coord, shape);
-      int6 c = lexicographic_index_to_coordinate(i, array_shape);
+      int6 c = lexicographic_lift(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
     });
@@ -213,7 +213,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 
     for(int i = 0; i < ns::grid_size(array_shape); ++i)
     {
-      int6 c = lexicographic_index_to_coordinate(i, array_shape); 
+      int6 c = lexicographic_lift(i, array_shape); 
 
       assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
     }
