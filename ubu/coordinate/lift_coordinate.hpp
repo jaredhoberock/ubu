@@ -21,9 +21,8 @@ namespace detail
 //     but a division for scalar coordinates?
 template<nonscalar_coordinate C, nonscalar_coordinate S>
   requires congruent<C,S>
-constexpr S lift_coordinate_impl(const C& dividend, const S&)
+constexpr coordinate auto lift_coordinate_impl(const C& dividend, const S&)
 {
-  //return std::pair{std::make_tuple(), static_cast<S>(dividend)};
   return std::pair{std::make_tuple(), dividend};
 }
 
@@ -36,7 +35,6 @@ constexpr coordinate auto lift_coordinate_impl(const C1& dividend, const C2& div
   auto quotient  = element<0>(dividend) / element<0>(divisor);
   auto remainder = element<0>(dividend) % element<0>(divisor);
 
-  //return std::pair{quotient, static_cast<C2>(remainder)};
   return std::pair{quotient, remainder};
 }
 
