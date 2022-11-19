@@ -1,6 +1,7 @@
+#include <array>
 #include <ubu/causality.hpp>
 #include <ubu/coordinate/detail/compact_row_major_stride.hpp>
-#include <ubu/coordinate/lexicographic_lift.hpp>
+#include <ubu/coordinate/lift_coordinate.hpp>
 #include <ubu/coordinate/to_index.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
@@ -159,29 +160,13 @@ void test_bulk_execute_after_member_function(ns::cuda::graph_executor ex)
 
     ns::wait(e);
 
-    for(int bz = 0; bz != shape.block.z; ++bz)
+    for(auto coord : lattice(shape))
     {
-      for(int by = 0; by != shape.block.y; ++by)
-      {
-        for(int bx = 0; bx != shape.block.x; ++bx)
-        {
-          for(int tz = 0; tz != shape.thread.z; ++tz)
-          {
-            for(int ty = 0; ty != shape.thread.y; ++ty)
-            {
-              for(int tx = 0; tx != shape.thread.x; ++tx)
-              {
-                cuda::thread_id coord{{bx,by,bz}, {tx,ty,tz}};
-                int expected = hash(coord);
+      int expected = hash(coord);
 
-                int result = array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x];
+      int result = array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x];
 
-                assert(expected == result);
-              }
-            }
-          }
-        }
-      }
+      assert(expected == result);
     }
   }
   catch(std::runtime_error& e)
@@ -204,8 +189,8 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 
     auto e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
-      int i = to_index(coord, shape, detail::compact_row_major_stride(shape));
-      int6 c = lexicographic_lift(i, array_shape);
+      int i = coordinate_to_index(coord, shape);
+      auto c = lift_coordinate(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
     });
@@ -214,7 +199,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 
     for(int i = 0; i < ns::grid_size(array_shape); ++i)
     {
-      int6 c = lexicographic_lift(i, array_shape); 
+      auto c = lift_coordinate(i, array_shape);
 
       assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
     }
