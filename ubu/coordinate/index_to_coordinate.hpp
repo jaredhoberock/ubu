@@ -17,8 +17,7 @@ template<coordinate C, coordinate S>
   requires weakly_congruent<C,S>
 constexpr congruent<S> auto index_to_coordinate(const C& coord, const S& shape)
 {
-  auto [_, remainder] = lift_coordinate(coord, shape);
-  return remainder;
+  return lift_coordinate(coord, shape);
 }
 
 

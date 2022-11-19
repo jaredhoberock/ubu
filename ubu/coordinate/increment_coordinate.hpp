@@ -5,6 +5,7 @@
 #include "coordinate.hpp"
 #include "detail/colexicographic_coordinate.hpp"
 #include "element.hpp"
+#include "is_bounded_by.hpp"
 #include "zeros.hpp"
 
 
@@ -34,7 +35,7 @@ constexpr void lexicographic_increment(C& coord, const C& origin, const C& end)
   increment_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(element<I>(origin) <= element<I>(coord) and element<I>(coord) < element<I>(end))
+  if(is_bounded_by(element<I>(coord), element<I>(origin), element<I>(end)))
   {
     return;
   }
@@ -58,7 +59,7 @@ constexpr void colexicographic_increment(C& coord, const C& origin, const C& end
   increment_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(element<I>(origin) <= element<I>(coord) and element<I>(coord) < element<I>(end))
+  if(is_bounded_by(element<I>(coord), element<I>(origin), element<I>(end)))
   {
     return;
   }
@@ -83,7 +84,7 @@ constexpr void increment_coordinate(C& coord, const C& origin, const C& end)
 {
   if constexpr(detail::colexicographic_coordinate<C>)
   {
-    // when we can detect that C compares colexicographically, we increment lexicographically
+    // when we can detect that C compares colexicographically, we increment colexicographically
     return detail::colexicographic_increment<0>(coord, origin, end);
   }
   else

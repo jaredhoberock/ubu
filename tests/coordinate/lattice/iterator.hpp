@@ -33,9 +33,9 @@ void test_iterator()
     ns::lattice<ns::int2> l(origin, shape);
 
     auto iter = l.begin();
-    for(int i = 0; i != l.shape()[0]; ++i)
+    for(int j = 0; j != l.shape()[1]; ++j)
     {
-      for(int j = 0; j != l.shape()[1]; ++j, ++iter)
+      for(int i = 0; i != l.shape()[0]; ++i, ++iter)
       {
         ns::int2 idx = {i,j};
         auto result = *iter;
@@ -54,11 +54,11 @@ void test_iterator()
     ns::lattice<ns::int3> l(origin, shape);
 
     auto iter = l.begin();
-    for(int i = 0; i != l.shape()[0]; ++i)
+    for(int k = 0; k != l.shape()[2]; ++k)
     {
       for(int j = 0; j != l.shape()[1]; ++j)
       {
-        for(int k = 0; k != l.shape()[2]; ++k, ++iter)
+        for(int i = 0; i != l.shape()[0]; ++i, ++iter)
         {
           ns::int3 idx{i,j,k};
           auto result = *iter;

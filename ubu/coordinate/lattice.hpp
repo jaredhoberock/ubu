@@ -1,12 +1,16 @@
 #pragma once
 
 #include <ubu/coordinate/coordinate.hpp>
+#include <ubu/coordinate/coordinate_cast.hpp>
+#include <ubu/coordinate/coordinate_difference.hpp>
 #include <ubu/coordinate/coordinate_sum.hpp>
 #include <ubu/coordinate/coordinate_to_index.hpp>
 #include <ubu/coordinate/decrement_coordinate.hpp>
 #include <ubu/coordinate/grid_size.hpp>
 #include <ubu/coordinate/increment_coordinate.hpp>
-#include <ubu/coordinate/index_to_coordinate.hpp>
+#include <ubu/coordinate/is_bounded_by.hpp>
+#include <ubu/coordinate/lift_coordinate.hpp>
+#include <ubu/coordinate/ones.hpp>
 #include <ubu/coordinate/rank.hpp>
 #include <concepts>
 #include <initializer_list>
@@ -69,10 +73,10 @@ class lattice
       return shape_;
     }
 
-    // returns whether or not p is the value of a lattice point
-    constexpr bool contains(const T& p) const
+    // returns whether or not coord is the value of a lattice point
+    constexpr bool contains(const T& coord) const
     {
-      return origin() <= p and p < (origin() + shape());
+      return ubu::is_bounded_by(coord, origin(), coordinate_sum(origin(), shape()));
     }
 
     // returns the number of lattice points
@@ -90,7 +94,7 @@ class lattice
     // returns the value of the (i,j,k,...)th lattice point
     constexpr T operator[](const T& idx) const
     {
-      return origin() + idx;
+      return coordinate_sum(origin(), idx);
     }
 
     // returns the value of the ith lattice point in lexicographic order
@@ -114,7 +118,7 @@ class lattice
 
     constexpr iterator end() const
     {
-      return iterator{*this, iterator::end_value(*this)};
+      return {*this, iterator::end_value(*this)};
     }
 
     constexpr bool operator==(const lattice& other) const
@@ -246,22 +250,21 @@ class lattice_iterator
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const lattice_iterator &rhs) const
+    constexpr bool operator>=(const lattice_iterator& rhs) const
     {
       return !(rhs > *this);
     }
 
     constexpr static T end_value(const lattice<T>& domain)
     {
-      // index_to_coordinate rolls over to zero at i == domain.size(), so find the final coordinate in the shape
-      T final_coordinate = index_to_coordinate(domain.size() - 1, domain.shape());
+      T result = last_value(domain);
+      increment_coordinate(result, domain.origin(), domain.shape());
+      return result;
+    }
 
-      // unlike index_to_coordinate, increment_coordinate does not roll over at domain.shape()
-      // increment the final coordinate in the shape so that we're at the end
-      increment_coordinate(final_coordinate, domain.shape());
-
-      // add the offset from the origin
-      return coordinate_sum(domain.origin(), final_coordinate);
+    constexpr static T last_value(const lattice<T>& domain)
+    {
+      return coordinate_sum(domain.origin(), coordinate_difference(domain.shape(), ones<T>));
     }
 
   private:
@@ -277,7 +280,8 @@ class lattice_iterator
 
     constexpr void advance(difference_type n)
     {
-      current_ = coordinate_sum(domain_.origin(), index_to_coordinate(index() + n, domain_.shape()));
+      // this cast is here because lift_coordinate may not return a T
+      current_ = coordinate_sum(domain_.origin(), coordinate_cast<T>(lift_coordinate(index() + n, domain_.shape())));
     }
 
     constexpr difference_type index() const
@@ -289,8 +293,7 @@ class lattice_iterator
 
       // subtract the origin from current to get
       // 0-based indices along each axis
-      // XXX this needs to be coordinate_difference or something rather than minus
-      T coord = current_ - domain_.origin();
+      T coord = coordinate_difference(current_, domain_.origin());
 
       return coordinate_to_index(coord, domain_.shape());
     }
@@ -298,7 +301,7 @@ class lattice_iterator
 
     constexpr bool is_at_the_end() const
     {
-      return current_ == end_value(domain_);
+      return not domain_.contains(current_);
     }
 
     lattice<T> domain_;

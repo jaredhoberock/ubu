@@ -651,7 +651,8 @@ constexpr decltype(auto) tuple_equal(const T1& t1, const T2& t2)
 }
 
 
-template<tuple_like T, tuple_zipper_r<bool,T> P>
+template<tuple_like T, class P>
+  requires tuple_zipper_r<bool,P,T>
 constexpr bool tuple_all(const T& t, const P& pred)
 {
   auto folder = [&](bool partial_result, const auto& element)

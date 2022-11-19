@@ -2,9 +2,10 @@
 
 #include "../detail/prologue.hpp"
 
-#include "detail/colexicographic_coordinate.hpp"
 #include "coordinate.hpp"
+#include "detail/colexicographic_coordinate.hpp"
 #include "element.hpp"
+#include "is_bounded_by.hpp"
 #include "zeros.hpp"
 
 
@@ -34,7 +35,7 @@ constexpr void lexicographic_decrement(C& coord, const C& origin, const C& end)
   decrement_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(element<I>(origin) <= element<I>(coord))
+  if(is_bounded_by(element<I>(coord), element<I>(origin), element<I>(end)))
   {
     return;
   }
@@ -60,7 +61,7 @@ constexpr void colexicographic_decrement(C& coord, const C& origin, const C& end
   decrement_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(element<I>(origin) <= element<I>(coord))
+  if(is_bounded_by(element<I>(coord), element<I>(origin), element<I>(end)))
   {
     return;
   }

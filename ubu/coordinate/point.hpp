@@ -497,10 +497,11 @@ class point : public detail::point_base<T,N>
       return !(*this == rhs);
     }
 
+    // note that point sorts colexicographically, unlike most types
     template<point_like_of_rank<N> Other>
     constexpr bool operator<(const Other& rhs) const
     {
-      return detail::tuple_lexicographical_compare(*this, rhs);
+      return detail::tuple_colexicographical_compare(*this, rhs);
     }
 
     template<point_like_of_rank<N> Other>

@@ -19,6 +19,11 @@ void test_contains()
       assert(l.contains(pt));
     }
 
+    for(auto coord : l)
+    {
+      assert(l.contains(coord));
+    }
+
     assert(!l.contains(origin + shape));
   }
 
@@ -34,6 +39,11 @@ void test_contains()
       {
         assert(l.contains({i,j}));
       }
+    }
+
+    for(auto coord : l)
+    {
+      assert(l.contains(coord));
     }
 
     assert(!l.contains(origin + shape));
@@ -54,6 +64,11 @@ void test_contains()
           assert(l.contains({i,j,k}));
         }
       }
+    }
+
+    for(auto coord : l)
+    {
+      assert(l.contains(coord));
     }
 
     assert(!l.contains(origin + shape));
