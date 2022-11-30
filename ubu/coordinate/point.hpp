@@ -635,18 +635,12 @@ class point : public detail::point_base<T,N>
 
     constexpr T product() const
     {
-      return detail::tuple_fold(*this, [](const T& partial_product, const T& factor)
-      {
-        return factor * partial_product;
-      });
+      return detail::tuple_product(*this);
     }
 
     constexpr T sum() const
     {
-      return detail::tuple_fold(*this, [](const T& partial_sum, const T& summand)
-      {
-        return summand + partial_sum;
-      });
+      return detail::tuple_sum(*this);
     }
 
 
