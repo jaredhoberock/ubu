@@ -1,5 +1,5 @@
-#include <ubu/grid/coordinate/detail/compact_column_major_stride.hpp>
-#include <ubu/grid/coordinate/detail/compact_row_major_stride.hpp>
+#include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
+#include <ubu/grid/layout/stride/compact_row_major_stride.hpp>
 #include <ubu/grid/coordinate/point.hpp>
 #include <ubu/grid/coordinate/to_index.hpp>
 
@@ -18,7 +18,7 @@ void test_to_index()
     std::size_t expected = 0;
     for(int coord = 0; coord < shape; ++coord, ++expected)
     {
-      std::size_t result = ns::to_index(coord, shape, ns::detail::compact_column_major_stride(shape));
+      std::size_t result = ns::to_index(coord, shape, ns::compact_column_major_stride(shape));
 
       assert(expected == result);
     }
@@ -31,7 +31,7 @@ void test_to_index()
     std::size_t expected = 0;
     for(int coord = 0; coord < shape; ++coord, ++expected)
     {
-      std::size_t result = ns::to_index(coord, shape, ns::detail::compact_row_major_stride(shape));
+      std::size_t result = ns::to_index(coord, shape, ns::compact_row_major_stride(shape));
 
       assert(expected == result);
     }
@@ -47,7 +47,7 @@ void test_to_index()
       for(int i = 0; i < shape[0]; ++i, ++expected)
       {
         ns::int2 coord{i,j};
-        std::size_t result = ns::to_index(coord, shape, ns::detail::compact_column_major_stride(shape));
+        std::size_t result = ns::to_index(coord, shape, ns::compact_column_major_stride(shape));
 
         assert(expected == result);
       }
@@ -64,7 +64,7 @@ void test_to_index()
       for(int j = 0; j < shape[1]; ++j, ++expected)
       {
         ns::int2 coord{i,j};
-        std::size_t result = ns::to_index(coord, shape, ns::detail::compact_row_major_stride(shape));
+        std::size_t result = ns::to_index(coord, shape, ns::compact_row_major_stride(shape));
 
         assert(expected == result);
       }
@@ -83,7 +83,7 @@ void test_to_index()
         for(int i = 0; i < shape[0]; ++i, ++expected)
         {
           ns::int3 coord{i,j,k};
-          std::size_t result = ns::to_index(coord, shape, ns::detail::compact_column_major_stride(shape));
+          std::size_t result = ns::to_index(coord, shape, ns::compact_column_major_stride(shape));
 
           assert(expected == result);
         }
@@ -103,7 +103,7 @@ void test_to_index()
         for(int k = 0; k < shape[2]; ++k, ++expected)
         {
           ns::int3 coord{i,j,k};
-          std::size_t result = to_index(coord, shape, ns::detail::compact_row_major_stride(shape));
+          std::size_t result = to_index(coord, shape, ns::compact_row_major_stride(shape));
 
           assert(expected == result);
         }
@@ -128,7 +128,7 @@ void test_to_index()
             for(int i = 0; i < shape.first[0]; ++i, ++expected)
             {
               std::pair<ns::int2, ns::int3> coord{{i,j}, {x,y,z}};
-              std::size_t result = ns::to_index(coord, shape, ns::detail::compact_column_major_stride(shape));
+              std::size_t result = ns::to_index(coord, shape, ns::compact_column_major_stride(shape));
 
               assert(expected == result);
             }
@@ -155,7 +155,7 @@ void test_to_index()
             for(int z = 0; z < shape.second[2]; ++z, ++expected)
             {
               std::pair<ns::int2, ns::int3> coord{{i,j}, {x,y,z}};
-              std::size_t result = ns::to_index(coord, shape, ns::detail::compact_row_major_stride(shape));
+              std::size_t result = ns::to_index(coord, shape, ns::compact_row_major_stride(shape));
 
               assert(expected == result);
             }

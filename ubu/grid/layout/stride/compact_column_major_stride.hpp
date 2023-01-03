@@ -2,18 +2,20 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../coordinate.hpp"
-#include "../element.hpp"
-#include "../grid_size.hpp"
-#include "../rank.hpp"
-#include "../same_rank.hpp"
-#include "tuple_algorithm.hpp"
+#include "../../coordinate/coordinate.hpp"
+#include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/element.hpp"
+#include "../../coordinate/grid_size.hpp"
+#include "../../coordinate/rank.hpp"
+#include "../../coordinate/same_rank.hpp"
 #include <concepts>
 #include <tuple>
 #include <utility>
 
 
-namespace ubu::detail
+namespace ubu
+{
+namespace detail
 {
 
 
@@ -27,7 +29,7 @@ template<nonscalar_coordinate D, nonscalar_coordinate S>
   requires same_rank<D,S>
 constexpr S compact_column_major_stride_impl(const D& current_stride, const S& shape)
 {
-  return detail::tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
+  return tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
   {
     return compact_column_major_stride_impl(cs, s);
   });
@@ -36,10 +38,10 @@ constexpr S compact_column_major_stride_impl(const D& current_stride, const S& s
 template<scalar_coordinate D, nonscalar_coordinate S>
 constexpr S compact_column_major_stride_impl(const D& current_stride, const S& shape)
 {
-  auto [_,result] = detail::tuple_fold(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
+  auto [_,result] = tuple_fold(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
   {
     auto [current_stride, prev_result] = prev;
-    auto result = detail::tuple_append_similar_to<S>(prev_result, compact_column_major_stride_impl(current_stride, s));
+    auto result = tuple_append_similar_to<S>(prev_result, compact_column_major_stride_impl(current_stride, s));
 
     return std::pair{current_stride * grid_size(s), result};
   });
@@ -48,10 +50,13 @@ constexpr S compact_column_major_stride_impl(const D& current_stride, const S& s
 }
 
 
+} // end detail
+
+
 template<coordinate S>
 constexpr S compact_column_major_stride(const S& shape)
 {
-  return compact_column_major_stride_impl(1, shape);
+  return detail::compact_column_major_stride_impl(1, shape);
 }
   
 
