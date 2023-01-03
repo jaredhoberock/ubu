@@ -2,6 +2,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "coordinate/congrue_coordinate.hpp"
 #include "coordinate/congruent.hpp"
 #include "coordinate/coordinate.hpp"
 #include "coordinate/coordinate_cast.hpp"
@@ -15,7 +16,6 @@
 #include "coordinate/index_to_coordinate.hpp"
 #include "coordinate/is_bounded_by.hpp"
 #include "coordinate/lattice.hpp"
-#include "coordinate/lift_coordinate.hpp"
 #include "coordinate/ones.hpp"
 #include "coordinate/point.hpp"
 #include "coordinate/rank.hpp"

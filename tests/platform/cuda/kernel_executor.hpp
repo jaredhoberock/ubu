@@ -1,7 +1,6 @@
 #include <array>
 #include <ubu/causality.hpp>
-#include <ubu/coordinate/detail/compact_row_major_stride.hpp>
-#include <ubu/coordinate/lift_coordinate.hpp>
+#include <ubu/coordinate/congrue_coordinate.hpp>
 #include <ubu/coordinate/to_index.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
@@ -224,7 +223,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
     cuda::event e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
       int i = coordinate_to_index(coord, shape);
-      auto c = lift_coordinate(i, array_shape);
+      auto c = congrue_coordinate(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
     });
@@ -233,7 +232,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
 
     for(int i = 0; i < ns::grid_size(array_shape); ++i)
     {
-      auto c = lift_coordinate(i, array_shape);
+      auto c = congrue_coordinate(i, array_shape);
 
       assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
     }

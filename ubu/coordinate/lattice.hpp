@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ubu/coordinate/congrue_coordinate.hpp>
 #include <ubu/coordinate/coordinate.hpp>
 #include <ubu/coordinate/coordinate_cast.hpp>
 #include <ubu/coordinate/coordinate_difference.hpp>
@@ -9,7 +10,6 @@
 #include <ubu/coordinate/grid_size.hpp>
 #include <ubu/coordinate/increment_coordinate.hpp>
 #include <ubu/coordinate/is_bounded_by.hpp>
-#include <ubu/coordinate/lift_coordinate.hpp>
 #include <ubu/coordinate/ones.hpp>
 #include <ubu/coordinate/rank.hpp>
 #include <concepts>
@@ -280,8 +280,8 @@ class lattice_iterator
 
     constexpr void advance(difference_type n)
     {
-      // this cast is here because lift_coordinate may not return a T
-      current_ = coordinate_sum(domain_.origin(), coordinate_cast<T>(lift_coordinate(index() + n, domain_.shape())));
+      // this cast is here because congrue_coordinate may not return a T
+      current_ = coordinate_sum(domain_.origin(), coordinate_cast<T>(congrue_coordinate(index() + n, domain_.shape())));
     }
 
     constexpr difference_type index() const
