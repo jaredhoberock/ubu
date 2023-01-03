@@ -66,6 +66,13 @@ static_assert(not tuple_like<int>);
 static_assert(not tuple_like<float>);
 
 
+template<class T>
+concept pair_like =
+  tuple_like<T>
+  and (std::tuple_size_v<std::remove_cvref_t<T>> == 2)
+;
+
+
 template<tuple_like T>
 constexpr auto tuple_indices = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
 
@@ -521,8 +528,8 @@ struct tuple_similar_to
 };
 
 
-// this makes a new tuple_like similar to an Example tuple_like
-// the value of the first argument is discarded
+// this makes a new tuple_like
+// it attempts to make the type of the result similar to a preferred Example tuple_like
 template<tuple_like Example, class... Args>
 constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
 {
@@ -630,6 +637,20 @@ template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> Op1, tuple_folder<tup
 constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
   return tuple_fold(tuple_zip_with(t1, t2, star), plus);
+}
+
+
+template<tuple_like T>
+constexpr auto tuple_sum(const T& t)
+{
+  return tuple_fold(t, std::plus{});
+}
+
+
+template<tuple_like T>
+constexpr auto tuple_product(const T& t)
+{
+  return tuple_fold(t, std::multiplies{});
 }
 
 
@@ -828,6 +849,138 @@ tuple_like auto tuple_unzip(T&& t)
 //    make_tuple_like<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
 //  );
 //}
+
+
+template<tuple_like T>
+constexpr decltype(auto) tuple_last(T&& t)
+{
+  constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
+  return get<N-1>(std::forward<T>(t));
+}
+
+
+template<std::size_t... I, tuple_like T>
+constexpr tuple_like auto tuple_drop_impl(std::index_sequence<I...>, T&& t)
+{
+  constexpr std::size_t num_dropped = std::tuple_size_v<std::remove_cvref_t<T>> - sizeof...(I);
+
+  return make_tuple_similar_to<T>(get<I+num_dropped>(std::forward<T>(t))...);
+}
+
+
+template<std::size_t N, tuple_like T>
+  requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
+constexpr tuple_like auto tuple_drop(T&& t)
+{
+  constexpr std::size_t num_kept = std::tuple_size_v<std::remove_cvref_t<T>> - N;
+  auto indices = std::make_index_sequence<num_kept>();
+  return tuple_drop_impl(indices, std::forward<T>(t));
+}
+
+
+template<tuple_like T>
+  requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
+constexpr tuple_like auto tuple_drop_first(T&& t)
+{
+  return tuple_drop<1>(std::forward<T>(t));
+}
+
+
+template<std::size_t... I, tuple_like T>
+  requires (sizeof...(I) <= std::tuple_size_v<std::remove_cvref_t<T>>)
+constexpr tuple_like auto tuple_take_impl(std::index_sequence<I...>, T&& t)
+{
+  return make_tuple_similar_to<T>(get<I>(t)...);
+}
+
+
+template<std::size_t N, tuple_like T>
+  requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
+constexpr tuple_like auto tuple_take(T&& t)
+{
+  auto indices = std::make_index_sequence<N>();
+  return tuple_take_impl(indices, std::forward<T>(t));
+}
+
+
+template<tuple_like T>
+constexpr tuple_like auto tuple_drop_last(T&& t)
+{
+  constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
+  return tuple_take<N-1>(std::forward<T>(t));
+}
+
+
+template<tuple_like R, std::size_t... I, tuple_like T>
+constexpr tuple_like auto ensure_tuple_similar_to_impl(std::index_sequence<I...>, T&& t)
+{
+  return make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
+}
+
+
+template<tuple_like R, tuple_like T>
+constexpr tuple_like auto ensure_tuple_similar_to(T&& t)
+{
+  return ensure_tuple_similar_to_impl<R>(tuple_indices<T>, std::forward<T>(t));
+}
+
+template<tuple_like R, class T>
+  requires (not tuple_like<T>)
+constexpr tuple_like auto ensure_tuple_similar_to(T&& arg)
+{
+  return make_tuple_similar_to<R>(std::forward<T>(arg));
+}
+
+
+template<class T>
+constexpr tuple_like auto ensure_tuple(T&& t)
+{
+  return ensure_tuple_similar_to<std::tuple<>>(std::forward<T>(t));
+}
+
+
+template<tuple_like T>
+  requires (std::tuple_size_v<std::remove_cvref_t<T>> == 1)
+constexpr decltype(auto) tuple_unwrap_single(T&& t)
+{
+  return get<0>(std::forward<T>(t));
+}
+
+template<tuple_like T>
+  requires (std::tuple_size_v<std::remove_cvref_t<T>> != 1)
+constexpr T&& tuple_unwrap_single(T&& t)
+{
+  return std::forward<T>(t);
+}
+
+
+template<bool do_wrap, class T>
+  requires (do_wrap == true)
+constexpr tuple_like auto tuple_wrap_if(T&& arg)
+{
+  return std::make_tuple(std::forward<T>(arg));
+}
+
+template<bool do_wrap, class T>
+  requires (do_wrap == false)
+constexpr auto tuple_wrap_if(T&& arg)
+{
+  return std::forward<T>(arg);
+}
+
+
+template<tuple_like R, std::size_t... I, std::size_t... J, tuple_like T1, tuple_like T2>
+constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, std::index_sequence<J...>, T1&& t1, T2&& t2)
+{
+  return make_tuple_similar_to<R>(get<I>(std::forward<T1>(t1))..., get<J>(std::forward<T2>(t2))...);
+}
+
+
+template<tuple_like R, tuple_like T1, tuple_like T2>
+constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2)
+{
+  return tuple_cat_similar_to_impl<R>(tuple_indices<T1>, tuple_indices<T2>, std::forward<T1>(t1), std::forward<T2>(t2));
+}
 
 
 template<class Arg>
