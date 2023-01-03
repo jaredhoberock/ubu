@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../coordinate/coordinate_to_index.hpp"
-#include "../../coordinate/lattice.hpp"
-#include "../../coordinate/point.hpp"
+#include "../../grid/coordinate/coordinate_to_index.hpp"
+#include "../../grid/coordinate/lattice.hpp"
+#include "../../grid/coordinate/point.hpp"
 #include "bulk_execution_grid.hpp"
 #include "dependent_on.hpp"
 #include "executor.hpp"

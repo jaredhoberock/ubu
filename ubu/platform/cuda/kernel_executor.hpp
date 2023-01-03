@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/point.hpp"
 #include "../../detail/reflection.hpp"
+#include "../../grid/coordinate/point.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_kernel.hpp"
 #include "detail/throw_on_error.hpp"

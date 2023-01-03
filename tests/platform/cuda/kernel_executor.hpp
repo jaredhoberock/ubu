@@ -1,12 +1,12 @@
 #include <array>
 #include <ubu/causality.hpp>
-#include <ubu/coordinate/congrue_coordinate.hpp>
-#include <ubu/coordinate/to_index.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
+#include <ubu/grid/coordinate/congrue_coordinate.hpp>
+#include <ubu/grid/coordinate/to_index.hpp>
 #include <ubu/platform/cuda/kernel_executor.hpp>
 
 #undef NDEBUG

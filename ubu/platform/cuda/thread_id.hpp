@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/coordinate.hpp"
-#include "../../coordinate/point.hpp"
+#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/point.hpp"
 #include <iostream>
 
 

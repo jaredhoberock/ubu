@@ -1,0 +1,91 @@
+#pragma once
+
+#include "../../detail/prologue.hpp"
+
+#include "element.hpp"
+#include "rank.hpp"
+#include <concepts>
+#include <utility>
+
+
+namespace ubu
+{
+
+
+template<class T>
+concept scalar_coordinate =
+  detail::static_rank<T>
+  and (rank_v<T> == 1)
+  and std::integral<element_t<0,T>>
+;
+
+
+namespace detail
+{
+
+
+template<class T>
+struct is_nonscalar_coordinate;
+
+
+// check T for elements 0... N-1, and make sure that each one is itself a coordinate
+template<class T, std::size_t... I>
+constexpr bool has_elements_that_are_coordinates(std::index_sequence<I...>)
+{
+  return (... and (scalar_coordinate<element_t<I,T>> or is_nonscalar_coordinate<element_t<I,T>>::value));
+}
+
+
+template<class T>
+concept static_rank_greater_than_one =
+  static_rank<T>
+  and (rank_v<T> > 1)
+;
+
+
+template<class T>
+struct is_nonscalar_coordinate
+{
+  template<class U = T>
+    requires static_rank_greater_than_one<U>
+  static constexpr bool test(int)
+  {
+    return has_elements_that_are_coordinates<U>(std::make_index_sequence<rank_v<U>>{});
+  }
+
+  static constexpr bool test(...)
+  {
+    return false;
+  }
+
+  static constexpr bool value = test(0);
+};
+
+
+} // end detail
+
+
+// nonscalar_coordinate is a recursive concept, so we need to implement it with traditional SFINAE techniques
+template<class T>
+concept nonscalar_coordinate = detail::is_nonscalar_coordinate<T>::value;
+
+
+// a coordinate is either a scalar or nonscalar coordinate
+template<class T>
+concept coordinate = scalar_coordinate<T> or nonscalar_coordinate<T>;
+
+template<class... Types>
+concept coordinates = (... and coordinate<Types>);
+
+template<class T, std::size_t N>
+concept coordinate_of_rank = coordinate<T> and (rank_v<T> == N);
+
+template<class... Types>
+concept nonscalar_coordinates = (... and nonscalar_coordinate<Types>);
+
+
+} // end ubu
+
+
+#include "../../detail/epilogue.hpp"
+

@@ -28,11 +28,8 @@
 
 #include "detail/prologue.hpp"
 
-#include "causality.hpp"
-#include "container.hpp"
-#include "execution.hpp"
-#include "grid.hpp"
-#include "memory.hpp"
+#include "grid/coordinate.hpp"
 
 #include "detail/epilogue.hpp"
+
 

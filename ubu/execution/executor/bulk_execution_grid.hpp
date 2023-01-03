@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../coordinate/coordinate.hpp"
-#include "../../coordinate/grid_size.hpp"
+#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/grid_size.hpp"
 #include "executor.hpp"
 #include "executor_happening.hpp"
 #include <concepts>
