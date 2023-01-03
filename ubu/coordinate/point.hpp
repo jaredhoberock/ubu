@@ -672,6 +672,11 @@ class point : public detail::point_base<T,N>
 };
 
 
+// deduction guide
+template<class T, std::same_as<T>... U>
+point(T,U...) -> point<T,1 + sizeof...(U)>;
+
+
 // scalar multiply
 template<class T1, class T2, std::size_t N>
   requires (std::is_arithmetic_v<T1> and std::is_arithmetic_v<T2> and N > 0)
