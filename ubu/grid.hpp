@@ -30,7 +30,7 @@
 
 #include "grid/coordinate.hpp"
 #include "grid/layout.hpp"
+#include "grid/shape.hpp"
 
 #include "detail/epilogue.hpp"
-
 
