@@ -28,14 +28,27 @@ class strided_layout
     strided_layout(const strided_layout&) = default;
 
     template<weakly_congruent<S> C>
-    constexpr auto operator()(C coord) const
+    constexpr auto apply_layout(const C& coord) const
     {
-      return apply_stride(congrue_coordinate(coord, shape()), stride_);
+      return apply_stride(congrue_coordinate(coord, shape()), stride());
+    }
+
+    template<weakly_congruent<S> C>
+    constexpr auto operator[](const C& coord) const
+    {
+      return apply_layout(coord);
     }
 
     constexpr S shape() const
     {
       return shape_;
+    }
+
+    // XXX this needn't be a member because is has a generic implementation
+    constexpr ubu::coordinate auto coshape() const
+    {
+      auto last_position = apply_layout(grid_size(shape()) - 1);
+      return coordinate_sum(last_position, ones<decltype(last_position)>);
     }
 
     constexpr D stride() const

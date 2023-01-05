@@ -16,7 +16,7 @@ bool test_composition(const LayoutA& layoutA,
 {
   for(int i = 0; i < ns::grid_size(layoutR.shape()); ++i)
   {
-    if(layoutR(i) != layoutA(layoutB(i)))
+    if(layoutR[i] != layoutA[layoutB[i]])
     {
       return false;
     }
