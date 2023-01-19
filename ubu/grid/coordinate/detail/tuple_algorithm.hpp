@@ -633,6 +633,16 @@ template<class F, tuple_like T, tuple_like... Ts>
 using tuple_zip_with_result_t = decltype(tuple_zip_with(std::declval<T>(), std::declval<Ts>()..., std::declval<F>()));
 
 
+template<tuple_like T, tuple_like... Ts>
+constexpr tuple_like auto tuple_zip(const T& t, const Ts&... ts)
+{
+  return tuple_zip_with(t, ts..., [](const auto&... elements)
+  {
+    return make_tuple_similar_to<T>(elements...);
+  });
+}
+
+
 template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> Op1, tuple_folder<tuple_zip_with_result_t<Op1,T1,T2>> Op2>
 constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
@@ -983,6 +993,40 @@ constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2)
 }
 
 
+template<tuple_like R, tuple_like T1, tuple_like T2, tuple_like... Ts>
+constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2, Ts&&... ts)
+{
+  return tuple_cat_similar_to<R>(tuple_cat_similar_to<R>(std::forward<T1>(t1), std::forward<T2>(t2)), std::forward<Ts>(ts)...);
+}
+
+
+template<tuple_like T, std::size_t... I>
+constexpr tuple_like auto tuple_cat_all_impl(std::index_sequence<I...>, T&& tuple_of_tuples)
+{
+  return tuple_cat_similar_to<T>(get<I>(std::forward<T>(tuple_of_tuples))...);
+}
+
+
+template<tuple_like T>
+constexpr tuple_like auto tuple_cat_all(T&& tuple_of_tuples)
+{
+  return tuple_cat_all_impl(tuple_indices<T>, std::forward<T>(tuple_of_tuples));
+}
+
+
+constexpr std::tuple<> tuple_cat()
+{
+  return std::tuple();
+}
+
+
+template<tuple_like T, tuple_like... Ts>
+constexpr tuple_like auto tuple_cat(const T& tuple, const Ts&... tuples)
+{
+  return tuple_cat_similar_to<T>(tuple, tuples...);
+}
+
+
 template<class Arg>
 constexpr void output_args(std::ostream& os, const char*, const Arg& arg)
 {
@@ -1021,6 +1065,25 @@ template<tuple_like T>
 constexpr std::ostream& tuple_output(std::ostream& os, const T& t)
 {
   return tuple_output(os, "(", ")", ", ", t);
+}
+
+
+template<class T>
+constexpr tuple_like auto as_flat_tuple(const T& arg)
+{
+  if constexpr (not tuple_like<T>)
+  {
+    return std::make_tuple(arg);
+  }
+  else
+  {
+    auto tuple_of_tuples = tuple_zip_with(arg, [](const auto& element)
+    {
+      return as_flat_tuple(element);
+    });
+
+    return tuple_cat_all(tuple_of_tuples);
+  }
 }
 
 
