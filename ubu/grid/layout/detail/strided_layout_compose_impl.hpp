@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "ceil_div.hpp"
 #include <algorithm>
 #include <ubu/grid/coordinate/coordinate.hpp>
 #include <ubu/grid/coordinate/detail/tuple_algorithm.hpp>
@@ -12,13 +13,6 @@
 
 namespace ubu::detail
 {
-
-
-template<std::integral T>
-constexpr T ceil_div(const T& dividend, const T& divisor)
-{
-  return (dividend + divisor - 1) / divisor;
-}
 
 
 // returns the pair (modulo, remainder)

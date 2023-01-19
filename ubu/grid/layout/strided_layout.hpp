@@ -3,6 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate.hpp"
+#include "../coordinate/detail/concatenate_coordinates.hpp"
+#include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "stride/apply_stride.hpp"
 #include "stride/compact_stride.hpp"
@@ -44,16 +46,17 @@ class strided_layout
       return shape_;
     }
 
-    // XXX this needn't be a member because is has a generic implementation
+    constexpr D stride() const
+    {
+      return stride_;
+    }
+
+    // XXX consider whether the following functions need to be members
+
     constexpr ubu::coordinate auto coshape() const
     {
       auto last_position = apply_layout(grid_size(shape()) - 1);
       return coordinate_sum(last_position, ones<decltype(last_position)>);
-    }
-
-    constexpr D stride() const
-    {
-      return stride_;
     }
 
     template<coordinate S1, stride_for<S1> D1>
@@ -61,6 +64,25 @@ class strided_layout
     {
       auto [s,d] = detail::strided_layout_compose_impl(shape(), stride(), other.shape(), other.stride());
       return make_strided_layout(s,d);
+    }
+
+    template<coordinate... Ss, stride_for<Ss>... Ds>
+    constexpr auto concatenate(const strided_layout<Ss,Ds>&... layouts) const
+    {
+      return make_strided_layout(detail::concatenate_coordinates(shape(), layouts.shape()...),
+                                 detail::concatenate_coordinates(stride(), layouts.stride()...));
+    }
+
+    template<std::integral I>
+    constexpr auto complement(I cosize_hi) const
+    {
+      auto [s,d] = detail::strided_layout_complement_impl(shape(), stride(), cosize_hi);
+      return make_strided_layout(s,d);
+    }
+
+    constexpr auto complement() const
+    {
+      return complement(grid_size(coshape()));
     }
 
   private:

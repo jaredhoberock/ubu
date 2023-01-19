@@ -34,7 +34,7 @@ bool test_composition(const LayoutA& layoutA,
 }
 
 
-void test_strided_layout()
+void test_compose()
 {
   using namespace std;
   using namespace ns;
