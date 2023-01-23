@@ -23,7 +23,7 @@ concept has_tuple_element =
     // XXX WAR circle bug:
     // https://godbolt.org/z/McoW5ez6o
     //
-    //{ get<N>(t) } -> std::convertible_to<const std::tuple_element_t<N, T>&>;
+    { get<N>(t) } -> std::convertible_to<const std::tuple_element_t<N, T>&>;
   }
 ;
 
