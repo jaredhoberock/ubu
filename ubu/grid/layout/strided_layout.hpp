@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate.hpp"
-#include "../coordinate/detail/concatenate_coordinates.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "stride/apply_stride.hpp"
@@ -69,8 +68,11 @@ class strided_layout
     template<coordinate... Ss, stride_for<Ss>... Ds>
     constexpr auto concatenate(const strided_layout<Ss,Ds>&... layouts) const
     {
-      return make_strided_layout(detail::concatenate_coordinates(shape(), layouts.shape()...),
-                                 detail::concatenate_coordinates(stride(), layouts.stride()...));
+      using shape_tuple = std::conditional_t<detail::tuple_like<S>, S, ubu::int1>;
+      using stride_tuple = std::conditional_t<detail::tuple_like<D>, D, ubu::int1>;
+
+      return make_strided_layout(detail::make_tuple_similar_to<shape_tuple>(shape(), layouts.shape()...),
+                                 detail::make_tuple_similar_to<stride_tuple>(stride(), layouts.stride()...));
     }
 
     template<std::integral I>
