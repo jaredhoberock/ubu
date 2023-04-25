@@ -181,6 +181,10 @@ class fancy_span
 };
 
 
+template<pointer_like P, std::integral E>
+fancy_span(P, E) -> fancy_span<P>;
+
+
 } // end ubu
 
 
