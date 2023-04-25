@@ -1,8 +1,8 @@
 CXX = clang
-CUDACXX = /home/jhoberock/Desktop/circle/circle
-INCLUDES = -I../../../
+# this discovers the top-level directory of ubu which is also its include path 
+UBU_INC_PATH = $(shell git rev-parse --show-toplevel)
+INCLUDES = -I$(UBU_INC_PATH)
 CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
-NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_35 -Xcompiler "$(CCFLAGS)"
 
 # this gets a list of all directories in this directory
 DIRECTORIES = $(sort $(wildcard */))
@@ -12,10 +12,6 @@ test : all-test-sources all-cpp-test-programs all-test-results
 
 # this turns a .hpp file into a .cpp file
 %.cpp : %.hpp
-	@echo '#include <iostream>\n#include "'$<'"\nint main(){ test_'$(basename $<)'(); std::cout << "OK" << std::endl; return 0;}' > $@
-
-# this turns a .hpp file into a .cu file
-%.cu : %.hpp
 	@echo '#include <iostream>\n#include "'$<'"\nint main(){ test_'$(basename $<)'(); std::cout << "OK" << std::endl; return 0;}' > $@
 
 # this compiles a .cpp file into an executable file (without a file extension)
@@ -36,7 +32,7 @@ all-cpp-test-programs : $(basename $(wildcard *.hpp))
 all-test-results : $(addprefix test., $(basename $(wildcard *.hpp)))
 
 clean:
-	rm -f *.cpp *.cu *-cuda $(basename $(wildcard *.hpp))
+	rm -f *.cpp $(basename $(wildcard *.hpp))
 
 .PHONY : test clean $(all-test-results) $(DIRECTORIES)
 

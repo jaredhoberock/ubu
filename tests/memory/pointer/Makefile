@@ -1,9 +1,13 @@
 CXX = clang
-CUDACXX = /home/jhoberock/Desktop/circle/circle
-INCLUDES = -I../../../ -I/usr/local/cuda/include
+CUDACXX = circle
+# this discovers the top-level directory of ubu which is also its include path 
+UBU_INC_PATH = $(shell git rev-parse --show-toplevel)
+CUDA_PATH = /opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/12.0
+CUDA_INC_PATH = $(CUDA_PATH)/include
+CUDA_LIB_PATH = $(CUDA_PATH)/lib64
+INCLUDES = -I$(UBU_INC_PATH) -I$(CUDA_INC_PATH)
 CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
-NVCCFLAGS = -ccbin=$(CXX) --expt-extended-lambda -rdc=true -arch=sm_35 -Xcompiler "$(CCFLAGS)"
-CUDACXXFLAGS = --cuda-path=/usr/local/cuda $(CCFLAGS) -sm_60
+CUDACXXFLAGS = -libstdc++=11 --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_60
 
 # this gets a list of all directories in this directory
 DIRECTORIES = $(sort $(wildcard */))
@@ -21,7 +25,7 @@ test : all-test-sources all-cpp-test-programs all-cuda-test-programs all-test-re
 
 # this compiles a .cpp file into an executable file (without a file extension)
 % : %.cpp
-	$(CXX) $(CCFLAGS) $< -lstdc++ -lpthread -L/usr/local/cuda/lib64 -lcudart -o $@
+	$(CXX) $(CCFLAGS) $< -lstdc++ -lpthread -L$(CUDA_LIB_PATH) -lcudart -o $@
 
 # this compiles a .cpp file into a CUDA executable file (without a file extension)
 %-cuda : %.cpp
