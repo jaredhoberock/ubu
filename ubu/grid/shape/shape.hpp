@@ -21,13 +21,13 @@ template<class T>
 concept has_shape_free_function = requires(T arg)
 {
   { shape(arg) } -> coordinate;
-}
+};
 
 template<class T>
 concept has_ranges_size = requires(T arg)
 {
   { std::ranges::size(arg) } -> coordinate;
-}
+};
 
 
 struct dispatch_shape
