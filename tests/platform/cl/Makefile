@@ -1,8 +1,8 @@
-CXX = clang
+CXX := clang
 # this discovers the top-level directory of ubu which is also its include path 
-UBU_INC_PATH = $(shell git rev-parse --show-toplevel)
-INCLUDES = -I$(UBU_INC_PATH)
-CCFLAGS = -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
+UBU_INC_PATH := $(shell git rev-parse --show-toplevel)
+INCLUDES := -I$(UBU_INC_PATH)
+CCFLAGS := -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 
 # this gets a list of all directories in this directory
 DIRECTORIES = $(sort $(wildcard */))
