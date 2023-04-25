@@ -25,10 +25,10 @@ constexpr T shape_cast(const S& shape)
 }
 
 template<nonscalar_coordinate T, nonscalar_coordinate S>
-  requires weakly_congruent<T,S>
+  requires (not congruent<T,S> and weakly_congruent<T,S>)
 constexpr T shape_cast(const S& shape)
 {
-  R z = zeros<T>;
+  T z = zeros<T>;
 
   return detail::tuple_zip_with(z, shape, [](auto z, const auto& s)
   {
