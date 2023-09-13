@@ -29,6 +29,7 @@
 #include "detail/prologue.hpp"
 
 #include "grid/coordinate.hpp"
+#include "grid/grid.hpp"
 #include "grid/layout.hpp"
 #include "grid/shape.hpp"
 
