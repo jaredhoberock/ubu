@@ -66,11 +66,15 @@ static_assert(not tuple_like<int>);
 static_assert(not tuple_like<float>);
 
 
-template<class T>
-concept pair_like =
+template<class T, std::size_t N>
+concept tuple_like_of_size =
   tuple_like<T>
-  and (std::tuple_size_v<std::remove_cvref_t<T>> == 2)
+  and (std::tuple_size_v<std::remove_cvref_t<T>> == N)
 ;
+
+
+template<class T>
+concept pair_like = tuple_like_of_size<T,2>;
 
 
 template<tuple_like T>
@@ -1084,6 +1088,56 @@ constexpr tuple_like auto as_flat_tuple(const T& arg)
 
     return tuple_cat_all(tuple_of_tuples);
   }
+}
+
+
+// this function computes an inclusive scan on an input tuple
+// the result of this function is a pair of values (result_tuple, carry_out):
+//   1. a tuple with the same size as the input, and
+//   2. a carry out value
+// the user's combination function f has control over the value of the carry after each combination
+// f(input[i], carry_in) must return the pair (result[i], carry_out)
+template<tuple_like T, class C, class F>
+constexpr auto tuple_inclusive_scan_with_carry(const T& input, const C& carry_in, const F& f)
+{
+  using namespace std;
+
+  return tuple_fold(pair(tuple(), carry_in), input, [&f](const auto& prev_state, const auto& input_i)
+  {
+    // unpack the result of the previous fold iteration
+    auto [prev_result, prev_carry] = prev_state;
+    
+    // combine the carry from the previous iteration with the current input element
+    auto [result_i, carry_out] = f(input_i, prev_carry);
+
+    // return the result of this iteration and the carry for the next iteration
+    return pair(tuple_append_similar_to<T>(prev_result, result_i), carry_out);
+  });
+}
+
+
+template<class T>
+concept tuple_of_pair_like =
+  unzippable_tuple_like<T>
+  and pair_like<std::tuple_element_t<0,T>>
+;
+
+template<tuple_of_pair_like T>
+constexpr pair_like auto unzip_innermost_pairs(const T& tuple_of_pairs)
+{
+  // this will return a pair of tuples
+  return tuple_unzip(tuple_of_pairs);
+}
+
+template<tuple_like T>
+  requires (not tuple_of_pair_like<T>)
+constexpr pair_like auto unzip_innermost_pairs(const T& tuple)
+{
+  // this will return a pair of tuples
+  return tuple_unzip(tuple_zip_with(tuple, [](auto t_i)
+  {
+    return unzip_innermost_pairs(t_i);
+  }));
 }
 
 
