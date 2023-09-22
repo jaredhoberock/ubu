@@ -8,6 +8,7 @@
 #include "stride/apply_stride.hpp"
 #include "stride/compact_stride.hpp"
 #include "stride/stride_for.hpp"
+#include <concepts>
 
 
 namespace ubu
@@ -27,6 +28,12 @@ class strided_layout
     {}
 
     strided_layout(const strided_layout&) = default;
+
+    template<coordinate OtherS, stride_for<OtherS> OtherD>
+      requires (std::convertible_to<OtherS,S> and std::convertible_to<OtherD,D>)
+    constexpr strided_layout(const strided_layout<OtherS,OtherD>& other)
+      : strided_layout{other.shape(), other.stride()}
+    {}
 
     template<weakly_congruent<S> C>
     constexpr auto apply_layout(const C& coord) const
