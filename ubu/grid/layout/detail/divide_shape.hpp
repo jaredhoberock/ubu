@@ -2,43 +2,49 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "ceil_div.hpp"
 #include "../../coordinate/coordinate.hpp"
+#include "../../coordinate/detail/coordinate_inclusive_scan.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
-#include <tuple>
 #include <utility>
 
 
 namespace ubu::detail
 {
 
-
-// returns (quotient, denominator, reciprocal)
-template<scalar_coordinate N, scalar_coordinate D>
-constexpr tuple_like auto divide_shape(const N& numerator, const D& denominator)
-{
-  auto n = element<0>(numerator);
-  auto d = element<0>(denominator);
-
-  return std::tuple((n+d-1)/d, d, (d+n-1)/n);
-}
-
-// returns (quotient, denominator, reciprocal)
+// divide_shape returns a pair of coordinates (quotient, divisor), where:
+// 1. quotient is a coordinate that is the result of dividing numerator by denominator, and
+// 2. divisor is a tuple of integers, where each element contains the divisor used to produce
+//    the corresponding element of quotient
 template<coordinate N, scalar_coordinate D>
-constexpr tuple_like auto divide_shape(const N& numerator, const D& denominator)
+constexpr pair_like auto divide_shape(const N& numerator, const D& denominator)
 {
-  using namespace std;
-  using namespace ubu::detail;
-
-  auto [quotient, d, init_and_reciprocal] = tuple_fold(tuple(tuple(), tuple(), tuple(denominator)), numerator, [](const auto& prev_result, const auto& ni)
+  // combine's primary result is the quotient of n and d, along with the divisor used in the quotient
+  // the carry is the reciprocal of this quotient
+  auto combine = [](auto n, auto d)
   {
-    auto [prev_quotient, prev_denominator, prev_reciprocal] = prev_result;
-    auto current_denominator = tuple_last(prev_reciprocal);
-    auto [current_quotient, current_denominator_, current_reciprocal] = divide_shape(ni, current_denominator);
+    auto quotient = ceil_div(n,d);
+    auto divisor = n < d ? n : d;
+    std::pair result(quotient, divisor);
 
-    return tuple(tuple_append_similar_to<N>(prev_quotient, current_quotient), tuple_append_similar_to<N>(prev_denominator, current_denominator_), tuple_append_similar_to<N>(prev_reciprocal, current_reciprocal));
-  });
+    // the carry is the reciprocal of the ceil_div we just did
+    auto carry = ceil_div(d,n);
 
-  return tuple(quotient, d, tuple_drop_first(init_and_reciprocal));
+    return std::pair(result, carry);
+  };
+
+  // the final combination just returns the arguments
+  // it doesn't do any division on the final mode
+  auto final_combine = [](auto n, auto d)
+  {
+    return std::pair(n,d);
+  };
+
+  // this scan will return a nested tuple whose innermost elements are pairs (quotient_i, divisor_i)
+  auto almost_result = coordinate_inclusive_scan_with_final(numerator, denominator, combine, final_combine);
+
+  // unzip the innermost pairs to yield (quotient, divisor)
+  return unzip_innermost_pairs(almost_result);
 }
 
 

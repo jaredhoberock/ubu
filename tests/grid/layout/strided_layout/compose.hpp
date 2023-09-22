@@ -9,11 +9,24 @@
 namespace ns = ubu;
 
 
+template<ns::coordinate S1, ns::coordinate S2>
+constexpr bool is_compatible_shape(const S1& shape1, const S2& shape2)
+{
+  if(not ns::weakly_congruent<S2,S1>) return false;
+
+  return ns::grid_size(shape1) == ns::grid_size(shape2);
+}
+
 template<class LayoutA, class LayoutB, class LayoutR>
 bool test_composition(const LayoutA& layoutA,
                       const LayoutB& layoutB,
                       const LayoutR& layoutR)
 {
+  if(not is_compatible_shape(layoutR.shape(), layoutB.shape()))
+  {
+    return false;
+  }
+
   for(int i = 0; i < ns::grid_size(layoutR.shape()); ++i)
   {
     if(layoutR[i] != layoutA[layoutB[i]])
@@ -188,6 +201,13 @@ void test_compose()
   }
 
   {
+    strided_layout a(ns::int2(2,3), ns::int2(1,1));
+    strided_layout b(2, 8);
+
+    assert(test_composition(a, b));
+  }
+
+  {
     strided_layout a(ns::int2(4,3));
     strided_layout b(ns::int2(4,3));
 
@@ -195,10 +215,12 @@ void test_compose()
   }
 
   {
+    // XXX FAILS due to b not "dividing into" a properly
+    // this matches cute's test failure
     strided_layout a(ns::int2(4,3));
     strided_layout b(6);
 
-    assert(test_composition(a, b));
+    assert(not test_composition(a, b));
   }
 
   {
@@ -216,13 +238,27 @@ void test_compose()
   }
 
   // XXX FAILS due to b not "dividing into" a properly
-  // this matches cute's test faillure
+  // this matches cute's test failure
   // this must not fulfill some precondition
   {
     strided_layout a(ns::int2(4,3));
     strided_layout b(ns::int2(4,3), ns::int2(3,1));
 
     assert(not test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(4,3), ns::int2(1,4));
+    strided_layout b(4, 1);
+
+    assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(4,3), ns::int2(1,4));
+    strided_layout b(6, 2);
+
+    assert(test_composition(a, b));
   }
 
   {
@@ -261,6 +297,20 @@ void test_compose()
   }
 
   {
+    strided_layout a(ns::int2(2,2), ns::int2(2,1));
+    strided_layout b(2,2);
+
+    assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(2,2), ns::int2(2,5));
+    strided_layout b(2, 4);
+
+    assert(test_composition(a, b));
+  }
+
+  {
     strided_layout a(ns::int2(4,3), ns::int2(3,1));
     strided_layout b(ns::int2(6,2), ns::int2(2,1));
 
@@ -270,6 +320,20 @@ void test_compose()
   {
     strided_layout a(ns::int2(2,4), ns::int2(2,5));
     strided_layout b(ns::int3(2,2,2), ns::int3(4,1,2));
+
+    assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(8,8), ns::int2(1,8));
+    strided_layout b(2,1);
+
+    assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(8,8), ns::int2(8,1));
+    strided_layout b(2,1);
 
     assert(test_composition(a, b));
   }
@@ -298,6 +362,13 @@ void test_compose()
 
   {
     strided_layout a(ns::int2(4,2), ns::int2(1,16));
+    strided_layout b(4,2);
+
+    assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int2(4,2), ns::int2(1,16));
     strided_layout b(ns::int2(4,2), ns::int2(2, 1));
 
     assert(test_composition(a, b));
@@ -308,6 +379,20 @@ void test_compose()
     strided_layout b(ns::int2(2,2), ns::int2(2,1));
 
     assert(test_composition(a, b));
+  }
+
+  {
+    strided_layout a(ns::int3(4,8,2), ns::int3(1,4,8));
+    strided_layout b(2,2);
+
+    assert(test_composition(a,b));
+  }
+
+  {
+    strided_layout a(ns::int3(4,8,2), ns::int3(1,4,8));
+    strided_layout b(4,2);
+
+    assert(test_composition(a,b));
   }
 
   {

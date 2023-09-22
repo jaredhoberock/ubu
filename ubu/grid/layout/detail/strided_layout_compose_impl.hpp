@@ -6,27 +6,13 @@
 #include <algorithm>
 #include <ubu/grid/coordinate/coordinate.hpp>
 #include <ubu/grid/coordinate/detail/tuple_algorithm.hpp>
+#include <ubu/grid/layout/detail/compatible_shape.hpp>
 #include <ubu/grid/layout/detail/compose_strides.hpp>
-#include <ubu/grid/layout/detail/divide_coordinate.hpp>
 #include <ubu/grid/layout/detail/divide_shape.hpp>
 
 
 namespace ubu::detail
 {
-
-
-// returns the pair (modulo, remainder)
-template<coordinate C1, coordinate C2>
-  requires weakly_congruent<C2,C1>
-constexpr auto modulo(const C1& dividend, const C2& divisor)
-{
-  using namespace std;
-
-  return divide_coordinate(dividend, divisor, [](int dividend, int divisor)
-  {
-    return pair(min(dividend,divisor), ceil_div(divisor, dividend));
-  });
-}
 
 
 // scalar everything
@@ -47,10 +33,9 @@ template<nonscalar_coordinate LStride, weakly_congruent<LStride> LShape,
 constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStride& lhs_stride,
                                            const RShape& rhs_shape, const RStride& rhs_stride)
 {
-  // XXX how do we eliminate the unused residual stuff?
-  auto [result_shape_1, denominator, _] = divide_shape(lhs_shape, rhs_stride);
-  auto [result_shape, __] = modulo(result_shape_1, rhs_shape);
-  auto result_stride = compose_strides(denominator, lhs_stride);
+  auto [result_shape_1, divisors] = divide_shape(lhs_shape, rhs_stride);
+  auto result_shape = compatible_shape(result_shape_1, rhs_shape);
+  auto result_stride = compose_strides(divisors, lhs_stride);
 
   return std::pair(result_shape, result_stride);
 }
