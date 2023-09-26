@@ -1122,6 +1122,18 @@ concept tuple_of_pair_like =
   and pair_like<std::tuple_element_t<0,T>>
 ;
 
+template<class T>
+concept pair_of_not_tuple_like =
+  pair_like<T>
+  and (not tuple_like<std::tuple_element_t<0,T>>)
+;
+
+template<pair_of_not_tuple_like T>
+constexpr T unzip_innermost_pairs(const T& pair)
+{
+  return pair;
+}
+
 template<tuple_of_pair_like T>
 constexpr pair_like auto unzip_innermost_pairs(const T& tuple_of_pairs)
 {
@@ -1130,7 +1142,7 @@ constexpr pair_like auto unzip_innermost_pairs(const T& tuple_of_pairs)
 }
 
 template<tuple_like T>
-  requires (not tuple_of_pair_like<T>)
+  requires (not tuple_of_pair_like<T> and not pair_of_not_tuple_like<T>)
 constexpr pair_like auto unzip_innermost_pairs(const T& tuple)
 {
   // this will return a pair of tuples
