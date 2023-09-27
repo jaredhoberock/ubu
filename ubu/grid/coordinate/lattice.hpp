@@ -11,7 +11,7 @@
 #include "decrement_coordinate.hpp"
 #include "grid_size.hpp"
 #include "increment_coordinate.hpp"
-#include "is_bounded_by.hpp"
+#include "is_below.hpp"
 #include "lift_coordinate.hpp"
 #include "ones.hpp"
 #include "rank.hpp"
@@ -79,7 +79,8 @@ class lattice
     // returns whether or not coord is the value of a lattice point
     constexpr bool contains(const T& coord) const
     {
-      return ubu::is_bounded_by(coord, origin(), coordinate_sum(origin(), shape()));
+      return is_on_or_below(origin(), coord) and
+             is_below(coord, coordinate_sum(origin(), shape()));
     }
 
     // returns the number of lattice points

@@ -1,0 +1,66 @@
+#pragma once
+
+#include "../../detail/prologue.hpp"
+
+#include "congruent.hpp"
+#include "coordinate.hpp"
+#include "detail/tuple_algorithm.hpp"
+#include "element.hpp"
+
+
+namespace ubu
+{
+
+
+// is_below(lhs, rhs) returns true if all modes of lhs is < their corresponding mode of rhs
+
+template<scalar_coordinate C1, scalar_coordinate C2>
+constexpr bool is_below(const C1& lhs, const C2& rhs)
+{
+  return element<0>(lhs) < element<0>(rhs);
+}
+
+template<nonscalar_coordinate C1, nonscalar_coordinate C2>
+  requires congruent<C1,C2>
+constexpr bool is_below(const C1& lhs, const C2& rhs)
+{
+  auto tuple_of_results = detail::tuple_zip_with(lhs, rhs, [](auto l, auto r)
+  {
+    return is_below(l, r);
+  });
+
+  return detail::tuple_all(tuple_of_results, [](bool result)
+  {
+    return result;
+  });
+}
+
+
+// is_on_or_below(lhs, rhs) returns true if all modes of lhs is <= their corresponding mode of rhs
+
+template<scalar_coordinate C1, scalar_coordinate C2>
+constexpr bool is_on_or_below(const C1& lhs, const C2& rhs)
+{
+  return element<0>(lhs) <= element<0>(rhs);
+}
+
+template<nonscalar_coordinate C1, nonscalar_coordinate C2>
+  requires congruent<C1,C2>
+constexpr bool is_on_or_below(const C1& lhs, const C2& rhs)
+{
+  auto tuple_of_results = detail::tuple_zip_with(lhs, rhs, [](auto l, auto r)
+  {
+    return is_on_or_below(l, r);
+  });
+
+  return detail::tuple_all(tuple_of_results, [](bool result)
+  {
+    return result;
+  });
+}
+
+
+} // end ubu
+
+#include "../../detail/epilogue.hpp"
+

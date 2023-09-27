@@ -4,7 +4,7 @@
 
 #include "coordinate.hpp"
 #include "element.hpp"
-#include "is_bounded_by.hpp"
+#include "is_below.hpp"
 #include "zeros.hpp"
 
 
@@ -28,13 +28,13 @@ namespace detail
 
 
 template<std::size_t I, nonscalar_coordinate C>
-constexpr void colexicographic_increment(C& coord, const C& origin, const C& end)
+constexpr void lexicographic_increment(C& coord, const C& origin, const C& end)
 {
   // recurse into the Ith element
   increment_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(is_bounded_by(element<I>(coord), element<I>(origin), element<I>(end)))
+  if(is_below(element<I>(coord), element<I>(end)))
   {
     return;
   }
@@ -46,7 +46,7 @@ constexpr void colexicographic_increment(C& coord, const C& origin, const C& end
     element<I>(coord) = element<I>(origin);
 
     // continue recursion towards the right
-    colexicographic_increment<I+1>(coord, origin, end);
+    lexicographic_increment<I+1>(coord, origin, end);
   }
 }
 
@@ -57,7 +57,7 @@ constexpr void colexicographic_increment(C& coord, const C& origin, const C& end
 template<nonscalar_coordinate C>
 constexpr void increment_coordinate(C& coord, const C& origin, const C& end)
 {
-  return detail::colexicographic_increment<0>(coord, origin, end);
+  return detail::lexicographic_increment<0>(coord, origin, end);
 }
 
 

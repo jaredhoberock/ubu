@@ -11,7 +11,7 @@
 #include "coordinate/element.hpp"
 #include "coordinate/grid_size.hpp"
 #include "coordinate/increment_coordinate.hpp"
-#include "coordinate/is_bounded_by.hpp"
+#include "coordinate/is_below.hpp"
 #include "coordinate/lattice.hpp"
 #include "coordinate/lift_coordinate.hpp"
 #include "coordinate/ones.hpp"
