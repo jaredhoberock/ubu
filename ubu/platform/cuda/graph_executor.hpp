@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "detail/graph_utility_functions.hpp"
+#include "device_executor.hpp"
 #include "graph_node.hpp"
-#include "kernel_executor.hpp"
 #include <concepts>
 #include <cstdint>
 #include <cuda_runtime.h>
@@ -68,7 +68,7 @@ class graph_executor
 
     constexpr static coordinate_type bulk_execution_grid(std::size_t n)
     {
-      return kernel_executor::bulk_execution_grid(n);
+      return device_executor::bulk_execution_grid(n);
     }
   
     template<std::invocable<coordinate_type> F>

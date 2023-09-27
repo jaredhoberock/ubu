@@ -1,6 +1,6 @@
 #include <ubu/causality/first_cause.hpp>
 #include <ubu/memory/allocator/allocator.hpp>
-#include <ubu/platform/cuda/kernel_executor.hpp>
+#include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/platform/cuda/managed_allocator.hpp>
 
 namespace ns = ubu;
@@ -16,7 +16,7 @@ void test_allocation()
   using namespace ns::cuda;
 
   cudaStream_t stream = 0;
-  kernel_executor ex{0,stream};
+  device_executor ex{0,stream};
   managed_allocator<T> alloc{ex.device()};
 
   {

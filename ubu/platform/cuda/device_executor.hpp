@@ -54,7 +54,7 @@ struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 } // end detail
 
 
-class kernel_executor
+class device_executor
 {
   public:
     constexpr static std::size_t default_on_chip_heap_size = -1;
@@ -62,21 +62,21 @@ class kernel_executor
     using coordinate_type = thread_id;
     using happening_type = cuda::event;
 
-    constexpr kernel_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
+    constexpr device_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : device_{device},
         stream_{stream},
         on_chip_heap_size_{on_chip_heap_size}
     {}
 
-    constexpr kernel_executor(int device, cudaStream_t stream)
-      : kernel_executor{device, stream, default_on_chip_heap_size}
+    constexpr device_executor(int device, cudaStream_t stream)
+      : device_executor{device, stream, default_on_chip_heap_size}
     {}
 
-    constexpr kernel_executor()
-      : kernel_executor{0, cudaStream_t{}}
+    constexpr device_executor()
+      : device_executor{0, cudaStream_t{}}
     {}
 
-    kernel_executor(const kernel_executor&) = default;
+    device_executor(const device_executor&) = default;
 
     constexpr static coordinate_type bulk_execution_grid(std::size_t n)
     {
@@ -98,7 +98,7 @@ class kernel_executor
     inline event bulk_execute_after(const event& before, coordinate_type shape, F f) const
     {
       // make the stream wait on the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "kernel_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "device_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
 
       // convert the shape to dim3
       dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
@@ -150,7 +150,7 @@ class kernel_executor
       });
     }
 
-    auto operator<=>(const kernel_executor&) const = default;
+    auto operator<=>(const device_executor&) const = default;
 
     constexpr int device() const
     {

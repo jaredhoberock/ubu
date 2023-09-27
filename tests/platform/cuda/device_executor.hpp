@@ -7,7 +7,7 @@
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/grid/coordinate/lift_coordinate.hpp>
 #include <ubu/grid/coordinate/to_index.hpp>
-#include <ubu/platform/cuda/kernel_executor.hpp>
+#include <ubu/platform/cuda/device_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -19,7 +19,7 @@ void test_bulk_execution_grid()
 {
   using namespace ns;
 
-  cuda::kernel_executor ex;
+  cuda::device_executor ex;
   cuda::thread_id result = bulk_execution_grid(ex, 128);
 
   assert(1 == result.block.x);
@@ -34,17 +34,17 @@ void test_bulk_execution_grid()
 
 void test_concepts()
 {
-  static_assert(ns::coordinate<ns::cuda::kernel_executor::coordinate_type>);
-  static_assert(std::same_as<ns::cuda::kernel_executor::coordinate_type, ns::executor_coordinate_t<ns::cuda::kernel_executor>>);
-  static_assert(ns::executor<ns::cuda::kernel_executor>);
+  static_assert(ns::coordinate<ns::cuda::device_executor::coordinate_type>);
+  static_assert(std::same_as<ns::cuda::device_executor::coordinate_type, ns::executor_coordinate_t<ns::cuda::device_executor>>);
+  static_assert(ns::executor<ns::cuda::device_executor>);
 }
 
 
-void test_equality(ns::cuda::kernel_executor ex1)
+void test_equality(ns::cuda::device_executor ex1)
 {
   using namespace ns;
   
-  cuda::kernel_executor ex2 = ex1;
+  cuda::device_executor ex2 = ex1;
 
   assert(ex1 == ex2);
   assert(!(ex1 != ex2));
@@ -61,7 +61,7 @@ __managed__ int result1;
 __managed__ int result2;
 
 
-void test_first_execute(ns::cuda::kernel_executor ex)
+void test_first_execute(ns::cuda::device_executor ex)
 {
   using namespace ns;
 
@@ -87,7 +87,7 @@ void test_first_execute(ns::cuda::kernel_executor ex)
 }
 
 
-void test_execute_after(ns::cuda::kernel_executor ex)
+void test_execute_after(ns::cuda::device_executor ex)
 {
   using namespace ns;
 
@@ -121,7 +121,7 @@ void test_execute_after(ns::cuda::kernel_executor ex)
 }
 
 
-void test_finally_execute_after(ns::cuda::kernel_executor ex)
+void test_finally_execute_after(ns::cuda::device_executor ex)
 {
   using namespace ns;
 
@@ -165,14 +165,14 @@ int hash(ns::cuda::thread_id coord)
 constexpr std::array<int,6> array_shape = {2, 4, 6, 8, 10, 12};
 __managed__ int array[2][4][6][8][10][12] = {};
 
-void test_bulk_execute_after_member_function(ns::cuda::kernel_executor ex)
+void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 {
   using namespace ns;
 
-  // partition the array shape into the kernel_executor's shape type
+  // partition the array shape into the device_executor's shape type
   // such that nearby threads touch nearby addresses
 
-  cuda::kernel_executor::coordinate_type shape
+  cuda::device_executor::coordinate_type shape
   {
     // (block.x, block.y, block.z)
     {array_shape[2],array_shape[1],array_shape[0]},
@@ -212,7 +212,7 @@ void test_bulk_execute_after_member_function(ns::cuda::kernel_executor ex)
 
 
 template<ns::coordinate C>
-void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C shape)
+void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex, C shape)
 {
   using namespace ns;
 
@@ -246,7 +246,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
 }
 
 
-void test(ns::cuda::kernel_executor ex)
+void test(ns::cuda::device_executor ex)
 {
   test_equality(ex);
   test_finally_execute_after(ex);
@@ -268,7 +268,7 @@ void test_with_default_stream()
 {
   cudaStream_t s{};
 
-  ns::cuda::kernel_executor ex{0, s};
+  ns::cuda::device_executor ex{0, s};
   test(ex);
 }
 
@@ -278,14 +278,14 @@ void test_with_new_stream()
   cudaStream_t s{};
   assert(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking) == cudaSuccess);
 
-  ns::cuda::kernel_executor ex{0, s};
+  ns::cuda::device_executor ex{0, s};
   test(ex);
 
   assert(cudaStreamDestroy(s) == cudaSuccess);
 }
 
 
-void test_kernel_executor()
+void test_device_executor()
 {
   test_bulk_execution_grid();
   test_concepts();

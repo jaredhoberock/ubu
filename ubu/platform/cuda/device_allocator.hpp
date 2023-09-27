@@ -4,10 +4,10 @@
 
 #include "../../detail/exception.hpp"
 #include "../../detail/reflection.hpp"
+#include "device_executor.hpp"
 #include "device_memory_resource.hpp"
 #include "device_ptr.hpp"
 #include "event.hpp"
-#include "kernel_executor.hpp"
 #include <cuda_runtime_api.h>
 #include <utility>
 
@@ -49,7 +49,7 @@ class device_allocator : private device_memory_resource
       : device_allocator{other.device()}
     {}
 
-    const kernel_executor associated_executor() const
+    const device_executor associated_executor() const
     {
       return {device(), stream()};
     }

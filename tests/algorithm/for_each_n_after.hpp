@@ -5,7 +5,7 @@
 #include <ubu/memory/allocator/associated_allocator.hpp>
 #include <ubu/memory/allocator/rebind_allocator.hpp>
 #include <ubu/platform/cuda/device_allocator.hpp>
-#include <ubu/platform/cuda/kernel_executor.hpp>
+#include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/platform/cuda/managed_allocator.hpp>
 
 #undef NDEBUG
@@ -121,7 +121,7 @@ void test_for_each_n_after()
 //  {
 //    // test_simple
 //    
-//    my_policy p{ns::cuda::kernel_executor{}, ns::cuda::managed_allocator<void>{}};
+//    my_policy p{ns::cuda::device_executor{}, ns::cuda::managed_allocator<void>{}};
 //
 //    test_simple<std::int8_t>(p);
 //    test_simple<std::uint8_t>(p);
@@ -137,7 +137,7 @@ void test_for_each_n_after()
 //  {
 //    // test many sizes
 //
-//    my_policy p{ns::cuda::kernel_executor{}, ns::cuda::managed_allocator<void>{}};
+//    my_policy p{ns::cuda::device_executor{}, ns::cuda::managed_allocator<void>{}};
 //
 //    for(std::size_t power = 0; power < 20; ++power)
 //    {
