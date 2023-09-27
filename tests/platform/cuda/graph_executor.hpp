@@ -5,7 +5,8 @@
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/grid/coordinate/lift_coordinate.hpp>
-#include <ubu/grid/coordinate/to_index.hpp>
+#include <ubu/grid/layout/stride/apply_stride.hpp>
+#include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
 #include <ubu/platform/cuda/graph_executor.hpp>
 
 #undef NDEBUG
@@ -188,7 +189,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 
     auto e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
-      int i = coordinate_to_index(coord, shape);
+      int i = apply_stride(coord, compact_column_major_stride(shape));
       auto c = lift_coordinate(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;

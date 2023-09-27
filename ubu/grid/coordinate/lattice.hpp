@@ -2,11 +2,12 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../layout/stride/apply_stride.hpp"
+#include "../layout/stride/compact_column_major_stride.hpp"
 #include "coordinate.hpp"
 #include "coordinate_cast.hpp"
 #include "coordinate_difference.hpp"
 #include "coordinate_sum.hpp"
-#include "coordinate_to_index.hpp"
 #include "decrement_coordinate.hpp"
 #include "grid_size.hpp"
 #include "increment_coordinate.hpp"
@@ -297,7 +298,7 @@ class lattice_iterator
       // 0-based indices along each axis
       T coord = coordinate_difference(current_, domain_.origin());
 
-      return coordinate_to_index(coord, domain_.shape());
+      return apply_stride(coord, compact_column_major_stride(domain_.shape()));
     }
 
 

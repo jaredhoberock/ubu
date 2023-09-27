@@ -3,9 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../grid/coordinate/coordinate_to_index.hpp"
 #include "../../grid/coordinate/lattice.hpp"
 #include "../../grid/coordinate/point.hpp"
+#include "../../grid/layout/stride/apply_stride.hpp"
+#include "../../grid/layout/stride/compact_column_major_stride.hpp"
 #include "bulk_execution_grid.hpp"
 #include "dependent_on.hpp"
 #include "executor.hpp"
@@ -115,7 +116,7 @@ class dispatch_bulk_execute_after
       return (*this)(std::forward<E>(executor), std::forward<H>(before), native_grid_shape, [=](executor_coordinate_t<E> native_coord)
       {
         // map the native coordinate to a linear index
-        std::size_t i = coordinate_to_index(native_coord, native_grid_shape);
+        std::size_t i = apply_stride(native_coord, compact_column_major_stride(native_grid_shape));
         
         // if coord is one of the coordinates that the user asked for, invoke the function
         if(i < grid.size())
