@@ -14,21 +14,11 @@
 namespace ubu::detail
 {
 
+// strided_layout_compose_impl is the implementation of strided_layout::compose
+// It returns the pair (composition_shape, composition_stride)
 
-// scalar everything
-// returns the pair (composition_shape, composition_stride)
-template<scalar_coordinate LShape, scalar_coordinate LStride,
-         scalar_coordinate RShape, scalar_coordinate RStride>
-constexpr auto strided_layout_compose_impl(const LShape&, const LStride& lhs_stride,
-                                           const RShape& rhs_shape, const RStride& rhs_stride)
-{
-  auto result_stride = rhs_stride * lhs_stride;
-  return std::pair(rhs_shape, result_stride);
-}
-
-
-// scalar RShape
-template<nonscalar_coordinate LStride, weakly_congruent<LStride> LShape,
+// case 1: scalar RShape
+template<coordinate LStride, weakly_congruent<LStride> LShape,
          scalar_coordinate RShape, coordinate RStride>
 constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStride& lhs_stride,
                                            const RShape& rhs_shape, const RStride& rhs_stride)
@@ -40,9 +30,7 @@ constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStrid
   return std::pair(result_shape, result_stride);
 }
 
-
-// nonscalar B shape
-// returns the pair (composition_shape, composition_stride)
+// case 2: nonscalar RShape
 template<coordinate LShape, same_rank<LShape> LStride,
          nonscalar_coordinate RShape, same_rank<RShape> RStride>
 constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStride& lhs_stride,
