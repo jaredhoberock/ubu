@@ -6,7 +6,7 @@
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "stride/apply_stride.hpp"
-#include "stride/compact_stride.hpp"
+#include "stride/compact_column_major_stride.hpp"
 #include "stride/stride_for.hpp"
 #include <concepts>
 
@@ -24,7 +24,7 @@ class strided_layout
     {}
 
     constexpr strided_layout(S s)
-      : strided_layout(s, compact_stride(s))
+      : strided_layout(s, compact_column_major_stride(s))
     {}
 
     strided_layout(const strided_layout&) = default;
