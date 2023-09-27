@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
+#include "shape/convert_shape.hpp"
 #include "shape/shape.hpp"
-#include "shape/shape_cast.hpp"
 
 #include "../detail/epilogue.hpp"
 
