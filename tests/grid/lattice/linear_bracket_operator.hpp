@@ -1,5 +1,5 @@
-#include <ubu/grid/coordinate/lattice.hpp>
 #include <ubu/grid/coordinate/point.hpp>
+#include <ubu/grid/lattice.hpp>
 
 #undef NDEBUG
 #include <cassert>

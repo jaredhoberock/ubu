@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../grid/coordinate/lattice.hpp"
 #include "../../grid/coordinate/point.hpp"
+#include "../../grid/lattice.hpp"
 #include "../../grid/layout/stride/apply_stride.hpp"
 #include "../../grid/layout/stride/compact_column_major_stride.hpp"
 #include "bulk_execution_grid.hpp"

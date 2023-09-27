@@ -30,6 +30,8 @@
 
 #include "grid/coordinate.hpp"
 #include "grid/grid.hpp"
+#include "grid/lattice.hpp"
+#include "grid/layout.hpp"
 #include "grid/layout.hpp"
 #include "grid/shape.hpp"
 

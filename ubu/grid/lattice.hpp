@@ -1,20 +1,20 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../detail/prologue.hpp"
 
-#include "../layout/stride/apply_stride.hpp"
-#include "../layout/stride/compact_column_major_stride.hpp"
-#include "coordinate.hpp"
-#include "coordinate_cast.hpp"
-#include "coordinate_difference.hpp"
-#include "coordinate_sum.hpp"
-#include "decrement_coordinate.hpp"
-#include "grid_size.hpp"
-#include "increment_coordinate.hpp"
-#include "is_below.hpp"
-#include "lift_coordinate.hpp"
-#include "ones.hpp"
-#include "rank.hpp"
+#include "coordinate/coordinate.hpp"
+#include "coordinate/coordinate_cast.hpp"
+#include "coordinate/coordinate_difference.hpp"
+#include "coordinate/coordinate_sum.hpp"
+#include "coordinate/decrement_coordinate.hpp"
+#include "coordinate/grid_size.hpp"
+#include "coordinate/increment_coordinate.hpp"
+#include "coordinate/is_below.hpp"
+#include "coordinate/lift_coordinate.hpp"
+#include "coordinate/ones.hpp"
+#include "coordinate/rank.hpp"
+#include "layout/stride/apply_stride.hpp"
+#include "layout/stride/compact_column_major_stride.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
@@ -316,5 +316,5 @@ class lattice_iterator
 } // end detail
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../detail/epilogue.hpp"
 

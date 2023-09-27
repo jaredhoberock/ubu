@@ -2,8 +2,8 @@
 #include <concepts>
 #include <string>
 #include <tuple>
-#include <ubu/grid/coordinate/lattice.hpp>
 #include <ubu/grid/grid.hpp>
+#include <ubu/grid/lattice.hpp>
 #include <utility>
 #include <vector>
 
