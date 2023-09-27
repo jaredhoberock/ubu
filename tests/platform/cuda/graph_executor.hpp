@@ -24,13 +24,13 @@ void test_bulk_execution_grid()
   cuda::graph_executor ex{g};
   cuda::thread_id result = bulk_execution_grid(ex, 128);
 
-  assert(1 == result.block.x);
-  assert(1 == result.block.y);
-  assert(1 == result.block.z);
-
   assert(128 == result.thread.x);
   assert(  1 == result.thread.y);
   assert(  1 == result.thread.z);
+
+  assert(1 == result.block.x);
+  assert(1 == result.block.y);
+  assert(1 == result.block.z);
 
   assert(cudaSuccess == cudaGraphDestroy(g));
 }
@@ -140,10 +140,10 @@ void test_bulk_execute_after_member_function(ns::cuda::graph_executor ex)
 
   cuda::graph_executor::coordinate_type shape
   {
-    // (block.x, block.y, block.z)
-    {array_shape[2],array_shape[1],array_shape[0]},
     // (thread.x, thread.y, thread.z)
-    {array_shape[5],array_shape[4],array_shape[3]}
+    {array_shape[5],array_shape[4],array_shape[3]},
+    // (block.x, block.y, block.z)
+    {array_shape[2],array_shape[1],array_shape[0]}
   };
 
   try

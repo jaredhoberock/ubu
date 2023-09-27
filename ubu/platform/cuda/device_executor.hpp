@@ -41,7 +41,7 @@ struct init_shmalloc_and_invoke_with_builtin_cuda_indices
       __syncthreads();
 
       // create a thread_id from the built-in variables
-      thread_id idx{{blockIdx.x, blockIdx.y, blockIdx.z}, {threadIdx.x, threadIdx.y, threadIdx.z}};
+      thread_id idx{{threadIdx.x, threadIdx.y, threadIdx.z}, {blockIdx.x, blockIdx.y, blockIdx.z}};
 
       // invoke the function with the id
       std::invoke(f, idx);
@@ -90,7 +90,7 @@ class device_executor
 
       int num_blocks = (n + block_size - 1) / block_size;
 
-      return coordinate_type{{num_blocks, 1, 1}, {block_size, 1, 1}};
+      return coordinate_type{{block_size, 1, 1}, {num_blocks, 1, 1}};
     }
 
     template<std::regular_invocable<coordinate_type> F>
@@ -128,13 +128,13 @@ class device_executor
       requires std::is_trivially_copyable_v<F>
     inline event bulk_execute_after(const event& before, int2 shape, F f) const
     {
-      // map the int2 to {{gx,gy,gz}, {bx, by, bz}}
+      // map the int2 to {{bx,by,bz}, {gx,gy,gz}}
       coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
       return bulk_execute_after(before, native_shape, [f](coordinate_type native_coord)
       {
         // map the native coordinate_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.block.x, native_coord.thread.x});
+        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
       });
     }
 

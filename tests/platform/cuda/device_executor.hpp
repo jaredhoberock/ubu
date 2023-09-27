@@ -22,13 +22,13 @@ void test_bulk_execution_grid()
   cuda::device_executor ex;
   cuda::thread_id result = bulk_execution_grid(ex, 128);
 
-  assert(1 == result.block.x);
-  assert(1 == result.block.y);
-  assert(1 == result.block.z);
-
   assert(128 == result.thread.x);
   assert(  1 == result.thread.y);
   assert(  1 == result.thread.z);
+
+  assert(1 == result.block.x);
+  assert(1 == result.block.y);
+  assert(1 == result.block.z);
 }
 
 
@@ -157,11 +157,11 @@ void test_finally_execute_after(ns::cuda::device_executor ex)
 
 int hash(ns::cuda::thread_id coord)
 {
-  return coord.block.x ^ coord.block.y ^ coord.block.z ^ coord.thread.x ^ coord.thread.y ^ coord.thread.z;
+  return coord.thread.x ^ coord.thread.y ^ coord.thread.z ^ coord.block.x ^ coord.block.y ^ coord.block.z;
 }
 
 
-// this array has 3 + 3 axes to match blockIdx + threadIdx
+// this array has 3 + 3 axes to match threadIdx + blockIdx
 constexpr std::array<int,6> array_shape = {2, 4, 6, 8, 10, 12};
 __managed__ int array[2][4][6][8][10][12] = {};
 
@@ -174,10 +174,10 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 
   cuda::device_executor::coordinate_type shape
   {
-    // (block.x, block.y, block.z)
-    {array_shape[2],array_shape[1],array_shape[0]},
     // (thread.x, thread.y, thread.z)
-    {array_shape[5],array_shape[4],array_shape[3]}
+    {array_shape[5],array_shape[4],array_shape[3]},
+    // (block.x, block.y, block.z)
+    {array_shape[2],array_shape[1],array_shape[0]}
   };
 
   try

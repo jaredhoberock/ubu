@@ -1,29 +1,31 @@
-// ~/Desktop/circle/circle -std=c++20 -I. --cuda-path=/usr/local/cuda -sm_60 --verbose shmalloc_reduce.cpp -o a.out
+// circle -std=c++20 -I. --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/23.3/cuda/12.0/ -sm_60 --verbose shmalloc_reduce.cpp --libstdc++=11 -L/usr/local/cuda/lib64 -lcudart -o a.out
 
 #include "measure_bandwidth_of_invocation.hpp"
 #include "shmalloc_reduce_kernel.hpp"
 #include "tile.hpp"
-#include <ubu/causality/first_cause.hpp>
-#include <ubu/execution/executor/bulk_execute_after.hpp>
-#include <ubu/platform/cuda/kernel_executor.hpp>
+#include <ubu/execution/executor.hpp>
+#include <ubu/memory/allocator.hpp>
+#include <ubu/platform/cuda/device_allocator.hpp>
+#include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/platform/cuda/managed_allocator.hpp>
-#include <functional>
-#include <numeric>
-#include <vector>
-#include <iostream>
+#include <concepts>
 #include <random>
+#include <vector>
 
 
-template<std::random_access_iterator I, std::random_access_iterator O1, std::random_access_iterator O2, std::invocable<std::iter_value_t<I>,std::iter_value_t<I>> F>
-  requires plain_old_reducible<I,O1,F> and plain_old_reducible<I,O2,F>
-void my_reduce(ubu::cuda::kernel_executor ex, I first, int n, O1 result, O2 partial_results, F op)
+template<std::random_access_iterator I, std::random_access_iterator O, binary_invocable<std::iter_value_t<I>> F>
+  requires plain_old_reducible<I,O,F>
+ubu::cuda::event reduce_after_to(ubu::cuda::device_executor ex, ubu::cuda::device_allocator<int> alloc, const ubu::cuda::event& before, I first, int n, O result, F op)
 {
-  using T = std::iter_value_t<I>;
+  using namespace ubu;
 
   constexpr int block_size = 32*6;
 
   int num_multiprocessors = 0;
-  cudaDeviceGetAttribute(&num_multiprocessors, cudaDevAttrMultiProcessorCount, ex.device());
+  ubu::cuda::detail::throw_on_error(
+    cudaDeviceGetAttribute(&num_multiprocessors, cudaDevAttrMultiProcessorCount, ex.device()),
+    "reduce_after_to: After cudaDeviceGetAttribute"
+  );
 
   // 695 was determined empirically
   int max_num_ctas = num_multiprocessors * 695;
@@ -34,34 +36,40 @@ void my_reduce(ubu::cuda::kernel_executor ex, I first, int n, O1 result, O2 part
   using namespace std::views;
   auto tiles = tile_evenly(counted(first,n), max_num_ctas, min_tile_size);
 
-  ubu::cuda::event before = ubu::first_cause(ex);
+  int num_tiles = tiles.size();
 
-  if(tiles.size() > 1)
+  if(num_tiles > 1)
   {
-    auto first_phase = ubu::bulk_execute_after(ex, before, {tiles.size(),block_size}, [=](ubu::int2 idx)
+    // allocate storage for each tile's reduction
+    using partial_sum_type = std::invoke_result_t<F,std::iter_value_t<I>,std::iter_value_t<I>>;
+
+    auto [allocation_ready, partial_results] = allocate_after<partial_sum_type>(alloc, before, num_tiles);
+
+    // reduce each tile into a partial result
+    auto first_phase = bulk_execute_after(ex, allocation_ready, {block_size,tiles.size()}, [=](ubu::int2 idx)
     {
-      shmalloc_reduce_tiles_kernel<block_size>(idx.x, idx.y, tiles, partial_results, op);
+      int block = idx.y;
+      int thread = idx.x;
+      shmalloc_reduce_tiles_kernel<block_size>(block, thread, tiles, partial_results, op);
     });
 
     // finish up in a second phase by reducing a single tile with a larger block
-
-    constexpr int block_size = 512;
     auto single_tile_of_partial_results = tile(counted(partial_results, tiles.size()), tiles.size());
-    ubu::bulk_execute_after(ex, first_phase, {1,block_size}, [=](ubu::int2 idx)
+    auto second_phase = bulk_execute_after(ex, first_phase, 512, [=](int thread_idx)
     {
-      shmalloc_reduce_tiles_kernel<block_size>(idx.x, idx.y, single_tile_of_partial_results, result, op);
+      shmalloc_reduce_tiles_kernel<512>(0, thread_idx, single_tile_of_partial_results, result, op);
     });
+
+    // deallocate storage
+    return deallocate_after(alloc, second_phase, partial_results, num_tiles);
   }
-  else
+
+  // the input is small enough that it only requires a single phase 
+  
+  return bulk_execute_after(ex, before, 512, [=](int thread_idx)
   {
-    // the input is small enough that it only requires a single phase 
-    
-    constexpr int block_size = 512;
-    ubu::bulk_execute_after(ex, before, {1,block_size}, [=](ubu::int2 idx)
-    {
-      shmalloc_reduce_tiles_kernel<block_size>(idx.x, idx.y, tiles, result, op);
-    });
-  }
+    shmalloc_reduce_tiles_kernel<512>(0, thread_idx, tiles, result, op);
+  });
 }
 
 
@@ -81,12 +89,13 @@ void test_correctness(int max_size)
 
   device_vector<int> result(1,0);
   device_vector<int> temporary(max_size);
-  ubu::cuda::kernel_executor ex;
+  ubu::cuda::device_executor ex;
+  ubu::cuda::device_allocator<int> alloc;
+  ubu::cuda::event before = ubu::first_cause(ex);
 
   for(int size = 1000; size < max_size; size += size / 100)
   {
-    my_reduce(ex, input.data(), size, result.data(), temporary.data(), std::plus{});
-    cudaStreamSynchronize(0);
+    reduce_after_to(ex, alloc, before, input.data(), size, result.data(), std::plus{}).wait();
 
     // host reduce using std::accumulate.
     int ref = std::accumulate(input.begin(), input.begin() + size, 0);
@@ -106,15 +115,16 @@ double test_performance(int size, int num_trials)
 {
   device_vector<int> input(size, 1);
   device_vector<int> result(1);
-  device_vector<int> temporary(size);
-  ubu::cuda::kernel_executor ex;
+  ubu::cuda::device_executor ex;
+  ubu::cuda::device_allocator<int> alloc;
+  ubu::cuda::event before = ubu::first_cause(ex);
 
   // warmup
-  my_reduce(ex, input.data(), size, result.data(), temporary.data(), std::plus{});
+  reduce_after_to(ex, alloc, before, input.data(), size, result.data(), std::plus{});
 
   return measure_bandwidth_of_invocation_in_gigabytes_per_second(num_trials, sizeof(int) * input.size(), [&]
   {
-    my_reduce(ex, input.data(), size, result.data(), temporary.data(), std::plus{});
+    reduce_after_to(ex, alloc, before, input.data(), size, result.data(), std::plus{});
   });
 }
 
