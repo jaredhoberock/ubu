@@ -31,7 +31,7 @@ template<std::size_t I, nonscalar_coordinate C>
 constexpr void lexicographic_decrement(C& coord, const C& origin, const C& end)
 {
   // is the Ith element of coord at the origin?
-  if(is_on_or_below(element<I>(coord), element<I>(origin)))
+  if(is_below_or_equal(element<I>(coord), element<I>(origin)))
   {
     // set the Ith element to the end
     element<I>(coord) = element<I>(end);

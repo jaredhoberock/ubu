@@ -79,7 +79,7 @@ class lattice
     // returns whether or not coord is the value of a lattice point
     constexpr bool contains(const T& coord) const
     {
-      return is_on_or_below(origin(), coord) and
+      return is_below_or_equal(origin(), coord) and
              is_below(coord, coordinate_sum(origin(), shape()));
     }
 
