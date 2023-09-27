@@ -38,7 +38,7 @@ class strided_layout
     template<weakly_congruent<S> C>
     constexpr auto apply_layout(const C& coord) const
     {
-      return apply_stride(congrue_coordinate(coord, shape()), stride());
+      return apply_stride(lift_coordinate(coord, shape()), stride());
     }
 
     template<weakly_congruent<S> C>

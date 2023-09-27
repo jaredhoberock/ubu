@@ -10,17 +10,28 @@
 namespace ubu
 {
 
+// lift_coordinate "upcasts" a weakly_congruent coordinate into a higher-dimensional space described by a shape
+// when the coordinate is congruent with the shape, lift_coordinate is the identity function
+
+
+template<coordinate C1, coordinate C2>
+  requires congruent<C1,C2>
+constexpr C1 lift_coordinate(const C1& coord, const C2& shape)
+{
+  return coord;
+}
+
 
 template<coordinate C1, coordinate C2>
   requires weakly_congruent<C1,C2>
-constexpr congruent<C2> auto congrue_coordinate(const C1& coord, const C2& shape)
+constexpr congruent<C2> auto lift_coordinate(const C1& coord, const C2& shape)
 {
-  // congrue_coordinate is essentially a divmod operation
+  // lift_coordinate is essentially a divmod operation
   // for each element of coord, we want to apply a divmod to the corresponding element of shape
   // that mode's result is the remainder of that operation, and we pass the quotient of the division
   // "to the right" as the carry
   //
-  // congrue_coordinate's final_combine operation ignores the carry and returns its first parameter
+  // lift_coordinate's final_combine operation ignores the carry and returns its first parameter
 
   // the combine operation is divmod
   // the result of the operation is the remainder, and the "carry" is the quotient

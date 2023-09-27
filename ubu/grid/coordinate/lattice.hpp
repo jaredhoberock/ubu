@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "congrue_coordinate.hpp"
 #include "coordinate.hpp"
 #include "coordinate_cast.hpp"
 #include "coordinate_difference.hpp"
@@ -12,6 +11,7 @@
 #include "grid_size.hpp"
 #include "increment_coordinate.hpp"
 #include "is_bounded_by.hpp"
+#include "lift_coordinate.hpp"
 #include "ones.hpp"
 #include "rank.hpp"
 #include <concepts>
@@ -282,8 +282,8 @@ class lattice_iterator
 
     constexpr void advance(difference_type n)
     {
-      // this cast is here because congrue_coordinate may not return a T
-      current_ = coordinate_sum(domain_.origin(), coordinate_cast<T>(congrue_coordinate(index() + n, domain_.shape())));
+      // this cast is here because lift_coordinate may not return a T
+      current_ = coordinate_sum(domain_.origin(), coordinate_cast<T>(lift_coordinate(index() + n, domain_.shape())));
     }
 
     constexpr difference_type index() const

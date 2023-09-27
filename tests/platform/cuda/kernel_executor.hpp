@@ -5,7 +5,7 @@
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/grid/coordinate/congrue_coordinate.hpp>
+#include <ubu/grid/coordinate/lift_coordinate.hpp>
 #include <ubu/grid/coordinate/to_index.hpp>
 #include <ubu/platform/cuda/kernel_executor.hpp>
 
@@ -223,7 +223,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
     cuda::event e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
     {
       int i = coordinate_to_index(coord, shape);
-      auto c = congrue_coordinate(i, array_shape);
+      auto c = lift_coordinate(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
     });
@@ -232,7 +232,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::kernel_executor ex, C
 
     for(int i = 0; i < ns::grid_size(array_shape); ++i)
     {
-      auto c = congrue_coordinate(i, array_shape);
+      auto c = lift_coordinate(i, array_shape);
 
       assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
     }
