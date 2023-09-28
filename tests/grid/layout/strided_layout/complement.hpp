@@ -114,9 +114,8 @@ void test_complement()
   }
 
   {
-    // XXX this fails a post-condition
     strided_layout layout(ns::int3(2,4,8), ns::int3(8,1,64));
-    assert(not test_complement(layout));
+    assert(test_complement(layout));
   }
 
   {

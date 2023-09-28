@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "compare/lexicographical_compare_coordinates.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include "element.hpp"
 #include "rank.hpp"
@@ -497,11 +498,10 @@ class point : public detail::point_base<T,N>
       return !(*this == rhs);
     }
 
-    // note that point sorts colexicographically, unlike most types
     template<point_like_of_rank<N> Other>
     constexpr bool operator<(const Other& rhs) const
     {
-      return detail::tuple_colexicographical_compare(*this, rhs);
+      return lex_less(*this, rhs);
     }
 
     template<point_like_of_rank<N> Other>

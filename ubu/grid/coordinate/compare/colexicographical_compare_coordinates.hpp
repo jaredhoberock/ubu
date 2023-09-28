@@ -32,7 +32,7 @@ namespace detail
 struct colex_less_t
 {
   template<coordinate C1, congruent<C1> C2>
-  constexpr bool operator()(const C1& lhs, const C2& rhs)
+  constexpr bool operator()(const C1& lhs, const C2& rhs) const
   {
     return colexicographical_compare_coordinates(lhs, rhs);
   }

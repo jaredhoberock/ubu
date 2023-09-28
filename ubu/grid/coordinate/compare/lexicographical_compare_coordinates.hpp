@@ -19,7 +19,7 @@ constexpr bool lexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
 template<nonscalar_coordinate C1, congruent<C1> C2>
 constexpr bool lexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
 {
-  return detail::tuple_colexicographical_compare(lhs, rhs, [](const auto& l, const auto& r)
+  return detail::tuple_lexicographical_compare(lhs, rhs, [](const auto& l, const auto& r)
   {
     return lexicographical_compare_coordinates(l,r);
   });
@@ -31,7 +31,7 @@ namespace detail
 struct lex_less_t
 {
   template<coordinate C1, congruent<C1> C2>
-  constexpr bool operator()(const C1& lhs, const C2& rhs)
+  constexpr bool operator()(const C1& lhs, const C2& rhs) const
   {
     return lexicographical_compare_coordinates(lhs, rhs);
   }

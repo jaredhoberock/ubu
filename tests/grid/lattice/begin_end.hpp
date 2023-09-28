@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <ubu/grid/coordinate/compare.hpp>
 #include <ubu/grid/coordinate/point.hpp>
 #include <ubu/grid/lattice.hpp>
 
@@ -23,7 +24,7 @@ void test_begin_end()
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end()));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 
   {
@@ -46,7 +47,7 @@ void test_begin_end()
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end()));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 
   {
@@ -63,7 +64,7 @@ void test_begin_end()
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end()));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 }
 
