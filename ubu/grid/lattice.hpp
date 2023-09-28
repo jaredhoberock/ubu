@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "coordinate/compare/is_below.hpp"
 #include "coordinate/coordinate.hpp"
 #include "coordinate/coordinate_cast.hpp"
 #include "coordinate/coordinate_difference.hpp"
@@ -9,7 +10,6 @@
 #include "coordinate/decrement_coordinate.hpp"
 #include "coordinate/grid_size.hpp"
 #include "coordinate/increment_coordinate.hpp"
-#include "coordinate/is_below.hpp"
 #include "coordinate/lift_coordinate.hpp"
 #include "coordinate/ones.hpp"
 #include "coordinate/rank.hpp"
@@ -120,6 +120,9 @@ class lattice
       return iterator{*this};
     }
 
+    // XXX a lattice_sentinel would be more efficient than returning a lattice_iterator
+    //     because only the final mode needs to be checked for equality for detecting
+    //     the end of the range
     constexpr iterator end() const
     {
       return {*this, iterator::end_value(*this)};
@@ -145,6 +148,9 @@ namespace detail
 {
 
 
+// XXX this should be named colexicographical_iterator and it should be organized underneath coordinate/iterator
+// XXX we should also have a lexicographical_iterator
+//     lattice.begin() should call lattice.colex_begin()
 template<coordinate T>
 class lattice_iterator
 {

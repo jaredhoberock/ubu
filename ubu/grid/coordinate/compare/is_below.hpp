@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "congruent.hpp"
-#include "coordinate.hpp"
-#include "detail/tuple_algorithm.hpp"
-#include "element.hpp"
+#include "../congruent.hpp"
+#include "../coordinate.hpp"
+#include "../detail/tuple_algorithm.hpp"
+#include "../element.hpp"
 
 
 namespace ubu
@@ -62,5 +62,5 @@ constexpr bool is_below_or_equal(const C1& lhs, const C2& rhs)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 
