@@ -8,13 +8,13 @@
 #include "coordinate/coordinate_difference.hpp"
 #include "coordinate/coordinate_sum.hpp"
 #include "coordinate/decrement_coordinate.hpp"
-#include "coordinate/grid_size.hpp"
 #include "coordinate/increment_coordinate.hpp"
 #include "coordinate/lift_coordinate.hpp"
 #include "coordinate/ones.hpp"
 #include "coordinate/rank.hpp"
 #include "layout/stride/apply_stride.hpp"
 #include "layout/stride/compact_column_major_stride.hpp"
+#include "shape/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
@@ -86,7 +86,7 @@ class lattice
     // returns the number of lattice points
     constexpr std::integral auto size() const
     {
-      return ubu::grid_size(shape());
+      return shape_size(shape());
     }
 
     // returns whether this lattice contains no points

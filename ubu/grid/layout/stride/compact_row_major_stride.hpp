@@ -5,9 +5,9 @@
 #include "../../coordinate/coordinate.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "../../coordinate/element.hpp"
-#include "../../coordinate/grid_size.hpp"
 #include "../../coordinate/rank.hpp"
 #include "../../coordinate/same_rank.hpp"
+#include "../../shape/shape_size.hpp"
 #include <concepts>
 #include <tuple>
 #include <utility>
@@ -43,7 +43,7 @@ constexpr S compact_row_major_stride_impl(const D& current_stride, const S& shap
     auto [current_stride, prev_result] = prev;
     auto result = tuple_prepend_similar_to<S>(prev_result, compact_row_major_stride_impl(current_stride, s));
 
-    return std::pair{current_stride * grid_size(s), result};
+    return std::pair{current_stride * shape_size(s), result};
   });
 
   return result;

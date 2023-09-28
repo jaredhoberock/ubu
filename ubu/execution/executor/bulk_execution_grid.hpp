@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../grid/coordinate/coordinate.hpp"
-#include "../../grid/coordinate/grid_size.hpp"
+#include "../../grid/shape/shape_size.hpp"
 #include "executor.hpp"
 #include "executor_happening.hpp"
 #include <concepts>
@@ -98,7 +98,7 @@ struct dispatch_bulk_execution_grid
   constexpr auto operator()(E&& ex, G grid_shape) const
   {
     // this path maps grid_shape to 1D and recurses
-    std::size_t num_points = grid_size(grid_shape);
+    std::size_t num_points = shape_size(grid_shape);
     return (*this)(std::forward<E>(ex), num_points);
   }
 

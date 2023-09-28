@@ -197,7 +197,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 
     ns::wait(e);
 
-    for(int i = 0; i < ns::grid_size(array_shape); ++i)
+    for(int i = 0; i < ns::shape_size(array_shape); ++i)
     {
       auto c = lift_coordinate(i, array_shape);
 

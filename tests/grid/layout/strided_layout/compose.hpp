@@ -14,7 +14,7 @@ constexpr bool is_compatible_shape(const S1& shape1, const S2& shape2)
 {
   if(not ns::weakly_congruent<S2,S1>) return false;
 
-  return ns::grid_size(shape1) == ns::grid_size(shape2);
+  return ns::shape_size(shape1) == ns::shape_size(shape2);
 }
 
 template<class LayoutA, class LayoutB, class LayoutR>
@@ -27,7 +27,7 @@ bool test_composition(const LayoutA& layoutA,
     return false;
   }
 
-  for(int i = 0; i < ns::grid_size(layoutR.shape()); ++i)
+  for(int i = 0; i < ns::shape_size(layoutR.shape()); ++i)
   {
     if(layoutR[i] != layoutA[layoutB[i]])
     {

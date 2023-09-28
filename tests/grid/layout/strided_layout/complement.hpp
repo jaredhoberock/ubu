@@ -24,26 +24,26 @@ bool test_complement(ns::strided_layout<S,D> layout, CoSizeHi cosize_hi)
 
   // post-condition on the domain size of the complement
   // XXX cute does a filter on the layout first
-  if(not (grid_size(result.shape()) >= cosize_hi / grid_size(layout.shape())))
+  if(not (shape_size(result.shape()) >= cosize_hi / shape_size(layout.shape())))
   {
     return false;
   }
 
   // post-condition on the codomain size of the complement
-  if(not (grid_size(result.coshape()) <= ceil_div(cosize_hi, grid_size(layout.coshape())) * grid_size(layout.coshape())))
+  if(not (shape_size(result.coshape()) <= ceil_div(cosize_hi, shape_size(layout.coshape())) * shape_size(layout.coshape())))
   {
     return false;
   }
 
   // post-condition on the codomain of the complement
-  for(int i = 1; i < grid_size(result.shape()); ++i)
+  for(int i = 1; i < shape_size(result.shape()); ++i)
   {
     if(not (result[i-1] < result[i]))
     {
       return false;
     }
 
-    for(int j = 0; j < grid_size(layout.shape()); ++j)
+    for(int j = 0; j < shape_size(layout.shape()); ++j)
     {
       if(not (result[i] != layout[j]))
       {
@@ -52,12 +52,12 @@ bool test_complement(ns::strided_layout<S,D> layout, CoSizeHi cosize_hi)
     }
   }
 
-  if(not (grid_size(result.shape()) <= grid_size(result.shape())))
+  if(not (shape_size(result.shape()) <= shape_size(result.shape())))
   {
     return false;
   }
 
-  if(not (grid_size(result.coshape()) >= cosize_hi / grid_size(layout.shape())))
+  if(not (shape_size(result.coshape()) >= cosize_hi / shape_size(layout.shape())))
   {
     return false;
   }
@@ -69,7 +69,7 @@ bool test_complement(ns::strided_layout<S,D> layout, CoSizeHi cosize_hi)
 template<ns::coordinate S, ns::stride_for<S> D>
 bool test_complement(ns::strided_layout<S,D> layout)
 {
-  return test_complement(layout, ns::grid_size(layout.coshape()));
+  return test_complement(layout, ns::shape_size(layout.coshape()));
 }
 
 

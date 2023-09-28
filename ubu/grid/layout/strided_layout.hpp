@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate.hpp"
+#include "../shape/shape_size.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "stride/apply_stride.hpp"
@@ -36,13 +37,13 @@ class strided_layout
     {}
 
     template<weakly_congruent<S> C>
-    constexpr auto apply_layout(const C& coord) const
+    constexpr coordinate auto apply_layout(const C& coord) const
     {
       return apply_stride(lift_coordinate(coord, shape()), stride());
     }
 
     template<weakly_congruent<S> C>
-    constexpr auto operator[](const C& coord) const
+    constexpr coordinate auto operator[](const C& coord) const
     {
       return apply_layout(coord);
     }
@@ -59,12 +60,14 @@ class strided_layout
 
     // XXX consider whether the following functions need to be members
 
-    constexpr ubu::coordinate auto coshape() const
+    // XXX the return type of this should be the same as operator[]
+    constexpr coordinate auto coshape() const
     {
-      auto last_position = apply_layout(grid_size(shape()) - 1);
+      auto last_position = apply_layout(shape_size(shape()) - 1);
       return coordinate_sum(last_position, ones<decltype(last_position)>);
     }
 
+    // XXX the return type of this should be constrained to layout_for<S1>
     template<coordinate S1, stride_for<S1> D1>
     constexpr auto compose(const strided_layout<S1,D1>& other) const
     {
@@ -72,6 +75,7 @@ class strided_layout
       return make_strided_layout(s,d);
     }
 
+    // XXX the return type of this should be constrained to layout
     template<coordinate... Ss, stride_for<Ss>... Ds>
     constexpr auto concatenate(const strided_layout<Ss,Ds>&... layouts) const
     {
@@ -82,6 +86,7 @@ class strided_layout
                                  detail::make_tuple_similar_to<stride_tuple>(stride(), layouts.stride()...));
     }
 
+    // XXX the return type of this should be constrained to layout
     template<std::integral I>
     constexpr auto complement(I cosize_hi) const
     {
@@ -89,9 +94,10 @@ class strided_layout
       return make_strided_layout(s,d);
     }
 
+    // XXX the return type of this should be constrained to layout
     constexpr auto complement() const
     {
-      return complement(grid_size(coshape()));
+      return complement(shape_size(coshape()));
     }
 
   private:

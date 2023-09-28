@@ -13,7 +13,7 @@ namespace ubu::detail
 
 
 // compatible_shape converts a shape to be compatible with another weakly_congruent shape
-// postcondition: grid_size(result) == grid_size(n)
+// postcondition: shape_size(result) == shape_size(n)
 template<ubu::coordinate S1, ubu::scalar_coordinate S2>
   requires weakly_congruent<S2,S1>
 constexpr S1 compatible_shape(const S1& shape, const S2& n)
