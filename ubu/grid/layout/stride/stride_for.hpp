@@ -9,8 +9,8 @@ namespace ubu
 {
 
 
-template<class D, class S>
-concept stride_for = weakly_congruent<S,D>;
+template<class S, class C>
+concept stride_for = weakly_congruent<C,S>;
 
 
 } // end ubu
