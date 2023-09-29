@@ -6,6 +6,7 @@
 #include "coordinate/coordinate.hpp"
 #include "coordinate/coordinate_sum.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
+#include "coordinate/iterator/lexicographical_iterator.hpp"
 #include "coordinate/rank.hpp"
 #include "shape/shape_size.hpp"
 #include <concepts>
@@ -100,17 +101,38 @@ class lattice
       shape_ = shape;
     }
 
-    constexpr iterator begin() const
+    constexpr colexicographical_iterator<T> colex_begin() const
     {
-      return iterator{origin(), shape()};
+      return {origin(), shape()};
     }
 
-    // XXX a lattice_sentinel would be more efficient than returning a lattice_iterator
-    //     because only the final mode needs to be checked for equality for detecting
-    //     the end of the range
+    // XXX a colexicographical_sentinel would be more efficient than returning an iterator
+    //     because only the final mode needs to be checked to detect the end of the range
+    constexpr colexicographical_iterator<T> colex_end() const
+    {
+      return {colexicographical_iterator<T>::end_value(origin(), shape()), origin(), shape()};
+    }
+
+    constexpr lexicographical_iterator<T> lex_begin() const
+    {
+      return {origin(), shape()};
+    }
+
+    // XXX a lexicographical_sentinel would be more efficient than returning an iterator
+    //     because only the final mode needs to be checked to detect the end of the range
+    constexpr lexicographical_iterator<T> lex_end() const
+    {
+      return {origin(), shape()};
+    }
+
+    constexpr iterator begin() const
+    {
+      return colex_begin();
+    }
+
     constexpr iterator end() const
     {
-      return {iterator::end_value(origin(), shape()), origin(), shape()};
+      return colex_end();
     }
 
     constexpr bool operator==(const lattice& other) const
