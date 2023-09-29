@@ -86,7 +86,7 @@ class lattice
       return coordinate_sum(origin(), idx);
     }
 
-    // returns the value of the ith lattice point in lexicographic order
+    // returns the value of the ith lattice point in colexicographic order
     template<std::integral I>
       requires (rank_v<T> > 1)
     constexpr T operator[](I idx) const
