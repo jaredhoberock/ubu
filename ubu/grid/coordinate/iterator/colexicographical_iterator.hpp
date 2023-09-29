@@ -101,7 +101,7 @@ class colexicographical_iterator
 
     constexpr difference_type operator-(const colexicographical_iterator& rhs) const
     {
-      return colexicographical_distance(rhs, current_, shape_);
+      return colexicographical_distance(*rhs, current_, shape_);
     }
 
     constexpr bool operator==(const colexicographical_iterator& rhs) const
