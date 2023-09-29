@@ -10,6 +10,7 @@
 #include "../lift_coordinate.hpp"
 #include "../ones.hpp"
 #include "colexicographical_decrement_coordinate.hpp"
+#include "colexicographical_distance.hpp"
 #include "colexicographical_increment_coordinate.hpp"
 
 namespace ubu
@@ -100,10 +101,7 @@ class colexicographical_iterator
 
     constexpr difference_type operator-(const colexicographical_iterator& rhs) const
     {
-      // XXX ideally, we would call a function named colexicographical_distance here
-      //     instead of calling apply_strides inside colexicographical_index()
-
-      return colexicographical_index() - rhs.colexicographical_index();
+      return colexicographical_distance(rhs, current_, shape_);
     }
 
     constexpr bool operator==(const colexicographical_iterator& rhs) const
@@ -171,6 +169,10 @@ class colexicographical_iterator
 
     constexpr difference_type colexicographical_index() const
     {
+      // XXX ideally this would simply return colexicographical_distance(origin_, current_);
+      //     in order to do that, we would need to guarantee
+      //     colexicographical_distance(origin_, end_value()) == shape_size(shape_)
+
       if(is_at_the_end())
       {
         return shape_size(shape_);
