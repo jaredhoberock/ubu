@@ -2,8 +2,6 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../layout/stride/apply_stride.hpp"
-#include "../../layout/stride/compact_column_major_stride.hpp"
 #include "../coordinate_cast.hpp"
 #include "../coordinate_difference.hpp"
 #include "../coordinate_sum.hpp"
@@ -160,7 +158,7 @@ class colexicographical_iterator
     constexpr void advance(difference_type n)
     {
       // XXX ideally, here we would call a function colexicographical_advance_coordinate
-      //     instead of relying on lift_coordinate
+      //     instead of relying on colexicographical_index + lift_coordinate
 
       // this cast is here because lift_coordinate may not return a T
       // XXX note that lift_coordinate uses a colexicographical algorithm
@@ -169,25 +167,7 @@ class colexicographical_iterator
 
     constexpr difference_type colexicographical_index() const
     {
-      // XXX ideally this would simply return colexicographical_distance(origin_, current_);
-      //     in order to do that, we would need to guarantee
-      //     colexicographical_distance(origin_, end_value()) == shape_size(shape_)
-
-      if(is_at_the_end())
-      {
-        return shape_size(shape_);
-      }
-
-      // subtract the origin from current to get
-      // 0-based indices along each axis
-      T coord = coordinate_difference(current_, origin_);
-
-      return apply_stride(coord, compact_column_major_stride(shape_));
-    }
-
-    constexpr bool is_at_the_end() const
-    {
-      return current_ == end_value(origin_, shape_);
+      return colexicographical_distance(origin_, current_, shape_);
     }
 
     T current_;
