@@ -6,7 +6,7 @@
 #include "../coordinate.hpp"
 #include "../coordinate_cast.hpp"
 #include "../coordinate_sum.hpp"
-#include "../lift_coordinate.hpp"
+#include "../colexicographical_lift.hpp"
 #include <concepts>
 
 
@@ -16,7 +16,7 @@ namespace ubu
 template<coordinate C, congruent<C> S, std::integral I>
 constexpr void colexicographical_advance(C& coord, const S& shape, I n)
 {
-  congruent<C> auto delta = lift_coordinate(n, shape);
+  congruent<C> auto delta = colexicographical_lift(n, shape);
   coord = coordinate_cast<C>(coordinate_sum(coord, delta));
 }
 

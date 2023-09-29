@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "coordinate/colexicographical_lift.hpp"
 #include "coordinate/compare.hpp"
 #include "coordinate/congruent.hpp"
 #include "coordinate/coordinate.hpp"
@@ -10,7 +11,6 @@
 #include "coordinate/coordinate_sum.hpp"
 #include "coordinate/element.hpp"
 #include "coordinate/iterator.hpp"
-#include "coordinate/lift_coordinate.hpp"
 #include "coordinate/ones.hpp"
 #include "coordinate/point.hpp"
 #include "coordinate/rank.hpp"
