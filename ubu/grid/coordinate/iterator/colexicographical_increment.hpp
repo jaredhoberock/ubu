@@ -13,14 +13,14 @@ namespace ubu
 
 
 template<scalar_coordinate C>
-constexpr void colexicographical_increment_coordinate(C& coord, const C&, const C&)
+constexpr void colexicographical_increment(C& coord, const C&, const C&)
 {
   ++coord;
 }
 
 
 template<nonscalar_coordinate C>
-constexpr void colexicographical_increment_coordinate(C& coord, const C& origin, const C& end);
+constexpr void colexicographical_increment(C& coord, const C& origin, const C& end);
 
 
 namespace detail
@@ -31,7 +31,7 @@ template<std::size_t I, nonscalar_coordinate C>
 constexpr void colexicographical_increment_impl(C& coord, const C& origin, const C& end)
 {
   // recurse into the Ith element
-  colexicographical_increment_coordinate(element<I>(coord), element<I>(origin), element<I>(end));
+  colexicographical_increment(element<I>(coord), element<I>(origin), element<I>(end));
 
   // check the Ith element against the Ith bounds
   if(is_below(element<I>(coord), element<I>(end)))
@@ -55,16 +55,16 @@ constexpr void colexicographical_increment_impl(C& coord, const C& origin, const
 
 
 template<nonscalar_coordinate C>
-constexpr void colexicographical_increment_coordinate(C& coord, const C& origin, const C& end)
+constexpr void colexicographical_increment(C& coord, const C& origin, const C& end)
 {
   return detail::colexicographical_increment_impl<0>(coord, origin, end);
 }
 
 
 template<coordinate C>
-constexpr void colexicographical_increment_coordinate(C& coord, const C& shape)
+constexpr void colexicographical_increment(C& coord, const C& shape)
 {
-  return colexicographical_increment_coordinate(coord, zeros<C>, shape);
+  return colexicographical_increment(coord, zeros<C>, shape);
 }
 
 
