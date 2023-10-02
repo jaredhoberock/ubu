@@ -7,6 +7,13 @@
 #include <type_traits>
 #include <utility>
 
+// XXX it would be more convenient to use the name "element" for dynamically indexing into grids
+//     and use something more like "get" for statically accessing the ith element of a coordinate
+//
+//     but, element<i>(coord) isn't identical to get<i>(coord) because coord is allowed to be std::integral when i==0
+//     if we wanted to change that, we would need to decide that the rank of a bare integer is 0 (like CuTe does),
+//     instead of 1 
+
 
 namespace ubu::detail
 {
