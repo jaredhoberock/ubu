@@ -15,24 +15,10 @@ concept layout =
   and coordinate<grid_element_t<T>>
 ;
 
-template<class L, class Coord>
+template<class L, class G>
 concept layout_for =
   layout<L>
-  and coordinate<Coord>
-  and requires(L layout, Coord coord)
-  {
-    { layout[coord] } -> coordinate;
-  }
-;
-
-template<class L, class FromCoord, class ToCoord>
-concept layout_onto =
-  layout_for<L, FromCoord>
-  and coordinate<ToCoord>
-  and requires(L layout, FromCoord coord)
-  {
-    { layout[coord] } -> congruent<ToCoord>;
-  }
+  and indexable_by<G, grid_element_t<L>>
 ;
 
 } // end ubu

@@ -12,8 +12,7 @@ namespace ubu
 // XXX consider requiring that Grid and Layout be trivially relocatable
 // i.e., Grid can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
 
-template<class Grid, ubu::layout Layout>
-  requires ubu::indexable_by<Grid, ubu::grid_element_t<Layout>>
+template<class Grid, ubu::layout_for<Grid> Layout>
 class view
 {
   public:
@@ -33,6 +32,7 @@ class view
     constexpr decltype(auto) operator[](const shape_type& coord) const
     {
       // XXX consider indexing both grid_ and layout_ via a customization point for a bit more flexibility
+      //     (i.e., we could support operator() in addition to operator[])
       //     for example such a choice would allow Layout to be a cute::Layout
       //     and Grid could be any function of Layout's element type
       return grid_[layout_[coord]];

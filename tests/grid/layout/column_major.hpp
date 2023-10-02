@@ -4,17 +4,20 @@
 #include <ubu/grid/layout/column_major.hpp>
 #include <ubu/grid/layout/layout.hpp>
 #include <utility>
+#include <vector>
 
 namespace ns = ubu;
 
 void test_column_major()
 {
-  static_assert(ns::layout_onto<ns::column_major<int>, int, int>);
-  static_assert(ns::layout_onto<ns::column_major<ns::int2>, ns::int2, int>);
-  static_assert(ns::layout_onto<ns::column_major<ns::int3>, ns::int3, int>);
+  using grid_t = std::vector<float>;
+
+  static_assert(ns::layout_for<ns::column_major<int>, grid_t>);
+  static_assert(ns::layout_for<ns::column_major<ns::int2>, grid_t>);
+  static_assert(ns::layout_for<ns::column_major<ns::int3>, grid_t>);
 
   using int3x4 = ns::point<ns::int4,3>;
 
-  static_assert(ns::layout_onto<ns::column_major<int3x4>, ns::int3, int>);
+  static_assert(ns::layout_for<ns::column_major<int3x4>, grid_t>);
 }
 

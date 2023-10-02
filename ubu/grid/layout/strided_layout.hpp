@@ -67,7 +67,7 @@ class strided_layout
       return coordinate_sum(last_position, ones<decltype(last_position)>);
     }
 
-    // XXX the return type of this should be constrained to layout_for<S1>
+    // XXX the return type of this should be constrained to layout
     template<coordinate S1, stride_for<S1> D1>
     constexpr auto compose(const strided_layout<S1,D1>& other) const
     {
