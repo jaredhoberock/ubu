@@ -29,11 +29,13 @@
 #include "detail/prologue.hpp"
 
 #include "grid/coordinate.hpp"
+#include "grid/domain.hpp"
 #include "grid/grid.hpp"
 #include "grid/lattice.hpp"
 #include "grid/layout.hpp"
 #include "grid/layout.hpp"
 #include "grid/shape.hpp"
+#include "grid/view.hpp"
 
 #include "detail/epilogue.hpp"
 
