@@ -32,7 +32,7 @@ constexpr congruent<C2> auto colexicographical_lift(const C1& coord, const C2& s
   // that mode's result is the remainder of that operation, and we pass the quotient of the division
   // "to the right" as the carry
   //
-  // colexicographical_lift's final_combine operation ignores the carry and returns its first parameter
+  // colexicographical_lift's final_combine operation ignores the divisor and returns the previous carry
 
   // the combine operation is divmod
   // the result of the operation is the remainder, and the "carry" is the quotient
