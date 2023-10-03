@@ -49,8 +49,8 @@ struct dispatch_native_layout
   }
 
   template<class T>
-    requires (not has_compose_member_function<const T&,typename T::coordinate_type&>
-              and not has_compose_free_function<const T&,typename T::coordinate_type&>)
+    requires (not has_native_layout_member_function<const T&,typename T::coordinate_type&>
+              and not has_native_layout_free_function<const T&,typename T::coordinate_type&>)
   constexpr layout auto operator()(const T&, typename T::coordinate_type shape) const
   {
     // assume a column-major ordering by default
