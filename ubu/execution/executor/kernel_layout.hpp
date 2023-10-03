@@ -4,6 +4,7 @@
 
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../grid/layout/compose_layouts.hpp"
+#include "../../grid/layout/identity_layout.hpp"
 #include "../../grid/layout/lifting_layout.hpp"
 #include "../../grid/layout/native_layout.hpp"
 #include "../../grid/shape/convert_shape.hpp"
@@ -15,11 +16,20 @@ namespace ubu
 namespace detail
 {
 
+template<executor E, std::invocable<executor_coordinate_t<E>> F>
+constexpr layout auto default_kernel_layout(const E&, const executor_coordinate_t<E>& shape, F&&)
+{
+  // when the type of shape requested by the user is the same type as the coordinates produced
+  // by the executor, we just return an identity_layout
+  return identity_layout(shape);
+}
+
 // postcondition: shape_size(result.coshape()) >= shape_size(shape)
 // postcondition: layout_coshape_t<decltype(result)> == S
 // XXX it's probably possible to constrain the result layout a bit more
 template<executor E, coordinate S, std::invocable<S> F>
-constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&& f)
+  requires (not std::same_as<S,executor_coordinate_t<E>>)
+constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&&)
 {
   // convert the user's requested shape into the native shape of the executor
   using native_coord_t = executor_coordinate_t<E>;
