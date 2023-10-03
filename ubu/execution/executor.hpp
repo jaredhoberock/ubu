@@ -14,6 +14,7 @@
 #include "executor/executor_happening.hpp"
 #include "executor/first_execute.hpp"
 #include "executor/inline_executor.hpp"
+#include "executor/kernel_layout.hpp"
 #include "executor/new_thread_executor.hpp"
 
 #include "../detail/epilogue.hpp"
