@@ -30,6 +30,7 @@
 
 #include "grid/coordinate.hpp"
 #include "grid/domain.hpp"
+#include "grid/fancy_span.hpp"
 #include "grid/grid.hpp"
 #include "grid/lattice.hpp"
 #include "grid/layout.hpp"
