@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../allocator.hpp"
 #include "../allocate.hpp"
+#include "../concepts/allocator.hpp"
 #include <memory>
 
 namespace ubu

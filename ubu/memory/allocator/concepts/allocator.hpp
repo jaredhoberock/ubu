@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "allocate.hpp"
-#include "deallocate.hpp"
+#include "../allocate.hpp"
+#include "../deallocate.hpp"
 #include <concepts>
 #include <memory>
 
@@ -31,5 +31,5 @@ concept allocator = allocator_of<A, int>;
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../pointer.hpp"
-#include "allocator.hpp"
+#include "concepts/allocator.hpp"
 #include "deallocate.hpp"
 #include "destroy.hpp"
 #include "traits/allocator_pointer_t.hpp"

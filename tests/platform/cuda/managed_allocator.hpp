@@ -1,5 +1,5 @@
 #include <ubu/causality/first_cause.hpp>
-#include <ubu/memory/allocator/allocator.hpp>
+#include <ubu/memory/allocator/concepts/allocator.hpp>
 #include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/platform/cuda/managed_allocator.hpp>
 

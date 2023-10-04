@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../allocator/asynchronous_allocator.hpp"
+#include "../allocator/concepts/asynchronous_allocator.hpp"
 #include "../allocator/deallocate_after.hpp"
 #include "../allocator/destroy_after.hpp"
 #include <utility>
