@@ -65,7 +65,7 @@ constexpr T convert_shape(const S& shape)
 
 // upcast from nonscalar case 2
 // when not weakly_congruent<S,T>, collapse the shape to an integer and recurse
-template<coordinate T, nonscalar_coordinate S>
+template<nonscalar_coordinate T, nonscalar_coordinate S>
   requires (not congruent<T,S> and not weakly_congruent<S,T>)
 constexpr T convert_shape(const S& shape)
 {

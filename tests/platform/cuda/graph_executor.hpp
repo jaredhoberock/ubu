@@ -2,6 +2,7 @@
 #include <ubu/causality.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
+#include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/grid/coordinate/colexicographical_lift.hpp>
@@ -213,6 +214,37 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C 
 }
 
 
+template<ns::coordinate C>
+void test_execute_kernel_customization_point(ns::cuda::graph_executor ex, C shape)
+{
+  using namespace ns;
+
+  try
+  {
+    ns::execute_kernel(ex, shape, [=](C coord)
+    {
+      int i = apply_stride(coord, compact_column_major_stride(shape));
+      auto c = colexicographical_lift(i, array_shape);
+
+      array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
+    });
+
+    for(int i = 0; i < ns::shape_size(array_shape); ++i)
+    {
+      auto c = colexicographical_lift(i, array_shape);
+
+      assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
+    }
+  }
+  catch(std::runtime_error& e)
+  {
+#if defined(__CUDACC__)
+    assert(false);
+#endif
+  }
+}
+
+
 void test(ns::cuda::graph_executor ex)
 {
   test_equality(ex);
@@ -227,6 +259,13 @@ void test(ns::cuda::graph_executor ex)
   test_bulk_execute_after_customization_point(ex, ns::int4{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4], array_shape[5]});
   test_bulk_execute_after_customization_point(ex, ns::int5{array_shape[0]*array_shape[1], array_shape[2], array_shape[3], array_shape[4], array_shape[5]});
   test_bulk_execute_after_customization_point(ex, array_shape);
+
+  test_execute_kernel_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
+  test_execute_kernel_customization_point(ex, ns::int2{array_shape[0]*array_shape[1]*array_shape[2], array_shape[3]*array_shape[4]*array_shape[5]});
+  test_execute_kernel_customization_point(ex, ns::int3{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4]*array_shape[5]});
+  test_execute_kernel_customization_point(ex, ns::int4{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4], array_shape[5]});
+  test_execute_kernel_customization_point(ex, ns::int5{array_shape[0]*array_shape[1], array_shape[2], array_shape[3], array_shape[4], array_shape[5]});
+  test_execute_kernel_customization_point(ex, array_shape);
 }
 
 
