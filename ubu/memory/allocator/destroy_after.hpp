@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
+#include "../../execution/executor/concepts/executor_associate.hpp"
 #include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
-#include "../../execution/executor/executor_associate.hpp"
 #include "../pointer.hpp"
 #include "destroy.hpp"
 #include "traits/allocator_size_t.hpp"

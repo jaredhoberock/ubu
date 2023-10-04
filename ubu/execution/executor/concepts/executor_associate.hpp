@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "associated_executor.hpp"
+#include "../associated_executor.hpp"
 
 
 namespace ubu
@@ -18,5 +18,5 @@ concept executor_associate = requires(T arg)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

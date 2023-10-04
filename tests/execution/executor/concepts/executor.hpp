@@ -1,5 +1,5 @@
 #include <ubu/causality/past_event.hpp>
-#include <ubu/execution/executor/executor.hpp>
+#include <ubu/execution/executor/concepts/executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

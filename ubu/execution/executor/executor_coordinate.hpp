@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "bulk_execution_grid.hpp"
-#include "executor.hpp"
+#include "concepts/executor.hpp"
 
 namespace ubu
 {

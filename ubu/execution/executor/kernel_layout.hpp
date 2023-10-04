@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "concepts/executor.hpp"
 #include "native_layout.hpp"
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../grid/layout/compose_layouts.hpp"

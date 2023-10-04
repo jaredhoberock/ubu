@@ -1,6 +1,6 @@
 #include <ubu/causality/wait.hpp>
+#include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
-#include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/execution/executor/new_thread_executor.hpp>

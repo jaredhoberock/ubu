@@ -9,7 +9,7 @@
 #include "../../grid/layout/layout.hpp"
 #include "../../grid/shape.hpp"
 #include "bulk_execute_after.hpp"
-#include "executor.hpp"
+#include "concepts/executor.hpp"
 #include "executor_coordinate.hpp"
 #include "kernel_layout.hpp"
 #include <concepts>

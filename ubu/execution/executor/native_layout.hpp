@@ -4,6 +4,7 @@
 
 #include "../../grid/layout/column_major.hpp"
 #include "../../grid/layout/layout.hpp"
+#include "concepts/executor.hpp"
 #include "executor_coordinate.hpp"
 #include <utility>
 

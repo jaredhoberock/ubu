@@ -2,8 +2,8 @@
 #include <ubu/causality.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
+#include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_kernel.hpp>
-#include <ubu/execution/executor/executor.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
 #include <ubu/grid/coordinate/colexicographical_lift.hpp>
 #include <ubu/grid/layout/stride/apply_stride.hpp>

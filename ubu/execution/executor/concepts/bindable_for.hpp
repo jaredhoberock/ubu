@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "bind_executable.hpp"
+#include "../bind_executable.hpp"
 
 
 namespace ubu
@@ -21,5 +21,5 @@ concept bindable_for =
 } // end ubu
 
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

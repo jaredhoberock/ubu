@@ -1,5 +1,5 @@
 #include <ubu/causality/first_cause.hpp>
-#include <ubu/execution/executor/executor.hpp>
+#include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/inline_executor.hpp>
 
 #undef NDEBUG
