@@ -50,23 +50,23 @@ class point_base
 
     template<std::size_t i>
       requires (i < N)
-    constexpr T& element()
+    friend constexpr T& get(point_base& self)
     {
-      return elements_[i];
+      return self.elements_[i];
     }
 
     template<std::size_t i>
       requires (i < N)
-    constexpr const T& element() const
+    friend constexpr const T& get(const point_base& self)
     {
-      return elements_[i];
+      return self.elements_[i];
     }
 
     template<std::size_t i>
       requires (i < N)
-    constexpr T&& element() &&
+    friend constexpr T&& get(point_base&& self)
     {
-      return std::move(elements_[i]);
+      return std::move(self.elements_[i]);
     }
 };
 
@@ -99,23 +99,23 @@ class point_base<T,1>
 
     template<std::size_t i>
       requires (i == 0)
-    constexpr T& element()
+    friend constexpr T& get(point_base& self)
     {
-      return x;
+      return self.x;
     }
 
     template<std::size_t i>
       requires (i == 0)
-    constexpr const T& element() const
+    friend constexpr const T& get(const point_base& self)
     {
-      return x;
+      return self.x;
     }
 
     template<std::size_t i>
       requires (i == 0)
-    constexpr T&& element() &&
+    friend constexpr T&& get(point_base&& self)
     {
-      return x;
+      return std::move(self.x);
     }
 };
 
@@ -148,26 +148,26 @@ class point_base<T,2>
 
     template<std::size_t i>
       requires (i < 2)
-    constexpr T& element()
+    friend constexpr T& get(point_base& self)
     {
-      if constexpr (i == 0) return x;
-      return y;
+      if constexpr (i == 0) return self.x;
+      return self.y;
     }
 
     template<std::size_t i>
       requires (i < 2)
-    constexpr const T& element() const
+    friend constexpr const T& get(const point_base& self)
     {
-      if constexpr (i == 0) return x;
-      return y;
+      if constexpr (i == 0) return self.x;
+      return self.y;
     }
 
     template<std::size_t i>
       requires (i < 2)
-    constexpr T&& element() &&
+    friend constexpr T&& get(point_base&& self)
     {
-      if constexpr (i == 0) return std::move(x);
-      return std::move(y);
+      if constexpr (i == 0) return std::move(self.x);
+      return std::move(self.y);
     }
 };
 
@@ -201,29 +201,29 @@ class point_base<T,3>
 
     template<std::size_t i>
       requires (i < 3)
-    constexpr T& element()
+    friend constexpr T& get(point_base& self)
     {
-      if constexpr (i == 0) return x;
-      else if constexpr (i == 1) return y;
-      return z;
+      if constexpr (i == 0) return self.x;
+      else if constexpr (i == 1) return self.y;
+      return self.z;
     }
 
     template<std::size_t i>
       requires (i < 3)
-    constexpr const T& element() const
+    friend constexpr const T& get(const point_base& self)
     {
-      if constexpr (i == 0) return x;
-      else if constexpr (i == 1) return y;
-      return z;
+      if constexpr (i == 0) return self.x;
+      else if constexpr (i == 1) return self.y;
+      return self.z;
     }
 
     template<std::size_t i>
       requires (i < 3)
-    constexpr T&& element() &&
+    friend constexpr T&& get(point_base&& self)
     {
-      if constexpr (i == 0) return std::move(x);
-      else if constexpr (i == 1) std::move(y);
-      else return std::move(z);
+      if constexpr (i == 0) return std::move(self.x);
+      else if constexpr (i == 1) return std::move(self.y);
+      else return std::move(self.z);
     }
 };
 
@@ -258,32 +258,32 @@ class point_base<T,4>
 
     template<std::size_t i>
       requires (i < 4)
-    constexpr T& element()
+    friend constexpr T& get(point_base& self)
     {
-      if constexpr (i == 0) return x;
-      else if constexpr (i == 1) return y;
-      else if constexpr (i == 2) return z;
-      return w;
+      if constexpr (i == 0) return self.x;
+      else if constexpr (i == 1) return self.y;
+      else if constexpr (i == 2) return self.z;
+      return self.w;
     }
 
     template<std::size_t i>
       requires (i < 4)
-    constexpr const T& element() const
+    friend constexpr const T& get(const point_base& self)
     {
-      if constexpr (i == 0) return x;
-      else if constexpr (i == 1) return y;
-      else if constexpr (i == 2) return z;
-      return w;
+      if constexpr (i == 0) return self.x;
+      else if constexpr (i == 1) return self.y;
+      else if constexpr (i == 2) return self.z;
+      return self.w;
     }
 
     template<std::size_t i>
       requires (i < 4)
-    constexpr T&& element() &&
+    friend constexpr T&& get(point_base&& self)
     {
-      if constexpr (i == 0) return std::move(x);
-      else if constexpr (i == 1) std::move(y);
-      else if constexpr (i == 2) std::move(z);
-      return std::move(w);
+      if constexpr (i == 0) return std::move(self.x);
+      else if constexpr (i == 1) return std::move(self.y);
+      else if constexpr (i == 2) return std::move(self.z);
+      return std::move(self.w);
     }
 };
 
@@ -386,28 +386,6 @@ class point : public detail::point_base<T,N>
     constexpr static size_type size()
     {
       return N;
-    }
-
-    // tuple-like interface
-    template<std::size_t i>
-      requires (i < N)
-    friend constexpr T& get(point& self)
-    {
-      return self.template element<i>();
-    }
-
-    template<std::size_t i>
-      requires (i < N)
-    friend constexpr const T& get(const point& self)
-    {
-      return self.template element<i>();
-    }
-
-    template<std::size_t i>
-      requires (i < N)
-    friend constexpr T&& get(point&& self)
-    {
-      return std::move(self.template element<i>());
     }
 
 
