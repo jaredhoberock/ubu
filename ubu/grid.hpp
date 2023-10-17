@@ -36,6 +36,7 @@
 #include "grid/layout.hpp"
 #include "grid/layout.hpp"
 #include "grid/shape.hpp"
+#include "grid/slice.hpp"
 #include "grid/view.hpp"
 
 #include "detail/epilogue.hpp"

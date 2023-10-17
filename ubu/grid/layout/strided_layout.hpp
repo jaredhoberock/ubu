@@ -4,8 +4,12 @@
 
 #include "../coordinate.hpp"
 #include "../shape/shape_size.hpp"
+#include "../slice/dice_coordinate.hpp"
+#include "../slice/slice_coordinate.hpp"
+#include "../slice/slicer.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
+#include "layout.hpp"
 #include "stride/apply_stride.hpp"
 #include "stride/compact_column_major_stride.hpp"
 #include "stride/stride_for.hpp"
@@ -98,6 +102,24 @@ class strided_layout
     constexpr auto complement() const
     {
       return complement(shape_size(coshape()));
+    }
+
+    // XXX the return type of this is some type of strided_layout
+    template<slicer_for<S> K>
+    constexpr auto slice(const K& katana) const
+    {
+      auto result_shape = slice_coordinate(shape(), katana);
+      auto result_stride = slice_coordinate(stride(), katana);
+      return make_strided_layout(result_shape, result_stride);
+    }
+
+    // XXX the return type of this is some type of strided_layout
+    template<slicer_for<S> K>
+    constexpr auto dice(const K& katana) const
+    {
+      auto result_shape = dice_coordinate(shape(), katana);
+      auto result_stride = dice_coordinate(stride(), katana);
+      return make_strided_layout(result_shape, result_stride);
     }
 
   private:
