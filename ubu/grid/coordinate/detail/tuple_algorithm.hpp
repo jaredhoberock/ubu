@@ -990,6 +990,27 @@ constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, s
 }
 
 
+template<tuple_like R>
+constexpr tuple_like auto tuple_cat_similar_to()
+{
+  return make_tuple_similar_to<R>();
+}
+
+
+template<tuple_like R, tuple_like T, std::size_t... I>
+constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, T&& t)
+{
+  return make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
+}
+
+
+template<tuple_like R, tuple_like T>
+constexpr tuple_like auto tuple_cat_similar_to(T&& t)
+{
+  return tuple_cat_similar_to_impl<T>(tuple_indices<T>, std::forward<T>(t));
+}
+
+
 template<tuple_like R, tuple_like T1, tuple_like T2>
 constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2)
 {
