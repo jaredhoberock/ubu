@@ -1178,6 +1178,20 @@ constexpr pair_like auto unzip_innermost_pairs(const T& tuple)
 }
 
 
+template<ubu::detail::tuple_like T, class F, std::size_t... I>
+constexpr auto unpack_and_invoke_impl(T&& arg, F&& f, std::index_sequence<I...>)
+{
+  return std::invoke(std::forward<F>(f), get<I>(std::forward<T>(arg))...);
+}
+
+template<ubu::detail::tuple_like T, class F>
+constexpr auto unpack_and_invoke(T&& args, F&& f)
+{
+  auto indices = tuple_indices<T>;
+  return unpack_and_invoke_impl(std::forward<T>(args), std::forward<F>(f), indices);
+}
+
+
 } // end ubu::detail
 
 
