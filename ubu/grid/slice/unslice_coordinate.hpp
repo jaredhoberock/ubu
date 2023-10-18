@@ -47,7 +47,8 @@ constexpr slicer auto unslice_coordinate_impl(const K& katana, const Cs&... cs)
     // tuple the cs
     tuple_like auto tupled_cs = std::make_tuple(cs...);
 
-    // separate the cs into the first n going towards the katana's head and the remainder going to the tail
+    // separate the cs into the first n going towards the katana's head
+    // and the remainder going to the tail
     tuple_like auto head_cs = tuple_take<n>(tupled_cs);
     tuple_like auto tail_cs = tuple_drop<n>(tupled_cs);
 
@@ -80,7 +81,7 @@ constexpr ubu::slicer auto unslice_coordinate(const C& coord, const K& katana)
   if constexpr(coordinate<C> and rank_v<C> == 1)
   {
     // we don't unpack rank-1 coordinates (even if they are singles) when calling the impl
-    return unslice_coordinate_impl(katana, coord);
+    return detail::unslice_coordinate_impl(katana, coord);
   }
   else if constexpr(detail::tuple_like<C> and std::tuple_size_v<C> == 1)
   {
