@@ -59,13 +59,53 @@ concept nonscalar_slicer = detail::is_nonscalar_slicer<T>::value;
 template<class T>
 concept slicer = scalar_slicer<T> or nonscalar_slicer<T>;
 
-// a slicer without any underscore is just a coordinate
-template<class S>
-concept slicer_without_underscore = coordinate<S>;
+namespace detail
+{
 
-// a slicer with an underscore
+template<slicer S>
+constexpr std::size_t underscore_count_v_impl()
+{
+  if constexpr(is_underscore_v<S>)
+  {
+    return 1;
+  }
+  else if constexpr(std::integral<S> or unit_like<S>)
+  {
+    return 0;
+  }
+  else if constexpr(tuple_like<S>)
+  {
+    using tuple_head_t = std::tuple_element_t<0,S>;
+    using tuple_tail_t = decltype(tuple_drop_first(std::declval<S>()));
+
+    // recurse down the head and tail and sum the results
+    return underscore_count_v_impl<tuple_head_t>() + underscore_count_v_impl<tuple_tail_t>();
+  }
+  else
+  {
+    static_assert("underscore_count: bad S");
+  }
+}
+
+template<slicer S>
+constexpr std::size_t underscore_count_v = underscore_count_v_impl<S>();
+
+} // end detail
+
+
+// a slicer without any underscore
 template<class S>
-concept slicer_with_underscore = slicer<S> and (not slicer_without_underscore<S>);
+concept slicer_without_underscore =
+  slicer<S>
+  and (detail::underscore_count_v<S> == 0)
+;
+
+// a slicer with at least one underscore
+template<class S>
+concept slicer_with_underscore =
+  slicer<S>
+  and (detail::underscore_count_v<S> > 0)
+;
 
 
 namespace detail
