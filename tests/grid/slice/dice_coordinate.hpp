@@ -62,6 +62,6 @@ void test_dice_coordinate()
     tuple    coord(tuple(pair(1,2),3), tuple(4,5), tuple(6));
     tuple   katana(tuple(pair(_,2),_), _,          tuple(_));
     int expected                =2;
-    assert(expected == dice_coordinate(coord, katana));
+    assert(expected == ns::dice_coordinate(coord, katana));
   }
 }
