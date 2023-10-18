@@ -74,6 +74,10 @@ concept tuple_like_of_size =
 
 
 template<class T>
+concept unit_like = tuple_like_of_size<T,0>;
+
+
+template<class T>
 concept pair_like = tuple_like_of_size<T,2>;
 
 
