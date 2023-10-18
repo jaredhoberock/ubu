@@ -9,5 +9,7 @@
 #include "slice/slice_coordinate.hpp"
 #include "slice/slicer.hpp"
 #include "slice/underscore.hpp"
+#include "slice/unslice_coordinate.hpp"
+#include "slice/unslicer.hpp"
 
 #include "../detail/epilogue.hpp"
