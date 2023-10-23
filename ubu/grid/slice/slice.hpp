@@ -43,7 +43,7 @@ struct dispatch_slice
               and not has_slice_free_function<A&&,K&&>)
   constexpr void operator()(A&& arg, K&& katana) const
   {
-    static_assert(sizeof(A) != 0, "slice(grid) default not yet implemented.");
+    static_assert(sizeof(A) == 0, "slice(grid) default not yet implemented.");
   }
 };
 

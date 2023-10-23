@@ -43,7 +43,7 @@ struct dispatch_dice
               and not has_dice_free_function<A&&,K&&>)
   constexpr void operator()(A&& arg, K&& katana) const
   {
-    static_assert(sizeof(A) != 0, "dice(grid) default not yet implemented.");
+    static_assert(sizeof(A) == 0, "dice(grid) default not yet implemented.");
   }
 };
 
