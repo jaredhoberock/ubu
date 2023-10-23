@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../grid.hpp"
+#include "slice_view.hpp"
 #include "slicer.hpp"
 
 namespace ubu
@@ -41,9 +42,9 @@ struct dispatch_slice
   template<grid A, slicer_for<grid_shape_t<A>> K>
     requires (not has_slice_member_function<A&&,K&&>
               and not has_slice_free_function<A&&,K&&>)
-  constexpr void operator()(A&& arg, K&& katana) const
+  constexpr grid auto operator()(A&& arg, K&& katana) const
   {
-    static_assert(sizeof(A) == 0, "slice(grid) default not yet implemented.");
+    return slice_view(std::forward<A>(arg), std::forward<K>(katana));
   }
 };
 

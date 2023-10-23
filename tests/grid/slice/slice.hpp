@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <ubu/grid/domain.hpp>
+#include <ubu/grid/lattice.hpp>
 #include <ubu/grid/layout/strided_layout.hpp>
 #include <ubu/grid/shape/shape_size.hpp>
 #include <ubu/grid/slice/slice.hpp>
@@ -50,7 +51,7 @@ constexpr auto partition_for_reduction(const T* ptr, std::size_t n)
   return ns::view(ptr, ns::strided_layout(shape, stride));
 }
 
-void test_slice()
+void test1()
 {
   // this number is chosen so that it will be evenly divided by the partitioning of partition_for_reduction
   std::size_t n = 32*32*11*6*2;
@@ -100,5 +101,69 @@ void test_slice()
       }
     }
   }
+}
+
+void test2()
+{
+  using namespace ns;
+
+  lattice grid(ns::int3(3,4,5));
+
+  // slice each inner dimension
+  for(int i = 0; i != shape(grid)[0]; ++i)
+  {
+    auto s = slice(grid, std::tuple(i, _, _));
+
+    for(ns::int2 jk : domain(s))
+    {
+      ns::int3 ijk(i, jk[0], jk[1]);
+
+      if(s[jk] != grid[ijk])
+      {
+        std::cerr << "ijk: " << ijk << ", grid[ijk]: " << grid[ijk] << std::endl;
+      }
+      assert(s[jk] == grid[ijk]);
+    }
+  }
+
+  // slice each middle dimension
+  for(int j = 0; j != shape(grid)[1]; ++j)
+  {
+    auto s = slice(grid, std::tuple(_, j, _));
+
+    for(ns::int2 ik : domain(s))
+    {
+      ns::int3 ijk(ik[0], j, ik[1]);
+
+      if(s[ik] != grid[ijk])
+      {
+        std::cerr << "ijk: " << ijk << ", grid[ijk]: " << grid[ijk] << std::endl;
+      }
+      assert(s[ik] == grid[ijk]);
+    }
+  }
+
+  // slice each outer dimension
+  for(int k = 0; k != shape(grid)[2]; ++k)
+  {
+    auto s = slice(grid, std::tuple(_, _, k));
+
+    for(ns::int2 ij : domain(s))
+    {
+      ns::int3 ijk(ij[0], ij[1], k);
+
+      if(s[ij] != grid[ijk])
+      {
+        std::cerr << "ijk: " << ijk << ", grid[ijk]: " << grid[ijk] << std::endl;
+      }
+      assert(s[ij] == grid[ijk]);
+    }
+  }
+}
+
+void test_slice()
+{
+  test1();
+  test2();
 }
 
