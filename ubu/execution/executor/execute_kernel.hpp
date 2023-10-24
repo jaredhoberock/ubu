@@ -22,10 +22,17 @@ namespace ubu
 namespace detail
 {
 
+template<class E, class S, class F>
+concept can_bulk_execute_after = requires(E ex, S shape, F f)
+{
+  wait(bulk_execute_after(ex, first_cause(ex), shape, f));
+};
 
-// when shape does match executor's coordinate type
-template<executor E, std::invocable<executor_coordinate_t<E>> F>
-void default_execute_kernel(E ex, const executor_coordinate_t<E>& shape, F&& f)
+
+// when bulk_execute_after can be called directly with the arguments
+template<executor E, coordinate S, std::invocable<S> F>
+  requires can_bulk_execute_after<E,S&,F&&>
+void default_execute_kernel(E ex, const S& shape, F&& f)
 {
   // XXX it would be more convenient to call a bulk_execute CPO
   auto finished = bulk_execute_after(ex, first_cause(ex), shape, std::forward<F>(f));
@@ -34,9 +41,9 @@ void default_execute_kernel(E ex, const executor_coordinate_t<E>& shape, F&& f)
 }
 
 
-// when shape does not match executor's coordinate type
+// when bulk_execute_after cannot be called directly with the arguments
 template<executor E, coordinate S, std::invocable<S> F>
-  requires (not std::same_as<S,executor_coordinate_t<E>>)
+  requires (not can_bulk_execute_after<E,S&,F&&>)
 void default_execute_kernel(E ex, const S& user_shape, F&& f)
 {
   // to_user_coord is a layout which maps a coordinate originating from
