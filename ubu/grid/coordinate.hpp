@@ -5,6 +5,7 @@
 #include "coordinate/colexicographical_lift.hpp"
 #include "coordinate/compare.hpp"
 #include "coordinate/congruent.hpp"
+#include "coordinate/coord.hpp"
 #include "coordinate/coordinate.hpp"
 #include "coordinate/coordinate_cast.hpp"
 #include "coordinate/coordinate_difference.hpp"
