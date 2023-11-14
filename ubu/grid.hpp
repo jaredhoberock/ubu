@@ -32,10 +32,11 @@
 #include "grid/domain.hpp"
 #include "grid/fancy_span.hpp"
 #include "grid/grid.hpp"
+#include "grid/iterator.hpp"
 #include "grid/lattice.hpp"
 #include "grid/layout.hpp"
-#include "grid/layout.hpp"
 #include "grid/shape.hpp"
+#include "grid/size.hpp"
 #include "grid/slice.hpp"
 #include "grid/view.hpp"
 
