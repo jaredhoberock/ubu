@@ -5,6 +5,7 @@
 #include "../coordinate_difference.hpp"
 #include "../coordinate_sum.hpp"
 #include "../ones.hpp"
+#include "../zeros.hpp"
 #include "colexicographical_advance.hpp"
 #include "colexicographical_decrement.hpp"
 #include "colexicographical_increment.hpp"
@@ -31,6 +32,12 @@ class colexicographical_iterator
 
     constexpr colexicographical_iterator(const T& origin, const T& shape)
       : colexicographical_iterator(origin, origin, shape)
+    {}
+
+    // this ctor overload assumes that the user is asking for an iterator pointing
+    // to the first coordinate of a grid whose origin is at zeros<T> of the given shape
+    constexpr colexicographical_iterator(const T& shape)
+      : colexicographical_iterator(zeros<T>, shape)
     {}
 
     constexpr colexicographical_iterator(const colexicographical_iterator&) = default;
@@ -135,6 +142,12 @@ class colexicographical_iterator
       T result = last_value(origin, shape);
       colexicographical_increment(result, origin, coordinate_sum(origin, shape));
       return result;
+    }
+
+    // this overload of end_value assumes the origin is at zeros<T>
+    constexpr static T end_value(const T& shape)
+    {
+      return end_value(zeros<T>, shape);
     }
 
     constexpr static T last_value(const T& origin, const T& shape)

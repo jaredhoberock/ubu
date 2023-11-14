@@ -33,6 +33,12 @@ class lexicographical_iterator
       : lexicographical_iterator(origin, origin, shape)
     {}
 
+    // this ctor overload assumes that the user is asking for an iterator pointing
+    // to the first coordinate of a grid whose origin is at zeros<T> of the given shape
+    constexpr lexicographical_iterator(const T& shape)
+      : lexicographical_iterator(zeros<T>, shape)
+    {}
+
     constexpr lexicographical_iterator(const lexicographical_iterator&) = default;
 
     constexpr reference operator*() const
@@ -135,6 +141,12 @@ class lexicographical_iterator
       T result = last_value(origin, shape);
       lexicographical_increment(result, origin, coordinate_sum(origin, shape));
       return result;
+    }
+
+    // this overload of end_value assumes the origin is at zeros<T>
+    constexpr static T end_value(const T& shape)
+    {
+      return end_value(zeros<T>, shape);
     }
 
     constexpr static T last_value(const T& origin, const T& shape)
