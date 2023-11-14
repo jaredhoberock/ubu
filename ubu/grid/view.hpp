@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "grid.hpp"
+#include "iterator.hpp"
 #include "layout/layout.hpp"
 #include "shape/shape.hpp"
 #include "slice/crop_bottom.hpp"
@@ -51,6 +52,20 @@ class view
       return layout_;
     }
 
+    // begin and end are templates because grid_iterator requires its template
+    // parameter to be a complete type
+    template<class Self = view>
+    constexpr grid_iterator<Self> begin() const
+    {
+      return {*this};
+    }
+    
+    template<class Self = view>
+    constexpr grid_sentinel<Self> end() const
+    {
+      return {};
+    }
+
     // XXX this returns some type of view
     template<slicer_for<shape_type> K>
     constexpr ubu::grid auto slice(const K& katana) const
@@ -70,6 +85,7 @@ class view
     Grid grid_;
     Layout layout_;
 };
+
 
 } // end ubu
 
