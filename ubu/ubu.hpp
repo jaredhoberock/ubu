@@ -29,6 +29,7 @@
 #include "detail/prologue.hpp"
 
 #include "causality.hpp"
+#include "cooperation.hpp"
 #include "execution.hpp"
 #include "grid.hpp"
 #include "memory.hpp"
