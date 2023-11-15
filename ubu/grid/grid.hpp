@@ -34,8 +34,12 @@ concept grid =
   and indexable_by<T, shape_t<T>>
 ;
 
-// XXX it might be more consistent with the allocator/executor stuff if we named this
-//     grid_coordinate_t instead of grid_shape_t, especially considering we already have the name shape_t
+// XXX in addition to grid_shape_t, I think we also need grid_coordinate_t
+//     in some important cases, the coordinate type will differ from the shape type
+//     for example, grids whose shape is known to be a constant at compile time
+//     would have a grid_shape_t like std::integral_constant, while their coordinate type would still
+//     need to vary dynamically
+
 template<grid T>
 using grid_shape_t = shape_t<T>;
 
