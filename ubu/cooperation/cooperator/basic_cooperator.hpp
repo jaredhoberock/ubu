@@ -27,9 +27,9 @@ template<barrier_like B, coordinate S = int, coordinate C = S>
   requires std::copyable<B>
 struct basic_cooperator
 {
-  const B barrier;
-  const S shape;
   const C coord;
+  const S shape;
+  const B barrier;
 
   // this ctor creates a child cooperator (e.g. a warp) from its parent hierarchical_cooperator
   // XXX we should enable the construction of any grandchild of arbitrary depth
@@ -39,8 +39,8 @@ struct basic_cooperator
     : basic_cooperator(descend(parent))
   {}
 
-  constexpr basic_cooperator(const B& b, const S& s, const C& c)
-    : barrier{b}, shape{s}, coord{c}
+  constexpr basic_cooperator(const C& c, const S& s, const B& b = B{})
+    : coord{c}, shape{s}, barrier{b}
   {}
 
   constexpr void synchronize() const
@@ -53,7 +53,7 @@ struct basic_cooperator
   constexpr basic_cooperator<B, OtherS> reshape(const OtherS& new_shape) const
   {
     auto new_coord = colexicographical_lift(id(*this), new_shape);
-    return {barrier, new_shape, new_coord};
+    return {new_coord, new_shape, barrier};
   }
 
   // this overload of descend_with_group_coord requires at least rank 2
@@ -69,7 +69,7 @@ struct basic_cooperator
     auto child_group_coord = tuple_last(coord);
     auto local_barrier = get_local_barrier(barrier);
 
-    return std::pair(make_basic_cooperator(local_barrier, child_shape, child_coord), child_group_coord);
+    return std::pair(make_basic_cooperator(child_coord, child_shape, local_barrier), child_group_coord);
   }
 
   // returns the pair (child_cooperator, child_group_coord)
@@ -102,9 +102,9 @@ struct basic_cooperator
 
   private:
     template<barrier_like OtherB, coordinate OtherS, coordinate OtherC>
-    static constexpr basic_cooperator<OtherB,OtherS,OtherC> make_basic_cooperator(OtherB b, OtherS s, OtherC c)
+    static constexpr basic_cooperator<OtherB,OtherS,OtherC> make_basic_cooperator(OtherC c, OtherS s, OtherB b)
     {
-      return {b, s, c};
+      return {c, s, b};
     }
 };
 

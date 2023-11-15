@@ -45,7 +45,7 @@ static_assert(std::same_as<warp, ns::child_cooperator_t<block>>);
 void test_basic_cooperator()
 {
   {
-    block self(cta_barrier(), 32*32, 0);
+    block self(0, 32*32, cta_barrier());
 
     auto [w, warp_id] = ns::descend_with_group_coord(self);
     static_assert(std::same_as<warp, decltype(w)>);
@@ -61,7 +61,7 @@ void test_basic_cooperator()
   {
     using block2d = ns::basic_cooperator<cta_barrier, ns::int2>;
 
-    block2d self(cta_barrier(), ns::int2(32,32), ns::int2(0,0));
+    block2d self(ns::int2(0,0), ns::int2(32,32), cta_barrier());
 
     auto [w, warp_id] = ns::descend_with_group_coord(self);
     static_assert(std::same_as<warp, decltype(w)>);
