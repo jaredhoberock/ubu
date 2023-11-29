@@ -4,6 +4,7 @@
 
 #include "barrier/arrive_and_wait.hpp"
 #include "barrier/barrier_like.hpp"
+#include "barrier/get_barrier.hpp"
 #include "barrier/get_local_barrier.hpp"
 #include "barrier/hierarchical_barrier_like.hpp"
 #include "barrier/sized_barrier_like.hpp"
