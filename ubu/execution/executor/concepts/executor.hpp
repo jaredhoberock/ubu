@@ -12,16 +12,19 @@
 namespace ubu
 {
 
+template<class E, class H, class F>
+concept dependent_executor_of =
+  std::equality_comparable<E>
+  and executable_on<F, E, H>
+;
+
 template<class E, class F>
 concept executor_of =
-  std::equality_comparable<E>
-
-  and requires(E e)
+  requires(E e)
   {
-    {first_cause(e)} -> happening;
+    first_cause(e);
   }
-
-  and executable_on<F, E, first_cause_result_t<E>>
+  and dependent_executor_of<E, first_cause_result_t<E>, F>
 ;
 
 template<class E>

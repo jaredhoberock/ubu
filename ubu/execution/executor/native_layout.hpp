@@ -5,7 +5,7 @@
 #include "../../grid/layout/column_major.hpp"
 #include "../../grid/layout/layout.hpp"
 #include "concepts/executor.hpp"
-#include "executor_coordinate.hpp"
+#include "traits/executor_coordinate.hpp"
 #include <utility>
 
 // The purpose of this CPO is for objects which produce coordinates to be able to describe a linear ordering with a "native" layout 

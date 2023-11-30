@@ -10,9 +10,9 @@
 #include "bulk_execution_grid.hpp"
 #include "concepts/executor.hpp"
 #include "dependent_on.hpp"
-#include "executor_coordinate.hpp"
-#include "executor_happening.hpp"
 #include "execute_after.hpp"
+#include "traits/executor_coordinate.hpp"
+#include "traits/executor_happening.hpp"
 
 #include <utility>
 #include <vector>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "bulk_execution_grid.hpp"
-#include "concepts/executor.hpp"
+#include "../bulk_execution_grid.hpp"
+#include "../concepts/executor.hpp"
 
 namespace ubu
 {
@@ -14,5 +14,5 @@ using executor_coordinate_t = decltype(bulk_execution_grid(std::declval<E>(), st
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

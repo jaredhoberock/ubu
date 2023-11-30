@@ -5,7 +5,7 @@
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../grid/shape/shape_size.hpp"
 #include "concepts/executor.hpp"
-#include "executor_happening.hpp"
+#include "traits/executor_happening.hpp"
 #include <concepts>
 #include <cstdint>
 

@@ -11,6 +11,8 @@ namespace ubu
 {
 
 
+// XXX consider a reorganization that would organize the happening and the invocable
+//     into a single "executable" concept
 template<class F, class E, class H = first_cause_result_t<E>>
 concept executable_on =
   ubu::happening<H>
