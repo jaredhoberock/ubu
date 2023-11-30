@@ -21,7 +21,7 @@ class graph_executor
   public:
     constexpr static std::size_t default_on_chip_heap_size = -1;
 
-    using coordinate_type = thread_id;
+    using shape_type = thread_id;
     using happening_type = graph_node;
 
     inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t on_chip_heap_size)
@@ -66,13 +66,13 @@ class graph_executor
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    constexpr static coordinate_type bulk_execution_grid(std::size_t n)
+    constexpr static shape_type bulk_execution_grid(std::size_t n)
     {
       return device_executor::bulk_execution_grid(n);
     }
   
-    template<std::invocable<coordinate_type> F>
-    graph_node bulk_execute_after(const graph_node& before, coordinate_type shape, F f) const
+    template<std::invocable<shape_type> F>
+    graph_node bulk_execute_after(const graph_node& before, shape_type shape, F f) const
     {
       if(before.graph() != graph())
       {
@@ -100,7 +100,7 @@ class graph_executor
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return bulk_execute_after(before, coordinate_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](coordinate_type)
+      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);

@@ -59,7 +59,7 @@ class device_executor
   public:
     constexpr static std::size_t default_on_chip_heap_size = -1;
 
-    using coordinate_type = thread_id;
+    using shape_type = thread_id;
     using happening_type = cuda::event;
 
     constexpr device_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
@@ -78,7 +78,7 @@ class device_executor
 
     device_executor(const device_executor&) = default;
 
-    constexpr static coordinate_type bulk_execution_grid(std::size_t n)
+    constexpr static shape_type bulk_execution_grid(std::size_t n)
     {
       int block_size = 128;
 
@@ -90,12 +90,12 @@ class device_executor
 
       int num_blocks = (n + block_size - 1) / block_size;
 
-      return coordinate_type{{block_size, 1, 1}, {num_blocks, 1, 1}};
+      return shape_type{{block_size, 1, 1}, {num_blocks, 1, 1}};
     }
 
-    template<std::regular_invocable<coordinate_type> F>
+    template<std::regular_invocable<shape_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute_after(const event& before, coordinate_type shape, F f) const
+    inline event bulk_execute_after(const event& before, shape_type shape, F f) const
     {
       // make the stream wait on the before event
       detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "device_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
@@ -129,11 +129,11 @@ class device_executor
     inline event bulk_execute_after(const event& before, int2 shape, F f) const
     {
       // map the int2 to {{bx,by,bz}, {gx,gy,gz}}
-      coordinate_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return bulk_execute_after(before, native_shape, [f](coordinate_type native_coord)
+      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
       {
-        // map the native coordinate_type back into an int2 and invoke
+        // map the native shape_type back into an int2 and invoke
         std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
       });
     }
@@ -143,7 +143,7 @@ class device_executor
       requires std::is_trivially_copyable_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, coordinate_type{int3{1,1,1}, int3{1,1,1}}, [f](coordinate_type)
+      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);

@@ -4,13 +4,30 @@
 
 #include "../bulk_execution_grid.hpp"
 #include "../concepts/executor.hpp"
+#include "executor_shape.hpp"
 
 namespace ubu
 {
+namespace detail
+{
 
 template<class E>
-  requires executor<E>
-using executor_coordinate_t = decltype(bulk_execution_grid(std::declval<E>(), std::declval<std::size_t>()));
+struct executor_coordinate
+{
+  using type = executor_shape_t<E>;
+};
+
+template<class E>
+  requires requires { typename E::coordinate_type; }
+struct executor_coordinate<E>
+{
+  using type = typename E::coordinate_type;
+};
+
+} // end detail
+
+template<executor E>
+using executor_coordinate_t = typename detail::executor_coordinate<E>::type;
 
 } // end ubu
 

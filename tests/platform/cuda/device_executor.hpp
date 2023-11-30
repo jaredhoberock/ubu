@@ -36,8 +36,8 @@ void test_bulk_execution_grid()
 
 void test_concepts()
 {
-  static_assert(ns::coordinate<ns::cuda::device_executor::coordinate_type>);
-  static_assert(std::same_as<ns::cuda::device_executor::coordinate_type, ns::executor_coordinate_t<ns::cuda::device_executor>>);
+  static_assert(ns::coordinate<ns::cuda::device_executor::shape_type>);
+  static_assert(std::same_as<ns::cuda::device_executor::shape_type, ns::executor_coordinate_t<ns::cuda::device_executor>>);
   static_assert(ns::executor<ns::cuda::device_executor>);
 }
 
@@ -174,7 +174,7 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
   // partition the array shape into the device_executor's shape type
   // such that nearby threads touch nearby addresses
 
-  cuda::device_executor::coordinate_type shape
+  cuda::device_executor::shape_type shape
   {
     // (thread.x, thread.y, thread.z)
     {array_shape[5],array_shape[4],array_shape[3]},
