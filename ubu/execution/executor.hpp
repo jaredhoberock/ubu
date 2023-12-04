@@ -15,6 +15,7 @@
 #include "executor/inline_executor.hpp"
 #include "executor/kernel_layout.hpp"
 #include "executor/native_layout.hpp"
+#include "executor/new_bulk_execute_after.hpp"
 #include "executor/new_thread_executor.hpp"
 #include "executor/traits.hpp"
 
