@@ -8,8 +8,9 @@
 #include <concepts>
 #include <functional>
 
-
-namespace ubu::cpp
+namespace ubu
+{
+inline namespace cpp
 {
 
 
@@ -32,8 +33,8 @@ struct inline_executor
 };
 
 
-} // end ubu::cpp
-
+} // end cpp
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

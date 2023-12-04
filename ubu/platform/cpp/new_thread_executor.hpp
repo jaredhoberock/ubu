@@ -4,14 +4,16 @@
 
 #include <compare>
 #include <concepts>
+#include <functional>
 #include <future>
 #include <thread>
 #include <utility>
 
 
-namespace ubu::cpp
+namespace ubu
 {
-
+inline namespace cpp
+{
 
 struct new_thread_executor
 {
@@ -63,8 +65,8 @@ struct new_thread_executor
 };
 
 
-} // end ubu::cpp
-
+} // end cpp
+} // end ubu
 
 #include "../../detail/epilogue.hpp"
 

@@ -33,6 +33,7 @@
 #include "execution.hpp"
 #include "grid.hpp"
 #include "memory.hpp"
+#include "platform/cpp.hpp"
 
 #include "detail/epilogue.hpp"
 
