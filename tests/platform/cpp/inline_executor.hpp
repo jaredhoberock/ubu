@@ -1,6 +1,6 @@
 #include <ubu/causality/first_cause.hpp>
 #include <ubu/execution/executor/concepts/executor.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -22,13 +22,13 @@ void test()
 {
   {
     auto lambda = []{};
-    static_assert(ns::executor_of<ns::inline_executor, decltype(lambda)>);
+    static_assert(ns::executor_of<ns::cpp::inline_executor, decltype(lambda)>);
   }
 
   {
     bool invoked = false;
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     auto before = ns::first_cause(e);
 

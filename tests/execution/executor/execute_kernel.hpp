@@ -1,5 +1,5 @@
 #include <ubu/execution/executor/execute_kernel.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -66,7 +66,7 @@ void test()
   {
     // 1D shape with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
     int expected = 10;
@@ -78,7 +78,7 @@ void test()
   {
     // 2D shape with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
     ns::int2 shape{2,5};
@@ -90,7 +90,7 @@ void test()
   {
     // 3D shape with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
     ns::int3 shape{2,5,7};

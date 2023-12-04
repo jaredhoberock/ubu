@@ -1,7 +1,7 @@
 #include <ubu/causality/happening.hpp>
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor/execute_after.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -66,7 +66,7 @@ void test()
   }
 
   {
-    ns::inline_executor ex;
+    ns::cpp::inline_executor ex;
     ns::past_event before;
 
     bool invoked = false;

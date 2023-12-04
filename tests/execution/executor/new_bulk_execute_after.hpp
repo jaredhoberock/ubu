@@ -2,11 +2,11 @@
 #include <ranges>
 #include <ubu/causality/past_event.hpp>
 #include <ubu/causality/wait.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
 #include <ubu/execution/executor/new_bulk_execute_after.hpp>
 #include <ubu/grid/coordinate/point.hpp>
 #include <ubu/grid/lattice.hpp>
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -127,7 +127,7 @@ void test()
   {
     // 1D grid shape with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
 
@@ -152,7 +152,7 @@ void test()
   {
     // 2D grid shape with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
 
@@ -179,7 +179,7 @@ void test()
   {
     // 3D grid space with inline_executor
 
-    ns::inline_executor e;
+    ns::cpp::inline_executor e;
 
     int counter = 0;
 

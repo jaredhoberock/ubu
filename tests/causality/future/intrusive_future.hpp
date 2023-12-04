@@ -3,6 +3,7 @@
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor.hpp>
 #include <ubu/memory/allocator.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #define NDEBUG
 #include <cassert>
@@ -29,7 +30,7 @@ struct trivial_asynchronous_allocator : public std::allocator<T>
     return {};
   }
 
-  static ns::inline_executor associated_executor()
+  static ns::cpp::inline_executor associated_executor()
   {
     return {};
   }
@@ -80,7 +81,7 @@ template<class T>
 void test_then_after()
 {
   trivial_asynchronous_allocator<T> alloc;
-  ns::inline_executor ex;
+  ns::cpp::inline_executor ex;
 
   auto before = ns::first_cause(alloc);
   
@@ -112,7 +113,7 @@ template<class T>
 void test_then_with_allocator()
 {
   trivial_asynchronous_allocator<T> alloc;
-  ns::inline_executor ex;
+  ns::cpp::inline_executor ex;
 
   auto before = ns::first_cause(alloc);
   
@@ -142,7 +143,7 @@ template<class T>
 void test_then_with_executor()
 {
   trivial_asynchronous_allocator<T> alloc;
-  ns::inline_executor ex;
+  ns::cpp::inline_executor ex;
 
   auto before = ns::first_cause(alloc);
   
@@ -172,7 +173,7 @@ template<class T>
 void test_then()
 {
   trivial_asynchronous_allocator<T> alloc;
-  ns::inline_executor ex;
+  ns::cpp::inline_executor ex;
 
   auto before = ns::first_cause(alloc);
   

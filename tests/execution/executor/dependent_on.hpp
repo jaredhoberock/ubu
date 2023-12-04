@@ -2,7 +2,7 @@
 #include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/dependent_on.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -56,7 +56,7 @@ void test()
 
 
   {
-    ns::inline_executor ex;
+    ns::cpp::inline_executor ex;
 
     int expected = 3;
     int counter = 0;

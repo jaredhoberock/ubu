@@ -1,6 +1,6 @@
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -61,7 +61,7 @@ void test()
   }
 
   {
-    ns::inline_executor ex;
+    ns::cpp::inline_executor ex;
 
     bool invoked = false;
     auto e = ns::first_execute(ex, [&]{ invoked = true; });

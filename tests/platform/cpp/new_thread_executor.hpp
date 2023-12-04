@@ -3,7 +3,7 @@
 #include <ubu/execution/executor/execute_after.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/execution/executor/new_thread_executor.hpp>
+#include <ubu/platform/cpp/new_thread_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -17,13 +17,13 @@ void test_new_thread_executor()
 {
   {
     auto lambda = []{};
-    static_assert(ns::executor_of<ns::new_thread_executor, decltype(lambda)>);
+    static_assert(ns::executor_of<ns::cpp::new_thread_executor, decltype(lambda)>);
   }
 
   {
     bool invoked = false;
 
-    ns::new_thread_executor ex;
+    ns::cpp::new_thread_executor ex;
 
     auto before = ns::first_cause(ex);
 
@@ -39,7 +39,7 @@ void test_new_thread_executor()
   {
     bool invoked = false;
 
-    ns::new_thread_executor ex;
+    ns::cpp::new_thread_executor ex;
 
     auto e = ns::first_execute(ex, [&invoked]
     {
@@ -54,7 +54,7 @@ void test_new_thread_executor()
     bool invoked1 = false;
     bool invoked2 = false;
 
-    ns::new_thread_executor ex;
+    ns::cpp::new_thread_executor ex;
 
     auto e1 = ns::first_execute(ex, [&invoked1]
     {
@@ -75,7 +75,7 @@ void test_new_thread_executor()
     bool invoked1 = false;
     bool invoked2 = false;
 
-    ns::new_thread_executor ex;
+    ns::cpp::new_thread_executor ex;
 
     auto e1 = ns::first_execute(ex, [&invoked1]
     {

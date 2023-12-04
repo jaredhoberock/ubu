@@ -1,6 +1,6 @@
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor/concepts/bulk_executor.hpp>
-#include <ubu/execution/executor/inline_executor.hpp>
+#include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -18,7 +18,7 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
-struct has_new_bulk_execute_after_member : public ns::inline_executor
+struct has_new_bulk_execute_after_member : public ns::cpp::inline_executor
 {
   ns::past_event new_bulk_execute_after(ns::past_event, int n, int workspace_shape, auto&& f) const
   {
@@ -35,7 +35,7 @@ struct has_new_bulk_execute_after_member : public ns::inline_executor
 };
 
 
-struct has_new_bulk_execute_after_free_function : public ns::inline_executor
+struct has_new_bulk_execute_after_free_function : public ns::cpp::inline_executor
 {
 };
 

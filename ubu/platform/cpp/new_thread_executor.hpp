@@ -9,7 +9,7 @@
 #include <utility>
 
 
-namespace ubu
+namespace ubu::cpp
 {
 
 
@@ -63,7 +63,7 @@ struct new_thread_executor
 };
 
 
-} // end ubu
+} // end ubu::cpp
 
 
 #include "../../detail/epilogue.hpp"

@@ -9,7 +9,7 @@
 #include <functional>
 
 
-namespace ubu
+namespace ubu::cpp
 {
 
 
@@ -32,7 +32,7 @@ struct inline_executor
 };
 
 
-} // end ubu
+} // end ubu::cpp
 
 
 #include "../../detail/epilogue.hpp"
