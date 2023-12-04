@@ -2,7 +2,6 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../bulk_execution_grid.hpp"
 #include "../concepts/executor.hpp"
 #include "executor_shape.hpp"
 
