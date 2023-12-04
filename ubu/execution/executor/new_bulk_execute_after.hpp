@@ -21,13 +21,13 @@ namespace detail
 template<class E, class B, class S, class W, class F>
 concept has_new_bulk_execute_after_member_function = requires(E executor, B before, S grid_shape, W workspace_shape, F function)
 {
-  { executor.new_bulk_execute_after(before, grid_shape, workspace_shape, function) } -> happening;
+  { std::forward<E>(executor).new_bulk_execute_after(std::forward<B>(before), std::forward<S>(grid_shape), std::forward<W>(workspace_shape), std::forward<F>(function)) } -> happening;
 };
 
 template<class E, class B, class S, class W, class F>
 concept has_new_bulk_execute_after_free_function = requires(E executor, B before, S grid_shape, W workspace_shape, F function)
 {
-  { new_bulk_execute_after(executor, before, grid_shape, workspace_shape, function) } -> happening;
+  { new_bulk_execute_after(std::forward<E>(executor), std::forward<B>(before), std::forward<S>(grid_shape), std::forward<W>(workspace_shape), std::forward<F>(function)) } -> happening;
 };
 
 
@@ -56,7 +56,7 @@ class dispatch_new_bulk_execute_after
     template<executor E, happening B, coordinate S, std::regular_invocable<S, std::span<std::byte>> F>
       requires (not has_new_bulk_execute_after_member_function<E&&,B&&,const S&,std::size_t,F&&>
                 and not has_new_bulk_execute_after_free_function<E&&,B&&,const S&,std::size_t,F&&>
-                and dependent_executor_of<E&&,B&&,default_new_bulk_execute_after_invocable_t<S,F&&>>)
+                and has_default_new_bulk_execute_after<E&&,B&&,const S&,std::size_t,F&&>)
     constexpr executor_happening_t<E> operator()(E&& executor, B&& before, const S& grid_shape, std::size_t workspace_shape, F&& function) const
     {
       return default_new_bulk_execute_after(std::forward<E>(executor), std::forward<B>(before), grid_shape, workspace_shape, std::forward<F>(function));

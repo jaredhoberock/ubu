@@ -55,6 +55,13 @@ executor_happening_t<E> default_new_bulk_execute_after(E&& ex, H&& before, const
 }
 
 
+template<class E, class B, class S, class W, class F>
+concept has_default_new_bulk_execute_after = requires(E ex, B before, S shape, W workspace_shape, F f)
+{
+  { default_new_bulk_execute_after(std::forward<E>(ex), std::forward<B>(before), std::forward<W>(shape), std::forward<W>(workspace_shape), std::forward<F>(f)) } -> happening;
+};
+
+
 } // end ubu::detail
 
 #include "../../../detail/epilogue.hpp"
