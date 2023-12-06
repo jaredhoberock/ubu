@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../loader.hpp"
+#include "pointer_like.hpp"
 #include <concepts>
 #include <iterator>
 #include <type_traits>
@@ -178,6 +179,15 @@ class remote_ptr : private L
     const address_type& to_address() const noexcept
     {
       return address_;
+    }
+
+    // returns the underlying address as a raw pointer to T
+    // when the underlying address type is itself a raw pointer
+    template<class A = address_type>
+      requires pointer_like<A>
+    constexpr T* to_raw_pointer() const noexcept
+    {
+      return reinterpret_cast<T*>(to_address());
     }
 
     // returns the loader
