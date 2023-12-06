@@ -12,9 +12,9 @@
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_kernel.hpp"
 #include "detail/throw_on_error.hpp"
+#include "device_allocator.hpp"
 #include "event.hpp"
 #include "shmalloc.hpp"
-#include "temporary_allocator.hpp"
 #include "thread_id.hpp"
 #include <bit>
 #include <concepts>
@@ -287,7 +287,9 @@ class device_executor
     }
 
   private:
-    temporary_allocator<std::byte> get_allocator() const
+    // XXX this is only used to allocate a temporary buffer for new_bulk_execute_after
+    //     so, we should use a different type of allocator optimized for such use
+    device_allocator<std::byte> get_allocator() const
     {
       return {device_, stream_};
     }
