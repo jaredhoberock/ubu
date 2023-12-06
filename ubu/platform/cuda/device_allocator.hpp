@@ -43,8 +43,8 @@ class device_allocator : private device_memory_resource
 
     device_allocator(const device_allocator&) = default;
 
-    template<class OtherT>
-    device_allocator(const device_allocator<OtherT>& other)
+    template<class U>
+    device_allocator(const device_allocator<U>& other)
       : device_allocator{other.device(), other.stream()}
     {}
 
