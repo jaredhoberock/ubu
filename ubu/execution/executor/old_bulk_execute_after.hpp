@@ -107,7 +107,7 @@ class dispatch_old_bulk_execute_after
     constexpr auto non_native_old_bulk_execute_after(E&& executor, H&& before, G grid_shape, F&& function) const
     {
       // ask the executor for its preffered grid shape in its native coordinate system
-      executor_coordinate_t<E> native_grid_shape = bulk_execution_grid(executor, grid_shape);
+      executor_shape_t<E> native_grid_shape = bulk_execution_grid(executor, grid_shape);
 
       // create a grid of the user's requested coordinates
       lattice grid(grid_shape);

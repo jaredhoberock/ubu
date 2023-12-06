@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <span>
+#include <type_traits>
 
 namespace ubu
 {
@@ -17,10 +18,10 @@ struct executor_workspace
 };
 
 template<class E>
-  requires requires { typename E::workspace_type; }
+  requires requires { typename std::remove_cvref_t<E>::workspace_type; }
 struct executor_workspace<E>
 {
-  using type = typename E::workspace_type;
+  using type = typename std::remove_cvref_t<E>::workspace_type;
 };
 
 } // end detail

@@ -17,10 +17,10 @@ struct executor_coordinate
 };
 
 template<class E>
-  requires requires { typename E::coordinate_type; }
+  requires requires { typename std::remove_cvref_t<E>::coordinate_type; }
 struct executor_coordinate<E>
 {
-  using type = typename E::coordinate_type;
+  using type = typename std::remove_cvref_t<E>::coordinate_type;
 };
 
 } // end detail
