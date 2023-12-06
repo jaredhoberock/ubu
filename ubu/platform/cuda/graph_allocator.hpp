@@ -89,11 +89,6 @@ class graph_allocator
       return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.to_address()), stream()};
     }
 
-    const graph_executor associated_executor() const
-    {
-      return {graph(), device(), stream()};
-    }
-
     auto operator<=>(const graph_allocator&) const = default;
 
   private:

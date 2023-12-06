@@ -49,11 +49,6 @@ class device_allocator : private device_memory_resource
       : device_allocator{other.device()}
     {}
 
-    const device_executor associated_executor() const
-    {
-      return {device(), stream()};
-    }
-
     pointer allocate(std::size_t n) const
     {
       T* raw_ptr = reinterpret_cast<T*>(super_t::allocate(sizeof(T) * n));
