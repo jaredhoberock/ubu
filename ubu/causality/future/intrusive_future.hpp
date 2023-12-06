@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/for_each_arg.hpp"
-#include "../../execution/executor/associated_executor.hpp"
 #include "../../execution/executor/bulk_execute_after.hpp"
+#include "../../execution/executor/concepts/executor.hpp"
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../memory/allocator/allocator_delete.hpp"
 #include "../../memory/allocator/concepts/asynchronous_allocator.hpp"
@@ -28,7 +28,7 @@ namespace ubu
 
 
 // XXX rename this to something else
-template<class T, asynchronous_allocator_of<T> A, happening H = allocator_happening_t<A>>
+template<class T, asynchronous_allocator_of<T> A, executor E, happening H = allocator_happening_t<A>>
 class intrusive_future
 {
   public:
@@ -36,13 +36,14 @@ class intrusive_future
     using pointer = allocator_pointer_t<A,T>;
     using happening_type = H;
     using allocator_type = A;
+    using executor_type = E;
 
-    intrusive_future(std::tuple<allocator_type, happening_type, pointer>&& resources)
+    intrusive_future(std::tuple<allocator_type, executor_type, happening_type, pointer>&& resources)
       : resources_{std::move(resources)}
     {}
 
-    intrusive_future(happening_type&& ready, pointer ptr_to_value, const A& allocator) noexcept
-      : intrusive_future{std::forward_as_tuple(allocator, std::move(ready), ptr_to_value)}
+    intrusive_future(happening_type&& ready, pointer ptr_to_value, const A& allocator, const E& executor) noexcept
+      : intrusive_future{std::forward_as_tuple(allocator, executor, std::move(ready), ptr_to_value)}
     {}
 
     intrusive_future(intrusive_future&& other) noexcept
@@ -56,7 +57,7 @@ class intrusive_future
     {
       if(data())
       {
-        auto [alloc, ready, ptr] = std::move(*this).release();
+        auto [alloc, exec, ready, ptr] = std::move(*this).release();
         finally_delete_after(alloc, std::move(ready), ptr, 1);
       }
     }
@@ -74,6 +75,11 @@ class intrusive_future
     allocator_type allocator() const
     {
       return std::get<allocator_type>(resources_);
+    }
+
+    executor_type executor() const
+    {
+      return std::get<executor_type>(resources_);
     }
 
     void wait()
@@ -94,7 +100,7 @@ class intrusive_future
         maybe_result_.emplace(std::move(result));
 
         // release resources
-        auto [alloc, ready, ptr] = std::move(*this).release();
+        auto [alloc, ex, ready, ptr] = std::move(*this).release();
         allocator_delete(alloc, ptr);
       }
     }
@@ -108,7 +114,7 @@ class intrusive_future
       return result;
     }
 
-    std::tuple<allocator_type,happening_type,pointer> release() &&
+    std::tuple<allocator_type,executor_type,happening_type,pointer> release() &&
     {
       auto result = std::move(resources_);
 
@@ -121,7 +127,7 @@ class intrusive_future
     // invocable<S, T>
     // requires copyable<T>
     // XXX we should pass f a (raw) reference to the value rather than a pointer
-    template<executor Ex, coordinate S, std::regular_invocable<S,pointer> F,
+    template<ubu::executor Ex, coordinate S, std::regular_invocable<S,pointer> F,
              class Self = intrusive_future
             >
     intrusive_future then_bulk_execute(const Ex& ex, S grid_shape, F function) &&
@@ -149,12 +155,13 @@ class intrusive_future
     }
 
 
-    template<executor E, happening OtherH, class... Args, class... Ds, std::invocable<value_type&&,Args&&...> F,
+    template<ubu::executor OtherE, happening OtherH, class... Args, class... As, class... Es,
+             std::invocable<value_type&&,Args&&...> F,
              class R = std::invoke_result_t<F,value_type&&,Args&&...>,
              asynchronous_allocator_of<R> OtherA
             >
-    intrusive_future<R, OtherA>
-      then_after(const E& ex, const OtherA& alloc, OtherH&& before, F&& f, intrusive_future<Args,Ds>&&... future_args) &&
+    intrusive_future<R, OtherA, OtherE>
+      then_after(const OtherE& ex, const OtherA& alloc, OtherH&& before, F&& f, intrusive_future<Args,As,Es>&&... future_args) &&
     {
       // XXX we can't simply call invoke_after because it #includes this header file
       //return invoke_after(ex, alloc, std::forward<H>(before), std::forward<F>(f), std::move(*this), std::move(future_args)...);
@@ -176,12 +183,12 @@ class intrusive_future
         // schedule the deletion of the future_args after the result is ready
         detail::for_each_arg([&](auto&& future_arg)
         {
-          auto [alloc, _, ptr] = std::move(future_arg).release();
+          auto [alloc, exec, _, ptr] = std::move(future_arg).release();
           finally_delete_after(alloc, result_ready, ptr, 1);
         }, std::move(*this), std::move(future_args)...);
 
         // return a new future
-        return {std::move(result_ready), ptr_to_result, alloc};
+        return {std::move(result_ready), ptr_to_result, alloc, ex};
       }
       catch(...)
       {
@@ -190,44 +197,46 @@ class intrusive_future
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile
-      return {std::move(result_allocation_ready), ptr_to_result, alloc};
+      return {std::move(result_allocation_ready), ptr_to_result, alloc, ex};
     }
 
 
-    template<executor Ex, class... Args, class... As, std::invocable<value_type&&,Args&&...> F,
+    template<ubu::executor OtherE, class... Args, class... As, class... Es,
+             std::invocable<value_type&&,Args&&...> F,
              class R = std::invoke_result_t<F,value_type&&,Args&&...>,
              asynchronous_allocator_of<R> OtherA
             >
-    intrusive_future<R, OtherA>
-      then(const Ex& ex, const OtherA& alloc, F&& f, intrusive_future<Args,As>&&... future_args) &&
+    intrusive_future<R, OtherA, OtherE>
+      then(const OtherE& ex, const OtherA& alloc, F&& f, intrusive_future<Args,As,Es>&&... future_args) &&
     {
       // forward to then_after using our ready() happening as the before happening
       return std::move(*this).then_after(ex, alloc, ready(), std::forward<F>(f), std::move(future_args)...);
     }
 
 
-    template<executor Ex, class... Args, class... As, std::invocable<value_type&&,Args&&...> F,
+    template<ubu::executor OtherE, class... Args, class... As, class... Es,
+             std::invocable<value_type&&,Args&&...> F,
              class R = std::invoke_result_t<F,value_type&&,Args&&...>
             >
-    auto then(const Ex& ex, F&& f, intrusive_future<Args,As>&&... future_args) &&
+    auto then(const OtherE& ex, F&& f, intrusive_future<Args,As,Es>&&... future_args) &&
     {
       // forward with our allocator as a parameter
       return std::move(*this).then(ex, allocator(), std::forward<F>(f), std::move(future_args)...);
     }
 
 
-    template<class... Args, class... As, std::invocable<value_type&&,Args&&...> F,
+    template<class... Args, class... As, class... Es,
+             std::invocable<value_type&&,Args&&...> F,
              class R = std::invoke_result_t<F,value_type&&,Args&&...>
             >
-      requires executor_associate<A>
-    auto then(F&& f, intrusive_future<Args,As>&&... future_args) &&
+    auto then(F&& f, intrusive_future<Args,As,Es>&&... future_args) &&
     {
-      // get an executor from our allocator and forward to the more primitive method
-      return std::move(*this).then(associated_executor(allocator()), std::forward<F>(f), std::move(future_args)...);
+      // use our allocator and forward to the more primitive method
+      return std::move(*this).then(executor(), std::forward<F>(f), std::move(future_args)...);
     }
 
   private:
-    std::tuple<allocator_type, happening_type, pointer> resources_;
+    std::tuple<allocator_type, executor_type, happening_type, pointer> resources_;
     std::optional<value_type> maybe_result_;
 };
 
