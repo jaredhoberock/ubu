@@ -43,9 +43,9 @@ class device_allocator : private device_memory_resource
 
     device_allocator(const device_allocator&) = default;
 
-    template<class OtherU>
-    device_allocator(const device_allocator<OtherU>& other)
-      : device_allocator{other.device()}
+    template<class OtherT>
+    device_allocator(const device_allocator<OtherT>& other)
+      : device_allocator{other.device(), other.stream()}
     {}
 
     pointer allocate(std::size_t n) const
