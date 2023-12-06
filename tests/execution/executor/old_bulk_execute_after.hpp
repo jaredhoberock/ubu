@@ -1,6 +1,6 @@
 #include <ubu/causality/past_event.hpp>
 #include <ubu/causality/wait.hpp>
-#include <ubu/execution/executor/bulk_execute_after.hpp>
+#include <ubu/execution/executor/old_bulk_execute_after.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
 
 #undef NDEBUG
@@ -18,10 +18,10 @@ __global__ void device_invoke(F f)
 
 namespace ns = ubu;
 
-struct has_bulk_execute_after_member
+struct has_old_bulk_execute_after_member
 {
   template<class F>
-  ns::past_event bulk_execute_after(ns::past_event before, int n, F&& f) const
+  ns::past_event old_bulk_execute_after(ns::past_event before, int n, F&& f) const
   {
     before.wait();
 
@@ -35,10 +35,10 @@ struct has_bulk_execute_after_member
 };
 
 
-struct has_bulk_execute_after_free_function {};
+struct has_old_bulk_execute_after_free_function {};
 
 template<class F>
-ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event before, int n, F&& f)
+ns::past_event old_bulk_execute_after(const has_old_bulk_execute_after_free_function&, ns::past_event before, int n, F&& f)
 {
   before.wait();
 
@@ -54,28 +54,28 @@ ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, n
 void test()
 {
   {
-    has_bulk_execute_after_member e;
+    has_old_bulk_execute_after_member e;
 
     int counter = 0;
 
     ns::past_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::old_bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
   }
 
   {
-    has_bulk_execute_after_free_function e;
+    has_old_bulk_execute_after_free_function e;
 
     int counter = 0;
 
     ns::past_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::old_bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
@@ -91,7 +91,7 @@ void test()
     ns::past_event before;
     int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, [&](int){ ++counter; });
+    auto done = ns::old_bulk_execute_after(e, before, expected, [&](int){ ++counter; });
     ns::wait(done);
 
     assert(expected == counter);
@@ -108,7 +108,7 @@ void test()
 
     ns::int2 grid_shape{2,5};
 
-    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int2){ ++counter; });
+    auto done = ns::old_bulk_execute_after(e, before, grid_shape, [&](ns::int2){ ++counter; });
     ns::wait(done);
 
     assert(grid_shape.product() == counter);
@@ -125,14 +125,14 @@ void test()
 
     ns::int3 grid_shape{2,5,7};
 
-    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int3){ ++counter; });
+    auto done = ns::old_bulk_execute_after(e, before, grid_shape, [&](ns::int3){ ++counter; });
     ns::wait(done);
 
     assert(grid_shape.product() == counter);
   }
 }
 
-void test_bulk_execute_after()
+void test_old_bulk_execute_after()
 {
   test();
 

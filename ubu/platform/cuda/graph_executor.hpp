@@ -123,11 +123,11 @@ class graph_executor
     }
   
     template<std::invocable<shape_type> F>
-    graph_node bulk_execute_after(const graph_node& before, shape_type shape, F f) const
+    graph_node old_bulk_execute_after(const graph_node& before, shape_type shape, F f) const
     {
       if(before.graph() != graph())
       {
-        throw std::runtime_error("cuda::graph_executor::bulk_execute_after: before's graph differs from graph_executor's");
+        throw std::runtime_error("cuda::graph_executor::old_bulk_execute_after: before's graph differs from graph_executor's");
       }
       
       // convert the shape to dim3
@@ -151,7 +151,7 @@ class graph_executor
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
+      return old_bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);

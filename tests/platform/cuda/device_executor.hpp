@@ -1,12 +1,12 @@
 #include <array>
 #include <ubu/causality.hpp>
 #include <ubu/cooperation/workspace/get_local_workspace.hpp>
-#include <ubu/execution/executor/bulk_execute_after.hpp>
 #include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
+#include <ubu/execution/executor/old_bulk_execute_after.hpp>
 #include <ubu/grid/coordinate/colexicographical_lift.hpp>
 #include <ubu/grid/layout/stride/apply_stride.hpp>
 #include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
@@ -169,7 +169,7 @@ int hash(ns::cuda::thread_id coord)
 constexpr std::array<int,6> array_shape = {2, 4, 6, 8, 10, 12};
 __managed__ int array[2][4][6][8][10][12] = {};
 
-void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
+void test_old_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 {
   using namespace ns;
 
@@ -188,7 +188,7 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
   {
     cuda::event before = ns::first_cause(ex);
 
-    cuda::event e = ex.bulk_execute_after(before, shape, [=](ns::cuda::thread_id coord)
+    cuda::event e = ex.old_bulk_execute_after(before, shape, [=](ns::cuda::thread_id coord)
     {
       int result = hash(coord);
 
@@ -310,7 +310,7 @@ void test_new_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 
 
 template<ns::coordinate C>
-void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex, C shape)
+void test_old_bulk_execute_after_customization_point(ns::cuda::device_executor ex, C shape)
 {
   using namespace ns;
 
@@ -318,7 +318,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex, C
   {
     cuda::event before = ns::first_cause(ex);
 
-    cuda::event e = ns::bulk_execute_after(ex, before, shape, [=](C coord)
+    cuda::event e = ns::old_bulk_execute_after(ex, before, shape, [=](C coord)
     {
       int i = apply_stride(coord, compact_column_major_stride(shape));
       auto c = colexicographical_lift(i, array_shape);
@@ -472,15 +472,15 @@ void test(ns::cuda::device_executor ex)
   test_first_execute(ex);
   test_execute_after(ex);
 
-  test_bulk_execute_after_member_function(ex);
+  test_old_bulk_execute_after_member_function(ex);
   test_new_bulk_execute_after_member_function(ex);
 
-  test_bulk_execute_after_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
-  test_bulk_execute_after_customization_point(ex, ns::int2{array_shape[0]*array_shape[1]*array_shape[2], array_shape[3]*array_shape[4]*array_shape[5]});
-  test_bulk_execute_after_customization_point(ex, ns::int3{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4]*array_shape[5]});
-  test_bulk_execute_after_customization_point(ex, ns::int4{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4], array_shape[5]});
-  test_bulk_execute_after_customization_point(ex, ns::int5{array_shape[0]*array_shape[1], array_shape[2], array_shape[3], array_shape[4], array_shape[5]});
-  test_bulk_execute_after_customization_point(ex, array_shape);
+  test_old_bulk_execute_after_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
+  test_old_bulk_execute_after_customization_point(ex, ns::int2{array_shape[0]*array_shape[1]*array_shape[2], array_shape[3]*array_shape[4]*array_shape[5]});
+  test_old_bulk_execute_after_customization_point(ex, ns::int3{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4]*array_shape[5]});
+  test_old_bulk_execute_after_customization_point(ex, ns::int4{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4], array_shape[5]});
+  test_old_bulk_execute_after_customization_point(ex, ns::int5{array_shape[0]*array_shape[1], array_shape[2], array_shape[3], array_shape[4], array_shape[5]});
+  test_old_bulk_execute_after_customization_point(ex, array_shape);
 
   test_new_bulk_execute_after_customization_point(ex);
 

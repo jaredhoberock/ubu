@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/for_each_arg.hpp"
-#include "../../execution/executor/bulk_execute_after.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
+#include "../../execution/executor/old_bulk_execute_after.hpp"
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../memory/allocator/allocator_delete.hpp"
 #include "../../memory/allocator/concepts/asynchronous_allocator.hpp"
@@ -136,7 +136,7 @@ class intrusive_future
 
       try
       {
-        auto after_f = bulk_execute_after(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
+        auto after_f = old_bulk_execute_after(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
         {
           std::invoke(f, coord, ptr);
         });
@@ -147,7 +147,7 @@ class intrusive_future
       catch(...)
       {
         // XXX return an exceptional future
-        throw std::runtime_error("future::then_bulk_execute: bulk_execute_after failed");
+        throw std::runtime_error("future::then_bulk_execute: old_bulk_execute_after failed");
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile

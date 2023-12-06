@@ -210,10 +210,10 @@ class device_executor
 
     template<std::regular_invocable<shape_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute_after(const event& before, shape_type shape, F f) const
+    inline event old_bulk_execute_after(const event& before, shape_type shape, F f) const
     {
       // make the stream wait on the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "device_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
+      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "device_executor::old_bulk_execute_after: CUDA error after cudaStreamWaitEvent");
 
       // convert the shape to dim3s
       auto [block_dim, grid_dim] = as_dim3s(shape);
@@ -240,12 +240,12 @@ class device_executor
 
     template<std::regular_invocable<int2> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute_after(const event& before, int2 shape, F f) const
+    inline event old_bulk_execute_after(const event& before, int2 shape, F f) const
     {
       // map the int2 to {{bx,by,bz}, {gx,gy,gz}}
       shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
+      return old_bulk_execute_after(before, native_shape, [f](shape_type native_coord)
       {
         // map the native shape_type back into an int2 and invoke
         std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
@@ -257,7 +257,7 @@ class device_executor
       requires std::is_trivially_copyable_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
+      return old_bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
       {
         // ignore the incoming coordinate and just invoke the function
         std::invoke(f);

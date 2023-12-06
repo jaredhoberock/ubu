@@ -25,27 +25,27 @@ struct bulk_invocable_archetype
 
 
 template<class E, class C>
-concept has_bulk_execute_after_member_function_customization =
+concept has_old_bulk_execute_after_member_function_customization =
   requires(E ex, executor_happening_t<E> before, C grid_shape)
   {
-    {ex.bulk_execute_after(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
+    {ex.old_bulk_execute_after(before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
   }
 ;
 
 
 template<class E, class C>
-concept has_bulk_execute_after_free_function_customization =
+concept has_old_bulk_execute_after_free_function_customization =
   requires(E ex, executor_happening_t<E> before, C grid_shape)
   {
-    {bulk_execute_after(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
+    {old_bulk_execute_after(ex, before, grid_shape, bulk_invocable_archetype<C>{})} -> std::same_as<executor_happening_t<E>>;
   }
 ;
 
 
 template<class E, class C>
-concept has_bulk_execute_after_customization =
+concept has_old_bulk_execute_after_customization =
   executor<E> and 
-  (has_bulk_execute_after_member_function_customization<E, C> or has_bulk_execute_after_free_function_customization<E, C>)
+  (has_old_bulk_execute_after_member_function_customization<E, C> or has_old_bulk_execute_after_free_function_customization<E, C>)
 ;
 
 
@@ -56,7 +56,7 @@ concept has_bulk_execution_grid_member_function =
   {
     {ex.bulk_execution_grid(grid_shape)} -> coordinate;
 
-    requires has_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(grid_shape))>;
+    requires has_old_bulk_execute_after_customization<E, decltype(ex.bulk_execution_grid(grid_shape))>;
   }
 ;
 
@@ -67,7 +67,7 @@ concept has_bulk_execution_grid_free_function =
   {
     {bulk_execution_grid(ex,grid_shape)} -> coordinate;
 
-    requires has_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,grid_shape))>;
+    requires has_old_bulk_execute_after_customization<E, decltype(bulk_execution_grid(ex,grid_shape))>;
   }
 ;
 
