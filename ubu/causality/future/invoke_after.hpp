@@ -16,11 +16,12 @@ namespace ubu
 {
 
 
-template<executor E, happening H, class... Args, asynchronous_allocator... As, std::invocable<Args&&...> F,
+template<executor E, happening H, class... Args, asynchronous_allocator... As, executor... Es,
+         std::invocable<Args&&...> F,
          class R = std::invoke_result_t<F,Args&&...>,
          asynchronous_allocator_of<R> A
         >
-intrusive_future<R,A> invoke_after(const E& ex, const A& alloc, H&& before, F&& f, intrusive_future<Args,As>&&... future_args)
+intrusive_future<R,A,E> invoke_after(const E& ex, const A& alloc, H&& before, F&& f, intrusive_future<Args,As,Es>&&... future_args)
 {
   // allocate storage for the result after before is ready
   auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
@@ -39,12 +40,12 @@ intrusive_future<R,A> invoke_after(const E& ex, const A& alloc, H&& before, F&& 
     // schedule the deletion of the future_args after the result is ready
     detail::for_each_arg([&](auto&& future_arg)
     {
-      auto [alloc, _, ptr] = std::move(future_arg).release();
-      finally_delete_after(alloc, result_ready, ptr, 1);
+      auto [alloc, ex, _, ptr] = std::move(future_arg).release();
+      finally_delete_after(alloc, ex, result_ready, ptr, 1);
     }, std::move(future_args)...);
 
     // return a new future
-    return {std::move(result_ready), ptr_to_result, alloc};
+    return {std::move(result_ready), ptr_to_result, alloc, ex};
   }
   catch(...)
   {
@@ -53,7 +54,7 @@ intrusive_future<R,A> invoke_after(const E& ex, const A& alloc, H&& before, F&& 
   }
 
   // XXX until we can handle exceptions, just return this to make everything compile
-  return {std::move(result_allocation_ready), ptr_to_result, alloc};
+  return {std::move(result_allocation_ready), ptr_to_result, alloc, ex};
 }
 
 

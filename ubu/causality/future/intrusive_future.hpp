@@ -58,7 +58,7 @@ class intrusive_future
       if(data())
       {
         auto [alloc, exec, ready, ptr] = std::move(*this).release();
-        finally_delete_after(alloc, std::move(ready), ptr, 1);
+        finally_delete_after(alloc, exec, std::move(ready), ptr, 1);
       }
     }
 
@@ -184,7 +184,7 @@ class intrusive_future
         detail::for_each_arg([&](auto&& future_arg)
         {
           auto [alloc, exec, _, ptr] = std::move(future_arg).release();
-          finally_delete_after(alloc, result_ready, ptr, 1);
+          finally_delete_after(alloc, exec, result_ready, ptr, 1);
         }, std::move(*this), std::move(future_args)...);
 
         // return a new future
