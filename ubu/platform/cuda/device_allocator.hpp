@@ -4,7 +4,6 @@
 
 #include "../../detail/exception.hpp"
 #include "../../detail/reflection.hpp"
-#include "device_executor.hpp"
 #include "device_memory_resource.hpp"
 #include "device_ptr.hpp"
 #include "event.hpp"
