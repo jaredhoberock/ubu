@@ -115,7 +115,7 @@ void test_bulk_execution()
   int n = 10;
   std::atomic<int> counter = 0;
 
-  auto after = ns::new_bulk_execute_after(ex, std::move(before), n, n * sizeof(int), [&](int coord, ns::concurrent_workspace auto workspace)
+  auto after = ns::bulk_execute_after(ex, std::move(before), n, n * sizeof(int), [&](int coord, ns::concurrent_workspace auto workspace)
   {
     auto coords = ns::reinterpret_buffer<int>(ns::get_buffer(workspace));
     coords[coord] = coord;

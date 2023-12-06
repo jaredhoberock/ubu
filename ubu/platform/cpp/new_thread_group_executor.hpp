@@ -24,7 +24,7 @@ struct new_thread_group_executor: public new_thread_executor
   };
 
   template<std::invocable<std::size_t, workspace_type> F>
-  std::future<void> new_bulk_execute_after(std::future<void>&& before, std::size_t n, std::size_t workspace_size, F&& f) const
+  std::future<void> bulk_execute_after(std::future<void>&& before, std::size_t n, std::size_t workspace_size, F&& f) const
   {
     return this->execute_after(std::move(before), [=,f=std::forward<F>(f)]
     {

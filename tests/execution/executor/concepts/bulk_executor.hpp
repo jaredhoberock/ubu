@@ -18,9 +18,9 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
-struct has_new_bulk_execute_after_member : public ns::cpp::inline_executor
+struct has_bulk_execute_after_member : public ns::cpp::inline_executor
 {
-  ns::past_event new_bulk_execute_after(ns::past_event, int n, int workspace_shape, auto&& f) const
+  ns::past_event bulk_execute_after(ns::past_event, int n, int workspace_shape, auto&& f) const
   {
     std::vector<std::byte> buffer(workspace_shape);
     std::span workspace(buffer.data(), buffer.size());
@@ -35,11 +35,11 @@ struct has_new_bulk_execute_after_member : public ns::cpp::inline_executor
 };
 
 
-struct has_new_bulk_execute_after_free_function : public ns::cpp::inline_executor
+struct has_bulk_execute_after_free_function : public ns::cpp::inline_executor
 {
 };
 
-ns::past_event new_bulk_execute_after(const has_new_bulk_execute_after_free_function&, ns::past_event, int n, int workspace_shape, auto&& f)
+ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event, int n, int workspace_shape, auto&& f)
 {
   std::vector<std::byte> buffer(workspace_shape);
   std::span workspace(buffer.data(), buffer.size());
@@ -56,11 +56,11 @@ ns::past_event new_bulk_execute_after(const has_new_bulk_execute_after_free_func
 void test()
 {
   {
-    static_assert(ns::bulk_executor<has_new_bulk_execute_after_member>);
+    static_assert(ns::bulk_executor<has_bulk_execute_after_member>);
   }
 
   {
-    static_assert(ns::executor<has_new_bulk_execute_after_free_function>);
+    static_assert(ns::executor<has_bulk_execute_after_free_function>);
   }
 }
 
