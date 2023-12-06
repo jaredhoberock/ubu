@@ -15,6 +15,7 @@
 #include "cuda/managed_allocator.hpp"
 #include "cuda/managed_memory_resource.hpp"
 #include "cuda/shmalloc.hpp"
+#include "cuda/temporary_allocator.hpp"
 #include "cuda/thread_id.hpp"
 
 #include "../detail/epilogue.hpp"
