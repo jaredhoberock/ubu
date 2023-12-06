@@ -4,6 +4,7 @@
 
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
+#include "graph_allocator.hpp"
 #include "graph_node.hpp"
 #include <concepts>
 #include <cstdint>
@@ -23,6 +24,7 @@ class graph_executor
 
     using shape_type = thread_id;
     using happening_type = graph_node;
+    using workspace_type = detail::workspace_type;
 
     inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : graph_{graph},
@@ -69,6 +71,55 @@ class graph_executor
     constexpr static shape_type bulk_execution_grid(std::size_t n)
     {
       return device_executor::bulk_execution_grid(n);
+    }
+
+    template<std::regular_invocable<shape_type, workspace_type> F>
+      requires std::is_trivially_copyable_v<F>
+    inline graph_node new_bulk_execute_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const
+    {
+      if(before.graph() != graph())
+      {
+        throw std::runtime_error("cuda::graph_executor::new_bulk_execute_after: before's graph differs from graph_executor's");
+      }
+
+      // decompose workspace shape
+      auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
+
+      // get an allocator for the outer workspace buffer
+      allocator auto alloc = get_allocator();
+
+      // allocate an outer buffer after the before node
+      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_after<std::byte>(alloc, before, outer_buffer_size);
+
+      // convert the shape to dim3s
+      auto [block_dim, grid_dim] = as_dim3s(shape);
+
+      // create the function that will be launched as a kernel
+      std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
+      detail::invoke_with_builtin_cuda_indices_and_workspace<F> kernel{f, outer_buffer};
+
+      // create the kernel node
+      graph_node after_kernel{graph(), detail::make_kernel_node(graph(), outer_buffer_ready.native_handle(), grid_dim, block_dim, inner_buffer_size, device_, kernel), stream()};
+
+      // deallocate outer buffer after the kernel
+      return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
+    }
+
+    // this overload of new_bulk_execute_after just does a simple conversion of the user's shape type to shape_type
+    // and then calls the lower-level function
+    // XXX this is the kind of simple adaptation the new_bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
+    template<std::regular_invocable<int2, workspace_type> F>
+      requires std::is_trivially_copyable_v<F>
+    inline graph_node new_bulk_execute_after(const graph_node& before, int2 shape, int2 workspace_shape, F f) const
+    {
+      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
+      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+
+      return new_bulk_execute_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
+      {
+        // map the native shape_type back into an int2 and invoke
+        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x}, ws);
+      });
     }
   
     template<std::invocable<shape_type> F>
@@ -123,6 +174,21 @@ class graph_executor
     auto operator<=>(const graph_executor&) const = default;
 
   private:
+    // XXX this is only used to allocate a temporary buffer for new_bulk_execute_after
+    //     so, we should use a different type of allocator optimized for such use
+    graph_allocator<std::byte> get_allocator() const
+    {
+      return {graph_, device_, stream_};
+    }
+
+    constexpr static std::pair<dim3,dim3> as_dim3s(shape_type shape)
+    {
+      dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
+      dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
+
+      return {block_dim, grid_dim};
+    }
+
     cudaGraph_t graph_;
     int device_;
     cudaStream_t stream_;
