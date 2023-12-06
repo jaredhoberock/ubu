@@ -5,7 +5,6 @@
 #include "detail/graph_utility_functions.hpp"
 #include "device_allocator.hpp"
 #include "device_ptr.hpp"
-#include "graph_executor.hpp"
 #include "graph_node.hpp"
 #include <cuda_runtime.h>
 #include <stdexcept>
@@ -34,6 +33,11 @@ class graph_allocator
     {}
 
     graph_allocator(const graph_allocator&) = default;
+
+    template<class U>
+    graph_allocator(const graph_allocator<U>& other)
+      : graph_allocator{other.graph(), other.device(), other.stream()}
+    {}
 
     cudaGraph_t graph() const
     {
