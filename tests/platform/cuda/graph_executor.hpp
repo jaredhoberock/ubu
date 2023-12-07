@@ -46,6 +46,8 @@ void test_concepts()
   static_assert(ns::coordinate<ns::cuda::graph_executor::shape_type>);
   static_assert(std::same_as<ns::cuda::graph_executor::shape_type, ns::executor_coordinate_t<ns::cuda::graph_executor>>);
   static_assert(ns::executor<ns::cuda::graph_executor>);
+  static_assert(ns::hierarchical_workspace<ns::executor_workspace_t<ns::cuda::graph_executor>>);
+  static_assert(std::same_as<ns::int2, ns::executor_workspace_shape_t<ns::cuda::graph_executor>>);
 }
 
 
@@ -416,7 +418,7 @@ void test_execute_kernel_customization_point(ns::cuda::graph_executor ex, C shap
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
     });
 
-    for(int i = 0; i < ns::shape_size(array_shape); ++i)
+    for(int i = 0; i < shape_size(array_shape); ++i)
     {
       auto c = colexicographical_lift(i, array_shape);
 

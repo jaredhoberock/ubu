@@ -42,6 +42,8 @@ void test_concepts()
   static_assert(ns::coordinate<ns::cuda::device_executor::shape_type>);
   static_assert(std::same_as<ns::cuda::device_executor::shape_type, ns::executor_coordinate_t<ns::cuda::device_executor>>);
   static_assert(ns::executor<ns::cuda::device_executor>);
+  static_assert(ns::hierarchical_workspace<ns::executor_workspace_t<ns::cuda::device_executor>>);
+  static_assert(std::same_as<ns::int2, ns::executor_workspace_shape_t<ns::cuda::device_executor>>);
 }
 
 
