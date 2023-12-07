@@ -123,38 +123,12 @@ class graph_executor
       });
     }
   
-    template<std::invocable<shape_type> F>
-    graph_node old_bulk_execute_after(const graph_node& before, shape_type shape, F f) const
-    {
-      if(before.graph() != graph())
-      {
-        throw std::runtime_error("cuda::graph_executor::old_bulk_execute_after: before's graph differs from graph_executor's");
-      }
-      
-      // convert the shape to dim3
-      dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
-      dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)}; 
-
-      detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
-
-      // compute dynamic_shared_memory_size
-      int dynamic_shared_memory_size = (on_chip_heap_size_ == default_on_chip_heap_size) ?
-        detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
-        on_chip_heap_size_
-      ;
-
-      // tell the kernel the size of the on-chip heap
-      kernel.on_chip_heap_size = dynamic_shared_memory_size;
-
-      return {graph(), detail::make_kernel_node(graph(), before.native_handle(), grid_dim, block_dim, dynamic_shared_memory_size, device_, kernel), stream()};
-    }
-  
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return old_bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
+      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, int2(0,0), [f](shape_type, workspace_type)
       {
-        // ignore the incoming coordinate and just invoke the function
+        // ignore the incoming parameters and just invoke the function
         std::invoke(f);
       });
     }

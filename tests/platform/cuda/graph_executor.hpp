@@ -2,11 +2,9 @@
 #include <ubu/causality.hpp>
 #include <ubu/cooperation/workspace/get_local_workspace.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
-#include <ubu/execution/executor/bulk_execution_grid.hpp>
 #include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/execution/executor/old_bulk_execute_after.hpp>
 #include <ubu/grid/coordinate/colexicographical_lift.hpp>
 #include <ubu/grid/layout/stride/apply_stride.hpp>
 #include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
@@ -17,28 +15,6 @@
 #include <cassert>
 
 namespace ns = ubu;
-
-
-void test_bulk_execution_grid()
-{
-  using namespace ns;
-
-  cudaGraph_t g{};
-  assert(cudaSuccess == cudaGraphCreate(&g,0));
-
-  cuda::graph_executor ex{g};
-  cuda::thread_id result = bulk_execution_grid(ex, 128);
-
-  assert(128 == result.thread.x);
-  assert(  1 == result.thread.y);
-  assert(  1 == result.thread.z);
-
-  assert(1 == result.block.x);
-  assert(1 == result.block.y);
-  assert(1 == result.block.z);
-
-  assert(cudaSuccess == cudaGraphDestroy(g));
-}
 
 
 void test_concepts()
@@ -137,53 +113,6 @@ int hash(ns::cuda::thread_id coord)
 // this array has 3 + 3 axes to match blockIdx + threadIdx
 constexpr ns::int6 array_shape = {2, 4, 6, 8, 10, 12};
 __managed__ int array[2][4][6][8][10][12] = {};
-
-void test_old_bulk_execute_after_member_function(ns::cuda::graph_executor ex)
-{
-  using namespace ns;
-
-  // partition the array shape into the graph_executor's shape type
-  // such that nearby threads touch nearby addresses
-
-  cuda::graph_executor::shape_type shape
-  {
-    // (thread.x, thread.y, thread.z)
-    {array_shape[5],array_shape[4],array_shape[3]},
-    // (block.x, block.y, block.z)
-    {array_shape[2],array_shape[1],array_shape[0]}
-  };
-
-  try
-  {
-    auto before = ns::first_cause(ex);
-
-    auto e = ex.old_bulk_execute_after(before, shape, [=](ns::cuda::thread_id coord)
-    {
-      int result = hash(coord);
-
-      array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x] = result;
-    });
-
-    ns::wait(e);
-
-    for(auto coord : lattice(shape))
-    {
-      int expected = hash(coord);
-
-      int result = array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x];
-
-      assert(expected == result);
-    }
-  }
-  catch(std::runtime_error& e)
-  {
-#if defined(__CUDACC__)
-    assert(false);
-#endif
-  }
-}
-
-
 __managed__ int counter;
 
 
@@ -267,41 +196,6 @@ void test_bulk_execute_after_member_function(ns::cuda::graph_executor ex)
       int result = array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x];
 
       assert(expected == result);
-    }
-  }
-  catch(std::runtime_error& e)
-  {
-#if defined(__CUDACC__)
-    assert(false);
-#endif
-  }
-}
-
-
-template<ns::coordinate C>
-void test_old_bulk_execute_after_customization_point(ns::cuda::graph_executor ex, C shape)
-{
-  using namespace ns;
-
-  try
-  {
-    auto before = ns::first_cause(ex);
-
-    auto e = ns::old_bulk_execute_after(ex, before, shape, [=](C coord)
-    {
-      int i = apply_stride(coord, compact_column_major_stride(shape));
-      auto c = colexicographical_lift(i, array_shape);
-
-      array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
-    });
-
-    ns::wait(e);
-
-    for(int i = 0; i < ns::shape_size(array_shape); ++i)
-    {
-      auto c = colexicographical_lift(i, array_shape);
-
-      assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
     }
   }
   catch(std::runtime_error& e)
@@ -440,16 +334,7 @@ void test(ns::cuda::graph_executor ex)
   test_first_execute(ex);
   test_execute_after(ex);
 
-  test_old_bulk_execute_after_member_function(ex);
   test_bulk_execute_after_member_function(ex);
-
-  test_old_bulk_execute_after_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
-  test_old_bulk_execute_after_customization_point(ex, ns::int2{array_shape[0]*array_shape[1]*array_shape[2], array_shape[3]*array_shape[4]*array_shape[5]});
-  test_old_bulk_execute_after_customization_point(ex, ns::int3{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4]*array_shape[5]});
-  test_old_bulk_execute_after_customization_point(ex, ns::int4{array_shape[0]*array_shape[1], array_shape[2]*array_shape[3], array_shape[4], array_shape[5]});
-  test_old_bulk_execute_after_customization_point(ex, ns::int5{array_shape[0]*array_shape[1], array_shape[2], array_shape[3], array_shape[4], array_shape[5]});
-  test_old_bulk_execute_after_customization_point(ex, array_shape);
-
   test_bulk_execute_after_customization_point(ex);
 
   test_execute_kernel_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
@@ -494,7 +379,6 @@ void test_with_new_stream()
 
 void test_graph_executor()
 {
-  test_bulk_execution_grid();
   test_concepts();
   test_with_default_stream();
   test_with_new_stream();

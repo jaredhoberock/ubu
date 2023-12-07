@@ -3,9 +3,11 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/for_each_arg.hpp"
+#include "../../execution/executor/bulk_execute_after.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
-#include "../../execution/executor/old_bulk_execute_after.hpp"
+#include "../../execution/executor/traits/executor_workspace_shape.hpp"
 #include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/zeros.hpp"
 #include "../../memory/allocator/allocator_delete.hpp"
 #include "../../memory/allocator/concepts/asynchronous_allocator.hpp"
 #include "../../memory/allocator/finally_delete_after.hpp"
@@ -136,7 +138,10 @@ class intrusive_future
 
       try
       {
-        auto after_f = old_bulk_execute_after(ex, std::move(ready), grid_shape, [f = function, ptr = ptr](const S& coord)
+        // we don't need a workspace
+        auto workspace_shape = zeros<executor_workspace_shape_t<Ex>>;
+
+        auto after_f = old_bulk_execute_after(ex, std::move(ready), grid_shape, workspace_shape, [f = function, ptr = ptr](const S& coord, auto)
         {
           std::invoke(f, coord, ptr);
         });

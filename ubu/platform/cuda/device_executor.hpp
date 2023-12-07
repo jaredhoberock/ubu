@@ -211,58 +211,13 @@ class device_executor
       return shape_type{{block_size, 1, 1}, {num_blocks, 1, 1}};
     }
 
-    template<std::regular_invocable<shape_type> F>
-      requires std::is_trivially_copyable_v<F>
-    inline event old_bulk_execute_after(const event& before, shape_type shape, F f) const
-    {
-      // make the stream wait on the before event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, before.native_handle()), "device_executor::old_bulk_execute_after: CUDA error after cudaStreamWaitEvent");
-
-      // convert the shape to dim3s
-      auto [block_dim, grid_dim] = as_dim3s(shape);
-
-      // create the function that will be launched as a kernel
-      detail::init_shmalloc_and_invoke_with_builtin_cuda_indices<F> kernel{f,0};
-
-      // compute dynamic_shared_memory_size
-      int dynamic_shared_memory_size = (on_chip_heap_size_ == default_on_chip_heap_size) ?
-        detail::default_dynamic_shared_memory_size(device_, kernel, block_dim.x * block_dim.y * block_dim.z) :
-        on_chip_heap_size_
-      ;
-
-      // tell the kernel the size of the on-chip heap
-      kernel.on_chip_heap_size = dynamic_shared_memory_size;
-
-      // launch the kernel
-      detail::launch_as_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream_, device_, kernel);
-
-      // return a new event recorded on our stream
-      return {device_, stream_};
-    }
-
-
-    template<std::regular_invocable<int2> F>
-      requires std::is_trivially_copyable_v<F>
-    inline event old_bulk_execute_after(const event& before, int2 shape, F f) const
-    {
-      // map the int2 to {{bx,by,bz}, {gx,gy,gz}}
-      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
-
-      return old_bulk_execute_after(before, native_shape, [f](shape_type native_coord)
-      {
-        // map the native shape_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
-      });
-    }
-
-
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return old_bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
+      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, int2(0,0), [f](shape_type, workspace_type)
       {
-        // ignore the incoming coordinate and just invoke the function
+        // ignore the incoming parameters and just invoke the function
         std::invoke(f);
       });
     }

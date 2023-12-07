@@ -14,7 +14,6 @@
 #include "executor/first_execute.hpp"
 #include "executor/kernel_layout.hpp"
 #include "executor/native_layout.hpp"
-#include "executor/old_bulk_execute_after.hpp"
 #include "executor/traits.hpp"
 
 #include "../detail/epilogue.hpp"
