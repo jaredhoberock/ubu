@@ -25,6 +25,7 @@ class graph_executor
     using shape_type = thread_id;
     using happening_type = graph_node;
     using workspace_type = detail::workspace_type;
+    using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
     inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : graph_{graph},

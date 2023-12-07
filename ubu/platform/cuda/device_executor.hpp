@@ -60,10 +60,12 @@ struct init_shmalloc_and_invoke_with_builtin_cuda_indices
 
 struct workspace_type
 {
+  // XXX we should use small_span or similar with int size
   std::span<std::byte> buffer;
 
   struct local_workspace_type
   {
+    // XXX we should use small_span or similar with int size
     std::span<std::byte> buffer;
 
     struct barrier_type
@@ -126,6 +128,7 @@ class device_executor
     using shape_type = thread_id;
     using happening_type = cuda::event;
     using workspace_type = detail::workspace_type;
+    using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
     constexpr device_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
       : device_{device},
