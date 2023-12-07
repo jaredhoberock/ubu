@@ -69,11 +69,6 @@ class graph_executor
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    constexpr static shape_type bulk_execution_grid(std::size_t n)
-    {
-      return device_executor::bulk_execution_grid(n);
-    }
-
     template<std::regular_invocable<shape_type, workspace_type> F>
       requires std::is_trivially_copyable_v<F>
     inline graph_node bulk_execute_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const

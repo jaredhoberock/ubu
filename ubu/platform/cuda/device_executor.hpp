@@ -196,21 +196,6 @@ class device_executor
       });
     }
 
-    constexpr static shape_type bulk_execution_grid(std::size_t n)
-    {
-      int block_size = 128;
-
-      // if n happens to be a valid block size, use it for a single block launch
-      if(n % 32 == 0 and n <= 1024)
-      {
-        block_size = n;
-      }
-
-      int num_blocks = (n + block_size - 1) / block_size;
-
-      return shape_type{{block_size, 1, 1}, {num_blocks, 1, 1}};
-    }
-
     template<std::regular_invocable F>
       requires std::is_trivially_copyable_v<F>
     inline event execute_after(const event& before, F f) const
