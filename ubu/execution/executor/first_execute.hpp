@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../causality/first_cause.hpp"
 #include "../../causality/happening.hpp"
+#include "../../causality/initial_happening.hpp"
 #include "concepts/executor.hpp"
 #include "execute_after.hpp"
 #include <concepts>
@@ -56,7 +56,7 @@ struct dispatch_first_execute
     requires (!has_first_execute_member_function<E&&,F&&> and !has_first_execute_free_function<E&&,F&&>)
   constexpr auto operator()(E&& e, F&& f) const
   {
-    return execute_after(std::forward<E>(e), first_cause(std::forward<E>(e)), std::forward<F>(f));
+    return execute_after(std::forward<E>(e), initial_happening(std::forward<E>(e)), std::forward<F>(f));
   }
 };
 

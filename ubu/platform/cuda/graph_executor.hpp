@@ -2,6 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../memory/allocator/allocate_and_zero_after.hpp"
+#include "../../memory/allocator/deallocate_after.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
 #include "graph_allocator.hpp"
@@ -64,7 +66,7 @@ class graph_executor
       return on_chip_heap_size_;
     }
   
-    inline graph_node first_cause() const
+    inline graph_node initial_happening() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
@@ -84,15 +86,15 @@ class graph_executor
       // get an allocator for the outer workspace buffer
       allocator auto alloc = get_allocator();
 
-      // allocate an outer buffer after the before node
-      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_after<std::byte>(alloc, before, outer_buffer_size);
-
-      // convert the shape to dim3s
-      auto [block_dim, grid_dim] = as_dim3s(shape);
+      // allocate a zeroed outer buffer after the before node
+      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
 
       // create the function that will be launched as a kernel
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
       detail::invoke_with_builtin_cuda_indices_and_workspace<F> kernel{f, outer_buffer};
+
+      // convert the shape to dim3s
+      auto [block_dim, grid_dim] = as_dim3s(shape);
 
       // create the kernel node
       graph_node after_kernel{graph(), detail::make_kernel_node(graph(), outer_buffer_ready.native_handle(), grid_dim, block_dim, inner_buffer_size, device_, kernel), stream()};
@@ -131,7 +133,7 @@ class graph_executor
     template<std::invocable F>
     graph_node first_execute(F f) const
     {
-      return execute_after(first_cause(), f);
+      return execute_after(initial_happening(), f);
     }
   
     template<std::invocable F>

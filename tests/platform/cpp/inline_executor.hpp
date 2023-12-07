@@ -1,4 +1,4 @@
-#include <ubu/causality/first_cause.hpp>
+#include <ubu/causality/initial_happening.hpp>
 #include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
 
@@ -22,15 +22,15 @@ void test()
 {
   {
     auto lambda = []{};
-    static_assert(ns::executor_of<ns::cpp::inline_executor, decltype(lambda)>);
+    static_assert(ns::executor_of<ns::inline_executor, decltype(lambda)>);
   }
 
   {
     bool invoked = false;
 
-    ns::cpp::inline_executor e;
+    ns::inline_executor e;
 
-    auto before = ns::first_cause(e);
+    auto before = ns::initial_happening(e);
 
     ns::execute_after(e, before, [&invoked]
     {

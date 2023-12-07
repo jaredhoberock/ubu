@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../event.hpp"
 #include "kernel_entry_point.hpp"
 #include "has_runtime.hpp"
 #include "temporarily_with_current_device.hpp"
@@ -68,6 +69,21 @@ void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_
 #else
   ubu::detail::throw_runtime_error("cuda::detail::launch_as_kernel requires CUDA C++ language support.");
 #endif
+}
+
+
+template<std::invocable F>
+  requires std::is_trivially_copyable_v<F>
+event launch_as_kernel_after(const event& before, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
+{
+  // make the stream wait on the before event
+  throw_on_error(cudaStreamWaitEvent(stream, before.native_handle()), "cuda::detail::launch_as_kernel_after: CUDA error after cudaStreamWaitEvent");
+  
+  // launch the kernel
+  launch_as_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream, device, f);
+  
+  // record an event on the stream
+  return {device, stream};
 }
 
 

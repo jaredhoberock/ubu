@@ -36,7 +36,7 @@ void test_single_execution()
 
     ns::new_thread_group_executor ex;
 
-    auto before = ns::first_cause(ex);
+    auto before = ns::initial_happening(ex);
 
     auto e = ns::execute_after(ex, std::move(before), [&invoked]
     {
@@ -110,17 +110,14 @@ void test_single_execution()
 void test_bulk_execution()
 {
   ns::new_thread_group_executor ex;
-  std::future<void> before = ubu::first_cause(ex);
+  std::future<void> before = ubu::initial_happening(ex);
 
   int n = 10;
-  std::atomic<int> counter = 0;
 
   auto after = ns::bulk_execute_after(ex, std::move(before), n, n * sizeof(int), [&](int coord, ns::concurrent_workspace auto workspace)
   {
     auto coords = ns::reinterpret_buffer<int>(ns::get_buffer(workspace));
     coords[coord] = coord;
-
-    ++counter;
 
     ns::arrive_and_wait(ns::get_barrier(workspace));
 
@@ -130,11 +127,11 @@ void test_bulk_execution()
       assert(expected == coord);
       ++expected;
     }
+
+    assert(n == expected);
   });
 
   ns::wait(after);
-
-  assert(n == counter);
 }
 
 void test_new_thread_group_executor()

@@ -25,7 +25,7 @@ void test_new_thread_executor()
 
     ns::cpp::new_thread_executor ex;
 
-    auto before = ns::first_cause(ex);
+    auto before = ns::initial_happening(ex);
 
     auto e = ns::execute_after(ex, std::move(before), [&invoked]
     {

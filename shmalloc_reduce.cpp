@@ -91,7 +91,7 @@ void test_correctness(int max_size)
   device_vector<int> temporary(max_size);
   ubu::cuda::device_executor ex;
   ubu::cuda::device_allocator<int> alloc;
-  ubu::cuda::event before = ubu::first_cause(ex);
+  ubu::cuda::event before = ubu::initial_happening(ex);
 
   for(int size = 1000; size < max_size; size += size / 100)
   {
@@ -117,7 +117,7 @@ double test_performance(int size, int num_trials)
   device_vector<int> result(1);
   ubu::cuda::device_executor ex;
   ubu::cuda::device_allocator<int> alloc;
-  ubu::cuda::event before = ubu::first_cause(ex);
+  ubu::cuda::event before = ubu::initial_happening(ex);
 
   // warmup
   reduce_after_to(ex, alloc, before, input.data(), size, result.data(), std::plus{});

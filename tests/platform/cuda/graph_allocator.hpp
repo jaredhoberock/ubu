@@ -1,4 +1,4 @@
-#include <ubu/causality/first_cause.hpp>
+#include <ubu/causality/initial_happening.hpp>
 #include <ubu/causality/wait.hpp>
 #include <ubu/memory/allocator/concepts/asynchronous_allocator.hpp>
 #include <ubu/platform/cuda/graph_allocator.hpp>
@@ -22,7 +22,7 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
 //
 //    cuda::device_ptr<T> ptr = alloc.allocate(1);
 //
-//    auto ready = ns::first_cause(alloc);
+//    auto ready = ns::initial_happening(alloc);
 //
 //    auto done = alloc.deallocate_after(ready, ptr, 1);
 //
@@ -32,11 +32,11 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
   {
     // test asynchronous allocation and synchronous deletion
 
-    auto ready = ns::first_cause(alloc);
+    auto ready = initial_happening(alloc);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
-    ns::wait(e);
+    wait(e);
 
     alloc.deallocate(ptr, 1);
   }
@@ -44,13 +44,13 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
   {
     // test asynchronous allocation and asynchronous deletion
 
-    auto ready = ns::first_cause(alloc);
+    auto ready = initial_happening(alloc);
 
     auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
 
     auto all_done = alloc.deallocate_after(e, ptr, 1);
 
-    ns::wait(all_done);
+    wait(all_done);
   }
 
 }

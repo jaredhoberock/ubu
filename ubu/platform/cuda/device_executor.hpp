@@ -7,7 +7,7 @@
 #include "../../grid/coordinate/coordinate.hpp"
 #include "../../grid/coordinate/weakly_congruent.hpp"
 #include "../../grid/coordinate/point.hpp"
-#include "../../memory/allocator/allocate_after.hpp"
+#include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_kernel.hpp"
@@ -156,24 +156,18 @@ class device_executor
       // get an allocator for the outer workspace buffer
       allocator auto alloc = get_allocator();
 
-      // allocate an outer buffer after the before event
-      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_after<std::byte>(alloc, before, outer_buffer_size);
-
-      // convert the shape to dim3s
-      auto [block_dim, grid_dim] = as_dim3s(shape);
+      // allocate a zeroed outer buffer after the before event
+      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
 
       // create the function that will be launched as a kernel
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
       detail::invoke_with_builtin_cuda_indices_and_workspace<F> kernel{f, outer_buffer};
 
-      // make the stream wait on the buffer_ready event
-      detail::throw_on_error(cudaStreamWaitEvent(stream_, outer_buffer_ready.native_handle()), "device_executor::bulk_execute_after: CUDA error after cudaStreamWaitEvent");
+      // convert the shape to dim3s
+      auto [block_dim, grid_dim] = as_dim3s(shape);
 
-      // launch the kernel
-      detail::launch_as_kernel(grid_dim, block_dim, inner_buffer_size, stream_, device_, kernel);
-
-      // record an event on the stream
-      event after_kernel{device_, stream_};
+      // launch the kernel after the outer buffer is ready
+      event after_kernel = detail::launch_as_kernel_after(outer_buffer_ready, grid_dim, block_dim, inner_buffer_size, stream_, device_, kernel);
 
       // deallocate outer buffer after the kernel
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);

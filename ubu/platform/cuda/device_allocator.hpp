@@ -67,6 +67,14 @@ class device_allocator : private device_memory_resource
       return {std::move(allocation_ready), d_ptr};
     }
 
+    std::pair<event, device_ptr<T>> allocate_and_zero_after(const event& before, std::size_t n) const
+    {
+      auto [allocation_ready, raw_ptr] = super_t::allocate_and_zero_after(before, sizeof(T) * n);
+      device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device()};
+
+      return {std::move(allocation_ready), d_ptr};
+    }
+
     event deallocate_after(const event& before, pointer ptr, std::size_t n) const
     {
       return super_t::deallocate_after(before, ptr.to_address(), sizeof(T) * n);

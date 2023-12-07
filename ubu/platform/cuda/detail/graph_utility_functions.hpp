@@ -148,6 +148,36 @@ inline cudaGraphNode_t make_mem_free_node(cudaGraph_t graph, cudaGraphNode_t dep
 }
 
 
+inline cudaGraphNode_t make_memset_node(cudaGraph_t graph, cudaGraphNode_t dependency, void* ptr, unsigned char value, std::size_t num_bytes)
+{
+  cudaGraphNode_t result{};
+
+  if UBU_TARGET(has_runtime())
+  {
+    cudaMemsetParams params
+    {
+      .dst = ptr,
+      .pitch = 0, // unused
+      .value = value,
+      .elementSize = 1,
+      .width = num_bytes,
+      .height = 1,
+    };
+
+    throw_on_error(
+      cudaGraphAddMemsetNode(&result, graph, &dependency, 1, &params),
+      "cuda::detail::make_memset_node: After cudaGraphAddMemsetNode"
+    );
+  }
+  else
+  {
+    ubu::detail::throw_runtime_error("cuda::detail::make_memset_node requires the CUDA Runtime.");
+  }
+
+  return result;
+}
+
+
 
 // graph algorithms
 

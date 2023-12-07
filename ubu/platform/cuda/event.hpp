@@ -119,7 +119,7 @@ class event
       }
     }
 
-    inline static event first_cause()
+    inline static event initial_happening()
     {
       return {0, cudaStream_t{0}};
     }

@@ -174,16 +174,16 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 
   try
   {
-    cuda::event before = ns::first_cause(ex);
+    cuda::event before = initial_happening(ex);
 
-    cuda::event e = ex.bulk_execute_after(before, shape, workspace_shape, [=](ns::cuda::thread_id coord, ns::cuda::device_executor::workspace_type ws)
+    cuda::event e = ex.bulk_execute_after(before, shape, workspace_shape, [=](cuda::thread_id coord, cuda::device_executor::workspace_type ws)
     {
       // hash the coordinate and store the result in the array
       int result = hash(coord);
       array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x] = result;
 
       // check that the outer workspace works
-      std::span<std::byte> global_workspace = ns::get_buffer(ws);
+      std::span<std::byte> global_workspace = get_buffer(ws);
 
       // each thread checks that the global_workspace is initialized to 0
       for(std::byte b : global_workspace)
@@ -192,14 +192,14 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
       }
 
       // check that the local workspace works
-      std::span<int> local_indices = ns::reinterpret_buffer<int>(ns::get_buffer(ns::get_local_workspace(ws)));
+      std::span<int> local_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
 
       // each thread records its local index in the local workspace
       int local_idx = apply_stride(coord.thread, compact_column_major_stride(shape.thread));
       local_indices[local_idx] = local_idx;
 
       // use the local barrier
-      ns::arrive_and_wait(ns::get_barrier(ns::get_local_workspace(ws)));
+      arrive_and_wait(get_barrier(get_local_workspace(ws)));
 
       // the first thread of the local group checks that each thread was recorded in the local workspace
       if(local_idx == 0)
@@ -213,7 +213,7 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
       }
     });
 
-    ns::wait(e);
+    wait(e);
 
     for(auto coord : lattice(shape))
     {
@@ -254,7 +254,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
 
   try
   {
-    cuda::event before = first_cause(ex);
+    cuda::event before = initial_happening(ex);
 
     cuda::event e = bulk_execute_after(ex, before, shape, workspace_shape, [=](ns::int2 coord, cuda::device_executor::workspace_type ws)
     {

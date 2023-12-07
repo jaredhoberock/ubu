@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../causality/first_cause.hpp"
+#include "../../causality/initial_happening.hpp"
 #include "../../causality/wait.hpp"
 #include "concepts/bulk_executable_on.hpp"
 #include <utility>
@@ -51,7 +51,7 @@ struct dispatch_bulk_execute
               and not has_bulk_execute_member_function<E,S,W,F>)
   constexpr void operator()(E ex, S shape, W workspace_shape, F func) const
   {
-    wait(bulk_execute_after(ex, first_cause(ex), shape, workspace_shape, func));
+    wait(bulk_execute_after(ex, initial_happening(ex), shape, workspace_shape, func));
   }
 };
 

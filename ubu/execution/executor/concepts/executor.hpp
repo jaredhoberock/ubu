@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../causality/first_cause.hpp"
 #include "../../../causality/happening.hpp"
+#include "../../../causality/initial_happening.hpp"
 #include "../detail/invocable_archetype.hpp"
 #include "executable_on.hpp"
 #include <concepts>
@@ -22,9 +22,9 @@ template<class E, class F>
 concept executor_of =
   requires(E e)
   {
-    first_cause(e);
+    initial_happening(e);
   }
-  and dependent_executor_of<E, first_cause_result_t<E>, F>
+  and dependent_executor_of<E, initial_happening_result_t<E>, F>
 ;
 
 template<class E>

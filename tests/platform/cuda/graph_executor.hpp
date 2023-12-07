@@ -135,7 +135,7 @@ void test_bulk_execute_after_member_function(ns::cuda::graph_executor ex)
 
   try
   {
-    auto before = first_cause(ex);
+    auto before = initial_happening(ex);
 
     auto e = ex.bulk_execute_after(before, shape, workspace_shape, [=](cuda::thread_id coord, cuda::graph_executor::workspace_type ws)
     {
@@ -215,7 +215,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex)
 
   try
   {
-    auto before = first_cause(ex);
+    auto before = initial_happening(ex);
 
     auto e = bulk_execute_after(ex, before, shape, workspace_shape, [=](ns::int2 coord, cuda::graph_executor::workspace_type ws)
     {

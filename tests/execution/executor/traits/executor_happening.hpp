@@ -32,7 +32,7 @@ struct executor_with_execute_after_member_function
   bool operator==(const executor_with_execute_after_member_function&) const { return true; }
   bool operator!=(const executor_with_execute_after_member_function&) const { return false; }
 
-  std::future<void> first_cause() const;
+  std::future<void> initial_happening() const;
 
   std::future<void> execute_after(const std::future<void>& before, auto&& f) const
   {
@@ -48,7 +48,7 @@ struct executor_with_execute_after_free_function
   bool operator==(const executor_with_execute_after_free_function&) const { return true; }
   bool operator!=(const executor_with_execute_after_free_function&) const { return false; }
 
-  std::future<void> first_cause() const;
+  std::future<void> initial_happening() const;
 };
 
 std::future<void> execute_after(const executor_with_execute_after_free_function&, const std::future<void>& before, auto&& f)

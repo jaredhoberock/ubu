@@ -66,6 +66,19 @@ class device_memory_resource
       });
     }
 
+    inline std::pair<event,void*> allocate_and_zero_after(const event& before, std::size_t num_bytes) const
+    {
+      auto [_, ptr] = allocate_after(before, num_bytes);
+
+      detail::throw_on_error(cudaMemsetAsync(ptr, 0, num_bytes, stream_),
+        "cuda::device_memory_resource::allocate_and_zero_after: after cudaMemsetAsync"
+      );
+
+      event after{device(), stream()};
+
+      return std::pair<event,void*>(std::move(after), ptr);
+    }
+
     inline event deallocate_after(const event& before, void* ptr, std::size_t) const
     {
       detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),

@@ -64,7 +64,7 @@ class graph_allocator
       alloc_.deallocate(ptr,n);
     }
 
-    graph_node first_cause() const
+    graph_node initial_happening() const
     {
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
@@ -79,8 +79,7 @@ class graph_allocator
       // handle an empty allocation - CUDA runtime won't accomodate mem alloc node for 0 bytes
       if(n == 0)
       {
-        auto node = detail::make_empty_node(graph(), before.native_handle());
-        return {graph_node{graph(), node, stream()}, nullptr};
+        return {do_nothing_after(before), nullptr};
       }
 
       auto [node, ptr] = detail::make_mem_alloc_node(graph(), before.native_handle(), alloc_.device(), sizeof(T) * n);
@@ -90,6 +89,21 @@ class graph_allocator
       return {graph_node{graph(), node, stream()}, d_ptr};
     }
 
+    std::pair<graph_node, pointer> allocate_and_zero_after(const graph_node& before, std::size_t n) const
+    {
+      auto [after_allocation, ptr] = allocate_after(before, n);
+
+      // handle an empty allocation - CUDA runtime won't accomodate memset node for 0 bytes
+      if(n == 0)
+      {
+        return {std::move(after_allocation), ptr};
+      }
+
+      cudaGraphNode_t node = detail::make_memset_node(graph(), after_allocation.native_handle(), ptr.to_raw_pointer(), 0, sizeof(T) * n);
+
+      return {graph_node{graph(), node, stream()}, ptr};
+    }
+
     graph_node deallocate_after(const graph_node& before, pointer ptr, std::size_t n) const
     {
       if(before.graph() != graph())
@@ -97,11 +111,10 @@ class graph_allocator
         throw std::runtime_error("cuda::graph_allocator::deallocate_after: before's graph differs from graph_allocator's");
       }
 
-      // handle an empty deallocation
+      // handle an empty deallocation - CUDA runtime won't accomodate mem free node for 0 bytes
       if(n == 0)
       {
-        auto node = detail::make_empty_node(graph(), before.native_handle());
-        return {graph(), node, stream()};
+        return do_nothing_after(before);
       }
 
       return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.to_address()), stream()};
@@ -110,6 +123,11 @@ class graph_allocator
     auto operator<=>(const graph_allocator&) const = default;
 
   private:
+    graph_node do_nothing_after(const graph_node& before) const
+    {
+      return {graph(), detail::make_empty_node(graph(), before.native_handle()), stream()};
+    }
+
     cudaGraph_t graph_;
     device_allocator<T> alloc_;
 };

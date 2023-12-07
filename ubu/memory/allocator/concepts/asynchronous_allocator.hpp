@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../causality/first_cause.hpp"
 #include "../../../causality/happening.hpp"
+#include "../../../causality/initial_happening.hpp"
 #include "../allocate_after.hpp"
 #include "../deallocate_after.hpp"
 #include "../traits/allocator_pointer_t.hpp"
@@ -21,10 +21,10 @@ concept asynchronous_allocator_of =
 
   and requires(A a)
   {
-    {first_cause(a)} -> happening;
+    {initial_happening(a)} -> happening;
   }
 
-  and requires(A a, const first_cause_result_t<A>& before, allocator_pointer_t<A,T> ptr, std::size_t n)
+  and requires(A a, const initial_happening_result_t<A>& before, allocator_pointer_t<A,T> ptr, std::size_t n)
   {
     // XXX this needs to check that the result is a pair<happening,pointer>
     ubu::allocate_after<T>(a, before, n);

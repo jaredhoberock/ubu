@@ -19,7 +19,7 @@ struct new_thread_executor
 {
   auto operator<=>(const new_thread_executor&) const = default;
 
-  static std::future<void> first_cause()
+  static std::future<void> initial_happening()
   {
     std::promise<void> p;
     auto result = p.get_future();

@@ -83,7 +83,7 @@ void test_then_after()
   trivial_asynchronous_allocator<T> alloc;
   ns::cpp::inline_executor ex;
 
-  auto before = ns::first_cause(alloc);
+  auto before = ns::initial_happening(alloc);
   
   // create one future argument
   auto future_val1 = ns::invoke_after(ex, alloc, before, []
@@ -97,7 +97,7 @@ void test_then_after()
     return 7;
   });
   
-  auto ready = ns::first_cause(alloc);
+  auto ready = ns::initial_happening(alloc);
   
   // then invoke this lambda when both arguments are ready
   auto future_val3 = std::move(future_val1).then_after(ex, alloc, std::move(ready), [](T&& arg1, T&& arg2)
@@ -115,7 +115,7 @@ void test_then_with_allocator()
   trivial_asynchronous_allocator<T> alloc;
   ns::cpp::inline_executor ex;
 
-  auto before = ns::first_cause(alloc);
+  auto before = ns::initial_happening(alloc);
   
   // create one future argument
   auto future_val1 = ns::invoke_after(ex, alloc, before, []
@@ -145,7 +145,7 @@ void test_then_with_executor()
   trivial_asynchronous_allocator<T> alloc;
   ns::cpp::inline_executor ex;
 
-  auto before = ns::first_cause(alloc);
+  auto before = ns::initial_happening(alloc);
   
   // create one future argument
   auto future_val1 = ns::invoke_after(ex, alloc, before, []
@@ -175,7 +175,7 @@ void test_then()
   trivial_asynchronous_allocator<T> alloc;
   ns::cpp::inline_executor ex;
 
-  auto before = ns::first_cause(alloc);
+  auto before = ns::initial_happening(alloc);
   
   // create one future argument
   auto future_val1 = ns::invoke_after(ex, alloc, before, []

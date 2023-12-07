@@ -18,7 +18,7 @@ struct past_event
     return true;
   }
 
-  constexpr static past_event first_cause()
+  constexpr static past_event initial_happening()
   {
     return {};
   }
