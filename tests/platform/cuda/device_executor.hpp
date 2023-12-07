@@ -69,7 +69,7 @@ void test_first_execute(ns::cuda::device_executor ex)
   catch(std::runtime_error&)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }
@@ -103,7 +103,7 @@ void test_execute_after(ns::cuda::device_executor ex)
   catch(std::runtime_error&)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }
@@ -137,7 +137,7 @@ void test_finally_execute_after(ns::cuda::device_executor ex)
   catch(std::runtime_error&)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }
@@ -152,7 +152,6 @@ int hash(ns::cuda::thread_id coord)
 // this array has 3 + 3 axes to match threadIdx + blockIdx
 constexpr std::array<int,6> array_shape = {2, 4, 6, 8, 10, 12};
 __managed__ int array[2][4][6][8][10][12] = {};
-__managed__ int counter;
 
 
 void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
@@ -170,15 +169,12 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
     {array_shape[2],array_shape[1],array_shape[0]}
   };
 
-  // create a workspace with block_size ints and num_blocks * block_size ints
-  ns::int2 workspace_shape(sizeof(int) * ns::shape_size(shape.thread), sizeof(int) * ns::shape_size(shape));
+  // create local workspaces with block_size ints and a global workspace with 32 bytes
+  ns::int2 workspace_shape(sizeof(int) * ns::shape_size(shape.thread), 32);
 
   try
   {
     cuda::event before = ns::first_cause(ex);
-
-    int n = ns::shape_size(shape);
-    counter = n;
 
     cuda::event e = ex.bulk_execute_after(before, shape, workspace_shape, [=](ns::cuda::thread_id coord, ns::cuda::device_executor::workspace_type ws)
     {
@@ -187,21 +183,12 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
       array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x] = result;
 
       // check that the outer workspace works
-      std::span<int> global_indices = ns::reinterpret_buffer<int>(ns::get_buffer(ws));
+      std::span<std::byte> global_workspace = ns::get_buffer(ws);
 
-      // each thread records its index in the outer workspace
-      int global_idx = ubu::column_major(shape)[coord];
-      global_indices[global_idx] = global_idx;
-
-      // the final thread checks that each thread was recorded in the workspace
-      if(int threads_remaining = --std::atomic_ref<int>(counter); threads_remaining == 0)
+      // each thread checks that the global_workspace is initialized to 0
+      for(std::byte b : global_workspace)
       {
-        int expected = 0;
-        for(int idx : global_indices)
-        {
-          assert(expected == idx);
-          ++expected;
-        }
+        assert(b == std::byte(0));
       }
 
       // check that the local workspace works
@@ -240,7 +227,7 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
   catch(std::runtime_error& e)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }
@@ -262,15 +249,12 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
     array_shape[2]*array_shape[1]*array_shape[0]  // num blocks
   };
 
-  // create a workspace with block_size ints and num_blocks * block_size ints
-  ns::int2 workspace_shape(sizeof(int) * shape_size(shape[0]), sizeof(int) * shape_size(shape));
+  // create a local workspaces with block_size ints and a global workspace with 32 bytes
+  ns::int2 workspace_shape(sizeof(int) * shape_size(shape[0]), 32);
 
   try
   {
     cuda::event before = first_cause(ex);
-
-    int n = shape_size(shape);
-    counter = n;
 
     cuda::event e = bulk_execute_after(ex, before, shape, workspace_shape, [=](ns::int2 coord, cuda::device_executor::workspace_type ws)
     {
@@ -279,21 +263,13 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
 
-      // check that the outer workspace works
-      std::span<int> global_indices = reinterpret_buffer<int>(get_buffer(ws));
+      // check that the global workspace works
+      std::span<std::byte> global_workspace = get_buffer(ws);
 
-      // each thread records its index in the outer workspace
-      global_indices[i] = i;
-
-      // the final thread checks that each thread was recorded in the workspace
-      if(int threads_remaining = --std::atomic_ref<int>(counter); threads_remaining == 0)
+      // each thread checks that the global workspace is initialized to zero
+      for(std::byte b : global_workspace)
       {
-        int expected = 0;
-        for(int idx : global_indices)
-        {
-          assert(expected == idx);
-          ++expected;
-        }
+        assert(b == std::byte(0));
       }
 
       // check that the local workspace works
@@ -330,7 +306,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
   catch(std::runtime_error& e)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }
@@ -361,7 +337,7 @@ void test_execute_kernel_customization_point(ns::cuda::device_executor ex, C sha
   catch(std::runtime_error& e)
   {
 #if defined(__CUDACC__)
-    assert(false);
+    throw;
 #endif
   }
 }

@@ -4,6 +4,7 @@
 
 #include "allocator/allocate.hpp"
 #include "allocator/allocate_after.hpp"
+#include "allocator/allocate_and_zero_after.hpp"
 #include "allocator/allocator_delete.hpp"
 #include "allocator/concepts.hpp"
 #include "allocator/construct.hpp"
