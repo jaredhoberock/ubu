@@ -29,15 +29,6 @@ concept concurrent_workspace =
 template<concurrent_workspace W>
 using workspace_barrier_t = barrier_t<W>;
 
-template<class T>
-concept hierarchical_workspace =
-  workspace<T>
-  and requires(T arg)
-  {
-    get_local_workspace(arg);
-  }
-;
-
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
