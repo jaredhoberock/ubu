@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "executor/bind_executable.hpp"
+#include "executor/bulk_execute.hpp"
 #include "executor/bulk_execute_after.hpp"
 #include "executor/bulk_execution_grid.hpp"
 #include "executor/concepts.hpp"
