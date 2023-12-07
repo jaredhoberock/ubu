@@ -76,6 +76,13 @@ class graph_allocator
         throw std::runtime_error("cuda::graph_allocator::allocate_after: before's graph differs from graph_allocator's");
       }
 
+      // handle an empty allocation - CUDA runtime won't accomodate mem alloc node for 0 bytes
+      if(n == 0)
+      {
+        auto node = detail::make_empty_node(graph(), before.native_handle());
+        return {graph_node{graph(), node, stream()}, nullptr};
+      }
+
       auto [node, ptr] = detail::make_mem_alloc_node(graph(), before.native_handle(), alloc_.device(), sizeof(T) * n);
 
       pointer d_ptr{reinterpret_cast<T*>(ptr), alloc_.device()};
@@ -88,6 +95,13 @@ class graph_allocator
       if(before.graph() != graph())
       {
         throw std::runtime_error("cuda::graph_allocator::deallocate_after: before's graph differs from graph_allocator's");
+      }
+
+      // handle an empty deallocation
+      if(n == 0)
+      {
+        auto node = detail::make_empty_node(graph(), before.native_handle());
+        return {graph(), node, stream()};
       }
 
       return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.to_address()), stream()};
