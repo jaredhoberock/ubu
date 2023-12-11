@@ -23,8 +23,34 @@ struct new_thread_group_executor: public new_thread_executor
     std::barrier<>& barrier;
   };
 
+  template<std::invocable<std::size_t> F>
+  std::future<void> bulk_execute_after(std::future<void>&& before, std::size_t n, F&& f) const
+  {
+    return this->execute_after(std::move(before), [=,f=std::forward<F>(f)]
+    {
+      // spawn the rest of the group's threads
+      std::vector<std::thread> threads;
+      for(std::size_t i = 1; i != n; ++i)
+      {
+        threads.emplace_back([=]
+        {
+          std::invoke(f, i);
+        });
+      }
+
+      // invoke for the leader
+      f(0);
+
+      // join the group
+      for(auto& th : threads)
+      {
+        th.join();
+      }
+    });
+  }
+
   template<std::invocable<std::size_t, workspace_type> F>
-  std::future<void> bulk_execute_after(std::future<void>&& before, std::size_t n, std::size_t workspace_size, F&& f) const
+  std::future<void> bulk_execute_with_workspace_after(std::future<void>&& before, std::size_t n, std::size_t workspace_size, F&& f) const
   {
     return this->execute_after(std::move(before), [=,f=std::forward<F>(f)]
     {

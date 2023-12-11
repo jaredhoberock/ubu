@@ -23,13 +23,7 @@ namespace ubu::detail
 template<executor E, coordinate S, std::invocable<executor_coordinate_t<E>> F>
 void default_execute_kernel(E ex, const S& shape, F&& f)
 {
-  // we don't need a workspace
-  auto workspace_shape = zeros<executor_workspace_shape_t<E>>;
-
-  bulk_execute(ex, shape, workspace_shape, [=](const executor_coordinate_t<E>& coord, executor_workspace_t<E>)
-  {
-    f(coord);
-  });
+  bulk_execute(ex, shape, std::forward<F>(f));
 }
 
 
@@ -39,15 +33,11 @@ template<executor E, coordinate S, std::invocable<S> F>
   requires (not std::invocable<F, executor_coordinate_t<E>>)
 void default_execute_kernel(E ex, const S& user_shape, F&& f)
 {
-  // we don't need a workspace
-  // XXX why is this producing size_t?
-  auto workspace_shape = zeros<executor_workspace_shape_t<E>>;
-
   // to_user_coord is a layout which maps a coordinate originating from
   // the executor to a coordinate within the user's requested shape
   layout auto to_user_coord = kernel_layout(ex, user_shape, std::forward<F>(f));
 
-  bulk_execute(ex, shape(to_user_coord), workspace_shape, [=](const executor_coordinate_t<E>& ex_coord, executor_workspace_t<E>)
+  bulk_execute(ex, shape(to_user_coord), [=](const executor_coordinate_t<E>& ex_coord)
   {
     S user_coord = to_user_coord[ex_coord];
     if(is_below(user_coord, user_shape))

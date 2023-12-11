@@ -7,6 +7,8 @@
 #include <ubu/grid/lattice.hpp>
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
+#include <numeric>
+#include <vector>
 
 #undef NDEBUG
 #include <cassert>
@@ -26,16 +28,13 @@ namespace ns = ubu;
 struct has_bulk_execute_after_member
 {
   template<class F>
-  ns::past_event bulk_execute_after(ns::past_event before, int n, int workspace_size, F&& f) const
+  ns::past_event bulk_execute_after(ns::past_event before, int n, F&& f) const
   {
     before.wait();
 
-    std::vector<std::byte> buffer(workspace_size);
-    std::span workspace(buffer.data(), buffer.size());
-
     for(int i = 0; i < n; ++i)
     {
-      f(i, workspace);
+      f(i);
     }
 
     return {};
@@ -46,16 +45,13 @@ struct has_bulk_execute_after_member
 struct has_bulk_execute_after_free_function {};
 
 template<class F>
-ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event before, int n, int workspace_size, F&& f)
+ns::past_event bulk_execute_after(const has_bulk_execute_after_free_function&, ns::past_event before, int n, F&& f)
 {
   before.wait();
 
-  std::vector<std::byte> buffer(workspace_size);
-  std::span workspace(buffer.data(), buffer.size());
-
   for(int i = 0; i < n; ++i)
   {
-    f(i, workspace);
+    f(i);
   }
 
   return {};
@@ -81,47 +77,41 @@ void test()
   {
     has_bulk_execute_after_member e;
 
-    int counter = 0;
+    int n = 10;
+
+    std::vector<int> expected(n);
+    std::iota(expected.begin(), expected.end(), 0);
+    std::vector<int> result(n,-1);
 
     ns::past_event before;
-    int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, expected * sizeof(int), [&](int coord, auto workspace)
+    auto done = ns::bulk_execute_after(e, before, n, [&](int coord)
     { 
-      auto coords = ns::reinterpret_buffer<int>(workspace);
-      coords[coord] = coord;
-
-      if(++counter == expected)
-      {
-        assert(are_ascending_coordinates(coords, expected));
-      }
+      result[coord] = coord;
     });
     ns::wait(done);
 
-    assert(expected == counter);
+    assert(expected == result);
   }
 
   {
     has_bulk_execute_after_free_function e;
 
-    int counter = 0;
+    int n = 10;
+
+    std::vector<int> expected(n);
+    std::iota(expected.begin(), expected.end(), 0);
+    std::vector<int> result(n,-1);
 
     ns::past_event before;
-    int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, expected * sizeof(int), [&](int coord, auto workspace)
+    auto done = ns::bulk_execute_after(e, before, n, [&](int coord)
     {
-      auto coords = ns::reinterpret_buffer<int>(workspace);
-      coords[coord] = coord;
-
-      if(++counter == expected)
-      {
-        assert(are_ascending_coordinates(coords, expected));
-      }
+      result[coord] = coord;
     });
     ns::wait(done);
 
-    assert(expected == counter);
+    assert(expected == result);
   }
 
   {
@@ -129,24 +119,21 @@ void test()
 
     ns::cpp::inline_executor e;
 
-    int counter = 0;
+    int n = 10;
+
+    std::vector<int> expected(n);
+    std::iota(expected.begin(), expected.end(), 0);
+    std::vector<int> result(n,-1);
 
     ns::past_event before;
-    int expected = 10;
 
-    auto done = ns::bulk_execute_after(e, before, expected, expected * sizeof(int), [&](int coord, auto workspace)
+    auto done = ns::bulk_execute_after(e, before, n, [&](int coord)
     {
-      auto coords = ns::reinterpret_buffer<int>(workspace);
-      coords[coord] = coord;
-
-      if(++counter == expected)
-      {
-        assert(are_ascending_coordinates(coords, expected));
-      }
+      result[coord] = coord;
     });
     ns::wait(done);
 
-    assert(expected == counter);
+    assert(expected == result);
   }
 
   {
@@ -159,17 +146,10 @@ void test()
     ns::past_event before;
 
     ns::int2 grid_shape{2,5};
-    int n = ns::shape_size(grid_shape);
 
-    auto done = ns::bulk_execute_after(e, before, grid_shape, n * sizeof(ns::int2), [&](ns::int2 coord, auto workspace)
+    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int2 coord)
     { 
-      auto coords = ns::reinterpret_buffer<ns::int2>(workspace);
-      coords[counter] = coord;
-
-      if(++counter == n)
-      {
-        assert(are_ascending_coordinates(coords, grid_shape));
-      }
+      ++counter;
     });
     ns::wait(done);
 
@@ -186,17 +166,10 @@ void test()
     ns::past_event before;
 
     ns::int3 grid_shape{2,5,7};
-    int n = ns::shape_size(grid_shape);
 
-    auto done = ns::bulk_execute_after(e, before, grid_shape, n * sizeof(ns::int3), [&](ns::int3 coord, auto workspace)
+    auto done = ns::bulk_execute_after(e, before, grid_shape, [&](ns::int3 coord)
     { 
-      auto coords = ns::reinterpret_buffer<ns::int3>(workspace);
-      coords[counter] = coord;
-
-      if(++counter == n)
-      {
-        assert(are_ascending_coordinates(coords, grid_shape));
-      }
+      ++counter;
     });
     ns::wait(done);
 
@@ -216,5 +189,4 @@ void test_bulk_execute_after()
   assert(cudaDeviceSynchronize() == cudaSuccess);
 #endif
 }
-
 

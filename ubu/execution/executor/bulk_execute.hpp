@@ -4,6 +4,7 @@
 
 #include "../../causality/initial_happening.hpp"
 #include "../../causality/wait.hpp"
+#include "bulk_execute_after.hpp"
 #include "concepts/bulk_executable_on.hpp"
 #include <utility>
 
@@ -12,16 +13,16 @@ namespace ubu
 namespace detail
 {
 
-template<class E, class S, class W, class F>
-concept has_bulk_execute_member_function = requires(E ex, S shape, W workspace_shape, F func)
+template<class E, class S, class F>
+concept has_bulk_execute_member_function = requires(E ex, S shape, F func)
 {
-  ex.bulk_execute_member_function(shape, workspace_shape, func);
+  ex.bulk_execute(shape, func);
 };
 
-template<class E, class S, class W, class F>
-concept has_bulk_execute_free_function = requires(E ex, S shape, W workspace_shape, F func)
+template<class E, class S, class F>
+concept has_bulk_execute_free_function = requires(E ex, S shape, F func)
 {
-  bulk_execute_member_function(ex, shape, workspace_shape, func);
+  bulk_execute(ex, shape, func);
 };
 
 
@@ -29,29 +30,29 @@ concept has_bulk_execute_free_function = requires(E ex, S shape, W workspace_sha
 struct dispatch_bulk_execute
 {
   // this dispatch path calls executor's member function
-  template<class E, class S, class W, class F>
-    requires has_bulk_execute_member_function<E&&,S&&,W&&,F&&>
-  constexpr void operator()(E&& ex, S&& shape, W&& workspace_shape, F&& func) const
+  template<class E, class S, class F>
+    requires has_bulk_execute_member_function<E&&,S&&,F&&>
+  constexpr void operator()(E&& ex, S&& shape, F&& func) const
   {
-    std::forward<E>(ex).bulk_execute(std::forward<S>(shape), std::forward<W>(workspace_shape), std::forward<F>(func));
+    std::forward<E>(ex).bulk_execute(std::forward<S>(shape), std::forward<F>(func));
   }
 
   // this dispatch path calls the free function
-  template<class E, class S, class W, class F>
-    requires (not has_bulk_execute_member_function<E&&,S&&,W&&,F&&>
-              and has_bulk_execute_free_function<E&&,S&&,W&&,F&&>)
-  constexpr void operator()(E&& ex, S&& shape, W&& workspace_shape, F&& func) const
+  template<class E, class S, class F>
+    requires (not has_bulk_execute_member_function<E&&,S&&,F&&>
+              and has_bulk_execute_free_function<E&&,S&&,F&&>)
+  constexpr void operator()(E&& ex, S&& shape, F&& func) const
   {
-    bulk_execute(std::forward<E>(ex), std::forward<S>(shape), std::forward<W>(workspace_shape), std::forward<F>(func));
+    bulk_execute(std::forward<E>(ex), std::forward<S>(shape), std::forward<F>(func));
   }
 
   // this dispatch path calls bulk_execute_after and waits
-  template<executor E, coordinate S, weakly_congruent<S> W, bulk_executable_on<E,executor_happening_t<E>,S,W> F>
-    requires (not has_bulk_execute_member_function<E,S,W,F>
-              and not has_bulk_execute_member_function<E,S,W,F>)
-  constexpr void operator()(E ex, S shape, W workspace_shape, F func) const
+  template<executor E, coordinate S, bulk_executable_on<E,executor_happening_t<E>,S> F>
+    requires (not has_bulk_execute_member_function<E,S,F>
+              and not has_bulk_execute_free_function<E,S,F>)
+  constexpr void operator()(E ex, S shape, F func) const
   {
-    wait(bulk_execute_after(ex, initial_happening(ex), shape, workspace_shape, func));
+    wait(bulk_execute_after(ex, initial_happening(ex), shape, func));
   }
 };
 

@@ -2,6 +2,7 @@
 #include <ubu/causality.hpp>
 #include <ubu/cooperation/workspace/get_local_workspace.hpp>
 #include <ubu/execution/executor/bulk_execute_after.hpp>
+#include <ubu/execution/executor/bulk_execute_with_workspace_after.hpp>
 #include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
@@ -169,6 +170,93 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
     {array_shape[2],array_shape[1],array_shape[0]}
   };
 
+  try
+  {
+    cuda::event before = initial_happening(ex);
+
+    cuda::event e = ex.bulk_execute_after(before, shape, [=](cuda::thread_id coord)
+    {
+      // hash the coordinate and store the result in the array
+      int result = hash(coord);
+      array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x] = result;
+    });
+
+    wait(e);
+
+    for(auto coord : lattice(shape))
+    {
+      int expected = hash(coord);
+
+      int result = array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x];
+
+      assert(expected == result);
+    }
+  }
+  catch(std::runtime_error& e)
+  {
+#if defined(__CUDACC__)
+    throw;
+#endif
+  }
+}
+
+
+void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
+{
+  using namespace ns;
+
+  // partition the array shape into int2
+  ns::int2 shape
+  {
+    array_shape[5]*array_shape[4]*array_shape[3], // num threads
+    array_shape[2]*array_shape[1]*array_shape[0]  // num blocks
+  };
+
+  try
+  {
+    cuda::event before = initial_happening(ex);
+
+    cuda::event e = bulk_execute_after(ex, before, shape, [=](ns::int2 coord)
+    {
+      int i = apply_stride(coord, compact_column_major_stride(shape));
+      auto c = colexicographical_lift(i, array_shape);
+
+      array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
+    });
+
+    wait(e);
+
+    for(int i = 0; i < shape_size(array_shape); ++i)
+    {
+      auto c = colexicographical_lift(i, array_shape);
+
+      assert(i == array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]]);
+    }
+  }
+  catch(std::runtime_error& e)
+  {
+#if defined(__CUDACC__)
+    throw;
+#endif
+  }
+}
+
+
+void test_bulk_execute_with_workspace_after_member_function(ns::cuda::device_executor ex)
+{
+  using namespace ns;
+
+  // partition the array shape into the device_executor's shape type
+  // such that nearby threads touch nearby addresses
+  
+  cuda::device_executor::shape_type shape
+  {
+    // (thread.x, thread.y, thread.z)
+    {array_shape[5],array_shape[4],array_shape[3]},
+    // (block.x, block.y, block.z)
+    {array_shape[2],array_shape[1],array_shape[0]}
+  };
+
   // create local workspaces with block_size ints and a global workspace with 32 bytes
   ns::int2 workspace_shape(sizeof(int) * ns::shape_size(shape.thread), 32);
 
@@ -176,7 +264,7 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
   {
     cuda::event before = initial_happening(ex);
 
-    cuda::event e = ex.bulk_execute_after(before, shape, workspace_shape, [=](cuda::thread_id coord, cuda::device_executor::workspace_type ws)
+    cuda::event e = ex.bulk_execute_with_workspace_after(before, shape, workspace_shape, [=](cuda::thread_id coord, cuda::device_executor::workspace_type ws)
     {
       // hash the coordinate and store the result in the array
       int result = hash(coord);
@@ -233,13 +321,8 @@ void test_bulk_execute_after_member_function(ns::cuda::device_executor ex)
 }
 
 
-void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
+void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::device_executor ex)
 {
-  // XXX at the moment, the only difference between this function and test_bulk_execute_after_member_function
-  // is that we provide the shape argument as an int2 and call bulk_execute_after through the CPO
-  // in principle, the CPO could do some simple adaptations from the shape parameter type to the executor's
-  // native shape type
-
   using namespace ns;
 
   // partition the array shape into int2
@@ -254,9 +337,11 @@ void test_bulk_execute_after_customization_point(ns::cuda::device_executor ex)
 
   try
   {
+    ns::cuda::device_allocator<std::byte> alloc;
+
     cuda::event before = initial_happening(ex);
 
-    cuda::event e = bulk_execute_after(ex, before, shape, workspace_shape, [=](ns::int2 coord, cuda::device_executor::workspace_type ws)
+    cuda::event e = bulk_execute_with_workspace_after(ex, alloc, before, shape, workspace_shape, [=](ns::int2 coord, cuda::device_executor::workspace_type ws)
     {
       int i = apply_stride(coord, compact_column_major_stride(shape));
       auto c = colexicographical_lift(i, array_shape);
@@ -352,6 +437,9 @@ void test(ns::cuda::device_executor ex)
 
   test_bulk_execute_after_member_function(ex);
   test_bulk_execute_after_customization_point(ex);
+
+  test_bulk_execute_with_workspace_after_member_function(ex);
+  test_bulk_execute_with_workspace_after_customization_point(ex);
 
   test_execute_kernel_customization_point(ex, array_shape[0]*array_shape[1]*array_shape[2]*array_shape[3]*array_shape[4]*array_shape[5]);
   test_execute_kernel_customization_point(ex, ns::int2{array_shape[0]*array_shape[1]*array_shape[2], array_shape[3]*array_shape[4]*array_shape[5]});

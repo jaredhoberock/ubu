@@ -8,11 +8,11 @@ namespace ubu
 {
 
 
-template<class F, class E, class B, class S, class WS>
+template<class F, class E, class B, class S>
 concept bulk_executable_on =
-  requires(F func, E ex, B before, S shape, WS workspace_shape)
+  requires(F func, E ex, B before, S shape)
   {
-    bulk_execute_after(std::forward<E>(ex), std::forward<B>(before), std::forward<S>(shape), std::forward<WS>(workspace_shape), std::forward<F>(func));
+    bulk_execute_after(std::forward<E>(ex), std::forward<B>(before), std::forward<S>(shape), std::forward<F>(func));
   }
 ;
 

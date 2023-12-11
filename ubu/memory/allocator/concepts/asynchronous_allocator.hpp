@@ -9,6 +9,7 @@
 #include "../traits/allocator_pointer_t.hpp"
 #include "../traits/allocator_value_t.hpp"
 #include "allocator.hpp"
+#include <cstddef>
 #include <memory>
 #include <type_traits>
 
@@ -34,7 +35,7 @@ concept asynchronous_allocator_of =
 ;
 
 template<class A>
-concept asynchronous_allocator = allocator<A> and asynchronous_allocator_of<A,int>;
+concept asynchronous_allocator = allocator<A> and asynchronous_allocator_of<A,std::byte>;
 
 } // end ubu
 

@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../grid/coordinate/coordinate.hpp"
-#include "bulk_execute.hpp"
 #include "concepts/executor.hpp"
 #include "detail/default_execute_kernel.hpp"
 #include <concepts>

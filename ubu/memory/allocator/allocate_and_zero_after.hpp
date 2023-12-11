@@ -47,7 +47,7 @@ concept asynchronous_allocation =
 // 7. allocate_and_zero_after(alloc, before, n)
 //
 // if dispatch fails to find a customization, it uses the default:
-// 8. ubu::allocate_after<T>(alloc, before, n) then ubu::execute_after(exec, after_allocation, f)
+// 8. ubu::allocate_after<T>(alloc, ...) then ubu::execute_after(exec, ...)
 //
 // the concepts which detect customizations 0 through 7 are below:
 
@@ -206,7 +206,7 @@ struct dispatch_allocate_and_zero_after
   }
 
   // finally, dispatch path 8 is the default and calls allocate_after followed by execute_after
-  template<asynchronous_allocation A, executor E, happening B, std::integral N>
+  template<asynchronous_allocator A, executor E, happening B, std::integral N>
     requires (not has_customization_0<T, A&&, E&&, B&&, N>
               and not has_customization_1<T, A&&, E&&, B&&, N>
               and not has_customization_2<T, A&&, E&&, B&&, N>
@@ -226,7 +226,7 @@ struct dispatch_allocate_and_zero_after
     {
       for(N i = 0; i != n; ++i)
       {
-        bytes[i] = 0;
+        bytes[i] = std::byte(0);
       }
     });
 

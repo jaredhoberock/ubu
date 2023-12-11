@@ -22,48 +22,46 @@ namespace ubu::cuda
 class graph_executor
 {
   public:
-    constexpr static std::size_t default_on_chip_heap_size = -1;
-
     using shape_type = thread_id;
     using happening_type = graph_node;
     using workspace_type = detail::workspace_type;
     using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
-    inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t on_chip_heap_size)
+    constexpr graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t dynamic_smem_size)
       : graph_{graph},
         device_{device},
         stream_{stream},
-        on_chip_heap_size_{on_chip_heap_size}
+        dynamic_smem_size_{dynamic_smem_size}
     {}
 
-    inline graph_executor(cudaGraph_t graph, int device, cudaStream_t stream)
-      : graph_executor{graph, device, stream, default_on_chip_heap_size}
+    constexpr graph_executor(cudaGraph_t graph, int device, cudaStream_t stream)
+      : graph_executor{graph, device, stream, 0}
     {}
 
-    inline graph_executor(cudaGraph_t graph)
+    constexpr graph_executor(cudaGraph_t graph)
       : graph_executor{graph, 0, 0}
     {}
 
     graph_executor(const graph_executor&) = default;
 
-    inline cudaGraph_t graph() const
+    constexpr cudaGraph_t graph() const
     {
       return graph_;
     }
 
-    inline int device() const
+    constexpr int device() const
     {
       return device_;
     }
 
-    inline cudaStream_t stream() const
+    constexpr cudaStream_t stream() const
     {
       return stream_;
     }
 
-    inline std::size_t on_chip_heap_size() const
+    constexpr std::size_t dynamic_smem_size() const
     {
-      return on_chip_heap_size_;
+      return dynamic_smem_size_;
     }
   
     inline graph_node initial_happening() const
@@ -71,13 +69,49 @@ class graph_executor
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    template<std::regular_invocable<shape_type, workspace_type> F>
+    template<std::regular_invocable<shape_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline graph_node bulk_execute_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const
+    inline graph_node bulk_execute_after(const graph_node& before, shape_type shape, F f) const
     {
       if(before.graph() != graph())
       {
         throw std::runtime_error("cuda::graph_executor::bulk_execute_after: before's graph differs from graph_executor's");
+      }
+
+      // create the function that will be launched as a kernel
+      detail::invoke_with_builtin_cuda_indices<F> kernel{f};
+
+      // convert the shape to dim3s
+      auto [block_dim, grid_dim] = as_dim3s(shape);
+
+      // create the kernel node
+      return {graph(), detail::make_kernel_node(graph(), before.native_handle(), grid_dim, block_dim, dynamic_smem_size_, device_, kernel), stream()};
+    }
+
+    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
+    // and then calls the lower-level function
+    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
+    template<std::regular_invocable<int2> F>
+      requires std::is_trivially_copyable_v<F>
+    inline graph_node bulk_execute_after(const graph_node& before, int2 shape, F f) const
+    {
+      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
+      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+
+      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
+      {
+        // map the native shape_type back into an int2 and invoke
+        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
+      });
+    }
+
+    template<std::regular_invocable<shape_type, workspace_type> F>
+      requires std::is_trivially_copyable_v<F>
+    inline graph_node bulk_execute_with_workspace_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const
+    {
+      if(before.graph() != graph())
+      {
+        throw std::runtime_error("cuda::graph_executor::bulk_execute_with_workspace_after: before's graph differs from graph_executor's");
       }
 
       // decompose workspace shape
@@ -89,31 +123,28 @@ class graph_executor
       // allocate a zeroed outer buffer after the before node
       auto [outer_buffer_ready, outer_buffer_ptr] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
 
-      // create the function that will be launched as a kernel
+      // launch the kernel after the outer buffer is ready
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
-      detail::invoke_with_builtin_cuda_indices_and_workspace<F> kernel{f, outer_buffer};
-
-      // convert the shape to dim3s
-      auto [block_dim, grid_dim] = as_dim3s(shape);
-
-      // create the kernel node
-      graph_node after_kernel{graph(), detail::make_kernel_node(graph(), outer_buffer_ready.native_handle(), grid_dim, block_dim, inner_buffer_size, device_, kernel), stream()};
+      graph_node after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
+      {
+        std::invoke(f, coord, detail::make_workspace(outer_buffer));
+      });
 
       // deallocate outer buffer after the kernel
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
 
-    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
+    // this overload of bulk_execute_with_workspace_after just does a simple conversion of the user's shape type to shape_type
     // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
+    // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2, workspace_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline graph_node bulk_execute_after(const graph_node& before, int2 shape, int2 workspace_shape, F f) const
+    inline graph_node bulk_execute_with_workspace_after(const graph_node& before, int2 shape, int2 workspace_shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
       shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return bulk_execute_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
+      return bulk_execute_with_workspace_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
       {
         // map the native shape_type back into an int2 and invoke
         std::invoke(f, int2{native_coord.thread.x, native_coord.block.x}, ws);
@@ -123,9 +154,9 @@ class graph_executor
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, int2(0,0), [f](shape_type, workspace_type)
+      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
       {
-        // ignore the incoming parameters and just invoke the function
+        // ignore the incoming parameter and just invoke the function
         std::invoke(f);
       });
     }
@@ -146,6 +177,11 @@ class graph_executor
     auto operator<=>(const graph_executor&) const = default;
 
   private:
+    constexpr graph_executor with_dynamic_smem_size(std::size_t dynamic_smem_size) const
+    {
+      return {graph(), device(), stream(), dynamic_smem_size};
+    }
+
     // XXX this is only used to allocate a temporary buffer for bulk_execute_after
     //     so, we should use a different type of allocator optimized for such use
     graph_allocator<std::byte> get_allocator() const
@@ -164,7 +200,7 @@ class graph_executor
     cudaGraph_t graph_;
     int device_;
     cudaStream_t stream_;
-    std::size_t on_chip_heap_size_;
+    std::size_t dynamic_smem_size_;
 };
 
 

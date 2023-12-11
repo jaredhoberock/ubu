@@ -3,8 +3,9 @@
 #include "../detail/prologue.hpp"
 
 #include "executor/bind_executable.hpp"
-#include "executor/bulk_execute.hpp"
 #include "executor/bulk_execute_after.hpp"
+#include "executor/bulk_execute_with_workspace.hpp"
+#include "executor/bulk_execute_with_workspace_after.hpp"
 #include "executor/concepts.hpp"
 #include "executor/dependent_on.hpp"
 #include "executor/execute_after.hpp"

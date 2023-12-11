@@ -18,10 +18,10 @@ namespace ubu
 namespace detail
 {
 
-struct new_bulk_invocable_archetype
+struct bulk_invocable_archetype
 {
-  template<class C, class W>
-  void operator()(C coord, W workspace) const;
+  template<class C>
+  void operator()(C coord) const;
 };
 
 } // end detail
@@ -30,8 +30,8 @@ template<class E>
 concept bulk_executor =
   executor<E>
   and congruent<executor_shape_t<E>, executor_coordinate_t<E>>
+  and bulk_executable_on<detail::bulk_invocable_archetype, E, executor_happening_t<E>, executor_shape_t<E>>
   and weakly_congruent<executor_workspace_shape_t<E>, executor_coordinate_t<E>>
-  and bulk_executable_on<detail::new_bulk_invocable_archetype, E, executor_happening_t<E>, executor_shape_t<E>, executor_workspace_shape_t<E>>
 ;
 
 } // end ubu

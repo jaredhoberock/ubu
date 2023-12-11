@@ -14,7 +14,6 @@
 #include "detail/throw_on_error.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
-#include "shmalloc.hpp"
 #include "thread_id.hpp"
 #include <bit>
 #include <concepts>
@@ -31,23 +30,15 @@ namespace detail
 
 template<std::invocable<thread_id> F>
   requires std::is_trivially_copyable_v<F>
-struct init_shmalloc_and_invoke_with_builtin_cuda_indices
+struct invoke_with_builtin_cuda_indices
 {
   F f;
-  int on_chip_heap_size;
 
   void operator()() const
   {
 #if defined(__CUDACC__)
     if UBU_TARGET(ubu::detail::is_device())
     {
-      // initialize shmalloc
-      if(threadIdx.x == 0 and threadIdx.y == 0 and threadIdx.z == 0)
-      {
-        init_on_chip_malloc(on_chip_heap_size);
-      }
-      __syncthreads();
-
       // create a thread_id from the built-in variables
       thread_id idx{{threadIdx.x, threadIdx.y, threadIdx.z}, {blockIdx.x, blockIdx.y, blockIdx.z}};
 
@@ -84,36 +75,30 @@ struct workspace_type
   local_workspace_type local_workspace;
 };
 
-template<std::invocable<thread_id, workspace_type> F>
-  requires std::is_trivially_copyable_v<F>
-struct invoke_with_builtin_cuda_indices_and_workspace
+constexpr workspace_type make_workspace(std::span<std::byte> outer_buffer)
 {
-  F f;
-  std::span<std::byte> outer_buffer;
-
-  void operator()() const
-  {
 #if defined(__CUDACC__)
-    if UBU_TARGET(ubu::detail::is_device())
-    {
-      // create a thread_id from the built-in variables
-      thread_id idx{{threadIdx.x, threadIdx.y, threadIdx.z}, {blockIdx.x, blockIdx.y, blockIdx.z}};
+  if UBU_TARGET(ubu::detail::is_device())
+  {
+    // count the number of dynamically-allocated shared memory bytes
+    unsigned int dynamic_smem_size;
+    asm("mov.u32 %0, %%dynamic_smem_size;" : "=r"(dynamic_smem_size));
 
-      // count the number of dynamically-allocated shared memory bytes
-      unsigned int dynamic_smem_size;
-      asm("mov.u32 %0, %%dynamic_smem_size;" : "=r"(dynamic_smem_size));
+    // create workspace
+    extern __shared__ std::byte inner_buffer[];
+    workspace_type result;
+    result.buffer = outer_buffer;
+    result.local_workspace.buffer = std::span(inner_buffer, dynamic_smem_size);
 
-      // create workspace
-      extern __shared__ std::byte inner_buffer[];
-      workspace_type workspace;
-      workspace.buffer = outer_buffer;
-      workspace.local_workspace.buffer = std::span(inner_buffer, dynamic_smem_size);
-
-      // invoke the function with the id and workspace
-      std::invoke(f, idx, workspace);
-    }
-#endif
+    return result;
   }
+  else
+  {
+    return {};
+  }
+#else
+  return {};
+#endif
 };
 
 
@@ -123,21 +108,19 @@ struct invoke_with_builtin_cuda_indices_and_workspace
 class device_executor
 {
   public:
-    constexpr static std::size_t default_on_chip_heap_size = -1;
-
     using shape_type = thread_id;
     using happening_type = cuda::event;
     using workspace_type = detail::workspace_type;
     using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
-    constexpr device_executor(int device, cudaStream_t stream, std::size_t on_chip_heap_size)
+    constexpr device_executor(int device, cudaStream_t stream, std::size_t dynamic_smem_size)
       : device_{device},
         stream_{stream},
-        on_chip_heap_size_{on_chip_heap_size}
+        dynamic_smem_size_{dynamic_smem_size}
     {}
 
     constexpr device_executor(int device, cudaStream_t stream)
-      : device_executor{device, stream, default_on_chip_heap_size}
+      : device_executor{device, stream, 0}
     {}
 
     constexpr device_executor()
@@ -146,9 +129,40 @@ class device_executor
 
     device_executor(const device_executor&) = default;
 
+    template<std::regular_invocable<shape_type> F>
+      requires std::is_trivially_copyable_v<F>
+    inline event bulk_execute_after(const event& before, shape_type shape, F f) const
+    {
+      // create the function that will be launched as a kernel
+      detail::invoke_with_builtin_cuda_indices<F> kernel{f};
+
+      // convert the shape to dim3s
+      auto [block_dim, grid_dim] = as_dim3s(shape);
+
+      // launch the kernel
+      return detail::launch_as_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
+    }
+
+    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
+    // and then calls the lower-level function
+    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
+    template<std::regular_invocable<int2> F>
+      requires std::is_trivially_copyable_v<F>
+    inline event bulk_execute_after(const event& before, int2 shape, F f) const
+    {
+      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
+      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+
+      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
+      {
+        // map the native shape_type back into an int2 and invoke
+        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
+      });
+    }
+
     template<std::regular_invocable<shape_type, workspace_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute_after(const event& before, shape_type shape, int2 workspace_shape, F f) const
+    inline event bulk_execute_with_workspace_after(const event& before, shape_type shape, int2 workspace_shape, F f) const
     {
       // decompose workspace shape
       auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
@@ -159,31 +173,28 @@ class device_executor
       // allocate a zeroed outer buffer after the before event
       auto [outer_buffer_ready, outer_buffer_ptr] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
 
-      // create the function that will be launched as a kernel
-      std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
-      detail::invoke_with_builtin_cuda_indices_and_workspace<F> kernel{f, outer_buffer};
-
-      // convert the shape to dim3s
-      auto [block_dim, grid_dim] = as_dim3s(shape);
-
       // launch the kernel after the outer buffer is ready
-      event after_kernel = detail::launch_as_kernel_after(outer_buffer_ready, grid_dim, block_dim, inner_buffer_size, stream_, device_, kernel);
+      std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
+      event after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
+      {
+        std::invoke(f, coord, detail::make_workspace(outer_buffer));
+      });
 
       // deallocate outer buffer after the kernel
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
 
-    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
+    // this overload of bulk_execute_with_workspace_after just does a simple conversion of the user's shape type to shape_type
     // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
+    // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2, workspace_type> F>
       requires std::is_trivially_copyable_v<F>
-    inline event bulk_execute_after(const event& before, int2 shape, int2 workspace_shape, F f) const
+    inline event bulk_execute_with_workspace_after(const event& before, int2 shape, int2 workspace_shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
       shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
 
-      return bulk_execute_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
+      return bulk_execute_with_workspace_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
       {
         // map the native shape_type back into an int2 and invoke
         std::invoke(f, int2{native_coord.thread.x, native_coord.block.x}, ws);
@@ -194,9 +205,9 @@ class device_executor
       requires std::is_trivially_copyable_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, int2(0,0), [f](shape_type, workspace_type)
+      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
       {
-        // ignore the incoming parameters and just invoke the function
+        // ignore the incoming parameter and just invoke the function
         std::invoke(f);
       });
     }
@@ -213,17 +224,22 @@ class device_executor
       return stream_;
     }
 
-    constexpr std::size_t on_chip_heap_size() const
+    constexpr std::size_t dynamic_smem_size() const
     {
-      return on_chip_heap_size_;
+      return dynamic_smem_size_;
     }
 
-    constexpr void on_chip_heap_size(std::size_t num_bytes)
+    constexpr void dynamic_smem_size(std::size_t num_bytes)
     {
-      on_chip_heap_size_ = num_bytes;
+      dynamic_smem_size_ = num_bytes;
     }
 
   private:
+    constexpr device_executor with_dynamic_smem_size(std::size_t dynamic_smem_size) const
+    {
+      return {device(), stream(), dynamic_smem_size};
+    }
+
     // XXX this is only used to allocate a temporary buffer for bulk_execute_after
     //     so, we should use a different type of allocator optimized for such use
     device_allocator<std::byte> get_allocator() const
@@ -241,7 +257,7 @@ class device_executor
 
     int device_;
     cudaStream_t stream_;
-    std::size_t on_chip_heap_size_;
+    std::size_t dynamic_smem_size_;
 };
 
 

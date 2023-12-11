@@ -17,8 +17,7 @@ struct trivial_asynchronous_allocator : public std::allocator<T>
 {
   using happening_type = ns::past_event;
 
-  template<class U = T>
-  std::pair<ns::past_event, U*> allocate_after(const ns::past_event& before, std::size_t n)
+  std::pair<ns::past_event, T*> allocate_after(const ns::past_event& before, std::size_t n)
   {
     T* ptr = std::allocator<T>::allocate(sizeof(T) * n);
   
