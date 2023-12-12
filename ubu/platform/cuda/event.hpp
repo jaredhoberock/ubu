@@ -26,7 +26,8 @@ class event
     }
 
     inline event(event&& other) noexcept
-      : native_handle_{0},
+      : device_{-1},
+        native_handle_{0},
         origin_target_{current_target()}
     {
       swap(other);
@@ -60,6 +61,11 @@ class event
       return *this;
     }
 
+    inline int device() const
+    {
+      return device_;
+    }
+
     inline cudaEvent_t native_handle() const
     {
       return native_handle_;
@@ -69,7 +75,10 @@ class event
     {
       if UBU_TARGET(detail::has_runtime())
       {
-        detail::throw_on_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: after cudaEventRecord");
+        detail::temporarily_with_current_device(device(), [&]
+        {
+          detail::throw_on_error(cudaEventRecord(native_handle(), s), "cuda::event::record_on: after cudaEventRecord");
+        });
       }
       else
       {
@@ -126,6 +135,7 @@ class event
 
     inline void swap(event& other)
     {
+      std::swap(device_, other.device_);
       std::swap(native_handle_, other.native_handle_);
       std::swap(origin_target_, other.origin_target_);
     }
@@ -171,7 +181,8 @@ class event
     }
 
     inline event(int device)
-      : native_handle_{make_cuda_event(device)},
+      : device_{device},
+        native_handle_{make_cuda_event(device)},
         origin_target_{current_target()}
     {}
 
@@ -207,6 +218,7 @@ class event
       }
     }
 
+    int device_;
     cudaEvent_t native_handle_;
     from origin_target_;
 };

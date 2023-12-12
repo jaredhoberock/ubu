@@ -51,7 +51,7 @@ class device_allocator : private device_memory_resource
     pointer allocate(std::size_t n) const
     {
       T* raw_ptr = reinterpret_cast<T*>(super_t::allocate(sizeof(T) * n));
-      return {raw_ptr, device()};
+      return {raw_ptr, device(), stream()};
     }
 
     void deallocate(pointer ptr, std::size_t n) const
@@ -62,7 +62,7 @@ class device_allocator : private device_memory_resource
     std::pair<event, device_ptr<T>> allocate_after(const event& before, std::size_t n) const
     {
       auto [allocation_ready, raw_ptr] = super_t::allocate_after(before, sizeof(T) * n);
-      device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device()};
+      device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device(), stream()};
 
       return {std::move(allocation_ready), d_ptr};
     }
@@ -70,7 +70,7 @@ class device_allocator : private device_memory_resource
     std::pair<event, device_ptr<T>> allocate_and_zero_after(const event& before, std::size_t n) const
     {
       auto [allocation_ready, raw_ptr] = super_t::allocate_and_zero_after(before, sizeof(T) * n);
-      device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device()};
+      device_ptr<T> d_ptr{reinterpret_cast<T*>(raw_ptr), device(), stream()};
 
       return {std::move(allocation_ready), d_ptr};
     }

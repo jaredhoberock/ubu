@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <ubu/causality/past_event.hpp>
 #include <ubu/memory/pointer/remote_ptr.hpp>
 
 #undef NDEBUG
@@ -10,16 +11,19 @@ namespace ns = ubu;
 
 struct trivial_loader
 {
+  using happening_type = ns::past_event;
   using address_type = void*;
 
-  void upload(const void* from, std::size_t num_bytes, address_type to) const
+  ns::past_event upload_after(ns::past_event, const void* from, std::size_t num_bytes, address_type to) const
   {
     std::memcpy(to, from, num_bytes);
+    return {};
   }
 
-  void download(address_type from, std::size_t num_bytes, void* to) const
+  ns::past_event download_after(ns::past_event, address_type from, std::size_t num_bytes, void* to) const
   {
     std::memcpy(to, from, num_bytes);
+    return {};
   }
 
   constexpr bool operator==(const trivial_loader&) const
@@ -27,6 +31,9 @@ struct trivial_loader
     return true;
   }
 };
+
+static_assert(ns::address<void*>);
+static_assert(ns::loader<trivial_loader>);
 
 
 void test_remote_ptr()
