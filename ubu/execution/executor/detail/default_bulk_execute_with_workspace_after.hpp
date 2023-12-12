@@ -40,6 +40,14 @@ template<executor E, asynchronous_allocator A, happening B, coordinate S, std::r
   requires bulk_executable_on<default_bulk_execute_with_workspace_after_invocable_t<S,F>, E, allocator_happening_t<A>, S>
 allocator_happening_t<A> default_bulk_execute_with_workspace_after(const E& ex, const A& alloc, B&& before, const S& shape, std::size_t workspace_size, F&& function)
 {
+  // XXX this function should call detail::construct_workspaces_after(ex, alloc, before, shape, workspace_size)
+  //     which would check executor_workspace_shape_t and construct buffers & barriers as necessary
+  //     it could return a grid of workspaces such that each coordinate's workspace would be found like so:
+  //
+  //         workspace auto ws = grid_of_workspaces[coord];
+  //
+  //     then, we'd follow it up with delete_workspaces_after
+
   // allocate a workspace
   // XXX concurrent executors do not need their workspace zeroed
   auto [workspace_ready, workspace_ptr] = allocate_and_zero_after<std::byte>(alloc, ex, std::forward<B>(before), workspace_size);
