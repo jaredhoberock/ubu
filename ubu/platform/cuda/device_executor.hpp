@@ -9,6 +9,7 @@
 #include "../../grid/coordinate/point.hpp"
 #include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"
+#include "cooperation.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_kernel.hpp"
 #include "detail/throw_on_error.hpp"
@@ -49,58 +50,6 @@ struct invoke_with_builtin_cuda_indices
   }
 };
 
-struct workspace_type
-{
-  // XXX we should use small_span or similar with int size
-  std::span<std::byte> buffer;
-
-  struct local_workspace_type
-  {
-    // XXX we should use small_span or similar with int size
-    std::span<std::byte> buffer;
-
-    struct barrier_type
-    {
-      constexpr void arrive_and_wait() const
-      {
-#if defined(__CUDACC__)
-        __syncthreads();
-#endif
-      }
-    };
-
-    barrier_type barrier;
-  };
-
-  local_workspace_type local_workspace;
-};
-
-constexpr workspace_type make_workspace(std::span<std::byte> outer_buffer)
-{
-#if defined(__CUDACC__)
-  if UBU_TARGET(ubu::detail::is_device())
-  {
-    // count the number of dynamically-allocated shared memory bytes
-    unsigned int dynamic_smem_size;
-    asm("mov.u32 %0, %%dynamic_smem_size;" : "=r"(dynamic_smem_size));
-
-    // create workspace
-    extern __shared__ std::byte inner_buffer[];
-    workspace_type result;
-    result.buffer = outer_buffer;
-    result.local_workspace.buffer = std::span(inner_buffer, dynamic_smem_size);
-
-    return result;
-  }
-  else
-  {
-    return {};
-  }
-#else
-  return {};
-#endif
-};
-
 
 } // end detail
 
@@ -110,7 +59,7 @@ class device_executor
   public:
     using shape_type = thread_id;
     using happening_type = cuda::event;
-    using workspace_type = detail::workspace_type;
+    using workspace_type = device_workspace;
     using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
     constexpr device_executor(int device, cudaStream_t stream, std::size_t dynamic_smem_size)
@@ -177,7 +126,7 @@ class device_executor
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
       event after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
       {
-        std::invoke(f, coord, detail::make_workspace(outer_buffer));
+        std::invoke(f, coord, device_workspace(outer_buffer));
       });
 
       // deallocate outer buffer after the kernel

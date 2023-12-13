@@ -4,10 +4,12 @@
 
 #include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"
+#include "cooperation.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
 #include "graph_allocator.hpp"
 #include "graph_node.hpp"
+#include "thread_id.hpp"
 #include <concepts>
 #include <cstdint>
 #include <cuda_runtime.h>
@@ -24,7 +26,7 @@ class graph_executor
   public:
     using shape_type = thread_id;
     using happening_type = graph_node;
-    using workspace_type = detail::workspace_type;
+    using workspace_type = device_workspace;
     using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
 
     constexpr graph_executor(cudaGraph_t graph, int device, cudaStream_t stream, std::size_t dynamic_smem_size)
@@ -127,7 +129,7 @@ class graph_executor
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
       graph_node after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
       {
-        std::invoke(f, coord, detail::make_workspace(outer_buffer));
+        std::invoke(f, coord, device_workspace(outer_buffer));
       });
 
       // deallocate outer buffer after the kernel
