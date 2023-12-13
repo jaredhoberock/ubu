@@ -65,21 +65,11 @@ struct basic_cooperator
   // cooperators with non-empty buffer can allocate from the buffer
   template<class = void>
     requires nonempty_buffer_like<buffer_t<W>> 
-  constexpr std::byte* push_shared_buffer(int num_bytes)
+  constexpr std::byte* coop_alloca(int num_bytes)
   {
     std::byte* result = std::ranges::data(get_buffer(workspace_)) + stack_counter_;
     stack_counter_ += num_bytes;
     return result;
-  }
-
-  // cooperators with non-empty buffer can allocate from the buffer
-  // XXX if the suggested style is to pass cooperators to cooperative algorithms
-  //     by value, then this function isn't really needed
-  template<class = void>
-    requires nonempty_buffer_like<buffer_t<W>> 
-  constexpr void pop_shared_buffer(int num_bytes)
-  {
-    stack_counter_ -= num_bytes;
   }
 
   // precondition: shape_size(new_shape) == size(self)
