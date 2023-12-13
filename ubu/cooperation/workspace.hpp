@@ -6,6 +6,7 @@
 #include "workspace/hierarchical_workspace.hpp"
 #include "workspace/workspace.hpp"
 #include "workspace/workspace_shape.hpp"
+#include "workspace/workspace_thread_scope.hpp"
 
 #include "../detail/epilogue.hpp"
 
