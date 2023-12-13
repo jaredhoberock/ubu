@@ -11,9 +11,9 @@
 #include "../barrier/arrive_and_wait.hpp"
 #include "../barrier/barrier_like.hpp"
 #include "../barrier/get_local_barrier.hpp"
-#include "cooperator.hpp"
+#include "concepts/cooperator.hpp"
+#include "concepts/hierarchical_cooperator.hpp"
 #include "descend.hpp"
-#include "hierarchical_cooperator.hpp"
 #include "id.hpp"
 #include <concepts>
 #include <type_traits>

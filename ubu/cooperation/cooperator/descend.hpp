@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "concepts/hierarchical_cooperator.hpp"
 #include "descend_with_group_coord.hpp"
-#include "hierarchical_cooperator.hpp"
 
 namespace ubu
 {

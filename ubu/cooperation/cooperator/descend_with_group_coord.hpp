@@ -4,7 +4,7 @@
 
 #include "../../grid/coordinate/detail/tuple_algorithm.hpp"
 #include "../../grid/coordinate/coordinate.hpp"
-#include "cooperator.hpp"
+#include "concepts/cooperator.hpp"
 #include <utility>
 
 namespace ubu

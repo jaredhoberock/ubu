@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
+#include "../descend_with_group_coord.hpp"
 #include "cooperator.hpp"
-#include "descend_with_group_coord.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -24,5 +24,5 @@ using child_cooperator_t = std::remove_cvref_t<decltype(get<0>(descend_with_grou
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

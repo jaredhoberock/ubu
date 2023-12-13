@@ -5,7 +5,7 @@
 #include "../../grid/coordinate/coord.hpp"
 #include "../../grid/layout/column_major.hpp"
 #include "../../grid/shape/shape.hpp"
-#include "cooperator.hpp"
+#include "concepts/cooperator.hpp"
 #include <concepts>
 
 namespace ubu
