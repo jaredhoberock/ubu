@@ -14,6 +14,7 @@ template<class T>
 concept buffer_like =
   std::ranges::view<std::remove_cvref_t<T>>
   and std::ranges::contiguous_range<T>
+  and std::ranges::sized_range<T>
   and std::same_as<std::ranges::range_value_t<T>, std::byte>
 ;
 
