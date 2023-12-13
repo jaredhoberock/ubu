@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "cuda/callback_executor.hpp"
+#include "cuda/cooperation.hpp"
 #include "cuda/device_allocator.hpp"
 #include "cuda/device_executor.hpp"
 #include "cuda/device_memory_resource.hpp"
