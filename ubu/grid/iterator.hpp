@@ -11,8 +11,9 @@ namespace ubu
 {
 
 
+// XXX this should take dense_grid_instead of grid
 template<grid G>
-class grid_iterator
+class dense_grid_iterator
 {
   public:
     using base_iterator = colexicographical_iterator<grid_shape_t<G>>;
@@ -23,7 +24,7 @@ class grid_iterator
     using pointer = void; // XXX do we need a non-void pointer type?
     using reference = grid_reference_t<G>;
 
-    constexpr grid_iterator(G grid)
+    constexpr dense_grid_iterator(G grid)
       : grid_(grid), base_(shape(grid))
     {}
 
@@ -37,81 +38,81 @@ class grid_iterator
       return grid_[base_[n]];
     }
 
-    constexpr grid_iterator& operator++()
+    constexpr dense_grid_iterator& operator++()
     {
       ++base_;
       return *this;
     }
 
-    constexpr grid_iterator operator++(int)
+    constexpr dense_grid_iterator operator++(int)
     {
-      grid_iterator result = *this;
+      dense_grid_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr grid_iterator& operator--()
+    constexpr dense_grid_iterator& operator--()
     {
       --base_;
       return *this;
     }
 
-    constexpr grid_iterator operator--(int)
+    constexpr dense_grid_iterator operator--(int)
     {
-      grid_iterator result = *this;
+      dense_grid_iterator result = *this;
       --(*this);
       return result;
     }
 
-    constexpr grid_iterator operator+(difference_type n) const
+    constexpr dense_grid_iterator operator+(difference_type n) const
     {
-      grid_iterator result{*this};
+      dense_grid_iterator result{*this};
       return result += n;
     }
 
-    constexpr grid_iterator& operator+=(difference_type n)
+    constexpr dense_grid_iterator& operator+=(difference_type n)
     {
       base_ += n;
       return *this;
     }
 
-    constexpr grid_iterator& operator-=(difference_type n)
+    constexpr dense_grid_iterator& operator-=(difference_type n)
     {
       return *this += -n;
     }
 
-    constexpr grid_iterator operator-(difference_type n) const
+    constexpr dense_grid_iterator operator-(difference_type n) const
     {
-      grid_iterator result{*this};
+      dense_grid_iterator result{*this};
       return result -= n;
     }
 
-    constexpr bool operator==(const grid_iterator& rhs) const
+    constexpr bool operator==(const dense_grid_iterator& rhs) const
     {
       return base_ == rhs.base_;
     }
 
-    constexpr bool operator!=(const grid_iterator& rhs) const
+    constexpr bool operator!=(const dense_grid_iterator& rhs) const
     {
       return !(*this == rhs);
     }
 
-    constexpr bool operator<(const grid_iterator& rhs) const
+    constexpr bool operator<(const dense_grid_iterator& rhs) const
     {
       return base_ < rhs.base_;
     }
 
-    constexpr bool operator<=(const grid_iterator& rhs) const
+    constexpr bool operator<=(const dense_grid_iterator& rhs) const
     {
       return !(rhs < *this);
     }
 
-    constexpr bool operator>(const grid_iterator& rhs) const
+    constexpr bool operator>(const dense_grid_iterator& rhs) const
     {
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const grid_iterator& rhs) const
+    constexpr bool operator>=(const dense_grid_iterator& rhs) const
     {
       return !(rhs > *this);
     }
@@ -135,13 +136,14 @@ class grid_iterator
 };
 
 
+// XXX this shoud require dense_grid instead of grid
 template<grid G>
-class grid_sentinel
+class dense_grid_sentinel
 {
   public:
-    friend constexpr bool operator==(const grid_iterator<G>& i, const grid_sentinel<G>& self)
+    friend constexpr bool operator==(const dense_grid_iterator<G>& i, const dense_grid_sentinel<G>& self)
     {
-      using base_iterator = typename grid_iterator<G>::base_iterator;
+      using base_iterator = typename dense_grid_iterator<G>::base_iterator;
 
       return *i.base() == base_iterator::end_value(shape(i.grid()));
     }

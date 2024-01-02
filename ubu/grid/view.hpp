@@ -52,16 +52,16 @@ class view
       return layout_;
     }
 
-    // begin and end are templates because grid_iterator requires its template
+    // begin and end are templates because dense_grid_iterator requires its template
     // parameter to be a complete type
     template<class Self = view>
-    constexpr grid_iterator<Self> begin() const
+    constexpr dense_grid_iterator<Self> begin() const
     {
       return {*this};
     }
     
     template<class Self = view>
-    constexpr grid_sentinel<Self> end() const
+    constexpr dense_grid_sentinel<Self> end() const
     {
       return {};
     }
