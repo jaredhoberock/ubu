@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "element_exists.hpp"
 #include "grid.hpp"
 #include "iterator.hpp"
 #include "layout/layout.hpp"
@@ -40,6 +41,11 @@ class view
       //     for example such a choice would allow Layout to be a cute::Layout
       //     and Grid could be any function of Layout's element type
       return grid_[layout_[coord]];
+    }
+
+    constexpr bool element_exists(const shape_type& coord) const
+    {
+      return element_exists(layout_, coord) and element_exists(grid_, layout_[coord]);
     }
 
     constexpr Grid grid() const

@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 #include "coordinate/coordinate.hpp"
+#include "element_exists.hpp"
 #include "shape/shape.hpp"
 #include <concepts>
 #include <type_traits>
@@ -32,13 +33,17 @@ concept grid =
     shape(g);
   }
   and indexable_by<T, shape_t<T>>
+  and requires(T g, shape_t<T> c)
+  {
+    element_exists(g, c);
+  }
 ;
 
 // XXX in addition to grid_shape_t, I think we also need grid_coordinate_t
 //     in some important cases, the coordinate type will differ from the shape type
 //     for example, grids whose shape is known to be a constant at compile time
-//     would have a grid_shape_t like std::integral_constant, while their coordinate type would still
-//     need to vary dynamically
+//     would have a grid_shape_t like std::integral_constant, while their coordinate
+//     type would still be able to vary dynamically
 
 template<grid T>
 using grid_shape_t = shape_t<T>;
