@@ -4,6 +4,7 @@
 #include "coordinate/coordinate.hpp"
 #include "element_exists.hpp"
 #include "shape/shape.hpp"
+#include "size.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -58,6 +59,21 @@ template<class G, class T>
 concept grid_of =
   grid<G>
   and std::same_as<grid_element_t<G>,T>
+;
+
+template<class T>
+concept dense_grid =
+  grid<T>
+  and requires(T g)
+  {
+    size(g);
+  }
+;
+
+template<class T>
+concept sparse_grid =
+  grid<T>
+  and not dense_grid<T>
 ;
 
 } // end ubu

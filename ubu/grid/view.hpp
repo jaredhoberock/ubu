@@ -34,6 +34,13 @@ class view
       return ubu::shape(layout_);
     }
 
+    template<class L_ = Layout>
+      requires dense_grid<L_>
+    constexpr auto size() const
+    {
+      return shape_size(shape());
+    }
+
     constexpr decltype(auto) operator[](const shape_type& coord) const
     {
       // XXX consider indexing both grid_ and layout_ via a customization point for a bit more flexibility
@@ -58,16 +65,15 @@ class view
       return layout_;
     }
 
-    // begin and end are templates because dense_grid_iterator requires its template
+    // begin is a template because grid_iterator requires its template
     // parameter to be a complete type
     template<class Self = view>
-    constexpr dense_grid_iterator<Self> begin() const
+    constexpr grid_iterator<Self> begin() const
     {
       return {*this};
     }
     
-    template<class Self = view>
-    constexpr dense_grid_sentinel<Self> end() const
+    constexpr grid_sentinel end() const
     {
       return {};
     }
