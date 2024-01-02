@@ -660,7 +660,7 @@ template<class T1, class T2, std::size_t N>
   requires (std::is_arithmetic_v<T1> and std::is_arithmetic_v<T2> and N > 0)
 constexpr point<T2,N> operator*(T1 scalar, const point<T2,N>& p)
 {
-  return p * scalar;
+  return point<T1,N>(scalar) * p;
 }
 
 
