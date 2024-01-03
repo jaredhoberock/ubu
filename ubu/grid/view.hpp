@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "domain.hpp"
 #include "element_exists.hpp"
 #include "grid.hpp"
 #include "iterator.hpp"
@@ -38,10 +39,12 @@ class view
       requires dense_grid<L_>
     constexpr auto size() const
     {
-      return shape_size(shape());
+      return ubu::size(layout_);
     }
 
-    constexpr decltype(auto) operator[](const shape_type& coord) const
+    // precondition: element_exists(coord)
+    template<coordinate_for<Layout> C>
+    constexpr decltype(auto) operator[](const C& coord) const
     {
       // XXX consider indexing both grid_ and layout_ via a customization point for a bit more flexibility
       //     (i.e., we could support operator() in addition to operator[])
@@ -50,9 +53,24 @@ class view
       return grid_[layout_[coord]];
     }
 
-    constexpr bool element_exists(const shape_type& coord) const
+    // precondition: in_domain(layout(), coord)
+    template<coordinate_for<Layout> C>
+    constexpr bool element_exists(const C& coord) const
     {
-      return element_exists(layout_, coord) and element_exists(grid_, layout_[coord]);
+      if (not ubu::element_exists(layout_, coord)) return false;
+
+      auto to_coord = layout_[coord];
+
+      // if Grid actually fulfills the requirements of ubu::grid,
+      // check the coordinate produced by the layout against grid_
+      // otherwise, we assume that the layout always perfectly covers grid_
+      if constexpr (ubu::grid<Grid>)
+      {
+        if (not in_domain(grid_, to_coord)) return false;
+        if (not ubu::element_exists(grid_, to_coord)) return false;
+      }
+
+      return true;
     }
 
     constexpr Grid grid() const
