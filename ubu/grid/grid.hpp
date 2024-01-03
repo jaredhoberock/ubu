@@ -27,6 +27,12 @@ concept indexable_by =
   }
 ;
 
+template<class C, class G>
+concept coordinate_for =
+  coordinate<C>
+  and indexable_by<G,C>
+;
+
 template<class T>
 concept grid =
   requires(T g)
