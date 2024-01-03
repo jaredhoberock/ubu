@@ -10,30 +10,6 @@
 
 namespace ubu
 {
-namespace detail
-{
-
-template<class T>
-concept not_void = not std::is_void_v<T>;
-
-} // end detail
-
-// XXX we should replace indexable_by with coordinate_for
-//     and put coordinate_for in coordinate/coordinate.hpp
-template<class T, class I>
-concept indexable_by =
-  requires(T obj, I idx)
-  {
-    // XXX we could base this on element(obj,idx) instead of bracket
-    { obj[idx] } -> detail::not_void;
-  }
-;
-
-template<class C, class G>
-concept coordinate_for =
-  coordinate<C>
-  and indexable_by<G,C>
-;
 
 template<class T>
 concept grid =
@@ -41,7 +17,7 @@ concept grid =
   {
     shape(g);
   }
-  and indexable_by<T, shape_t<T>>
+  and coordinate_for<shape_t<T>, T>
   and requires(T g, shape_t<T> c)
   {
     element_exists(g, c);

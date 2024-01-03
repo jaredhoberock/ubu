@@ -18,7 +18,7 @@ concept layout =
 template<class L, class G>
 concept layout_for =
   layout<L>
-  and indexable_by<G, grid_element_t<L>>
+  and coordinate_for<grid_element_t<L>, G>
 ;
 
 } // end ubu

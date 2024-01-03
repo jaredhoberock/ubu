@@ -9,7 +9,7 @@
 namespace ubu
 {
 
-// lift is an indexable_by that calls colexicographical_lift on a coordinate
+// lift's bracket calls colexicographical_lift on a coordinate
 template<coordinate To>
 class lift
 {

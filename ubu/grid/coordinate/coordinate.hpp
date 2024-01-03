@@ -5,6 +5,7 @@
 #include "element.hpp"
 #include "rank.hpp"
 #include <concepts>
+#include <type_traits>
 #include <utility>
 
 
@@ -82,6 +83,26 @@ concept coordinate_of_rank = coordinate<T> and (rank_v<T> == N);
 
 template<class... Types>
 concept nonscalar_coordinates = (... and nonscalar_coordinate<Types>);
+
+
+namespace detail
+{
+
+template<class T>
+concept not_void = not std::is_void_v<T>;
+
+} // end detail
+
+
+template<class C, class T>
+concept coordinate_for =
+  coordinate<C>
+  and requires(C coord, T obj)
+  {
+    // XXX we should base this on element(obj,coord) instead of bracket
+    { obj[coord] } -> detail::not_void;
+  }
+;
 
 
 } // end ubu
