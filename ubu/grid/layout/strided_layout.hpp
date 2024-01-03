@@ -57,6 +57,11 @@ class strided_layout
       return shape_;
     }
 
+    constexpr auto size() const
+    {
+      return shape_size(shape());
+    }
+
     constexpr D stride() const
     {
       return stride_;
@@ -67,7 +72,7 @@ class strided_layout
     // XXX the return type of this should be the same as operator[]
     constexpr coordinate auto coshape() const
     {
-      auto last_position = apply_layout(shape_size(shape()) - 1);
+      auto last_position = apply_layout(size() - 1);
       return coordinate_sum(last_position, ones<decltype(last_position)>);
     }
 
