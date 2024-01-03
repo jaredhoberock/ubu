@@ -18,6 +18,8 @@ concept not_void = not std::is_void_v<T>;
 
 } // end detail
 
+// XXX we should replace indexable_by with coordinate_for
+//     and put coordinate_for in coordinate/coordinate.hpp
 template<class T, class I>
 concept indexable_by =
   requires(T obj, I idx)
