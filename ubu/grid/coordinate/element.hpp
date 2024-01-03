@@ -35,7 +35,7 @@ concept has_get_free_function_template = requires(T obj) { get<i>(obj); };
 template<std::size_t i>
 struct dispatch_element
 {
-  // when T has a member function template arg.element<i>(), return that
+  // try member function template arg.element<i>()
   template<class T>
     requires has_element_member_function_template<i,T&&>
   constexpr decltype(auto) operator()(T&& arg) const
@@ -43,7 +43,7 @@ struct dispatch_element
     return std::forward<T>(arg).template element<i>();
   }
 
-  // else, when T has a free function template element<i>(arg), return that
+  // else, try free function template element<i>(arg)
   template<class T>
     requires(!has_element_member_function_template<i,T&&> and
               has_element_free_function_template<i,T&&>)
@@ -52,7 +52,7 @@ struct dispatch_element
     return element<i>(std::forward<T>(arg));
   }
 
-  // else, when T is just a number and the index i is zero, just return the number
+  // else, if the index i is zero, try just returning a number
   template<class T>
     requires(!has_element_member_function_template<i,T&&> and 
              !has_element_free_function_template<i,T&&> and
@@ -63,7 +63,7 @@ struct dispatch_element
     return std::forward<T>(num);
   }
 
-  // else, when T has get<i>(arg), return that
+  // else, try free function template get<i>(arg)
   template<class T>
     requires(!has_element_member_function_template<i,T&&> and 
              !has_element_free_function_template<i,T&&> and
@@ -74,7 +74,7 @@ struct dispatch_element
     return get<i>(std::forward<T>(arg));
   }
 
-  // else, when T has operator bracket obj[i], return that
+  // else, try arg[i]
   template<class T>
     requires(!has_element_member_function_template<i,T&&> and 
              !has_element_free_function_template<i,T&&> and
@@ -95,13 +95,8 @@ namespace ubu
 {
 
 
-namespace
-{
-
 template<std::size_t i>
-constexpr detail::dispatch_element<i> element;
-
-} // end anonymous namespace
+inline constexpr detail::dispatch_element<i> element;
 
 
 template<std::size_t i, class T>
