@@ -62,36 +62,6 @@ struct thread_id
   }
 };
 
-template<std::size_t i>
-constexpr const int3& element(const thread_id&);
-
-template<std::size_t i>
-constexpr int3& element(thread_id&);
-
-template<>
-constexpr const int3& element<0>(const thread_id& id)
-{
-  return id.thread;
-}
-
-template<>
-constexpr int3& element<0>(thread_id& id)
-{
-  return id.thread;
-}
-
-template<>
-constexpr const int3& element<1>(const thread_id& id)
-{
-  return id.block;
-}
-
-template<>
-constexpr int3& element<1>(thread_id& id)
-{
-  return id.block;
-}
-
 
 std::ostream& operator<<(std::ostream& os, const thread_id& id)
 {
