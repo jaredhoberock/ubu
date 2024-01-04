@@ -1,4 +1,4 @@
-#include <ubu/grid/coordinate/weakly_congruent.hpp>
+#include <ubu/grid/coordinate/concepts/weakly_congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../grid/coordinate/detail/tuple_algorithm.hpp"
-#include "../../grid/coordinate/coordinate.hpp"
 #include "concepts/cooperator.hpp"
 #include <utility>
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
+#include "../rank.hpp"
 #include "coordinate.hpp"
-#include "rank.hpp"
 
 namespace ubu
 {
@@ -19,5 +19,5 @@ concept same_rank =
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

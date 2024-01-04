@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../congruent.hpp"
-#include "../coordinate.hpp"
+#include "../concepts/congruent.hpp"
+#include "../concepts/coordinate.hpp"
 #include "../element.hpp"
 #include "tuple_algorithm.hpp"
 #include <utility>

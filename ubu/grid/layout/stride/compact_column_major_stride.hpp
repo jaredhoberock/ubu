@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/coordinate.hpp"
+#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/concepts/same_rank.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "../../coordinate/element.hpp"
 #include "../../coordinate/rank.hpp"
-#include "../../coordinate/same_rank.hpp"
 #include "../../shape/shape_size.hpp"
 #include <concepts>
 #include <tuple>

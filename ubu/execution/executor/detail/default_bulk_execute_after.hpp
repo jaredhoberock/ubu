@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../causality/happening.hpp"
-#include "../../../grid/coordinate/coordinate.hpp"
+#include "../../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../../grid/lattice.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"

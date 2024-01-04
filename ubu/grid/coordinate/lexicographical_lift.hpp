@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "colexicographical_lift.hpp"
-#include "congruent.hpp"
-#include "coordinate.hpp"
+#include "concepts/congruent.hpp"
+#include "concepts/coordinate.hpp"
 #include "detail/tuple_algorithm.hpp"
 
 

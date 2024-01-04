@@ -1,4 +1,4 @@
-#include <ubu/grid/coordinate/coordinate.hpp>
+#include <ubu/grid/coordinate/concepts/coordinate.hpp>
 #include <ubu/grid/coordinate/point.hpp>
 
 namespace ns = ubu;

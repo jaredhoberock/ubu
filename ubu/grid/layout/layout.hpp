@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../grid.hpp"
-#include "../coordinate/congruent.hpp"
-#include "../coordinate/coordinate.hpp"
+#include "../coordinate/concepts/congruent.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
 
 namespace ubu
 {

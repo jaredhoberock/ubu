@@ -2,12 +2,12 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "detail/approximate_factors.hpp"
-#include "shape_size.hpp"
-#include "../coordinate/coordinate.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/coordinate_cast.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "../coordinate/zeros.hpp"
+#include "detail/approximate_factors.hpp"
+#include "shape_size.hpp"
 #include <array>
 
 namespace ubu

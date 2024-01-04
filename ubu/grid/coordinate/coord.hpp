@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "coordinate.hpp"
+#include "concepts/coordinate.hpp"
 #include <utility>
 
 namespace ubu

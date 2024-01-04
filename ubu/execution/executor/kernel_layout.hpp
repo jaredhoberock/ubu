@@ -2,13 +2,13 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "concepts/executor.hpp"
-#include "native_layout.hpp"
-#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../grid/layout/compose_layouts.hpp"
 #include "../../grid/layout/identity_layout.hpp"
 #include "../../grid/layout/lifting_layout.hpp"
 #include "../../grid/shape/convert_shape.hpp"
+#include "concepts/executor.hpp"
+#include "native_layout.hpp"
 
 
 namespace ubu

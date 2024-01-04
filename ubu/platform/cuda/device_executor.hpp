@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
-#include "../../grid/coordinate/congruent.hpp"
-#include "../../grid/coordinate/coordinate.hpp"
-#include "../../grid/coordinate/weakly_congruent.hpp"
+#include "../../grid/coordinate/concepts/congruent.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
+#include "../../grid/coordinate/concepts/weakly_congruent.hpp"
 #include "../../grid/coordinate/point.hpp"
 #include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"

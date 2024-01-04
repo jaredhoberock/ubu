@@ -1,4 +1,4 @@
-#include <ubu/grid/coordinate/congruent.hpp>
+#include <ubu/grid/coordinate/concepts/congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
+#include "../rank.hpp"
 #include "coordinate.hpp"
-#include "rank.hpp"
 #include "same_rank.hpp"
 #include "weakly_congruent.hpp"
 #include <concepts>
@@ -88,5 +88,5 @@ concept congruent =
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

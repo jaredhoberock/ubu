@@ -2,13 +2,13 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "ceil_div.hpp"
+#include "compatible_shape.hpp"
+#include "compose_strides.hpp"
+#include "divide_shape.hpp"
 #include <algorithm>
-#include <ubu/grid/coordinate/coordinate.hpp>
-#include <ubu/grid/coordinate/detail/tuple_algorithm.hpp>
-#include <ubu/grid/layout/detail/compatible_shape.hpp>
-#include <ubu/grid/layout/detail/compose_strides.hpp>
-#include <ubu/grid/layout/detail/divide_shape.hpp>
 
 
 namespace ubu::detail

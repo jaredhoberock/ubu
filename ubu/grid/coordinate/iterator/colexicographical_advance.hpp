@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../congruent.hpp"
-#include "../coordinate.hpp"
+#include "../concepts/congruent.hpp"
+#include "../concepts/coordinate.hpp"
 #include "../coordinate_cast.hpp"
 #include "../coordinate_sum.hpp"
 #include "../colexicographical_lift.hpp"

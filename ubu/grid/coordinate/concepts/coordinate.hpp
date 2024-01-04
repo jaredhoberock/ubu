@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "element.hpp"
-#include "rank.hpp"
+#include "../element.hpp"
+#include "../rank.hpp"
 #include <concepts>
 #include <type_traits>
 #include <utility>
@@ -108,5 +108,5 @@ concept coordinate_for =
 } // end ubu
 
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

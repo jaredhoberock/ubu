@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "coordinate/coordinate.hpp"
+#include "coordinate/concepts/coordinate.hpp"
 #include "element_exists.hpp"
 #include "shape/shape.hpp"
 #include "size.hpp"

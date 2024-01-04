@@ -6,7 +6,7 @@
 #include "../../execution/executor/bulk_execute_after.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
 #include "../../execution/executor/traits/executor_workspace_shape.hpp"
-#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../grid/coordinate/zeros.hpp"
 #include "../../memory/allocator/allocator_delete.hpp"
 #include "../../memory/allocator/concepts/asynchronous_allocator.hpp"

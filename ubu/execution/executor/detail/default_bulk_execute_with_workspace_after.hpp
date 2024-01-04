@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../causality/happening.hpp"
-#include "../../../grid/coordinate/coordinate.hpp"
+#include "../../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../../memory/allocator/concepts/asynchronous_allocator.hpp"
 #include "../../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../../memory/allocator/deallocate_after.hpp"

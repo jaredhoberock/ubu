@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../grid/coordinate/colexicographical_lift.hpp"
-#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../grid/coordinate/detail/tuple_algorithm.hpp"
 #include "../../grid/coordinate/rank.hpp"
 #include "../../grid/shape/shape_size.hpp"

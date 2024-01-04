@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "coordinate.hpp"
+#include "concepts/coordinate.hpp"
 #include "detail/coordinate_inclusive_scan.hpp"
 #include <utility>
 

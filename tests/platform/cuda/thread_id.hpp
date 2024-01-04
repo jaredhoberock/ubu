@@ -1,7 +1,7 @@
-#include <ubu/grid/coordinate/congruent.hpp>
-#include <ubu/grid/coordinate/coordinate.hpp>
+#include <ubu/grid/coordinate/concepts/congruent.hpp>
+#include <ubu/grid/coordinate/concepts/coordinate.hpp>
+#include <ubu/grid/coordinate/concepts/weakly_congruent.hpp>
 #include <ubu/grid/coordinate/detail/tuple_algorithm.hpp>
-#include <ubu/grid/coordinate/weakly_congruent.hpp>
 #include <ubu/platform/cuda/thread_id.hpp>
 
 namespace ns = ubu;

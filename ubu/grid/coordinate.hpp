@@ -4,9 +4,8 @@
 
 #include "coordinate/colexicographical_lift.hpp"
 #include "coordinate/compare.hpp"
-#include "coordinate/congruent.hpp"
+#include "coordinate/concepts.hpp"
 #include "coordinate/coord.hpp"
-#include "coordinate/coordinate.hpp"
 #include "coordinate/coordinate_cast.hpp"
 #include "coordinate/coordinate_difference.hpp"
 #include "coordinate/coordinate_sum.hpp"
@@ -15,8 +14,6 @@
 #include "coordinate/ones.hpp"
 #include "coordinate/point.hpp"
 #include "coordinate/rank.hpp"
-#include "coordinate/same_rank.hpp"
-#include "coordinate/weakly_congruent.hpp"
 #include "coordinate/zeros.hpp"
 
 #include "../detail/epilogue.hpp"

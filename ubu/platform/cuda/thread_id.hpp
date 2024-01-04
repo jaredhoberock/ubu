@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/coordinate/coordinate.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../grid/coordinate/point.hpp"
 #include <iostream>
 

@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "ceil_div.hpp"
-#include "../../coordinate/coordinate.hpp"
+#include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/detail/coordinate_inclusive_scan.hpp"
 #include <utility>
 

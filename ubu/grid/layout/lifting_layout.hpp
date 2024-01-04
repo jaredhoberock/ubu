@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinate/coordinate.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/colexicographical_lift.hpp"
 #include "compose_layouts.hpp"
 

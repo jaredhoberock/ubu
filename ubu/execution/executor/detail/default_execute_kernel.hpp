@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../grid/coordinate/compare.hpp"
-#include "../../../grid/coordinate/coordinate.hpp"
+#include "../../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../../grid/coordinate/zeros.hpp"
 #include "../../../grid/layout/layout.hpp"
 #include "../../../grid/shape.hpp"

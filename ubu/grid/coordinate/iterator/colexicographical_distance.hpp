@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../coordinate.hpp"
-#include "../congruent.hpp"
+#include "../concepts/coordinate.hpp"
+#include "../concepts/congruent.hpp"
 #include "../coordinate_difference.hpp"
 #include "../../layout/stride/apply_stride.hpp"
 #include "../../layout/stride/compact_column_major_stride.hpp"

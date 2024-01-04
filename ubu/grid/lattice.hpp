@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "coordinate/compare/is_below.hpp"
-#include "coordinate/coordinate.hpp"
+#include "coordinate/concepts/coordinate.hpp"
 #include "coordinate/coordinate_sum.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "coordinate/iterator/lexicographical_iterator.hpp"

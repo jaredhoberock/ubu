@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/for_each_tuple_element.hpp"
-#include "coordinate.hpp"
+#include "concepts/coordinate.hpp"
 #include "element.hpp"
 
 
