@@ -4,8 +4,8 @@
 
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
+#include "detail/as_integral.hpp"
 #include "detail/tuple_algorithm.hpp"
-#include "element.hpp"
 #include "zeros.hpp"
 #include <type_traits>
 
@@ -18,7 +18,7 @@ template<scalar_coordinate T, scalar_coordinate C>
   requires (not std::is_reference_v<T>)
 constexpr T coordinate_cast(const C& coord)
 {
-  return static_cast<T>(element<0>(coord));
+  return static_cast<T>(detail::as_integral(coord));
 }
 
 template<nonscalar_coordinate T, congruent<T> C>

@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/element.hpp"
+#include "../coordinate/detail/as_integral.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include <concepts>
 
@@ -16,7 +16,7 @@ namespace ubu
 template<scalar_coordinate C>
 constexpr std::integral auto shape_size(const C& shape)
 {
-  return element<0>(shape);
+  return detail::as_integral(shape);
 }
 
 

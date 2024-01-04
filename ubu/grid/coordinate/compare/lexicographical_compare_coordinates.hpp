@@ -4,8 +4,8 @@
 
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
+#include "../detail/as_integral.hpp"
 #include "../detail/tuple_algorithm.hpp"
-#include "../element.hpp"
 
 namespace ubu
 {
@@ -13,7 +13,7 @@ namespace ubu
 template<scalar_coordinate C1, scalar_coordinate C2>
 constexpr bool lexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
 {
-  return element<0>(lhs) < element<0>(rhs);
+  return detail::as_integral(lhs) < detail::as_integral(rhs);
 }
 
 template<nonscalar_coordinate C1, congruent<C1> C2>

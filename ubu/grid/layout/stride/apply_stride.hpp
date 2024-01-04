@@ -4,8 +4,8 @@
 
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
+#include "../../coordinate/detail/as_integral.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
-#include "../../coordinate/element.hpp"
 #include "stride_for.hpp"
 #include <concepts>
 
@@ -19,7 +19,7 @@ namespace detail
 template<scalar_coordinate C, scalar_coordinate D>
 constexpr std::integral auto apply_stride_impl(const C& coord, const D& stride)
 {
-  return element<0>(stride) * element<0>(coord);
+  return as_integral(stride) * as_integral(coord);
 }
 
 

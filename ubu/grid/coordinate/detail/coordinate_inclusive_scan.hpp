@@ -4,7 +4,7 @@
 
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../element.hpp"
+#include "as_integral.hpp"
 #include "tuple_algorithm.hpp"
 #include <utility>
 
@@ -31,8 +31,8 @@ namespace ubu::detail
 template<scalar_coordinate C1, scalar_coordinate C2, class F>
 constexpr pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
-  // the use of element<0>(...) ensures that we pass integers to combine
-  return combine(element<0>(coord), element<0>(carry_in));
+  // the use of as_integral ensures that we pass integers to combine
+  return combine(as_integral(coord), as_integral(carry_in));
 }
 
 template<nonscalar_coordinate C1, scalar_coordinate C2, class F>

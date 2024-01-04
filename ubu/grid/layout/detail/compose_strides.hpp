@@ -5,8 +5,8 @@
 #include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/same_rank.hpp"
+#include "../../coordinate/detail/as_integral.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
-#include "../../coordinate/element.hpp"
 #include <concepts>
 
 
@@ -17,7 +17,7 @@ namespace ubu::detail
 template<scalar_coordinate A, scalar_coordinate B>
 constexpr std::integral auto compose_strides(const A& a, const B& b)
 {
-  return element<0>(a) * element<0>(b);
+  return as_integral(a) * as_integral(b);
 }
 
 
