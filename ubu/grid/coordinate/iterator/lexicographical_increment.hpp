@@ -4,6 +4,7 @@
 
 #include "../compare/is_below.hpp"
 #include "../concepts/coordinate.hpp"
+#include "../detail/as_integral.hpp"
 #include "../zeros.hpp"
 
 
@@ -11,11 +12,10 @@ namespace ubu
 {
 
 
-// XXX this seems wrong, coord needs to be unwrapped when it's a single
 template<scalar_coordinate C>
 constexpr void lexicographical_increment(C& coord, const C&, const C&)
 {
-  ++coord;
+  ++detail::as_integral(coord);
 }
 
 

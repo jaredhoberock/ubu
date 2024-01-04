@@ -4,6 +4,7 @@
 
 #include "../compare/is_below.hpp"
 #include "../concepts/coordinate.hpp"
+#include "../detail/as_integral.hpp"
 #include "../zeros.hpp"
 
 
@@ -14,7 +15,7 @@ namespace ubu
 template<scalar_coordinate C>
 constexpr void colexicographical_increment(C& coord, const C&, const C&)
 {
-  ++coord;
+  ++detail::as_integral(coord);
 }
 
 
