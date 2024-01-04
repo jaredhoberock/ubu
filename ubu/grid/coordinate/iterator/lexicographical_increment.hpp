@@ -4,7 +4,6 @@
 
 #include "../compare/is_below.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../element.hpp"
 #include "../zeros.hpp"
 
 
@@ -12,6 +11,7 @@ namespace ubu
 {
 
 
+// XXX this seems wrong, coord needs to be unwrapped when it's a single
 template<scalar_coordinate C>
 constexpr void lexicographical_increment(C& coord, const C&, const C&)
 {
@@ -31,10 +31,10 @@ template<std::size_t I, nonscalar_coordinate C>
 constexpr void lexicographical_increment_impl(C& coord, const C& origin, const C& end)
 {
   // recurse into the Ith element
-  lexicographical_increment(element<I>(coord), element<I>(origin), element<I>(end));
+  lexicographical_increment(get<I>(coord), get<I>(origin), get<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(is_below(element<I>(coord), element<I>(end)))
+  if(is_below(get<I>(coord), get<I>(end)))
   {
     return;
   }
@@ -43,7 +43,7 @@ constexpr void lexicographical_increment_impl(C& coord, const C& origin, const C
   if constexpr (I > 0)
   {
     // note that we don't roll the final (0th) dimension over to the origin
-    element<I>(coord) = element<I>(origin);
+    get<I>(coord) = get<I>(origin);
 
     // continue recursion towards the left
     lexicographical_increment_impl<I-1>(coord, origin, end);

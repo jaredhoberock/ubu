@@ -4,7 +4,6 @@
 
 #include "../compare/is_below.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../element.hpp"
 #include "../zeros.hpp"
 
 
@@ -31,10 +30,10 @@ template<std::size_t I, nonscalar_coordinate C>
 constexpr void colexicographical_increment_impl(C& coord, const C& origin, const C& end)
 {
   // recurse into the Ith element
-  colexicographical_increment(element<I>(coord), element<I>(origin), element<I>(end));
+  colexicographical_increment(get<I>(coord), get<I>(origin), get<I>(end));
 
   // check the Ith element against the Ith bounds
-  if(is_below(element<I>(coord), element<I>(end)))
+  if(is_below(get<I>(coord), get<I>(end)))
   {
     return;
   }
@@ -43,7 +42,7 @@ constexpr void colexicographical_increment_impl(C& coord, const C& origin, const
   if constexpr (I < rank_v<C> - 1)
   {
     // note that we don't roll the final (rank-1) dimension over to the origin
-    element<I>(coord) = element<I>(origin);
+    get<I>(coord) = get<I>(origin);
 
     // continue recursion towards the right
     colexicographical_increment_impl<I+1>(coord, origin, end);

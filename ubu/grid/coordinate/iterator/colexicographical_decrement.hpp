@@ -4,7 +4,6 @@
 
 #include "../compare/is_below.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../element.hpp"
 #include "../zeros.hpp"
 
 
@@ -12,6 +11,7 @@ namespace ubu
 {
 
 
+// XXX this seems wrong, coord needs to be unwrapped if its a single
 template<scalar_coordinate C>
 constexpr void colexicographical_decrement(C& coord, const C&, const C&)
 {
@@ -31,13 +31,13 @@ template<std::size_t I, nonscalar_coordinate C>
 constexpr void colexicographical_decrement_impl(C& coord, const C& origin, const C& end)
 {
   // is the Ith element of coord at the origin?
-  if(is_below_or_equal(element<I>(coord), element<I>(origin)))
+  if(is_below_or_equal(get<I>(coord), get<I>(origin)))
   {
     // set the Ith element to the end
-    element<I>(coord) = element<I>(end);
+    get<I>(coord) = get<I>(end);
 
     // decrement the element one more time to offset us one from the end
-    colexicographical_decrement(element<I>(coord), element<I>(origin), element<I>(end));
+    colexicographical_decrement(get<I>(coord), get<I>(origin), get<I>(end));
 
     if constexpr (I > rank_v<C> - 1)
     {
@@ -47,7 +47,7 @@ constexpr void colexicographical_decrement_impl(C& coord, const C& origin, const
   }
   else
   {
-    colexicographical_decrement(element<I>(coord), element<I>(origin), element<I>(end));
+    colexicographical_decrement(get<I>(coord), get<I>(origin), get<I>(end));
   }
 }
 
