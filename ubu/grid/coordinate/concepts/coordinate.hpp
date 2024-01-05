@@ -3,7 +3,6 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../detail/as_integral.hpp"
-#include "../element.hpp"
 #include "../rank.hpp"
 #include <concepts>
 #include <tuple>

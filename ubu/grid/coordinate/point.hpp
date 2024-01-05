@@ -4,7 +4,6 @@
 
 #include "compare/lexicographical_compare_coordinates.hpp"
 #include "detail/tuple_algorithm.hpp"
-#include "element.hpp"
 #include "rank.hpp"
 #include <array>
 #include <concepts>
