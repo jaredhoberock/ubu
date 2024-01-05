@@ -3,87 +3,78 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "detail/number.hpp"
 #include <type_traits>
 #include <utility>
-
-// XXX it would be more convenient to use the name "element" for dynamically indexing into grids
-//     and use something more like "get" for statically accessing the ith element of a coordinate
-//
-//     but, element<i>(coord) isn't identical to get<i>(coord) because coord is allowed to be std::integral when i==0
-//     if we wanted to change that, we would need to decide that the rank of a bare integer is 0 (like CuTe does),
-//     instead of 1 
-
 
 namespace ubu::detail
 {
 
+template<class T>
+concept new_not_void = not std::is_void_v<T>;
 
-template<std::size_t i, class T>
-concept has_element_member_function_template = requires(T obj) { obj.template element<i>(); };
+template<class T, class C>
+concept has_element_member_function = requires(T obj, C coord)
+{
+  { obj.element(coord) } -> new_not_void;
+};
 
-template<std::size_t i, class T>
-concept has_element_free_function_template = requires(T obj) { element<i>(obj); };
+template<class T, class C>
+concept has_element_free_function = requires(T obj, C coord)
+{
+  { element(obj,coord) } -> new_not_void;
+};
 
-template<class T, class Arg>
-concept has_operator_bracket = requires(T obj, Arg arg) { obj[arg]; };
+template<class T, class C>
+concept has_operator_bracket = requires(T obj, C coord)
+{
+  { obj[coord] } -> new_not_void;
+};
 
-template<std::size_t i, class T>
-concept has_get_free_function_template = requires(T obj) { get<i>(obj); };
+template<class T, class C>
+concept has_operator_parens = requires(T obj, C coord)
+{
+  { obj(coord) } -> new_not_void;
+};
 
 
-template<std::size_t i>
 struct dispatch_element
 {
-  // try member function template arg.element<i>()
-  template<class T>
-    requires has_element_member_function_template<i,T&&>
-  constexpr decltype(auto) operator()(T&& arg) const
+  // try obj.element(coord)
+  template<class T, class C>
+    requires has_element_member_function<T&&,C&&>
+  constexpr decltype(auto) operator()(T&& obj, C&& coord) const
   {
-    return std::forward<T>(arg).template element<i>();
+    return std::forward<T>(obj).element(std::forward<C>(coord));
   }
 
-  // else, try free function template element<i>(arg)
-  template<class T>
-    requires(!has_element_member_function_template<i,T&&> and
-              has_element_free_function_template<i,T&&>)
-  constexpr decltype(auto) operator()(T&& arg) const
+  // else, try element(obj,coord)
+  template<class T, class C>
+    requires(not has_element_member_function<T&&,C&&>
+             and has_element_free_function<T&&,C&&>)
+  constexpr decltype(auto) operator()(T&& obj, C&& coord) const
   {
-    return element<i>(std::forward<T>(arg));
+    return element(std::forward<T>(obj), std::forward<C>(coord));
   }
 
-  // else, if the index i is zero, try just returning a number
-  template<class T>
-    requires(!has_element_member_function_template<i,T&&> and 
-             !has_element_free_function_template<i,T&&> and
-             number<std::remove_cvref_t<T&&>> and
-             i == 0)
-  constexpr T&& operator()(T&& num) const
+  // else, try obj[coord]
+  template<class T, class C>
+    requires(not has_element_member_function<T&&,C&&>
+             and not has_element_free_function<T&&,C&&>
+             and has_operator_bracket<T&&,C&&>)
+  constexpr decltype(auto) operator()(T&& obj, C&& coord) const
   {
-    return std::forward<T>(num);
+    return std::forward<T>(obj)[std::forward<C>(coord)];
   }
 
-  // else, try free function template get<i>(arg)
-  template<class T>
-    requires(!has_element_member_function_template<i,T&&> and 
-             !has_element_free_function_template<i,T&&> and
-             !number<T&&> and
-             has_get_free_function_template<i,T&&>)
-  constexpr decltype(auto) operator()(T&& arg) const
+  // else, try obj(coord)
+  template<class T, class C>
+    requires(not has_element_member_function<T&&,C&&>
+             and not has_element_free_function<T&&,C&&>
+             and not has_operator_bracket<T&&,C&&>
+             and has_operator_parens<T&&,C&&>)
+  constexpr decltype(auto) operator()(T&& obj, C&& coord) const
   {
-    return get<i>(std::forward<T>(arg));
-  }
-
-  // else, try arg[i]
-  template<class T>
-    requires(!has_element_member_function_template<i,T&&> and 
-             !has_element_free_function_template<i,T&&> and
-             !number<T&&> and
-             !has_get_free_function_template<i,T&&> and
-             has_operator_bracket<T&&,std::size_t>)
-  constexpr decltype(auto) operator()(T&& arg) const
-  {
-    return std::forward<T>(arg)[i];
+    return std::forward<T>(obj)(std::forward<C>(coord));
   }
 };
 
@@ -94,13 +85,16 @@ struct dispatch_element
 namespace ubu
 {
 
+inline namespace cpos
+{
 
-template<std::size_t i>
-inline constexpr detail::dispatch_element<i> element;
+inline constexpr detail::dispatch_element element;
+
+} // end cpos
 
 
-template<std::size_t i, class T>
-using element_t = std::remove_cvref_t<decltype(ubu::element<i>(std::declval<T>()))>;
+template<class T, class C>
+using element_t = std::remove_cvref_t<decltype(element(std::declval<T>(), std::declval<C>()))>;
 
 
 } // end ubu
