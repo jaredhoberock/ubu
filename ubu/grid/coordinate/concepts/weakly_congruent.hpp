@@ -2,10 +2,10 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../element.hpp"
 #include "coordinate.hpp"
 #include "same_rank.hpp"
 #include <concepts>
+#include <tuple>
 #include <utility>
 
 
@@ -57,7 +57,7 @@ template<coordinate T1, coordinate T2, std::size_t I, std::size_t... Is>
 constexpr bool is_weakly_congruent_recursive_impl(std::index_sequence<I,Is...>)
 {
   // check the weak congruency of the first element of each coordinate and recurse to the rest of the elements
-  return is_weakly_congruent<element_t<I,T1>, element_t<I,T2>>() and is_weakly_congruent_recursive_impl<T1,T2>(std::index_sequence<Is...>{});
+  return is_weakly_congruent<std::tuple_element_t<I,T1>, std::tuple_element_t<I,T2>>() and is_weakly_congruent_recursive_impl<T1,T2>(std::index_sequence<Is...>{});
 }
 
 // recursive case: two nonscalar coordinates
@@ -65,7 +65,7 @@ template<nonscalar_coordinate T1, nonscalar_coordinate T2>
   requires same_rank<T1,T2>
 constexpr bool is_weakly_congruent()
 {
-  return is_weakly_congruent_recursive_impl<T1,T2>(std::make_index_sequence<rank_v<T1>>{});
+  return is_weakly_congruent_recursive_impl<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>>(std::make_index_sequence<rank_v<T1>>{});
 }
 
 
