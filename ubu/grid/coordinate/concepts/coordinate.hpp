@@ -6,6 +6,7 @@
 #include "../element.hpp"
 #include "../rank.hpp"
 #include <concepts>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -20,7 +21,6 @@ concept scalar_coordinate =
   {
     detail::as_integral(coord);
   }
-  and std::integral<detail::as_integral_t<T>>
 ;
 
 
@@ -36,7 +36,7 @@ struct is_nonscalar_coordinate;
 template<class T, std::size_t... I>
 constexpr bool has_elements_that_are_coordinates(std::index_sequence<I...>)
 {
-  return (... and (scalar_coordinate<element_t<I,T>> or is_nonscalar_coordinate<element_t<I,T>>::value));
+  return (... and (scalar_coordinate<std::tuple_element_t<I,T>> or is_nonscalar_coordinate<std::tuple_element_t<I,T>>::value));
 }
 
 
@@ -54,7 +54,7 @@ struct is_nonscalar_coordinate
     requires static_rank_greater_than_one<U>
   static constexpr bool test(int)
   {
-    return has_elements_that_are_coordinates<U>(std::make_index_sequence<rank_v<U>>{});
+    return has_elements_that_are_coordinates<std::remove_cvref_t<U>>(std::make_index_sequence<rank_v<U>>{});
   }
 
   static constexpr bool test(...)
