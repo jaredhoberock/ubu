@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../detail/as_integral.hpp"
+#include "../element.hpp"
 #include "../rank.hpp"
 #include <concepts>
 #include <tuple>
@@ -87,22 +88,13 @@ template<class... Types>
 concept nonscalar_coordinates = (... and nonscalar_coordinate<Types>);
 
 
-namespace detail
-{
-
-template<class T>
-concept not_void = not std::is_void_v<T>;
-
-} // end detail
-
-
+// XXX consider reorganizing coordinate_for and element underneath grid
 template<class C, class T>
 concept coordinate_for =
   coordinate<C>
   and requires(C coord, T obj)
   {
-    // XXX we should base this on element(obj,coord) instead of bracket
-    { obj[coord] } -> detail::not_void;
+    ubu::element(obj, coord);
   }
 ;
 
