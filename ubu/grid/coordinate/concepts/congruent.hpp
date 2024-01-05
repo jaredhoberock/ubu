@@ -7,6 +7,8 @@
 #include "same_rank.hpp"
 #include "weakly_congruent.hpp"
 #include <concepts>
+#include <tuple>
+#include <type_traits>
 #include <utility>
 
 
@@ -53,7 +55,7 @@ template<nonscalar_coordinate T1, nonscalar_coordinate T2, std::size_t Index, st
 constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
 {
   // check the congruency of the first element of each coordinate and recurse to the rest of the elements
-  return are_congruent<element_t<Index,T1>, element_t<Index,T2>>() and are_congruent_recursive_impl<T1,T2>(std::index_sequence<Indices...>{});
+  return are_congruent<std::tuple_element_t<Index,T1>, std::tuple_element_t<Index,T2>>() and are_congruent_recursive_impl<T1,T2>(std::index_sequence<Indices...>{});
 }
 
 
@@ -62,7 +64,7 @@ template<nonscalar_coordinate T1, nonscalar_coordinate T2>
   requires same_rank<T1,T2>
 constexpr bool are_congruent()
 {
-  return are_congruent_recursive_impl<T1,T2>(std::make_index_sequence<rank_v<T1>>{});
+  return are_congruent_recursive_impl<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>>(std::make_index_sequence<rank_v<T1>>{});
 }
 
 
