@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../detail/as_integral.hpp"
 #include "../element.hpp"
 #include "../rank.hpp"
 #include <concepts>
@@ -15,9 +16,11 @@ namespace ubu
 
 template<class T>
 concept scalar_coordinate =
-  detail::static_rank<T>
-  and (rank_v<T> == 1)
-  and std::integral<element_t<0,T>>
+  requires(T coord)
+  {
+    detail::as_integral(coord);
+  }
+  and std::integral<detail::as_integral_t<T>>
 ;
 
 
