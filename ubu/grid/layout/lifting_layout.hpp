@@ -9,7 +9,7 @@
 namespace ubu
 {
 
-// lift's bracket calls colexicographical_lift on a coordinate
+// lift's parens calls colexicographical_lift on a coordinate
 template<coordinate To>
 class lift
 {
@@ -20,7 +20,6 @@ class lift
 
     lift(const lift&) = default;
 
-    // XXX it might seem a bit more natural if this was operator()
     template<weakly_congruent<To> From>
     constexpr To operator[](const From& coord) const
     {

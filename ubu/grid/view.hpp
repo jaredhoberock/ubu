@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "coordinate/element.hpp"
 #include "domain.hpp"
 #include "element_exists.hpp"
 #include "grid.hpp"
@@ -46,11 +47,7 @@ class view
     template<coordinate_for<Layout> C>
     constexpr decltype(auto) operator[](const C& coord) const
     {
-      // XXX consider indexing both grid_ and layout_ via a customization point for a bit more flexibility
-      //     (i.e., we could support operator() in addition to operator[])
-      //     for example such a choice would allow Layout to be a cute::Layout
-      //     and Grid could be any function of Layout's element type
-      return grid_[layout_[coord]];
+      return ubu::element(grid_, ubu::element(layout_,coord));
     }
 
     // precondition: in_domain(layout(), coord)
