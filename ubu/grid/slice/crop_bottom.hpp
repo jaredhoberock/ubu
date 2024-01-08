@@ -19,6 +19,9 @@ constexpr T* crop_bottom(T* ptr, std::ptrdiff_t new_origin)
 template<class T>
 constexpr std::span<T> crop_bottom(const std::span<T>& s, std::size_t new_origin)
 {
+  // XXX it might be a better idea to make it illegal to call crop_bottom with a new_origin outside the domain of the grid
+  //     and force the caller to check for this case
+
   // don't return an out-of-range subspan
   return new_origin <= s.size() ? s.subspan(new_origin) : std::span<T>();
 }
