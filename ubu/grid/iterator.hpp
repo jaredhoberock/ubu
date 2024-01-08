@@ -153,10 +153,10 @@ class sparse_grid_iterator
     using reference         = ubu::grid_reference_t<G>;
 
     constexpr sparse_grid_iterator(G grid)
-      : grid_{grid}, coord_{ubu::shape(grid)}, coord_end_{coord_iterator::end(ubu::shape(grid))}
-    {
-      assert(coord_ != coord_end_);
-    }
+      : grid_{grid},
+        coord_end_{coord_iterator::end(shape(grid))},
+        coord_{find_begin(grid, coord_end_)}
+    {}
 
     sparse_grid_iterator(const sparse_grid_iterator&) = default;
 
@@ -210,12 +210,24 @@ class sparse_grid_iterator
     }
     
   private:
-    // XXX grid_, coord_, and coord_end_ contain some redundant state (for example, shape)
+    static constexpr coord_iterator find_begin(G grid, coord_iterator end)
+    {
+      coord_iterator coord{shape(grid)};
+
+      while(coord != end and not element_exists(grid, *coord))
+      {
+        ++coord;
+      }
+
+      return coord;
+    }
+
+    // XXX grid_, coord_end_, and coord_ contain some redundant state (for example, shape)
     //     it would be more efficient to store grid_ and the current coordinate range
     //     and simply call the increment/decrement coordinate functions directly
     G grid_;
-    coord_iterator coord_;
     coord_iterator coord_end_;
+    coord_iterator coord_;
 };
 
 
