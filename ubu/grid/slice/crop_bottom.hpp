@@ -19,7 +19,8 @@ constexpr T* crop_bottom(T* ptr, std::ptrdiff_t new_origin)
 template<class T>
 constexpr std::span<T> crop_bottom(const std::span<T>& s, std::size_t new_origin)
 {
-  return s.subspan(new_origin);
+  // don't return an out-of-range subspan
+  return new_origin <= s.size() ? s.subspan(new_origin) : std::span<T>();
 }
 
 template<grid G>
