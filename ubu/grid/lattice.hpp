@@ -110,7 +110,7 @@ class lattice
     //     because only the final mode needs to be checked to detect the end of the range
     constexpr colexicographical_iterator<T> colex_end() const
     {
-      return {colexicographical_iterator<T>::end_value(origin(), shape()), origin(), shape()};
+      return colexicographical_iterator<T>::end(origin(), shape());
     }
 
     constexpr lexicographical_iterator<T> lex_begin() const
@@ -122,7 +122,7 @@ class lattice
     //     because only the final mode needs to be checked to detect the end of the range
     constexpr lexicographical_iterator<T> lex_end() const
     {
-      return {origin(), shape()};
+      return lexicographical_iterator<T>::end(origin(), shape());
     }
 
     constexpr iterator begin() const

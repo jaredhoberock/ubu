@@ -136,6 +136,18 @@ class lexicographical_iterator
       return !(rhs > *this);
     }
 
+    constexpr static lexicographical_iterator end(const T& origin, const T& shape)
+    {
+      return {end_value(origin, shape), origin, shape};
+    }
+
+    // this end overload assumes that the user is asking for an iterator pointing
+    // to the end of a grid of the given shape whose origin is at zeros<T>
+    constexpr static lexicographical_iterator end(const T& shape)
+    {
+      return {end_value(zeros<T>, shape), zeros<T>, shape};
+    }
+
     constexpr static T end_value(const T& origin, const T& shape)
     {
       T result = last_value(origin, shape);

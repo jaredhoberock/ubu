@@ -37,7 +37,13 @@ void test_lex_begin_end()
     for(auto i = l.lex_begin(); i != l.lex_end(); ++i, ++linear_idx)
     {
       auto result = *i;
-      auto expected = ns::lexicographical_lift(linear_idx, shape);
+      auto expected = ns::lexicographical_lift(linear_idx, shape) + origin;
+      if(expected != result)
+      {
+        std::cout << "linear_idx: " << linear_idx << std::endl;
+        std::cout << "expected: " << expected << std::endl;
+        std::cout << "result: " << result << std::endl;
+      }
       assert(expected == result);
     }
 
@@ -54,7 +60,7 @@ void test_lex_begin_end()
     for(auto i = l.lex_begin(); i != l.lex_end(); ++i, ++linear_idx)
     {
       auto result = *i;
-      auto expected = ns::lexicographical_lift(linear_idx, shape);
+      auto expected = ns::lexicographical_lift(linear_idx, shape) + origin;
       assert(expected == result);
     }
 

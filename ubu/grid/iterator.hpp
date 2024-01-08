@@ -11,6 +11,10 @@ namespace ubu
 {
 
 
+// this is a sentinel type for any of dense_grid_iterator, sparse_grid_iterator, or grid_iterator
+struct grid_sentinel {};
+
+
 template<dense_grid G>
 class dense_grid_iterator
 {
@@ -121,6 +125,12 @@ class dense_grid_iterator
       return !(rhs > *this);
     }
 
+    constexpr bool operator==(grid_sentinel) const
+    {
+      // XXX it would be more efficient if the value of coord_iterator::end was state of grid_sentinel
+      return coord_ == coord_iterator::end(shape(grid_));
+    }
+
   private:
     // XXX both grid_ and coord_ contain some redundant state (for example, shape)
     //     it would be more efficient to store grid_ and the current coordinate
@@ -143,8 +153,12 @@ class sparse_grid_iterator
     using reference         = ubu::grid_reference_t<G>;
 
     constexpr sparse_grid_iterator(G grid)
-      : grid_{grid}, coord_{ubu::shape(grid)}, coord_end_{coord_iterator::end_value(ubu::shape(grid))}
-    {}
+      : grid_{grid}, coord_{ubu::shape(grid)}, coord_end_{coord_iterator::end(ubu::shape(grid))}
+    {
+      assert(coord_ != coord_end_);
+    }
+
+    sparse_grid_iterator(const sparse_grid_iterator&) = default;
 
     const G& grid() const
     {
@@ -163,14 +177,12 @@ class sparse_grid_iterator
 
     constexpr sparse_grid_iterator& operator++()
     {
-      // increment the coordinate iterator
-      ++coord_;
-
       // find either the first element that exists, or the end of the range
-      while(coord_ != coord_end_ and not element_exists(grid_, *coord_))
+      do
       {
         ++coord_;
       }
+      while(coord_ != coord_end_ and not element_exists(grid_, *coord_));
 
       return *this;
     }
@@ -190,6 +202,11 @@ class sparse_grid_iterator
     constexpr bool operator!=(const sparse_grid_iterator& rhs) const
     {
       return !(*this == rhs);
+    }
+
+    constexpr bool operator==(grid_sentinel) const
+    {
+      return coord_ == coord_end_;
     }
     
   private:
@@ -321,28 +338,6 @@ class grid_iterator<G> : public sparse_grid_iterator<G>
     using super_t::operator!=;
 };
 
-
-// this is a sentinel type for any of dense_grid_iterator, sparse_grid_iterator, or grid_iterator
-struct grid_sentinel
-{
-  template<dense_grid G>
-  friend constexpr bool operator==(const dense_grid_iterator<G>& i, const grid_sentinel& self)
-  {
-    return *i.coord() == i.coord().end_value(shape(i.grid()));
-  }
-
-  template<sparse_grid G>
-  friend constexpr bool operator==(const sparse_grid_iterator<G>& i, const grid_sentinel& self)
-  {
-    return *i.coord() == i.coord().end_value(shape(i.grid()));
-  }
-
-  template<grid G>
-  friend constexpr bool operator==(const grid_iterator<G>& i, const grid_sentinel& self)
-  {
-    return *i.coord() == i.coord().end_value(shape(i.grid()));
-  }
-};
 
 } // end ubu
 
