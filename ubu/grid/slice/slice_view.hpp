@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../coordinate/coordinate_cast.hpp"
+#include "../element_exists.hpp"
 #include "../grid.hpp"
 #include "../shape/shape.hpp"
 #include "slice_coordinate.hpp"
@@ -25,6 +26,12 @@ class slice_view
     constexpr shape_type shape() const
     {
       return slice_coordinate(ubu::shape(grid_), katana_);
+    }
+
+    constexpr bool element_exists(shape_type coord) const
+    {
+      auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
+      return element_exists(grid_, grid_coord);
     }
 
     constexpr decltype(auto) operator[](shape_type coord) const
