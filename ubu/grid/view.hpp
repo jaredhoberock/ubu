@@ -12,6 +12,7 @@
 #include "slice/crop_bottom.hpp"
 #include "slice/dice_coordinate.hpp"
 #include "slice/slice_and_dice.hpp"
+#include <ranges>
 
 namespace ubu
 {
@@ -40,7 +41,7 @@ class view
       requires (not grid<G_> and dense_grid<L_>)
     constexpr auto size() const
     {
-      return ubu::size(layout_);
+      return std::ranges::size(layout_);
     }
 
     // precondition: element_exists(coord)

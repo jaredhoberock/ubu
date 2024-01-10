@@ -4,8 +4,8 @@
 #include "coordinate/concepts/coordinate.hpp"
 #include "element_exists.hpp"
 #include "shape/shape.hpp"
-#include "size.hpp"
 #include <concepts>
+#include <ranges>
 #include <type_traits>
 
 namespace ubu
@@ -45,12 +45,15 @@ concept grid_of =
   and std::same_as<grid_element_t<G>,T>
 ;
 
+// XXX basing dense_grid off of size() might not be the best idea
+//     the problem is that it's not obvious when a grid composition should provide size
+//     maybe we should assume that if element_exists(grid) does not exist, then all elements of grid exist
 template<class T>
 concept dense_grid =
   grid<T>
   and requires(T g)
   {
-    size(g);
+    std::ranges::size(g);
   }
 ;
 

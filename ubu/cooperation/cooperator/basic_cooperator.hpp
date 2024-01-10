@@ -7,7 +7,6 @@
 #include "../../grid/coordinate/detail/tuple_algorithm.hpp"
 #include "../../grid/coordinate/rank.hpp"
 #include "../../grid/shape/shape_size.hpp"
-#include "../../grid/size.hpp"
 #include "../../memory/buffer/empty_buffer.hpp"
 #include "../barrier/arrive_and_wait.hpp"
 #include "../barrier/sized_barrier_like.hpp"
@@ -19,6 +18,7 @@
 #include "concepts/hierarchical_cooperator.hpp"
 #include "descend.hpp"
 #include "id.hpp"
+#include "size.hpp"
 #include <concepts>
 #include <type_traits>
 #include <utility>

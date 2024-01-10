@@ -9,6 +9,7 @@
 #include "cooperator/descend.hpp"
 #include "cooperator/descend_with_group_coord.hpp"
 #include "cooperator/id.hpp"
+#include "cooperator/size.hpp"
 #include "cooperator/synchronize.hpp"
 
 #include "../detail/epilogue.hpp"

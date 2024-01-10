@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "size.hpp"
 #include <concepts>
+#include <ranges>
 #include <utility>
 
 namespace ubu
@@ -25,7 +25,7 @@ concept has_element_exists_free_function = requires(T arg, C coord)
 template<class T>
 concept has_size = requires(T arg)
 {
-  size(arg);
+  std::ranges::size(arg);
 };
 
 
