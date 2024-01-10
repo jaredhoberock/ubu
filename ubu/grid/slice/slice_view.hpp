@@ -5,6 +5,7 @@
 #include "../element_exists.hpp"
 #include "../grid.hpp"
 #include "../shape/shape.hpp"
+#include "../shape/shape_size.hpp"
 #include "slice_coordinate.hpp"
 #include "slicer.hpp"
 #include "unslice_coordinate.hpp"
@@ -28,12 +29,6 @@ class slice_view
       return slice_coordinate(ubu::shape(grid_), katana_);
     }
 
-    constexpr bool element_exists(shape_type coord) const
-    {
-      auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
-      return element_exists(grid_, grid_coord);
-    }
-
     constexpr decltype(auto) operator[](shape_type coord) const
     {
       // we have to do a coordinate_cast because unsliced_coord may not return precisely grid_shape_t
@@ -41,6 +36,23 @@ class slice_view
 
       auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
       return grid_[grid_coord];
+    }
+
+    // XXX providing element_exists when G is dense is a pessimization
+    // XXX we only need to provide element_exists if G is sparse,
+    //     but std::ranges::size doesn't seem to work correctly
+    constexpr bool element_exists(shape_type coord) const
+    {
+      auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
+      return element_exists(grid_, grid_coord);
+    }
+
+    // if G is dense, we can provide size
+    template<class G_ = G>
+      requires dense_grid<G_>
+    constexpr bool size() const
+    {
+      return shape_size(shape());
     }
 
   private:
