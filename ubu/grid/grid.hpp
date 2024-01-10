@@ -45,22 +45,13 @@ concept grid_of =
   and std::same_as<grid_element_t<G>,T>
 ;
 
-// XXX basing dense_grid off of size() might not be the best idea
-//     the problem is that it's not obvious when a grid composition should provide size
-//     maybe we should assume that if element_exists(grid) does not exist, then all elements of grid exist
 template<class T>
-concept dense_grid =
+concept sized_grid =
   grid<T>
   and requires(T g)
   {
     std::ranges::size(g);
   }
-;
-
-template<class T>
-concept sparse_grid =
-  grid<T>
-  and not dense_grid<T>
 ;
 
 } // end ubu

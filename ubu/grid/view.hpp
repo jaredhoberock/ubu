@@ -38,7 +38,7 @@ class view
     }
 
     template<class G_ = Grid, class L_ = Layout>
-      requires (not grid<G_> and dense_grid<L_>)
+      requires (not grid<G_> and sized_grid<L_>)
     constexpr auto size() const
     {
       return std::ranges::size(layout_);

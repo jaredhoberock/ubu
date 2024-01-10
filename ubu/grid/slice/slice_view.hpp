@@ -38,7 +38,7 @@ class slice_view
       return grid_[grid_coord];
     }
 
-    // XXX providing element_exists when G is dense is a pessimization
+    // XXX providing element_exists when G is sized is a pessimization
     // XXX we only need to provide element_exists if G is sparse,
     //     but std::ranges::size doesn't seem to work correctly
     constexpr bool element_exists(shape_type coord) const
@@ -47,9 +47,9 @@ class slice_view
       return element_exists(grid_, grid_coord);
     }
 
-    // if G is dense, we can provide size
+    // if G is sized, we can provide size
     template<class G_ = G>
-      requires dense_grid<G_>
+      requires sized_grid<G_>
     constexpr bool size() const
     {
       return shape_size(shape());

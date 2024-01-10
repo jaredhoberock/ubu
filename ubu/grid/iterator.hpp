@@ -11,12 +11,12 @@ namespace ubu
 {
 
 
-// this is a sentinel type for any of dense_grid_iterator, sparse_grid_iterator, or grid_iterator
+// this is a sentinel type for any of sized_grid_iterator, unsized_grid_iterator, or grid_iterator
 struct grid_sentinel {};
 
 
-template<dense_grid G>
-class dense_grid_iterator
+template<sized_grid G>
+class sized_grid_iterator
 {
   public:
     using coord_iterator = colexicographical_iterator<grid_shape_t<G>>;
@@ -27,7 +27,7 @@ class dense_grid_iterator
     using pointer = void; // XXX do we need a non-void pointer type?
     using reference = grid_reference_t<G>;
 
-    constexpr dense_grid_iterator(G grid)
+    constexpr sized_grid_iterator(G grid)
       : grid_(grid), coord_(shape(grid))
     {}
 
@@ -51,76 +51,76 @@ class dense_grid_iterator
       return grid_[coord_[n]];
     }
 
-    constexpr dense_grid_iterator& operator++()
+    constexpr sized_grid_iterator& operator++()
     {
       ++coord_;
       return *this;
     }
 
-    constexpr dense_grid_iterator operator++(int)
+    constexpr sized_grid_iterator operator++(int)
     {
-      dense_grid_iterator result = *this;
+      sized_grid_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr dense_grid_iterator& operator--()
+    constexpr sized_grid_iterator& operator--()
     {
       --coord_;
       return *this;
     }
 
-    constexpr dense_grid_iterator operator--(int)
+    constexpr sized_grid_iterator operator--(int)
     {
-      dense_grid_iterator result = *this;
+      sized_grid_iterator result = *this;
       --(*this);
       return result;
     }
 
-    constexpr dense_grid_iterator& operator+=(difference_type n)
+    constexpr sized_grid_iterator& operator+=(difference_type n)
     {
       coord_ += n;
       return *this;
     }
 
-    constexpr dense_grid_iterator operator+(difference_type n) const
+    constexpr sized_grid_iterator operator+(difference_type n) const
     {
-      dense_grid_iterator result{*this};
+      sized_grid_iterator result{*this};
       return result += n;
     }
 
-    constexpr dense_grid_iterator operator-(difference_type n) const
+    constexpr sized_grid_iterator operator-(difference_type n) const
     {
-      dense_grid_iterator result{*this};
+      sized_grid_iterator result{*this};
       return result -= n;
     }
 
-    constexpr bool operator==(const dense_grid_iterator& rhs) const
+    constexpr bool operator==(const sized_grid_iterator& rhs) const
     {
       return coord_ == rhs.coord_;
     }
 
-    constexpr bool operator!=(const dense_grid_iterator& rhs) const
+    constexpr bool operator!=(const sized_grid_iterator& rhs) const
     {
       return !(*this == rhs);
     }
 
-    constexpr bool operator<(const dense_grid_iterator& rhs) const
+    constexpr bool operator<(const sized_grid_iterator& rhs) const
     {
       return coord_ < rhs.coord_;
     }
 
-    constexpr bool operator<=(const dense_grid_iterator& rhs) const
+    constexpr bool operator<=(const sized_grid_iterator& rhs) const
     {
       return !(rhs < *this);
     }
 
-    constexpr bool operator>(const dense_grid_iterator& rhs) const
+    constexpr bool operator>(const sized_grid_iterator& rhs) const
     {
       return rhs < *this;
     }
 
-    constexpr bool operator>=(const dense_grid_iterator& rhs) const
+    constexpr bool operator>=(const sized_grid_iterator& rhs) const
     {
       return !(rhs > *this);
     }
@@ -140,8 +140,9 @@ class dense_grid_iterator
 };
 
 
-template<ubu::sparse_grid G>
-class sparse_grid_iterator
+template<grid G>
+  requires (not sized_grid<G>)
+class unsized_grid_iterator
 {
   public:
     using coord_iterator = ubu::colexicographical_iterator<ubu::grid_shape_t<G>>;
@@ -152,13 +153,13 @@ class sparse_grid_iterator
     using pointer           = void; // XXX do we need a non-void pointer type?
     using reference         = ubu::grid_reference_t<G>;
 
-    constexpr sparse_grid_iterator(G grid)
+    constexpr unsized_grid_iterator(G grid)
       : grid_{grid},
         coord_end_{coord_iterator::end(shape(grid))},
         coord_{find_begin(grid, coord_end_)}
     {}
 
-    sparse_grid_iterator(const sparse_grid_iterator&) = default;
+    unsized_grid_iterator(const unsized_grid_iterator&) = default;
 
     const G& grid() const
     {
@@ -175,7 +176,7 @@ class sparse_grid_iterator
       return grid_[*coord_];
     }
 
-    constexpr sparse_grid_iterator& operator++()
+    constexpr unsized_grid_iterator& operator++()
     {
       // find either the first element that exists, or the end of the range
       do
@@ -187,19 +188,19 @@ class sparse_grid_iterator
       return *this;
     }
 
-    constexpr sparse_grid_iterator operator++(int)
+    constexpr unsized_grid_iterator operator++(int)
     {
-      sparse_grid_iterator result = *this;
+      unsized_grid_iterator result = *this;
       ++(*this);
       return result;
     }
 
-    constexpr bool operator==(const sparse_grid_iterator& rhs) const
+    constexpr bool operator==(const unsized_grid_iterator& rhs) const
     {
       return coord_ == rhs.coord_;
     }
 
-    constexpr bool operator!=(const sparse_grid_iterator& rhs) const
+    constexpr bool operator!=(const unsized_grid_iterator& rhs) const
     {
       return !(*this == rhs);
     }
@@ -235,11 +236,11 @@ template<grid G>
 class grid_iterator;
 
 
-template<dense_grid G>
-class grid_iterator<G> : public dense_grid_iterator<G>
+template<sized_grid G>
+class grid_iterator<G> : public sized_grid_iterator<G>
 {
   private:
-    using super_t = dense_grid_iterator<G>;
+    using super_t = sized_grid_iterator<G>;
 
   public:
     // iterator traits
@@ -311,11 +312,12 @@ class grid_iterator<G> : public dense_grid_iterator<G>
 };
 
 
-template<sparse_grid G>
-class grid_iterator<G> : public sparse_grid_iterator<G>
+template<grid G>
+  requires (not sized_grid<G>)
+class grid_iterator<G> : public unsized_grid_iterator<G>
 {
   private:
-    using super_t = sparse_grid_iterator<G>;
+    using super_t = unsized_grid_iterator<G>;
 
   public:
     // iterator traits
