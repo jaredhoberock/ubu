@@ -36,8 +36,8 @@ class view
       return ubu::shape(layout_);
     }
 
-    template<class L_ = Layout>
-      requires dense_grid<L_>
+    template<class G_ = Grid, class L_ = Layout>
+      requires (not grid<G_> and dense_grid<L_>)
     constexpr auto size() const
     {
       return ubu::size(layout_);
