@@ -5,6 +5,7 @@
 #include "layout/column_major.hpp"
 #include "layout/compose_layouts.hpp"
 #include "layout/identity_layout.hpp"
+#include "layout/is_injective.hpp"
 #include "layout/layout.hpp"
 #include "layout/lifting_layout.hpp"
 #include "layout/row_major.hpp"
