@@ -195,6 +195,9 @@ constexpr std::optional<T> shuffle_down(const std::optional<T>& x, int offset, i
 template<warp_like W, class T, class F>
 constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, int num_values, F binary_op)
 {
+  // XXX is there a reason we have this variant of coop_reduce that takes num_values?
+  //     we could call synchronize_and_count within this function
+  
   // XXX we need to be able to say this in a constexpr
   // constexpr int num_threads = size(self);
   constexpr int warp_size = 32;
@@ -228,10 +231,14 @@ namespace detail
 {
 
 
-template<warp_like W, class T>
-constexpr int coop_count_values(W, const std::optional<T>& maybe_value)
+template<warp_like W>
+constexpr int synchronize_and_count(W, bool value)
 {
-  return __popc(__ballot_sync(0xFFFFFFFF, maybe_value.has_value()));
+#if defined(__CUDACC__)
+  return __popc(__ballot_sync(0xFFFFFFFF, value));
+#else
+  return -1;
+#endif
 }
 
 
@@ -241,7 +248,7 @@ constexpr int coop_count_values(W, const std::optional<T>& maybe_value)
 template<warp_like W, class T, class F>
 constexpr std::optional<T> coop_reduce(W self, const std::optional<T>& value, F binary_op)
 {
-  return coop_reduce(self, value, detail::coop_count_values(self, value), binary_op);
+  return coop_reduce(self, value, detail::synchronize_and_count(self, value.has_value()), binary_op);
 }
 
 
