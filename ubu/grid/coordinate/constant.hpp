@@ -116,7 +116,7 @@ constexpr uint64_t parse_int_digits(uint64_t result, int digit, Ts... digits) no
 //
 //   auto var = 32_c;
 //
-// var has type constant<32>.
+// var has type constant<32ull>.
 template<char... digits>
 constexpr constant<detail::parse_int_digits(0, (digits - '0')...)> operator "" _c() noexcept
 {
