@@ -141,5 +141,27 @@ class strided_layout
 
 } // end ubu
 
+#if __has_include(<fmt/format.h>)
+
+#include <fmt/format.h>
+
+template<ubu::coordinate S, ubu::stride_for<S> D>
+struct fmt::formatter<ubu::strided_layout<S,D>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx)
+  {
+    return ctx.begin();
+  }
+
+  template<class FormatContext>
+  auto format(const ubu::strided_layout<S,D>& l, FormatContext& ctx)
+  {
+    return fmt::format_to(ctx.out(), "{}:{}", l.shape(), l.stride());
+  }
+};
+
+#endif // __has_include
+
 #include "../../detail/epilogue.hpp"
 
