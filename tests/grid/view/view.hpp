@@ -45,7 +45,7 @@ void test(S shape)
     for(auto c : domain(v))
     {
       auto result = v[c];
-      auto expected = grid[ns::apply_stride(c, ns::compact_row_major_stride(shape))];
+      auto expected = grid[ns::apply_stride(ns::compact_row_major_stride(shape), c)];
       assert(expected == result);
     }
   }

@@ -43,7 +43,7 @@ class strided_layout
     template<weakly_congruent<S> C>
     constexpr coordinate auto apply_layout(const C& coord) const
     {
-      return apply_stride(colexicographical_lift(coord, shape()), stride());
+      return apply_stride(stride(), colexicographical_lift(coord, shape()));
     }
 
     template<weakly_congruent<S> C>

@@ -17,7 +17,7 @@ template<coordinate C1, congruent<C1> C2, congruent<C1> S>
 constexpr std::integral auto colexicographical_distance(const C1& from, const C2& to, const S& shape)
 {
   auto delta = coordinate_difference(to, from);
-  return apply_stride(delta, compact_column_major_stride(shape));
+  return apply_stride(compact_column_major_stride(shape), delta);
 }
 
 
