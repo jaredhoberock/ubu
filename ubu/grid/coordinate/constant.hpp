@@ -95,7 +95,7 @@ namespace detail
 
 // parse_int_digits takes a variadic number of digits and converts them into an int
 template<std::same_as<int>... Ts>
-constexpr int64_t parse_int_digits(int64_t result, int digit, Ts... digits) noexcept
+constexpr uint64_t parse_int_digits(uint64_t result, int digit, Ts... digits) noexcept
 {
   if constexpr (sizeof...(Ts) == 0)
   {
