@@ -19,7 +19,7 @@ template<sized_grid G>
 class sized_grid_iterator
 {
   public:
-    using coord_iterator = colexicographical_iterator<grid_shape_t<G>>;
+    using coord_iterator = colexicographical_iterator<grid_coordinate_t<G>, grid_shape_t<G>>;
 
     using iterator_category = typename std::iterator_traits<coord_iterator>::iterator_category;
     using value_type = grid_element_t<G>;
@@ -145,13 +145,13 @@ template<grid G>
 class unsized_grid_iterator
 {
   public:
-    using coord_iterator = ubu::colexicographical_iterator<ubu::grid_shape_t<G>>;
+    using coord_iterator = colexicographical_iterator<grid_coordinate_t<G>, grid_shape_t<G>>;
 
     using iterator_category = std::forward_iterator_tag; // XXX this could be bidirectional_iterator_tag if we save the beginning of the range
-    using value_type        = ubu::grid_element_t<G>;
+    using value_type        = grid_element_t<G>;
     using difference_type   = typename std::iterator_traits<coord_iterator>::difference_type;
     using pointer           = void; // XXX do we need a non-void pointer type?
-    using reference         = ubu::grid_reference_t<G>;
+    using reference         = grid_reference_t<G>;
 
     constexpr unsized_grid_iterator(G grid)
       : grid_{grid},
