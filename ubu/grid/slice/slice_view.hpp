@@ -31,10 +31,10 @@ class slice_view
 
     constexpr decltype(auto) operator[](shape_type coord) const
     {
-      // we have to do a coordinate_cast because unsliced_coord may not return precisely grid_shape_t
+      // we have to do a coordinate_cast because unsliced_coord may not return precisely grid_coordinate_t
       // XXX ideally, this kind of cast would happen in a CPO for indexing a grid with a coordinate
 
-      auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
+      auto grid_coord = coordinate_cast<grid_coordinate_t<G>>(unslice_coordinate(coord, katana_));
       return grid_[grid_coord];
     }
 
@@ -43,7 +43,7 @@ class slice_view
     //     but std::ranges::size doesn't seem to work correctly
     constexpr bool element_exists(shape_type coord) const
     {
-      auto grid_coord = coordinate_cast<grid_shape_t<G>>(unslice_coordinate(coord, katana_));
+      auto grid_coord = coordinate_cast<grid_coordinate_t<G>>(unslice_coordinate(coord, katana_));
       return element_exists(grid_, grid_coord);
     }
 

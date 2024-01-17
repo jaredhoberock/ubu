@@ -27,7 +27,7 @@ constexpr std::span<T> crop_bottom(const std::span<T>& s, std::size_t new_origin
 }
 
 template<grid G>
-constexpr void crop_bottom(const G& g, const grid_shape_t<G>& new_origin)
+constexpr void crop_bottom(const G& g, const grid_coordinate_t<G>& new_origin)
 {
   static_assert(sizeof(G) != 0, "crop_bottom(grid): Not yet implemented.");
 }

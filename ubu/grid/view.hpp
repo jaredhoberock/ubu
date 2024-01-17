@@ -25,6 +25,7 @@ class view
 {
   public:
     using shape_type = grid_shape_t<Layout>;
+    using coordinate_type = grid_coordinate_t<Layout>;
 
     constexpr view(Grid grid, Layout layout)
       : grid_{grid}, layout_{layout}
@@ -95,7 +96,7 @@ class view
     }
 
     // XXX this returns some type of view
-    template<slicer_for<shape_type> K>
+    template<slicer_for<coordinate_type> K>
     constexpr ubu::grid auto slice(const K& katana) const
     {
       auto [sliced_layout, diced_layout] = slice_and_dice(layout(), katana);
