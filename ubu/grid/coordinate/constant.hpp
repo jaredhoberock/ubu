@@ -1,7 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "concepts/coordinate.hpp"
 #include "detail/tuple_algorithm.hpp"
+#include "zeros.hpp"
 #include <concepts>
 #include <iostream>
 
@@ -86,6 +88,20 @@ struct constant
 
   // operators for dynamic values are handled via conversion to value_type
 };
+
+
+// specialize zeros<constant<v>>
+template<auto v>
+  requires coordinate<decltype(v)>
+constexpr auto zeros<constant<v>> = zeros<decltype(v)>;
+
+template<auto v>
+  requires coordinate<decltype(v)>
+constexpr auto zeros<constant<v>&> = zeros<decltype(v)>;
+
+template<auto v>
+  requires coordinate<decltype(v)>
+constexpr auto zeros<const constant<v>&> = zeros<decltype(v)>;
 
 
 #if defined(__cpp_user_defined_literals)
