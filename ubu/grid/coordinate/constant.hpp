@@ -57,7 +57,7 @@ struct constant
   // unary operators
   constexpr constant<+v> operator+() const noexcept { return {}; }
   constexpr constant<-v> operator-() const noexcept { return {}; }
-  constexpr constant<~v> operator~() const noexcept { return {}; }
+  constexpr constant<!v> operator!() const noexcept { return {}; }
 
   // binary operators against another constant
 #define CONSTANT_BIN_OP_CONSTANT(OP)\
