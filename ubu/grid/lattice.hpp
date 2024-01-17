@@ -8,6 +8,7 @@
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "coordinate/iterator/lexicographical_iterator.hpp"
 #include "coordinate/rank.hpp"
+#include "coordinate/zeros.hpp"
 #include "shape/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>
@@ -18,13 +19,12 @@ namespace ubu
 {
 
 
-template<coordinate T>
+template<coordinate C, congruent<C> S = C>
 class lattice
 {
   public:
-    using value_type = T;
-    using reference  = value_type;
-    using iterator   = colexicographical_iterator<T>;
+    using coordinate_type = C;
+    using iterator = colexicographical_iterator<C,S>;
 
     // default constructor
     lattice() = default;
@@ -34,36 +34,36 @@ class lattice
 
     // (origin, shape) constructor
     // creates a new lattice of the given shape at the given origin
-    constexpr lattice(const T& origin, const T& shape)
+    constexpr lattice(const C& origin, const S& shape)
       : origin_{origin}, shape_{shape}
     {}
 
     // shape constructor
-    // creates a new lattice at the origin with the given shape
-    constexpr explicit lattice(const T& shape)
-      : lattice{value_type{}, shape}
+    // creates a new lattice with the origin at zeros<C> of the given shape
+    constexpr explicit lattice(const S& shape)
+      : lattice{zeros<C>, shape}
     {}
 
     // returns the number of dimensions spanned by this lattice
     static constexpr std::size_t number_of_dimensions()
     {
-      return rank_v<T>;
+      return rank_v<C>;
     }
 
     // returns the value of the smallest lattice point
-    constexpr T origin() const
+    constexpr C origin() const
     {
       return origin_;
     }
 
     // returns the number of lattice points along each of this lattice's dimensions
-    constexpr T shape() const
+    constexpr S shape() const
     {
       return shape_;
     }
 
     // returns whether or not coord is the value of a lattice point
-    constexpr bool contains(const T& coord) const
+    constexpr bool contains(const C& coord) const
     {
       return is_below_or_equal(origin(), coord) and
              is_below(coord, coordinate_sum(origin(), shape()));
@@ -78,51 +78,51 @@ class lattice
     // returns whether this lattice contains no points
     constexpr bool empty() const
     {
-      return shape() == T{};
+      return size() == 0;
     }
 
     // returns the value of the (i,j,k,...)th lattice point
-    constexpr T operator[](const T& idx) const
+    constexpr C operator[](const C& idx) const
     {
       return coordinate_sum(origin(), idx);
     }
 
     // returns the value of the ith lattice point in colexicographic order
     template<std::integral I>
-      requires (rank_v<T> > 1)
-    constexpr T operator[](I idx) const
+      requires (rank_v<C> > 1)
+    constexpr C operator[](I idx) const
     {
       return begin()[idx];
     }
 
     // reshape does not move the origin
-    constexpr void reshape(const T& shape)
+    constexpr void reshape(const S& shape)
     {
       shape_ = shape;
     }
 
-    constexpr colexicographical_iterator<T> colex_begin() const
+    constexpr colexicographical_iterator<C,S> colex_begin() const
     {
       return {origin(), shape()};
     }
 
     // XXX a colexicographical_sentinel would be more efficient than returning an iterator
     //     because only the final mode needs to be checked to detect the end of the range
-    constexpr colexicographical_iterator<T> colex_end() const
+    constexpr colexicographical_iterator<C,S> colex_end() const
     {
-      return colexicographical_iterator<T>::end(origin(), shape());
+      return colexicographical_iterator<C,S>::end(origin(), shape());
     }
 
-    constexpr lexicographical_iterator<T> lex_begin() const
+    constexpr lexicographical_iterator<C,S> lex_begin() const
     {
       return {origin(), shape()};
     }
 
     // XXX a lexicographical_sentinel would be more efficient than returning an iterator
     //     because only the final mode needs to be checked to detect the end of the range
-    constexpr lexicographical_iterator<T> lex_end() const
+    constexpr lexicographical_iterator<C,S> lex_end() const
     {
-      return lexicographical_iterator<T>::end(origin(), shape());
+      return lexicographical_iterator<C,S>::end(origin(), shape());
     }
 
     constexpr iterator begin() const
@@ -146,9 +146,13 @@ class lattice
     }
 
   private:
-    T origin_;
-    T shape_;
+    C origin_;
+    S shape_;
 };
+
+
+template<coordinate S>
+lattice(const S&) -> lattice<S,S>;
 
 
 } // end ubu
