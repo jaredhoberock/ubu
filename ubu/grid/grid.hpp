@@ -16,6 +16,8 @@ namespace detail
 template<class T>
 struct coordinate_or_shape
 {
+  // XXX it might be a better idea to make the default be zeros_t<shape_t<T>>
+  //     to make it work with ubu::constant
   using type = shape_t<T>;
 };
 
