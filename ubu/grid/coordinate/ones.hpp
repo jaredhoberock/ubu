@@ -4,7 +4,8 @@
 
 #include "../../detail/for_each_tuple_element.hpp"
 #include "concepts/coordinate.hpp"
-#include <type_traits>
+#include "zeros.hpp"
+#include <concepts>
 
 
 namespace ubu
@@ -13,24 +14,20 @@ namespace detail
 {
 
 
-template<scalar_coordinate T>
-constexpr T ones_impl()
+template<std::integral T>
+constexpr auto successor_of_each_mode(const T& i)
 {
-  return 1;
+  return i + 1;
 }
 
 
-template<nonscalar_coordinate T>
-constexpr T ones_impl()
+template<tuple_like T>
+constexpr auto successor_of_each_mode(const T& t)
 {
-  T result{};
-
-  detail::for_each_tuple_element([](auto& element)
+  return detail::tuple_zip_with(t, [](auto element)
   {
-    element = ones_impl<std::remove_cvref_t<decltype(element)>>();
-  }, result);
-
-  return result;
+    return successor_of_each_mode(element);
+  });
 }
 
 
@@ -38,7 +35,7 @@ constexpr T ones_impl()
 
 
 template<coordinate T>
-constexpr std::remove_cvref_t<T> ones = detail::ones_impl<std::remove_cvref_t<T>>();
+constexpr auto ones = detail::successor_of_each_mode(zeros<T>);
 
 
 } // end ubu
