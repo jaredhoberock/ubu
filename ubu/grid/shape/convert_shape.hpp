@@ -6,7 +6,6 @@
 #include "../coordinate/coordinate_cast.hpp"
 #include "../coordinate/detail/as_integral.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
-#include "../coordinate/zeros.hpp"
 #include "detail/approximate_factors.hpp"
 #include "shape_size.hpp"
 #include <array>
@@ -46,9 +45,9 @@ constexpr T convert_shape(const S& shape)
   std::array<detail::as_integral_t<S>, N> factors = detail::approximate_factors<N>(detail::as_integral(shape));
 
   // recurse with each factor
-  return detail::tuple_zip_with(zeros<T>, factors, [](auto z, const auto& f)
+  return detail::tuple_zip_with(T{}, factors, [](auto t, const auto& f)
   {
-    return convert_shape<decltype(z)>(f);
+    return convert_shape<decltype(t)>(f);
   });
 }
 
@@ -58,9 +57,9 @@ template<nonscalar_coordinate T, nonscalar_coordinate S>
   requires (not congruent<T,S> and weakly_congruent<S,T>)
 constexpr T convert_shape(const S& shape)
 {
-  return detail::tuple_zip_with(zeros<T>, shape, [](auto z, const auto& s)
+  return detail::tuple_zip_with(T{}, shape, [](auto t, const auto& s)
   {
-    return convert_shape<decltype(z)>(s);
+    return convert_shape<decltype(t)>(s);
   });
 }
 

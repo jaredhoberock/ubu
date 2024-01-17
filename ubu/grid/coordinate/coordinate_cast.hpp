@@ -6,7 +6,6 @@
 #include "concepts/coordinate.hpp"
 #include "detail/as_integral.hpp"
 #include "detail/tuple_algorithm.hpp"
-#include "zeros.hpp"
 #include <type_traits>
 
 
@@ -25,9 +24,9 @@ template<nonscalar_coordinate T, congruent<T> C>
   requires (not std::is_reference_v<T>)
 constexpr T coordinate_cast(const C& coord)
 {
-  T z = zeros<T>;
+  T zero{};
 
-  return detail::tuple_zip_with(z, coord, [](auto z, const auto& c)
+  return detail::tuple_zip_with(zero, coord, [](auto z, const auto& c)
   {
     return coordinate_cast<decltype(z)>(c);
   });

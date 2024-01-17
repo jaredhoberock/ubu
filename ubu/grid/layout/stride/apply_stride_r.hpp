@@ -6,7 +6,6 @@
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/weakly_congruent.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
-#include "../../coordinate/zeros.hpp"
 #include "../../coordinate/detail/as_integral.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "apply_stride.hpp"
@@ -34,9 +33,9 @@ constexpr auto apply_stride_r_impl(const D& stride, const C& coord);
 template<nonscalar_coordinate R, nonscalar_coordinate D, scalar_coordinate C>
 constexpr R apply_stride_r_impl(const D& stride, const C& coord)
 {
-  return detail::tuple_zip_with(stride, zeros<R>, [&](const auto& s, auto z)
+  return detail::tuple_zip_with(stride, R{}, [&](const auto& s, auto r)
   {
-    return apply_stride_r_impl<decltype(z)>(s, coord);
+    return apply_stride_r_impl<decltype(r)>(s, coord);
   });
 }
 
