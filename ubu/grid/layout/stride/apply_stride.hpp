@@ -7,6 +7,7 @@
 #include "../../coordinate/detail/as_integral.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include <concepts>
+#include <utility>
 
 
 namespace ubu
@@ -63,6 +64,10 @@ constexpr coordinate auto apply_stride(const D& stride, const C& coord)
 {
   return detail::apply_stride_impl(stride, coord);
 }
+
+
+template<coordinate D, weakly_congruent<D> C>
+using apply_stride_t = decltype(apply_stride(std::declval<D>(), std::declval<C>()));
 
 
 } // end ubu
