@@ -658,6 +658,13 @@ constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plu
 }
 
 
+template<tuple_like T1, tuple_like T2, tuple_like T3, tuple_zipper<T1,T2,T3> Op1, tuple_folder<tuple_zip_with_result_t<Op1,T1,T2,T3>> Op2>
+constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, Op1 star, Op2 plus)
+{
+  return tuple_fold(tuple_zip_with(t1, t2, t3, star), plus);
+}
+
+
 template<tuple_like T>
 constexpr auto tuple_sum(const T& t)
 {
