@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../detail/for_each_tuple_element.hpp"
 #include "concepts/coordinate.hpp"
 #include <type_traits>
 
