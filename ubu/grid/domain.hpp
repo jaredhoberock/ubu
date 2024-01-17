@@ -17,7 +17,7 @@ namespace ubu
 // a lift function to indices in [0, size(g))
 // XXX consider whether domain should be a customization point
 template<grid G>
-constexpr lattice<grid_shape_t<G>> domain(const G& g)
+constexpr lattice<grid_coordinate_t<G>,grid_shape_t<G>> domain(const G& g)
 {
   return lattice(shape(g));
 }
