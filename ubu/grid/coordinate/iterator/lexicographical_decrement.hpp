@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../compare/is_below.hpp"
+#include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../detail/as_integral.hpp"
 #include "../zeros.hpp"
@@ -12,23 +13,23 @@ namespace ubu
 {
 
 
-template<scalar_coordinate C>
-constexpr void lexicographical_decrement(C& coord, const C&, const C&)
+template<scalar_coordinate C, congruent<C> O, congruent<C> E>
+constexpr void lexicographical_decrement(C& coord, const O&, const E&)
 {
   --detail::as_integral(coord);
 }
 
 
-template<nonscalar_coordinate C>
-constexpr void lexicographical_decrement(C& coord, const C& origin, const C& end);
+template<nonscalar_coordinate C, congruent<C> O, congruent<C> E>
+constexpr void lexicographical_decrement(C& coord, const O& origin, const E& end);
 
 
 namespace detail
 {
 
 
-template<std::size_t I, nonscalar_coordinate C>
-constexpr void lexicographical_decrement_impl(C& coord, const C& origin, const C& end)
+template<std::size_t I, nonscalar_coordinate C, congruent<C> O, congruent<C> E>
+constexpr void lexicographical_decrement_impl(C& coord, const O& origin, const E& end)
 {
   // is the Ith element of coord at the origin?
   if(is_below_or_equal(get<I>(coord), get<I>(origin)))
@@ -55,15 +56,15 @@ constexpr void lexicographical_decrement_impl(C& coord, const C& origin, const C
 } // end detail
 
 
-template<nonscalar_coordinate C>
-constexpr void lexicographical_decrement(C& coord, const C& origin, const C& end)
+template<nonscalar_coordinate C, congruent<C> O, congruent<C> E>
+constexpr void lexicographical_decrement(C& coord, const O& origin, const E& end)
 {
   return detail::lexicographical_decrement_impl<rank_v<C> - 1>(coord, origin, end);
 }
 
 
-template<coordinate C>
-constexpr void lexicographical_decrement(C& coord, const C& shape)
+template<coordinate C, congruent<C> S>
+constexpr void lexicographical_decrement(C& coord, const S& shape)
 {
   return lexicographical_decrement(coord, zeros<C>, shape);
 }
