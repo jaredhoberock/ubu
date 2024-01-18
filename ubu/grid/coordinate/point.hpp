@@ -359,7 +359,7 @@ class point : public detail::point_base<T,N>
     template<detail::tuple_like_of_size<N> Tuple>
       requires detail::tuple_elements_convertible_to<Tuple,T>
     constexpr point(const Tuple& other)
-      : point{other, std::make_index_sequence<N>{}}
+      : point{from_tuple_t{}, other, std::make_index_sequence<N>{}}
     {}
 
     // fill constructor
@@ -628,10 +628,12 @@ class point : public detail::point_base<T,N>
     }
 
   private:
+    struct from_tuple_t {};
+
     // tuple-like unpacking constructor
     template<detail::tuple_like_of_size<N> Tuple, std::size_t... Indices>
       requires detail::tuple_elements_convertible_to<Tuple,T>
-    constexpr point(const Tuple& other, std::index_sequence<Indices...>)
+    constexpr point(from_tuple_t, const Tuple& other, std::index_sequence<Indices...>)
       : point{get<Indices>(other)...}
     {}
 
