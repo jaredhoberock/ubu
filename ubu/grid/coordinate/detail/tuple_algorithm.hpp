@@ -109,6 +109,29 @@ static_assert(!same_tuple_size<std::pair<int,int>, std::tuple<float>, std::array
 static_assert(!same_tuple_size<std::tuple<float>, std::array<double,1>, std::tuple<>>);
 
 
+template<class To, class From1, class... From>
+concept all_convertible_to =
+  std::convertible_to<From1,To>
+  and (... and std::convertible_to<From,To>)
+;
+
+
+template<tuple_like T, class U, std::size_t... I>
+  requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
+constexpr bool tuple_elements_convertible_to_impl(std::index_sequence<0,I...>)
+{
+  return all_convertible_to<U, std::tuple_element_t<0,T>, std::tuple_element_t<I,T>...>;
+}
+
+
+template<class FromTuple, class To>
+concept tuple_elements_convertible_to =
+  tuple_like<FromTuple>
+  and (std::tuple_size_v<std::remove_cvref_t<FromTuple>> > 0)
+  and tuple_elements_convertible_to_impl<FromTuple,To>(tuple_indices<FromTuple>)
+;
+
+
 template<std::size_t I, class T>
 concept tuple_index_for =
   tuple_like<T>
