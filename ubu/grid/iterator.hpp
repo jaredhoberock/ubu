@@ -131,6 +131,18 @@ class sized_grid_iterator
       return coord_ == coord_iterator::end(shape(grid_));
     }
 
+    constexpr bool operator<(grid_sentinel) const
+    {
+      // XXX it would be more efficient if the value of coord_iterator::end was state of grid_sentinel
+      return coord_ < coord_iterator::end(shape(grid_));
+    }
+
+    friend constexpr auto operator-(grid_sentinel, const sized_grid_iterator& self)
+    {
+      // XXX it would be more efficient if the value of coord_iterator::end was state of grid_sentinel
+      return coord_iterator::end(shape(self.grid_)) - self.coord_;
+    }
+
   private:
     // XXX both grid_ and coord_ contain some redundant state (for example, shape)
     //     it would be more efficient to store grid_ and the current coordinate
