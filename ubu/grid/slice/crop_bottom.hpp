@@ -48,14 +48,10 @@ struct dispatch_crop_bottom
   template<class T>
   constexpr std::span<T> operator()(const std::span<T>& s, std::size_t new_origin) const
   {
-    // XXX it might be a better idea to make it illegal to call crop_bottom with a new_origin outside the domain of the grid
-    //     and force the caller to check for this case
-
-    // don't return an out-of-range subspan
-    return new_origin <= s.size() ? s.subspan(new_origin) : std::span<T>();
+    return s.subspan(new_origin);
   }
 
-  // XXX not yet implemented
+  // XXX default case not yet implemented
   template<grid G>
     requires (not has_crop_bottom_member_function<G,grid_coordinate_t<G>>
               and not has_crop_bottom_free_function<G,grid_coordinate_t<G>>)

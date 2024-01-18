@@ -101,6 +101,13 @@ class view
     {
       auto [sliced_layout, diced_layout] = slice_and_dice(layout(), katana);
       auto new_origin = diced_layout[dice_coordinate(katana,katana)];
+
+      // when the diced layout produces a new origin outside the grid, we yield an empty grid
+      if constexpr (ubu::grid<Grid>)
+      {
+        if (not in_domain(grid_, new_origin)) new_origin = ubu::shape(grid());
+      }
+
       return make_view(crop_bottom(grid(), new_origin), sliced_layout);
     }
 
