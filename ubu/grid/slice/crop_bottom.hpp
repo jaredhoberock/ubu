@@ -6,31 +6,67 @@
 
 namespace ubu
 {
-
-// XXX crop_bottom should be a CPO
-// it isn't at the moment because the default implementation has not been written yet
-
-template<class T>
-constexpr T* crop_bottom(T* ptr, std::ptrdiff_t new_origin)
+namespace detail
 {
-  return ptr + new_origin;
-}
 
-template<class T>
-constexpr std::span<T> crop_bottom(const std::span<T>& s, std::size_t new_origin)
+template<class G, class O>
+concept has_crop_bottom_member_function = requires(G g, O o)
 {
-  // XXX it might be a better idea to make it illegal to call crop_bottom with a new_origin outside the domain of the grid
-  //     and force the caller to check for this case
+  g.crop_bottom(o);
+};
 
-  // don't return an out-of-range subspan
-  return new_origin <= s.size() ? s.subspan(new_origin) : std::span<T>();
-}
-
-template<grid G>
-constexpr void crop_bottom(const G& g, const grid_coordinate_t<G>& new_origin)
+template<class G, class O>
+concept has_crop_bottom_free_function = requires(G g, O o)
 {
-  static_assert(sizeof(G) != 0, "crop_bottom(grid): Not yet implemented.");
-}
+  crop_bottom(g,o);
+};
+
+// this is the type of crop_bottom
+struct dispatch_crop_bottom
+{
+  template<class G, class O>
+    requires has_crop_bottom_member_function<G&&,O&&>
+  constexpr auto operator()(G&& g, O&& new_origin) const
+  {
+    return std::forward<G>(g).crop_bottom(std::forward<O>(new_origin));
+  }
+
+  template<class G, class O>
+    requires (not has_crop_bottom_member_function<G&&,O&&>
+              and has_crop_bottom_free_function<G&&,O&&>)
+  constexpr auto operator()(G&& g, O&& new_origin) const
+  {
+    return crop_bottom(std::forward<G>(g), std::forward<O>(new_origin));
+  }
+
+  template<class T>
+  constexpr T* operator()(T* ptr, std::ptrdiff_t new_origin) const
+  {
+    return ptr + new_origin;
+  }
+
+  template<class T>
+  constexpr std::span<T> operator()(const std::span<T>& s, std::size_t new_origin)
+  {
+    // XXX it might be a better idea to make it illegal to call crop_bottom with a new_origin outside the domain of the grid
+    //     and force the caller to check for this case
+
+    // don't return an out-of-range subspan
+    return new_origin <= s.size() ? s.subspan(new_origin) : std::span<T>();
+  }
+
+  // XXX not yet implemented
+  template<grid G>
+    requires (not has_crop_bottom_member_function<G,grid_coordinate_t<G>>
+              and not has_crop_bottom_free_function<G,grid_coordinate_t<G>>)
+  constexpr G operator()(const G& g, const grid_coordinate_t<G>& new_origin) const = delete;
+};
+
+} // end detail
+
+
+inline constexpr detail::dispatch_crop_bottom crop_bottom;
+
 
 } // end ubu
 
