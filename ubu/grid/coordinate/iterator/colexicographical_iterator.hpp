@@ -10,6 +10,7 @@
 #include "../zeros.hpp"
 #include "colexicographical_advance.hpp"
 #include "colexicographical_decrement.hpp"
+#include "colexicographical_distance.hpp"
 #include "colexicographical_increment.hpp"
 
 namespace ubu

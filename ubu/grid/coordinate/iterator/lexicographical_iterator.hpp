@@ -9,6 +9,7 @@
 #include "../ones.hpp"
 #include "lexicographical_advance.hpp"
 #include "lexicographical_decrement.hpp"
+#include "colexicographical_distance.hpp"
 #include "lexicographical_increment.hpp"
 
 namespace ubu
