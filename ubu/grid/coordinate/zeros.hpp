@@ -13,6 +13,9 @@ namespace ubu
 template<coordinate T>
 constexpr std::remove_cvref_t<T> zeros{};
 
+template<coordinate T>
+using zeros_t = std::remove_cvref_t<decltype(zeros<T>)>;
+
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
