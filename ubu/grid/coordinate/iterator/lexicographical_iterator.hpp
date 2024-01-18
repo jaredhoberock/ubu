@@ -43,7 +43,9 @@ class lexicographical_iterator
       : lexicographical_iterator(zeros<O>, shape)
     {}
 
-    constexpr lexicographical_iterator(const lexicographical_iterator&) = default;
+    lexicographical_iterator(const lexicographical_iterator&) = default;
+
+    lexicographical_iterator() = default;
 
     constexpr reference operator*() const
     {
@@ -86,6 +88,11 @@ class lexicographical_iterator
     {
       lexicographical_iterator result{*this};
       return result += n;
+    }
+
+    friend constexpr lexicographical_iterator operator+(difference_type n, const lexicographical_iterator& self)
+    {
+      return self + n;
     }
 
     constexpr lexicographical_iterator& operator+=(difference_type n)

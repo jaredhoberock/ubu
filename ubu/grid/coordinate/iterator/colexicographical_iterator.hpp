@@ -43,7 +43,9 @@ class colexicographical_iterator
       : colexicographical_iterator(zeros<O>, shape)
     {}
 
-    constexpr colexicographical_iterator(const colexicographical_iterator&) = default;
+    colexicographical_iterator(const colexicographical_iterator&) = default;
+
+    colexicographical_iterator() = default;
 
     constexpr reference operator*() const
     {
@@ -86,6 +88,11 @@ class colexicographical_iterator
     {
       colexicographical_iterator result{*this};
       return result += n;
+    }
+
+    friend constexpr colexicographical_iterator operator+(difference_type n, const colexicographical_iterator& self)
+    {
+      return self + n;
     }
 
     constexpr colexicographical_iterator& operator+=(difference_type n)
