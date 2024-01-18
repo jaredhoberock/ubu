@@ -5,6 +5,7 @@
 #include "grid.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "shape/shape.hpp"
+#include <concepts>
 #include <iterator>
 
 namespace ubu
@@ -30,6 +31,10 @@ class sized_grid_iterator
     constexpr sized_grid_iterator(G grid)
       : grid_(grid), coord_(shape(grid))
     {}
+
+    sized_grid_iterator(const sized_grid_iterator&) = default;
+
+    sized_grid_iterator() requires std::default_initializable<G> = default;
 
     const G& grid() const
     {
@@ -83,16 +88,31 @@ class sized_grid_iterator
       return *this;
     }
 
+    constexpr sized_grid_iterator& operator-=(difference_type n)
+    {
+      return operator+=(-n);
+    }
+
     constexpr sized_grid_iterator operator+(difference_type n) const
     {
       sized_grid_iterator result{*this};
       return result += n;
     }
 
+    friend constexpr sized_grid_iterator operator+(difference_type n, const sized_grid_iterator& self)
+    {
+      return self + n;
+    }
+
     constexpr sized_grid_iterator operator-(difference_type n) const
     {
       sized_grid_iterator result{*this};
       return result -= n;
+    }
+    
+    constexpr auto operator-(const sized_grid_iterator& rhs) const
+    {
+      return coord_ - rhs.coord_;
     }
 
     constexpr bool operator==(const sized_grid_iterator& rhs) const
@@ -129,6 +149,11 @@ class sized_grid_iterator
     {
       // XXX it would be more efficient if the value of coord_iterator::end was state of grid_sentinel
       return coord_ == coord_iterator::end(shape(grid_));
+    }
+
+    friend constexpr bool operator==(const grid_sentinel& s, const sized_grid_iterator& self)
+    {
+      return self == s;
     }
 
     constexpr bool operator<(grid_sentinel) const
@@ -172,6 +197,8 @@ class unsized_grid_iterator
     {}
 
     unsized_grid_iterator(const unsized_grid_iterator&) = default;
+
+    unsized_grid_iterator() requires std::default_initializable<G> = default;
 
     const G& grid() const
     {
@@ -297,9 +324,15 @@ class grid_iterator<G> : public sized_grid_iterator<G>
       return result;
     }
 
-    grid_iterator& operator+=(difference_type n)
+    constexpr grid_iterator& operator+=(difference_type n)
     {
       super_t::operator+=(n);
+      return *this;
+    }
+
+    constexpr grid_iterator& operator-=(difference_type n)
+    {
+      super_t::operator-=(n);
       return *this;
     }
 
@@ -309,13 +342,25 @@ class grid_iterator<G> : public sized_grid_iterator<G>
       return result += n;
     }
 
+    friend constexpr grid_iterator operator+(difference_type n, const grid_iterator& self)
+    {
+      return self + n;
+    }
+
     constexpr grid_iterator operator-(difference_type n) const
     {
       grid_iterator result{*this};
       return result -= n;
     }
 
-    using super_t::operator==;
+    constexpr auto operator-(const grid_iterator& rhs) const
+    {
+      return super_t::operator-(rhs);
+    }
+
+    // XXX if we instead try using super_t::operator== for this operator, std::regular complains because of reasons
+    bool operator==(const grid_iterator&) const = default;
+
     using super_t::operator!=;
     using super_t::operator<;
     using super_t::operator<=;
