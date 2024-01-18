@@ -355,14 +355,15 @@ class point : public detail::point_base<T,N>
       : super_t{static_cast<T>(args)...}
     {}
 
-    // converting constructor
-    template<class OtherT>
-      requires std::convertible_to<OtherT,T>
-    constexpr point(const point<OtherT,N>& other)
+    // tuple-like converting constructor
+    template<detail::tuple_like_of_size<N> Tuple>
+      requires detail::tuple_elements_convertible_to<Tuple,T>
+    constexpr point(const Tuple& other)
       : point{other, std::make_index_sequence<N>{}}
     {}
 
     // fill constructor
+    // XXX is this really a good idea?
     template<class OtherT>
       requires (N > 1) and std::convertible_to<OtherT,T>
     explicit constexpr point(OtherT val)
@@ -627,11 +628,11 @@ class point : public detail::point_base<T,N>
     }
 
   private:
-    // point unpacking constructor
-    template<class OtherT, std::size_t... Indices>
-      requires std::convertible_to<OtherT,T>
-    constexpr point(const point<OtherT,N>& other, std::index_sequence<Indices...>)
-      : point{other[Indices]...}
+    // tuple-like unpacking constructor
+    template<detail::tuple_like_of_size<N> Tuple, std::size_t... Indices>
+      requires detail::tuple_elements_convertible_to<Tuple,T>
+    constexpr point(const Tuple& other, std::index_sequence<Indices...>)
+      : point{get<Indices>(other)...}
     {}
 
     template<std::size_t, class OtherT>
