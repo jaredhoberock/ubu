@@ -7,6 +7,7 @@
 #include "../coordinate_difference.hpp"
 #include "../coordinate_sum.hpp"
 #include "../ones.hpp"
+#include "../zeros.hpp"
 #include "lexicographical_advance.hpp"
 #include "lexicographical_decrement.hpp"
 #include "lexicographical_distance.hpp"
