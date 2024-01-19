@@ -60,7 +60,7 @@ template<grid T>
 using grid_coordinate_t = detail::coordinate_or_default_t<T>;
 
 template<grid T>
-using grid_reference_t = decltype(std::declval<T>()[std::declval<grid_coordinate_t<T>>()]);
+using grid_reference_t = decltype(element(std::declval<T>(), std::declval<grid_coordinate_t<T>>()));
 
 template<grid T>
 using grid_element_t = std::remove_cvref_t<grid_reference_t<T>>;
