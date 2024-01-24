@@ -7,6 +7,7 @@
 #include "../../cooperation/cooperator/basic_cooperator.hpp"
 #include "../../cooperation/cooperator/concepts/cooperator.hpp"
 #include "../../cooperation/cooperator/cooperator_thread_scope.hpp"
+#include "detail/sync_blocks.hpp"
 #include <cmath>
 #include <concepts>
 #include <cstddef>
@@ -86,6 +87,26 @@ struct device_workspace
     }
 #endif
   }
+};
+
+
+struct concurrent_device_workspace : device_workspace
+{
+  using device_workspace::device_workspace;
+
+  struct barrier_type
+  {
+    constexpr static const std::string_view thread_scope = "device";
+  
+    constexpr void arrive_and_wait() const
+    {
+#if defined(__CUDACC__)
+      detail::sync_blocks();
+#endif
+    }
+  };
+  
+  barrier_type barrier;
 };
 
 
