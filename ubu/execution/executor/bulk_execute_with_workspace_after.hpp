@@ -8,6 +8,7 @@
 #include "concepts/executor.hpp"
 #include "detail/default_bulk_execute_with_workspace_after.hpp"
 #include "traits/executor_happening.hpp"
+#include "traits/executor_workspace.hpp"
 #include <concepts>
 #include <cstddef>
 #include <span>
@@ -118,7 +119,7 @@ class cpo
     }
 
     // dispatch path calls default_bulk_execute_with_workspace_after
-    template<executor E, asynchronous_allocator A, happening B, coordinate S, class F>
+    template<executor E, asynchronous_allocator A, happening B, coordinate S, std::regular_invocable<S,executor_workspace_t<E>> F>
       requires (    not has_customization_0<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_1<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_2<E&&,A&&,B&&,const S&,std::size_t,F&&>
