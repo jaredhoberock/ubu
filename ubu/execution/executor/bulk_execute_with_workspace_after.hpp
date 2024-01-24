@@ -42,7 +42,7 @@ namespace detail
 // 
 // customizations that ignore the allocator parameter:
 // 2. exec.bulk_execute_with_workspace_after(before, shape, workspace_shape, f)
-// 3 bulk_execute_with_workspace_after(exec, shape, workspace_shape, f)
+// 3. bulk_execute_with_workspace_after(exec, shape, workspace_shape, f)
 //
 // if dispatch fails to find a customization, it uses the default:
 // 4. allocate_and_zero_after(alloc, ...) then bulk_execute_after(ex, ...) then deallocate_after(alloc, ...)
@@ -118,7 +118,7 @@ class cpo
     }
 
     // dispatch path calls default_bulk_execute_with_workspace_after
-    template<executor E, asynchronous_allocator A, happening B, coordinate S, std::regular_invocable<S, std::span<std::byte>> F>
+    template<executor E, asynchronous_allocator A, happening B, coordinate S, class F>
       requires (    not has_customization_0<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_1<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_2<E&&,A&&,B&&,const S&,std::size_t,F&&>

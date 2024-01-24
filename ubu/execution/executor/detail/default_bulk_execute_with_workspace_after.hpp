@@ -12,6 +12,7 @@
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"
 #include "../traits/executor_happening.hpp"
+#include "../traits/executor_workspace.hpp"
 #include <concepts>
 #include <cstddef>
 #include <functional>
@@ -27,7 +28,6 @@ constexpr std::regular_invocable<S> auto make_default_bulk_execute_with_workspac
 {
   return [=, function = std::forward<F>(function)](S coord)
   {
-    // XXX concurrent executors would need a workspace with a barrier
     std::invoke(function, coord, workspace);
   };
 }
@@ -36,7 +36,11 @@ template<coordinate S, std::regular_invocable<S,std::span<std::byte>> F>
 using default_bulk_execute_with_workspace_after_invocable_t = decltype(make_default_bulk_execute_with_workspace_after_invocable<S>(std::declval<std::span<std::byte>>(), std::declval<F>()));
 
 
-template<executor E, asynchronous_allocator A, happening B, coordinate S, std::regular_invocable<S, std::span<std::byte>> F>
+// XXX for now, this default version of bulk_execute_with_workspace_after will only work for executors whose workspace type is std::span
+template<class E>
+concept executor_with_simple_workspace = executor<E> and std::same_as<std::span<std::byte>, executor_workspace_t<E>>;
+
+template<executor_with_simple_workspace E, asynchronous_allocator A, happening B, coordinate S, std::regular_invocable<S, std::span<std::byte>> F>
   requires bulk_executable_on<default_bulk_execute_with_workspace_after_invocable_t<S,F>, E, allocator_happening_t<A>, S>
 allocator_happening_t<A> default_bulk_execute_with_workspace_after(const E& ex, const A& alloc, B&& before, const S& shape, std::size_t workspace_size, F&& function)
 {
