@@ -1,14 +1,21 @@
 #pragma once
 
-#include <bit>
+#include "../../detail/prologue.hpp"
+
+#include "../../grid/coordinate/concepts/congruent.hpp"
+#include "../../grid/coordinate/concepts/coordinate.hpp"
+#include "../../grid/coordinate/point.hpp"
+#include "../../memory/allocator/allocate_and_zero_after.hpp"
+#include "../../memory/allocator/deallocate_after.hpp"
+#include "cooperation.hpp"
+#include "detail/default_dynamic_shared_memory_size.hpp"
+#include "detail/launch_as_cooperative_kernel.hpp"
+#include "device_allocator.hpp"
+#include "event.hpp"
 #include <concepts>
 #include <cstddef>
 #include <functional>
 #include <span>
-#include <ubu/ubu.hpp>
-#include <ubu/platform/cuda.hpp>
-#include <ubu/platform/cuda/detail/launch_as_cooperative_kernel.hpp>
-#include <ubu/platform/cuda/detail/sync_blocks.hpp>
 
 
 namespace ubu::cuda
@@ -158,4 +165,6 @@ class coop_executor
 
 
 } // end ubu::cuda
+
+#include "../../detail/epilogue.hpp"
 
