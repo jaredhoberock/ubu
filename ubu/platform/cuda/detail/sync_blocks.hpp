@@ -10,8 +10,53 @@
 namespace ubu::cuda::detail
 {
 
+inline void arrive_and_wait(bool is_first_thread, std::uint32_t num_expected_threads, volatile uint32_t* counter_and_generation_ptr)
+{
+#if defined(__CUDACC__)
+  auto all_arrived = [](std::uint32_t old_arrived, std::uint32_t current_arrived)
+  {
+    return (((old_arrived ^ current_arrived) & 0x80000000) != 0);
+  };
+  
+  std::uint32_t increment = is_first_thread ? (0x80000000 - (num_expected_threads - 1)) : 1;
+  
+  NV_IF_ELSE_TARGET(NV_PROVIDES_SM_70, (
+    // update the barrier with memory order release
+    //asm volatile("atom.add.release.gpu.u32 %0,[%1],%2;" : "=r"(oldArrive) : "l"((unsigned int*)arrived), "r"(nb) : "memory");
+    std::uint32_t old_arrived = std::atomic_ref(*counter_and_generation_ptr).fetch_add(increment, std::memory_order_release);
+  
+    std::uint32_t current_arrived;                                                                                                      
+    do
+    {
+      // poll the barrier with memory order acquire
+      // XXX can probably use std::atomic_ref instead of this inline PTX
+      asm volatile("ld.acquire.gpu.u32 %0,[%1];" : "=r"(current_arrived) : "l"((std::uint32_t*)counter_and_generation_ptr) : "memory");
+  
+      // XXX circle crashes on this alternative to the above:
+      //     https://godbolt.org/z/qvMbh7G6G
+      //current_arrived = std::atomic_ref(*counter_and_generation_ptr).load(std::memory_order_acquire);
+    }
+    while(not all_arrived(old_arrived, current_arrived));                                                                            
+  ), (
+    std::atomic_ref counter_and_generation(*counter_and_generation_ptr);
 
-// XXX these function bodies should really be guarded with if UBU_TARGET(is_device) { ... }
+    // older architectures need to use fences
+    __threadfence();
+    // XXX circle crashes on this alternative(?) to the above:
+    //std::atomic_thread_fence(std::memory_order_seq_cst);
+  
+    std::uint32_t old_arrived = std::atomic_ref(*counter_and_generation_ptr).fetch_add(increment);
+  
+    while(not all_arrived(old_arrived, *counter_and_generation_ptr));
+  
+    __threadfence();
+    // XXX circle crashes on this alternative(?) to the above:
+    //std::atomic_thread_fence(std::memory_order_seq_cst);
+  ))
+#else
+  assert(false);
+#endif
+}
 
 
 inline void sync_blocks(std::uint32_t expected_num_blocks, volatile std::uint32_t* arrived_num_blocks)
@@ -21,45 +66,10 @@ inline void sync_blocks(std::uint32_t expected_num_blocks, volatile std::uint32_
   bool is_first_block = (blockIdx.x + blockIdx.y + blockIdx.z == 0);
     
   __syncthreads();
-    
   if(is_block_leader)
   {
-    auto all_arrived = [](std::uint32_t old_arrived, std::uint32_t current_arrived)
-    {
-      return (((old_arrived ^ current_arrived) & 0x80000000) != 0);
-    };
-
-    std::uint32_t increment = is_first_block ? (0x80000000 - (expected_num_blocks - 1)) : 1;
-
-    NV_IF_ELSE_TARGET(NV_PROVIDES_SM_70, (
-      // update the barrier with memory order release
-      //asm volatile("atom.add.release.gpu.u32 %0,[%1],%2;" : "=r"(oldArrive) : "l"((unsigned int*)arrived), "r"(nb) : "memory");
-      std::uint32_t old_arrived = std::atomic_ref(*arrived_num_blocks).fetch_add(increment, std::memory_order_release);
-
-      std::uint32_t current_arrived;                                                                                                      
-      do
-      {
-        // poll the barrier with memory order acquire
-        // XXX can probably use std::atomic_ref instead of this inline PTX
-        asm volatile("ld.acquire.gpu.u32 %0,[%1];" : "=r"(current_arrived) : "l"((std::uint32_t*)arrived_num_blocks) : "memory");
-
-        // XXX circle crashes on this alternative to the above:
-        //     https://godbolt.org/z/qvMbh7G6G
-        //current_arrived = std::atomic_ref(*arrived_num_blocks).load(std::memory_order_acquire);
-      }
-      while(not all_arrived(old_arrived, current_arrived));                                                                            
-    ), (
-      // older architectures need to use fences
-      __threadfence();
-
-      std::uint32_t old_arrived = std::atomic_ref(*arrived_num_blocks).fetch_add(increment);
-
-      while(not all_arrived(old_arrived, *arrived_num_blocks));
-
-      __threadfence();
-    ))
+    arrive_and_wait(is_first_block, expected_num_blocks, arrived_num_blocks);
   }
-
   __syncthreads();
 #else
   assert(false);
