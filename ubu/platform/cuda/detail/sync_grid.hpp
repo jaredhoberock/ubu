@@ -65,7 +65,7 @@ inline void arrive_and_wait(bool is_first_thread, std::uint32_t num_expected_thr
 }
 
 
-inline void sync_blocks(std::uint32_t expected_num_blocks, volatile std::uint32_t* arrived_num_blocks)
+inline void sync_grid(std::uint32_t expected_num_blocks, volatile std::uint32_t* arrived_num_blocks)
 {
 #if defined(__CUDACC__)
   bool is_block_leader = (threadIdx.x + threadIdx.y + threadIdx.z == 0);
@@ -115,12 +115,12 @@ inline std::uint32_t* cooperative_kernel_barrier_counter_ptr()
   return reinterpret_cast<std::uint32_t*>(workspace_addr + sizeof(std::uint32_t));
 }
 
-inline void sync_blocks()
+inline void sync_grid()
 {
 #if defined(__CUDACC__)
   std::uint32_t expected_num_blocks = gridDim.x * gridDim.y * gridDim.z;
 
-  sync_blocks(expected_num_blocks, cooperative_kernel_barrier_counter_ptr());
+  sync_grid(expected_num_blocks, cooperative_kernel_barrier_counter_ptr());
 #else
   assert(false);
 #endif
