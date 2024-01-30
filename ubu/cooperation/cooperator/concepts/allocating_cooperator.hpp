@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../coop_alloca.hpp"
+#include "../coop_dealloca.hpp"
 #include "cooperator.hpp"
 
 namespace ubu
@@ -14,6 +15,7 @@ concept allocating_cooperator =
   and requires(T self, int n)
   {
     coop_alloca(self, n); 
+    coop_dealloca(self, n);
   }
 ;
 

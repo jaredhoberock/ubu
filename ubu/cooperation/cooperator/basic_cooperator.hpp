@@ -72,6 +72,14 @@ struct basic_cooperator
     return result;
   }
 
+  // cooperators with non-empty buffer can deallocate from the buffer
+  template<class = void>
+    requires nonempty_buffer_like<buffer_t<W>>
+  constexpr void coop_dealloca(int num_bytes)
+  {
+    stack_counter_ -= num_bytes;
+  }
+
   // precondition: shape_size(new_shape) == size(self)
   template<coordinate OtherS>
   constexpr basic_cooperator<W, OtherS> reshape(const OtherS& new_shape) const
