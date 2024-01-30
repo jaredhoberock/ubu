@@ -6,7 +6,7 @@
 #include "../../memory/buffer/empty_buffer.hpp"
 #include "../../cooperation/cooperator/basic_cooperator.hpp"
 #include "../../cooperation/cooperator/concepts/cooperator.hpp"
-#include "../../cooperation/cooperator/cooperator_thread_scope.hpp"
+#include "../../cooperation/cooperator/traits/cooperator_thread_scope.hpp"
 #include "detail/sync_grid.hpp"
 #include <cmath>
 #include <concepts>
