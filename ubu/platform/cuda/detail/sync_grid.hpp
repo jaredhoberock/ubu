@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../detail/reflection/is_device.hpp"
 #include <atomic>
 #include <cassert>
 #include <concepts>
@@ -15,16 +16,18 @@ template<std::integral T>
   requires (sizeof(T) == sizeof(int))
 T load_acquire(volatile T* ptr)
 {
-#if defined(__CUDACC__)
-  T result;
-  asm volatile("ld.acquire.gpu.u32 %0,[%1];" : "=r"(result) : "l"((T*)ptr) : "memory");
-  return result;
-  // XXX circle crashes on this alternative to the above:
-  //     https://godbolt.org/z/qvMbh7G6G
-  //return std::atomic_ref(*ptr).load(std::memory_order_acquire);
-#else
-  assert(false);
-#endif
+  if UBU_TARGET(ubu::detail::is_device())
+  {
+    T result;
+    asm volatile("ld.acquire.gpu.u32 %0,[%1];" : "=r"(result) : "l"((T*)ptr) : "memory");
+    return result;
+  }
+  else
+  {
+    // XXX circle crashes on this alternative to the above:
+    //     https://godbolt.org/z/qvMbh7G6G
+    return std::atomic_ref(*ptr).load(std::memory_order_acquire);
+  }
 }
 
 inline void arrive_and_wait(bool is_first_thread, std::uint32_t num_expected_threads, volatile uint32_t* counter_and_generation_ptr)
