@@ -15,26 +15,26 @@ namespace detail
 {
 
 
-// terminal case 1: the slicer is literally the underscore: keep the whole coordinate
-template<coordinate C>
+// terminal case 1: katana is literally the underscore: keep the whole coordinate
+template<slicer C>
 constexpr C slice_coordinate_impl(const C& coord, detail::underscore_t)
 {
   return coord;
 }
 
-// terminal case 2: the slicer does not contain an underscore, discard the whole coordinate
-template<coordinate C, slicer_for<C> S>
-  requires slicer_without_underscore<S>
-constexpr std::tuple<> slice_coordinate_impl(const C&, const S&)
+// terminal case 2: katana does not contain an underscore, discard the whole coordinate
+template<slicer C, slicer_for<C> K>
+  requires slicer_without_underscore<K>
+constexpr std::tuple<> slice_coordinate_impl(const C&, const K&)
 {
   return {};
 }
 
-// recursive case: the slicer is nonscalar
+// recursive case: katana is nonscalar
 // this is a forward declaration for recursive_slice_coordinate_impl
-template<coordinate C, nonscalar_slicer_for<C> S>
-  requires slicer_with_underscore<S>
-constexpr auto slice_coordinate_impl(const C& coord, const S& katana);
+template<slicer C, nonscalar_slicer_for<C> K>
+  requires slicer_with_underscore<K>
+constexpr auto slice_coordinate_impl(const C& coord, const K& katana);
 
 template<detail::tuple_like R, class MaybeUnderscore, class Arg>
 constexpr auto wrap_if_underscore_or_int(const Arg& arg)
@@ -49,8 +49,8 @@ constexpr auto wrap_if_underscore_or_int(const Arg& arg)
   }
 }
 
-template<coordinate C, nonscalar_slicer_for<C> S, std::size_t... I>
-constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const C& coord, const S& katana)
+template<slicer C, nonscalar_slicer_for<C> K, std::size_t... I>
+constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const C& coord, const K& katana)
 {
   // we apply slice_coordinate to each element of coord & katana and we want to concatenate all the results
   // we also want to preserve the tuple structure of any tuples that were selected by underscore at element I
@@ -60,25 +60,25 @@ constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const 
 
   // finally, because it's really inconvenient for this function to return a (single_thing), we unwrap any singles we find
 
-  auto result_tuple = tuple_cat_similar_to<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,S>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
+  auto result_tuple = tuple_cat_similar_to<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
   return detail::tuple_unwrap_single(result_tuple);
 }
 
 
-// recursive case: the slicer is nonscalar
-template<coordinate C, nonscalar_slicer_for<C> S>
-  requires slicer_with_underscore<S>
-constexpr auto slice_coordinate_impl(const C& coord, const S& katana)
+// recursive case: katana is nonscalar
+template<slicer C, nonscalar_slicer_for<C> K>
+  requires slicer_with_underscore<K>
+constexpr auto slice_coordinate_impl(const C& coord, const K& katana)
 {
-  return recursive_slice_coordinate_impl(detail::tuple_indices<S>, coord, katana);
+  return recursive_slice_coordinate_impl(detail::tuple_indices<K>, coord, katana);
 }
 
 
 } // end detail
 
 
-template<coordinate C, slicer_for<C> S>
-constexpr slicer auto slice_coordinate(const C& coord, const S& katana)
+template<slicer C, slicer_for<C> K>
+constexpr slicer auto slice_coordinate(const C& coord, const K& katana)
 {
   return detail::slice_coordinate_impl(coord, katana);
 }
