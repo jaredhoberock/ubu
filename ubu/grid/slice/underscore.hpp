@@ -9,7 +9,13 @@ namespace ubu
 namespace detail
 {
 
-struct underscore_t {};
+struct underscore_t
+{
+  constexpr bool operator==(const underscore_t&) const
+  {
+    return true;
+  }
+};
 
 std::ostream& operator<<(std::ostream& os, underscore_t)
 {
