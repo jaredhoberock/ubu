@@ -4,6 +4,7 @@
 
 #include "slice/crop_bottom.hpp"
 #include "slice/dice_coordinate.hpp"
+#include "slice/opposite_slicer.hpp"
 #include "slice/slice.hpp"
 #include "slice/slice_and_dice.hpp"
 #include "slice/slice_coordinate.hpp"
