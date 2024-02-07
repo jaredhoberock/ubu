@@ -53,7 +53,10 @@ struct is_nonscalar_slicer
 
 // nonscalar_slicer is a recursive concept, so we need to implement it with traditional SFINAE techniques
 template<class T>
-concept nonscalar_slicer = detail::is_nonscalar_slicer<T>::value;
+concept nonscalar_slicer = 
+  (not scalar_slicer<T>)
+  and detail::is_nonscalar_slicer<T>::value
+;
 
 // a slicer is either a scalar or nonscalar slicer
 template<class T>
