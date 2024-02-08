@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 #include <ubu/grid/coordinate/compare.hpp>
 #include <ubu/grid/domain.hpp>
 #include <ubu/grid/lattice.hpp>
 #include <ubu/grid/layout/column_major.hpp>
 #include <ubu/grid/layout/row_major.hpp>
+#include <ubu/grid/shape/shape_size.hpp>
 #include <ubu/grid/view.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -51,6 +53,60 @@ void test(S shape)
   }
 }
 
+void test_slice()
+{
+  using namespace ns;
+  using namespace std;
+
+  ns::int2 shape(3,3);
+  vector<int> grid(shape_size(shape));
+  iota(grid.begin(), grid.end(), 0);
+
+  {
+    // test slice of a view<T*,...>
+    view A(grid.data(), column_major(shape));
+
+    // A is
+    // +---+---+---+
+    // | 0 | 3 | 6 |
+    // +---+---+---+
+    // | 1 | 4 | 7 |
+    // +---+---+---+
+    // | 2 | 5 | 8 |
+    // +---+---+---+
+
+    array<int,3> expected{{3,4,5}};
+
+    auto column_1 = A.slice(pair(_,1));
+
+    static_assert(std::same_as<decltype(column_1), view<int*, strided_layout<int>>>);
+
+    assert(equal(expected.begin(), expected.end(), column_1.begin()));
+  }
+
+  {
+    // test slice of a view<std::span<T>, ...>
+    view A(span(grid.data(), grid.size()), column_major(shape));
+
+    // A is
+    // +---+---+---+
+    // | 0 | 3 | 6 |
+    // +---+---+---+
+    // | 1 | 4 | 7 |
+    // +---+---+---+
+    // | 2 | 5 | 8 |
+    // +---+---+---+
+
+    array<int,3> expected{{3,4,5}};
+
+    auto column_1 = A.slice(pair(_,1));
+
+    static_assert(std::same_as<decltype(column_1), view<span<int>, strided_layout<int>>>);
+
+    assert(equal(expected.begin(), expected.end(), column_1.begin()));
+  }
+}
+
 void test_view()
 {
   using namespace std;
@@ -62,5 +118,7 @@ void test_view()
   test(ns::convert_shape<ns::int3>(n));
   test(ns::convert_shape<pair<int, ns::int2>>(n));
   test(ns::convert_shape<pair<ns::int3, ns::int2>>(n));
+
+  test_slice();
 }
 

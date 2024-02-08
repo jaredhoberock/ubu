@@ -10,9 +10,7 @@
 #include "iterator.hpp"
 #include "layout/layout.hpp"
 #include "shape/shape.hpp"
-#include "slice/crop_bottom.hpp"
-#include "slice/dice_coordinate.hpp"
-#include "slice/slice_and_dice.hpp"
+#include "slice/slice.hpp"
 #include <ranges>
 
 namespace ubu
@@ -106,20 +104,10 @@ class view
       return {};
     }
 
-    // XXX this returns some type of view
     template<slicer_for<coordinate_type> K>
     constexpr ubu::grid auto slice(const K& katana) const
     {
-      auto [sliced_layout, diced_layout] = slice_and_dice(layout(), katana);
-      auto new_origin = diced_layout[dice_coordinate(katana,katana)];
-
-      // when the diced layout produces a new origin outside the grid, we yield an empty grid
-      if constexpr (ubu::grid<Grid>)
-      {
-        if (not in_domain(grid_, new_origin)) new_origin = ubu::shape(grid());
-      }
-
-      return compose(crop_bottom(grid(), new_origin), sliced_layout);
+      return detail::invoke_compose(grid(), ubu::slice(layout(), katana));
     }
 
   private:

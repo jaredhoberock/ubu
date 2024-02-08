@@ -10,6 +10,7 @@
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "layout.hpp"
+#include "offset.hpp"
 #include "stride/apply_stride.hpp"
 #include "stride/apply_stride_r.hpp"
 #include "stride/compact_column_major_stride.hpp"
@@ -116,9 +117,19 @@ class strided_layout
       return complement(shape_size(coshape()));
     }
 
+    template<slicer_for<S> K>
+    constexpr layout auto slice(const K& katana) const
+    {
+      auto needs_offset = cute_slice(katana);
+      auto diced_layout = cute_dice(katana);
+      auto o = diced_layout[dice_coordinate(katana,katana)];
+      return offset(needs_offset, o);
+    }
+
+  private:
     // XXX the return type of this is some type of strided_layout
     template<slicer_for<S> K>
-    constexpr auto slice(const K& katana) const
+    constexpr auto cute_slice(const K& katana) const
     {
       auto result_shape = slice_coordinate(shape(), katana);
       auto result_stride = slice_coordinate(stride(), katana);
@@ -127,14 +138,13 @@ class strided_layout
 
     // XXX the return type of this is some type of strided_layout
     template<slicer_for<S> K>
-    constexpr auto dice(const K& katana) const
+    constexpr auto cute_dice(const K& katana) const
     {
       auto result_shape = dice_coordinate(shape(), katana);
       auto result_stride = dice_coordinate(stride(), katana);
       return make_strided_layout_r<R>(result_shape, result_stride);
     }
 
-  private:
     template<class S1, stride_for<S1> D1>
     constexpr static strided_layout<S1,D1> make_strided_layout(S1 s, D1 d) 
     {
