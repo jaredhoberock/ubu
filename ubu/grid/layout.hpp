@@ -3,7 +3,6 @@
 #include "../detail/prologue.hpp"
 
 #include "layout/column_major.hpp"
-#include "layout/compose_layouts.hpp"
 #include "layout/identity_layout.hpp"
 #include "layout/is_injective.hpp"
 #include "layout/layout.hpp"

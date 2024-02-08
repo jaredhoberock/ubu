@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../detail/prologue.hpp"
 
-#include "../grid.hpp"
-#include "../view.hpp"
-#include "layout.hpp"
+#include "grid.hpp"
+#include "layout/layout.hpp"
+#include "view.hpp"
 #include <concepts>
 #include <utility>
 
@@ -32,7 +32,7 @@ concept has_compose_free_function = requires(A a, B b)
   { compose(a,b) } -> composition_of_grids<A,B>;
 };
 
-struct dispatch_compose_layouts
+struct dispatch_compose
 {
   template<class A, class B>
     requires has_compose_member_function<A&&,B&&>
@@ -63,11 +63,11 @@ struct dispatch_compose_layouts
 namespace
 {
 
-constexpr detail::dispatch_compose_layouts compose_layouts;
+constexpr detail::dispatch_compose compose;
 
 } // end anonymous namespace
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../detail/epilogue.hpp"
 

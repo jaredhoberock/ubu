@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../grid/compose.hpp"
 #include "../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../grid/layout/compose_layouts.hpp"
 #include "../../grid/layout/identity_layout.hpp"
 #include "../../grid/layout/lifting_layout.hpp"
 #include "../../grid/shape/convert_shape.hpp"
@@ -44,7 +44,7 @@ constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&&)
   lifting_layout index_to_user_coord(native_coord_to_index.coshape(), shape);
 
   // the kernel layout is the composition of these two layouts
-  return compose_layouts(index_to_user_coord, native_coord_to_index);
+  return compose(index_to_user_coord, native_coord_to_index);
 }
 
 

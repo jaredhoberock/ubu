@@ -4,7 +4,7 @@
 
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/colexicographical_lift.hpp"
-#include "compose_layouts.hpp"
+#include "../compose.hpp"
 
 namespace ubu
 {
@@ -36,7 +36,7 @@ class lift
 };
 
 // lifting_layout extends lift to present a layout interface
-// also specializes compose_layouts
+// also specializes compose
 template<coordinate From, coordinate To>
   requires weakly_congruent<From,To>
 class lifting_layout : public lift<To>
@@ -57,7 +57,7 @@ class lifting_layout : public lift<To>
     constexpr layout auto compose(const L& rhs) const
     {
       // it's safe to discard shape_ when composing with another layout
-      return compose_layouts(static_cast<const lift<To>&>(*this), rhs);
+      return ubu::compose(static_cast<const lift<To>&>(*this), rhs);
     }
 
   private:

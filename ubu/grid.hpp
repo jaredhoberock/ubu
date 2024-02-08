@@ -28,6 +28,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "grid/compose.hpp"
 #include "grid/coordinate.hpp"
 #include "grid/domain.hpp"
 #include "grid/element_exists.hpp"
