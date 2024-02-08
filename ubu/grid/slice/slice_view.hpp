@@ -44,7 +44,7 @@ class slice_view
     constexpr bool element_exists(shape_type coord) const
     {
       auto grid_coord = coordinate_cast<grid_coordinate_t<G>>(unslice_coordinate(coord, katana_));
-      return element_exists(grid_, grid_coord);
+      return ubu::element_exists(grid_, grid_coord);
     }
 
     // if G is sized, we can provide size
