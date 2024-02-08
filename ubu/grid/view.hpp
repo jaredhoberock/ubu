@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "compose.hpp"
 #include "coordinate/element.hpp"
 #include "domain.hpp"
 #include "element_exists.hpp"
@@ -16,6 +17,16 @@
 
 namespace ubu
 {
+namespace detail
+{
+
+// view and compose have a cyclic dependency and can't use each other directly
+// declare detail::invoke_compose for view's use
+template<class... Args>
+constexpr auto invoke_compose(Args&&... args);
+
+} // end detail
+
 
 // XXX consider requiring that Grid and Layout be trivially relocatable
 // i.e., Grid can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
@@ -108,19 +119,27 @@ class view
         if (not in_domain(grid_, new_origin)) new_origin = ubu::shape(grid());
       }
 
-      return make_view(crop_bottom(grid(), new_origin), sliced_layout);
+      return compose(crop_bottom(grid(), new_origin), sliced_layout);
     }
 
   private:
-    template<class G, layout_for<G> L>
-    static constexpr view<G,L> make_view(G g, L l)
-    {
-      return {g,l};
-    }
-
     Grid grid_;
     Layout layout_;
 };
+
+namespace detail
+{
+
+// view and compose have a cyclic dependency and can't use each other directly
+// define detail::make_view as soon as view's definition is available
+template<class G, layout_for<G> L>
+constexpr auto make_view(G g, L l)
+{
+  return view<G,L>(g,l);
+}
+
+
+} // end detail
 
 
 } // end ubu

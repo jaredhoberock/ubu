@@ -13,6 +13,11 @@ namespace ubu
 namespace detail
 {
 
+// view and compose have a cyclic dependency and can't use each other directly
+// declare detail::make_view for compose's use
+template<class G, layout_for<G> L>
+constexpr auto make_view(G g, L l);
+
 template<class R, class A, class B>
 concept composition_of_grids =
   grid<R>
@@ -54,7 +59,7 @@ struct dispatch_compose
               and not has_compose_free_function<A&&,B&&>)
   constexpr grid auto operator()(A&& a, B&& b) const
   {
-    return view(std::forward<A>(a), std::forward<B>(b));
+    return detail::make_view(std::forward<A>(a), std::forward<B>(b));
   }
 };
 
@@ -66,6 +71,19 @@ namespace
 constexpr detail::dispatch_compose compose;
 
 } // end anonymous namespace
+
+namespace detail
+{
+
+// view and compose have a cyclic dependency and can't use each other directly
+// define detail::invoke_compose as soon as compose's definition is available
+template<class... Args>
+constexpr auto invoke_compose(Args&&... args)
+{
+  return compose(std::forward<Args>(args)...);
+}
+
+} // end detail
 
 } // end ubu
 
