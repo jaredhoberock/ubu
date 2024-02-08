@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../grid.hpp"
 #include "../view.hpp"
 #include "layout.hpp"
 #include <concepts>
@@ -13,8 +14,8 @@ namespace detail
 {
 
 template<class R, class A, class B>
-concept composition_of_layouts =
-  layout<R>
+concept composition_of_grids =
+  grid<R>
   and layout_for<B,A>
   and std::same_as<shape_t<R>, shape_t<B>>
 ;
@@ -22,20 +23,20 @@ concept composition_of_layouts =
 template<class A, class B>
 concept has_compose_member_function = requires(A a, B b)
 {
-  { a.compose(b) } -> composition_of_layouts<A,B>;
+  { a.compose(b) } -> composition_of_grids<A,B>;
 };
 
 template<class A, class B>
 concept has_compose_free_function = requires(A a, B b)
 {
-  { compose(a,b) } -> composition_of_layouts<A,B>;
+  { compose(a,b) } -> composition_of_grids<A,B>;
 };
 
 struct dispatch_compose_layouts
 {
   template<class A, class B>
     requires has_compose_member_function<A&&,B&&>
-  constexpr layout auto operator()(A&& a, B&& b) const
+  constexpr grid auto operator()(A&& a, B&& b) const
   {
     return std::forward<A>(a).compose(std::forward<B>(b));
   }
@@ -43,7 +44,7 @@ struct dispatch_compose_layouts
   template<class A, class B>
     requires (not has_compose_member_function<A&&,B&&>
               and has_compose_free_function<A&&,B&&>)
-  constexpr layout auto operator()(A&& a, B&& b) const
+  constexpr grid auto operator()(A&& a, B&& b) const
   {
     return compose(std::forward<A>(a), std::forward<B>(b));
   }
@@ -51,7 +52,7 @@ struct dispatch_compose_layouts
   template<class A, layout_for<A> B>
     requires (not has_compose_member_function<A&&,B&&>
               and not has_compose_free_function<A&&,B&&>)
-  constexpr layout auto operator()(A&& a, B&& b) const
+  constexpr grid auto operator()(A&& a, B&& b) const
   {
     return view(std::forward<A>(a), std::forward<B>(b));
   }
