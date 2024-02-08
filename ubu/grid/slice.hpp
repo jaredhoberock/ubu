@@ -2,7 +2,6 @@
 
 #include "../detail/prologue.hpp"
 
-#include "slice/crop_bottom.hpp"
 #include "slice/dice_coordinate.hpp"
 #include "slice/opposite_slicer.hpp"
 #include "slice/slice.hpp"
