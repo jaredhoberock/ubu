@@ -15,6 +15,12 @@ struct underscore_t
   {
     return true;
   }
+  
+  template<class T>
+  constexpr bool operator==(const T&) const
+  {
+    return false;
+  }
 };
 
 std::ostream& operator<<(std::ostream& os, underscore_t)
