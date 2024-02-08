@@ -14,7 +14,7 @@ template<class U, class C>
 concept unslicer_for =
   slicer<U>
   and slicer<C>
-  and (detail::underscore_count_v<U> == rank_v<C>)
+  and (detail::is_underscore_v<U> or detail::underscore_count_v<U> == rank_v<C>)
 ;
 
 } // end ubu

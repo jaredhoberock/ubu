@@ -22,6 +22,26 @@ void test_unslice_coordinate()
   }
 
   {
+    ns::int1 coord(1);
+    auto katana = _;
+
+    auto sliced_coord = slice_coordinate(coord, katana);
+    auto unsliced_coord = unslice_coordinate(sliced_coord, katana);
+
+    assert(coord == unsliced_coord);
+  }
+
+  {
+    ns::int2 coord(1,2);
+    auto katana =  _;
+
+    auto sliced_coord = slice_coordinate(coord, katana);
+    auto unsliced_coord = unslice_coordinate(sliced_coord, katana);
+
+    assert(coord == unsliced_coord);
+  }
+
+  {
     ns::int2 coord(1,2);
     tuple   katana(_,2);
 

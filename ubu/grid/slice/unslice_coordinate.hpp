@@ -78,7 +78,12 @@ constexpr ubu::slicer auto unslice_coordinate(const C& coord, const K& katana)
 {
   // we may need to unpack coord into its constituent elements when calling the impl
 
-  if constexpr(coordinate<C> and rank_v<C> == 1)
+  if constexpr(detail::is_underscore_v<K>)
+  {
+    // katana is literally the underscore, just return coord
+    return coord;
+  }
+  else if constexpr(coordinate<C> and rank_v<C> == 1)
   {
     // we don't unpack rank-1 coordinates (even if they are singles) when calling the impl
     return detail::unslice_coordinate_impl(katana, coord);
