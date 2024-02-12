@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "grid.hpp"
+#include "coordinate/element.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "shape/shape.hpp"
 #include <concepts>
@@ -48,12 +49,12 @@ class sized_grid_iterator
 
     constexpr decltype(auto) operator*() const
     {
-      return grid_[*coord_];
+      return element(grid_, *coord_);
     }
 
     constexpr decltype(auto) operator[](difference_type n) const
     {
-      return grid_[coord_[n]];
+      return element(grid_, coord_[n]);
     }
 
     constexpr sized_grid_iterator& operator++()
