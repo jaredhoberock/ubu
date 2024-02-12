@@ -67,7 +67,7 @@ class view
     {
       if (not ubu::element_exists(layout_, coord)) return false;
 
-      auto to_coord = layout_[coord];
+      auto to_coord = ubu::element(layout_,coord);
 
       // if Grid actually fulfills the requirements of ubu::grid,
       // check the coordinate produced by the layout against grid_
