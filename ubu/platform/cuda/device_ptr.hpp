@@ -2,6 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../causality/initial_happening.hpp"
+#include "../../causality/wait.hpp"
 #include "../../detail/exception.hpp"
 #include "../../memory/plain_old_data.hpp"
 #include "../../memory/pointer/remote_ptr.hpp"
@@ -85,6 +87,25 @@ class device_memory_loader
 #endif
     }
 
+
+    // download is customized to avoid creating events in device code
+    void download(address_type from, std::size_t num_bytes, void* to) const
+    {
+#if defined(__CUDACC__)
+      if UBU_TARGET(ubu::detail::is_device())
+      {
+        std::memcpy(to, from, num_bytes);
+      }
+      else
+      {
+        wait(download_after(initial_happening(*this), from, num_bytes, to));
+      }
+#else
+      wait(download_after(initial_happening(*this), from, num_bytes, to));
+#endif
+    }
+
+
     event upload_after(const event& before, const void* from, std::size_t num_bytes, address_type to) const
     {
 #if defined(__CUDACC__)
@@ -128,6 +149,24 @@ class device_memory_loader
 
         return event(device(), stream());
       });
+#endif
+    }
+
+
+    // upload is customized to avoid creating events in device code
+    void upload(const void* from, std::size_t num_bytes, address_type to) const
+    {
+#if defined(__CUDACC__)
+      if UBU_TARGET(ubu::detail::is_device())
+      {
+        std::memcpy(to, from, num_bytes);
+      }
+      else
+      {
+        wait(upload_after(initial_happening(*this), from, num_bytes, to));
+      }
+#else
+      wait(upload_after(initial_happening(*this), from, num_bytes, to));
 #endif
     }
 
