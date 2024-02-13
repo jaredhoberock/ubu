@@ -1,4 +1,4 @@
-// circle -std=c++20 -I. --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/23.3/cuda/12.0/ -sm_60 --verbose reduce.cpp --libstdc++=11 -L/usr/local/cuda/lib64 -lcudart -o a.out
+// circle -std=c++20 -I. --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/23.3/cuda/12.0/ -sm_60 --verbose reduce.cpp --libstdc++=11 -L/usr/local/cuda/lib64 -lcudart -o reduce.out
 
 #include "measure_bandwidth_of_invocation.hpp"
 #include "reduce_kernel.hpp"
@@ -36,36 +36,39 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor ex, ubu::cuda::devic
   using namespace std::views;
   auto tiles = tile_evenly(counted(first,n), max_num_ctas, min_tile_size);
 
-  int num_tiles = tiles.size();
+  int num_blocks = tiles.size();
 
-  if(num_tiles > 1)
+  if(num_blocks > 1)
   {
     // allocate storage for each tile's reduction
     using partial_sum_type = std::invoke_result_t<F,std::iter_value_t<I>,std::iter_value_t<I>>;
 
-    auto [allocation_ready, partial_results] = allocate_after<partial_sum_type>(alloc, before, num_tiles);
+    auto [allocation_ready, partial_results] = allocate_after<partial_sum_type>(alloc, before, num_blocks);
 
     // reduce each tile into a partial result
-    auto first_phase = bulk_execute_after(ex, allocation_ready, {block_size,num_tiles}, [=](cuda::thread_id idx)
+    auto first_phase = ex.bulk_execute_after(allocation_ready, ubu::int2(block_size,num_blocks), [=](ubu::int2 idx)
     {
-      reduce_tiles_kernel<block_size>(idx.block.x, idx.thread.x, tiles, partial_results, op);
+      auto [thread,block] = idx;
+      reduce_tiles_kernel<block_size>(block, thread, tiles, partial_results, op);
     });
 
     // finish up in a second phase by reducing the partial results
-    auto single_tile_of_partial_results = tile(counted(partial_results, num_tiles), num_tiles);
-    auto second_phase = bulk_execute_after(ex, first_phase, {512,1}, [=](cuda::thread_id idx)
+    auto single_tile_of_partial_results = tile(counted(partial_results, num_blocks), num_blocks);
+    auto second_phase = ex.bulk_execute_after(first_phase, ubu::int2(512,1), [=](ubu::int2 idx)
     {
-      reduce_tiles_kernel<512>(idx.block.x, idx.thread.x, single_tile_of_partial_results, result, op);
+      auto [thread,block] = idx;
+      reduce_tiles_kernel<512>(0, thread, single_tile_of_partial_results, result, op);
     });
 
     // deallocate storage
-    return deallocate_after(alloc, second_phase, partial_results, num_tiles);
+    return deallocate_after(alloc, second_phase, partial_results, num_blocks);
   }
 
   // the input is small enough that it only requires a single phase 
-  return bulk_execute_after(ex, before, 512, [=](int thread_idx)
+  return ex.bulk_execute_after(before, ubu::int2(512,1), [=](ubu::int2 idx)
   {
-    reduce_tiles_kernel<512>(0, thread_idx, tiles, result, op);
+    auto [thread,block] = idx;
+    reduce_tiles_kernel<512>(0, thread, tiles, result, op);
   });
 }
 
