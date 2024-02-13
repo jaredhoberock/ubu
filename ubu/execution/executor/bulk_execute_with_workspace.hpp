@@ -18,13 +18,13 @@ namespace detail
 template<class E, class A, class S, class W, class F>
 concept has_bulk_execute_with_workspace_member_function = requires(E ex, A alloc, S shape, W workspace_shape, F func)
 {
-  ex.bulk_execute_with_workspace_member_function(alloc, shape, workspace_shape, func);
+  ex.bulk_execute_with_workspace(alloc, shape, workspace_shape, func);
 };
 
 template<class E, class A, class S, class W, class F>
 concept has_bulk_execute_with_workspace_free_function = requires(E ex, A alloc, S shape, W workspace_shape, F func)
 {
-  bulk_execute_with_workspace_member_function(ex, alloc, shape, workspace_shape, func);
+  bulk_execute_with_workspace(ex, alloc, shape, workspace_shape, func);
 };
 
 
