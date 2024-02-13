@@ -67,7 +67,7 @@ class coop_executor
 
     auto operator<=>(const coop_executor&) const = default;
 
-    template<congruent<shape_type> S, std::regular_invocable<S> F>
+    template<congruent<shape_type> S, std::invocable<S> F>
       requires std::is_trivially_copyable_v<F>
     event bulk_execute_after(const event& before, S shape, F f) const
     {
@@ -81,7 +81,7 @@ class coop_executor
       return detail::launch_as_cooperative_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
     }
 
-    template<std::regular_invocable F>
+    template<std::invocable F>
       requires std::is_trivially_copyable_v<F>
     event execute_after(const event& before, F f) const
     {
@@ -92,7 +92,7 @@ class coop_executor
       });
     }
 
-    template<congruent<shape_type> S, std::regular_invocable<S, workspace_type> F>
+    template<congruent<shape_type> S, std::invocable<S, workspace_type> F>
       requires std::is_trivially_copyable_v<F>
     event bulk_execute_with_workspace_after(const event& before, S shape, int2 workspace_shape, F f) const
     {

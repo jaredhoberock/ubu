@@ -51,7 +51,7 @@ class dispatch_bulk_execute_after
     }
 
     // this dispatch path calls default_bulk_execute_after
-    template<executor E, happening B, coordinate S, std::regular_invocable<S> F>
+    template<executor E, happening B, coordinate S, std::invocable<S> F>
       requires (not has_bulk_execute_after_member_function<E&&,B&&,const S&,F&&>
                 and not has_bulk_execute_after_free_function<E&&,B&&,const S&,F&&>
                 and has_default_bulk_execute_after<E&&,B&&,const S&,F&&>)

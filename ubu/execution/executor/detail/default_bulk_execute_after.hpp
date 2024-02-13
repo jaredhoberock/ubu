@@ -17,8 +17,8 @@ namespace ubu::detail
 {
 
 
-template<coordinate S, std::regular_invocable<S> F>
-constexpr std::regular_invocable auto make_default_bulk_execute_after_invocable(const S& shape, F&& function)
+template<coordinate S, std::invocable<S> F>
+constexpr std::invocable auto make_default_bulk_execute_after_invocable(const S& shape, F&& function)
 {
   return [=, function = std::forward<F>(function)]
   {
@@ -30,16 +30,16 @@ constexpr std::regular_invocable auto make_default_bulk_execute_after_invocable(
 }
 
 
-template<coordinate S, std::regular_invocable<S> F>
+template<coordinate S, std::invocable<S> F>
 using default_bulk_execute_after_invocable_t = decltype(make_default_bulk_execute_after_invocable(std::declval<S>(), std::declval<F>()));
 
 
-template<class E, happening H, coordinate S, std::regular_invocable<S> F>
+template<class E, happening H, coordinate S, std::invocable<S> F>
   requires dependent_executor_of<E&&, H&&, default_bulk_execute_after_invocable_t<S,F>>
 executor_happening_t<E> default_bulk_execute_after(E&& ex, H&& before, const S& shape, F&& function)
 {
   // create an invocable to represent the kernel
-  std::regular_invocable auto kernel = make_default_bulk_execute_after_invocable(shape,std::forward<F>(function));
+  std::invocable auto kernel = make_default_bulk_execute_after_invocable(shape,std::forward<F>(function));
 
   // asynchronously execute the kernel
   return execute_after(ex, std::forward<H>(before), std::move(kernel));
