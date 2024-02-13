@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../causality/happening.hpp"
-#include "../../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../../grid/lattice.hpp"
+#include "../../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../../tensor/lattice.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"
 #include "../traits/executor_happening.hpp"

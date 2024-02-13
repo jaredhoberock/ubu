@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../grid/coordinate/coord.hpp"
-#include "../../../grid/shape/shape.hpp"
+#include "../../../tensor/coordinate/coord.hpp"
+#include "../../../tensor/shape/shape.hpp"
 #include "../synchronize.hpp"
 
 namespace ubu

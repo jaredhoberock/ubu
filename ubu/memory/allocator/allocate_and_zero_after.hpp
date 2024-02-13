@@ -5,7 +5,7 @@
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
 #include "../../execution/executor/execute_after.hpp"
-#include "../../grid/coordinate/detail/tuple_algorithm.hpp"
+#include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
 #include "../pointer/pointer_like.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocator.hpp"

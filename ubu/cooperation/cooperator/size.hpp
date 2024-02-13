@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/shape/shape.hpp"
-#include "../../grid/shape/shape_size.hpp"
+#include "../../tensor/shape/shape.hpp"
+#include "../../tensor/shape/shape_size.hpp"
 #include "concepts/cooperator.hpp"
 #include <concepts>
 

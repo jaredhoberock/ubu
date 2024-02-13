@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/layout/column_major.hpp"
-#include "../../grid/layout/layout.hpp"
+#include "../../tensor/layout/column_major.hpp"
+#include "../../tensor/layout/layout.hpp"
 #include "concepts/executor.hpp"
 #include "traits/executor_coordinate.hpp"
 #include <utility>
@@ -13,7 +13,7 @@
 // For example, executors produce coordinates which are passed to invocables
 // We may also need to describe the layout of objects in memory produced by allocators
 //
-// XXX this header ought to be organized underneath grid/layout/
+// XXX this header ought to be organized underneath tensor/layout/
 //     the problem is that we need to mention executor_coordinate_t in the default dispatch path below
 //     we either need to find a way to eliminate this CPO, or we need to be able to find a generic implementation of the default path
 

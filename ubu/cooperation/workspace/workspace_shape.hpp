@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../grid/coordinate/detail/tuple_algorithm.hpp"
-#include "../../grid/coordinate/point.hpp"
 #include "../../memory/buffer/get_buffer.hpp"
+#include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../../tensor/coordinate/point.hpp"
 #include "hierarchical_workspace.hpp"
 #include "workspace.hpp"
 #include <ranges>
@@ -13,7 +13,7 @@ namespace ubu
 {
 
 
-// XXX shape is not the best thing to call this because a workspace is not a grid
+// XXX shape is not the best thing to call this because a workspace is not a tensor_like
 template<workspace W>
 inline constexpr auto workspace_shape(W ws)
 {

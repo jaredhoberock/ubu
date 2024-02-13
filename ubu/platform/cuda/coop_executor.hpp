@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/coordinate/concepts/congruent.hpp"
-#include "../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../grid/coordinate/point.hpp"
 #include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"
+#include "../../tensor/coordinate/concepts/congruent.hpp"
+#include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/coordinate/point.hpp"
 #include "cooperation.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cooperative_kernel.hpp"

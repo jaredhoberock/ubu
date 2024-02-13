@@ -6,14 +6,14 @@
 #include "../../execution/executor/bulk_execute_after.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
 #include "../../execution/executor/traits/executor_workspace_shape.hpp"
-#include "../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../grid/coordinate/zeros.hpp"
 #include "../../memory/allocator/allocator_delete.hpp"
 #include "../../memory/allocator/concepts/asynchronous_allocator.hpp"
 #include "../../memory/allocator/finally_delete_after.hpp"
 #include "../../memory/allocator/first_allocate.hpp"
 #include "../../memory/allocator/traits.hpp"
 #include "../../memory/pointer/construct_at.hpp"
+#include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/coordinate/zeros.hpp"
 #include "../happening.hpp"
 #include <cassert>
 #include <concepts>

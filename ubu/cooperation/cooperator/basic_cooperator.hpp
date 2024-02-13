@@ -2,12 +2,12 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/coordinate/colexicographical_lift.hpp"
-#include "../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../grid/coordinate/detail/tuple_algorithm.hpp"
-#include "../../grid/coordinate/rank.hpp"
-#include "../../grid/shape/shape_size.hpp"
 #include "../../memory/buffer/empty_buffer.hpp"
+#include "../../tensor/coordinate/colexicographical_lift.hpp"
+#include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../../tensor/coordinate/rank.hpp"
+#include "../../tensor/shape/shape_size.hpp"
 #include "../barrier/arrive_and_wait.hpp"
 #include "../barrier/sized_barrier_like.hpp"
 #include "../workspace/get_local_workspace.hpp"

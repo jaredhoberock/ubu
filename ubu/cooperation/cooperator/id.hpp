@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/coordinate/coord.hpp"
-#include "../../grid/layout/column_major.hpp"
-#include "../../grid/shape/shape.hpp"
+#include "../../tensor/coordinate/coord.hpp"
+#include "../../tensor/layout/column_major.hpp"
+#include "../../tensor/shape/shape.hpp"
 #include "concepts/cooperator.hpp"
 #include <concepts>
 

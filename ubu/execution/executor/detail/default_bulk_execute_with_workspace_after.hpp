@@ -3,11 +3,11 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../causality/happening.hpp"
-#include "../../../grid/coordinate/concepts/coordinate.hpp"
 #include "../../../memory/allocator/concepts/asynchronous_allocator.hpp"
 #include "../../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../../memory/allocator/deallocate_after.hpp"
 #include "../../../memory/allocator/traits/allocator_happening_t.hpp"
+#include "../../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../concepts/bulk_executable_on.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"
@@ -46,9 +46,9 @@ allocator_happening_t<A> default_bulk_execute_with_workspace_after(const E& ex, 
 {
   // XXX this function should call detail::construct_workspaces_after(ex, alloc, before, shape, workspace_size)
   //     which would check executor_workspace_shape_t and construct buffers & barriers as necessary
-  //     it could return a grid of workspaces such that each coordinate's workspace would be found like so:
+  //     it could return a tensor of workspaces such that each coordinate's workspace would be found like so:
   //
-  //         workspace auto ws = grid_of_workspaces[coord];
+  //         workspace auto ws = tensor_of_workspaces[coord];
   //
   //     then, we'd follow it up with delete_workspaces_after
 

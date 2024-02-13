@@ -7,11 +7,11 @@
 #include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/finally_execute_after.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/grid/coordinate/colexicographical_lift.hpp>
-#include <ubu/grid/layout/stride/apply_stride.hpp>
-#include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cuda/coop_executor.hpp>
+#include <ubu/tensor/coordinate/colexicographical_lift.hpp>
+#include <ubu/tensor/layout/stride/apply_stride.hpp>
+#include <ubu/tensor/layout/stride/compact_column_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -246,7 +246,7 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::coop_execu
 
   cuda::coop_executor::shape_type shape(block_size, num_blocks);
 
-  // create local workspaces with block_size ints and a global workspace with grid_size ints
+  // create local workspaces with block_size ints and a global workspace with num_blocks ints
   ns::int2 workspace_shape(block_size * sizeof(int), num_blocks * sizeof(int));
 
   try
@@ -338,7 +338,7 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::coop_e
 
   cuda::coop_executor::shape_type shape(block_size, num_blocks);
 
-  // create local workspaces with block_size ints and a global workspace with grid_size ints
+  // create local workspaces with block_size ints and a global workspace with num_blocks ints
   ns::int2 workspace_shape(block_size * sizeof(int), num_blocks * sizeof(int));
 
   try

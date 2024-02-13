@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../grid/compose.hpp"
-#include "../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../grid/layout/identity_layout.hpp"
-#include "../../grid/layout/lifting_layout.hpp"
-#include "../../grid/shape/convert_shape.hpp"
+#include "../../tensor/compose.hpp"
+#include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/layout/identity_layout.hpp"
+#include "../../tensor/layout/lifting_layout.hpp"
+#include "../../tensor/shape/convert_shape.hpp"
 #include "concepts/executor.hpp"
 #include "native_layout.hpp"
 

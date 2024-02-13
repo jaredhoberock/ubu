@@ -4,10 +4,10 @@
 #include <ubu/causality/past_event.hpp>
 #include <ubu/causality/wait.hpp>
 #include <ubu/execution/executor/bulk_execute_with_workspace_after.hpp>
-#include <ubu/grid/coordinate/point.hpp>
-#include <ubu/grid/lattice.hpp>
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/lattice.hpp>
 
 #undef NDEBUG
 #include <cassert>

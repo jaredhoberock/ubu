@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../grid/coordinate/compare.hpp"
-#include "../../../grid/coordinate/concepts/coordinate.hpp"
-#include "../../../grid/coordinate/zeros.hpp"
-#include "../../../grid/layout/layout.hpp"
-#include "../../../grid/shape.hpp"
+#include "../../../tensor/coordinate/compare.hpp"
+#include "../../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../../tensor/coordinate/zeros.hpp"
+#include "../../../tensor/layout/layout.hpp"
+#include "../../../tensor/shape.hpp"
 #include "../bulk_execute.hpp"
 #include "../concepts/executor.hpp"
 #include "../kernel_layout.hpp"

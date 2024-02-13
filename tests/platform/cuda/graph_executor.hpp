@@ -5,11 +5,11 @@
 #include <ubu/execution/executor/concepts/executor.hpp>
 #include <ubu/execution/executor/execute_kernel.hpp>
 #include <ubu/execution/executor/first_execute.hpp>
-#include <ubu/grid/coordinate/colexicographical_lift.hpp>
-#include <ubu/grid/layout/stride/apply_stride.hpp>
-#include <ubu/grid/layout/stride/compact_column_major_stride.hpp>
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cuda/graph_executor.hpp>
+#include <ubu/tensor/coordinate/colexicographical_lift.hpp>
+#include <ubu/tensor/layout/stride/apply_stride.hpp>
+#include <ubu/tensor/layout/stride/compact_column_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>

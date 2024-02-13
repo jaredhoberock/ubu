@@ -31,9 +31,9 @@
 #include "causality.hpp"
 #include "cooperation.hpp"
 #include "execution.hpp"
-#include "grid.hpp"
 #include "memory.hpp"
 #include "platform/cpp.hpp"
+#include "tensor.hpp"
 
 #include "detail/epilogue.hpp"
 
