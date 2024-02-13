@@ -65,6 +65,9 @@ using tensor_reference_t = decltype(element(std::declval<T>(), std::declval<tens
 template<tensor_like T>
 using tensor_element_t = std::remove_cvref_t<tensor_reference_t<T>>;
 
+template<tensor_like T>
+inline constexpr auto tensor_rank_v = rank_v<tensor_shape_t<T>>;
+
 template<class T, class U>
 concept tensor_like_of =
   tensor_like<T>
