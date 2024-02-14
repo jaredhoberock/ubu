@@ -14,7 +14,7 @@
 #include "coordinate/iterator.hpp"
 #include "coordinate/ones.hpp"
 #include "coordinate/point.hpp"
-#include "coordinate/rank.hpp"
+#include "coordinate/traits.hpp"
 #include "coordinate/zeros.hpp"
 
 #include "../detail/epilogue.hpp"

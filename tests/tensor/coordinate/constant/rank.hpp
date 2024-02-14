@@ -1,5 +1,5 @@
 #include <ubu/tensor/coordinate/constant.hpp>
-#include <ubu/tensor/coordinate/rank.hpp>
+#include <ubu/tensor/coordinate/traits/rank.hpp>
 #include <utility>
 
 namespace ns = ubu;

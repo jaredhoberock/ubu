@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate/rank.hpp"
 #include "../concepts/tensor_like.hpp"
+#include "../coordinate/traits/rank.hpp"
 #include "tensor_shape.hpp"
 
 namespace ubu

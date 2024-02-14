@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../rank.hpp"
+#include "../traits/rank.hpp"
 #include "coordinate.hpp"
 
 namespace ubu

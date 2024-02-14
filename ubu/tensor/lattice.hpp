@@ -7,7 +7,7 @@
 #include "coordinate/coordinate_sum.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "coordinate/iterator/lexicographical_iterator.hpp"
-#include "coordinate/rank.hpp"
+#include "coordinate/traits/rank.hpp"
 #include "coordinate/zeros.hpp"
 #include "shape/shape_size.hpp"
 #include <concepts>

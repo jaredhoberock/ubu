@@ -6,7 +6,7 @@
 #include "../../coordinate/concepts/same_rank.hpp"
 #include "../../coordinate/detail/as_integral.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
-#include "../../coordinate/rank.hpp"
+#include "../../coordinate/traits/rank.hpp"
 #include "../../shape/shape_size.hpp"
 #include <concepts>
 #include <tuple>

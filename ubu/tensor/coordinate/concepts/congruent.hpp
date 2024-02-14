@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../rank.hpp"
+#include "../traits/rank.hpp"
 #include "coordinate.hpp"
 #include "same_rank.hpp"
 #include "weakly_congruent.hpp"

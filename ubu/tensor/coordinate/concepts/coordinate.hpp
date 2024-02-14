@@ -4,7 +4,7 @@
 
 #include "../detail/as_integral.hpp"
 #include "../element.hpp"
-#include "../rank.hpp"
+#include "../traits/rank.hpp"
 #include <concepts>
 #include <tuple>
 #include <type_traits>
