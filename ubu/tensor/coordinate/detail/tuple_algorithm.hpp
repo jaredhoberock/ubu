@@ -1002,6 +1002,12 @@ constexpr T&& tuple_unwrap_single(T&& t)
 }
 
 
+template<tuple_like T>
+constexpr auto tuple_drop_last_and_unwrap_single(T&& t)
+{
+  return tuple_unwrap_single(tuple_drop_last(std::forward<T>(t)));
+}
+
 template<bool do_wrap, class T>
   requires (do_wrap == true)
 constexpr tuple_like auto tuple_wrap_if(T&& arg)

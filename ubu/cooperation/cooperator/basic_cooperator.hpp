@@ -96,8 +96,8 @@ struct basic_cooperator
   {
     using namespace detail;
 
-    auto child_shape = tuple_unwrap_single(tuple_drop_last(shape));
-    auto child_coord = tuple_unwrap_single(tuple_drop_last(coord));
+    auto child_shape = tuple_drop_last_and_unwrap_single(shape);
+    auto child_coord = tuple_drop_last_and_unwrap_single(coord);
     auto child_group_coord = tuple_last(coord);
     auto local_workspace = get_local_workspace(workspace_);
 

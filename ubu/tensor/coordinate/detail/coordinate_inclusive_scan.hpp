@@ -92,7 +92,7 @@ constexpr tuple_like_of_size<rank_v<C1>> auto coordinate_inclusive_scan_with_fin
   //
   // so we unwrap single-element coord_front
   // and then apply a wrapping to result_front to account for it
-  auto coord_front = tuple_unwrap_single(tuple_drop_last(coord));
+  auto coord_front = tuple_drop_last_and_unwrap_single(coord);
   auto coord_last  = tuple_last(coord);
 
   // do a normal scan on the front
