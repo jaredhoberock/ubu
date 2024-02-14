@@ -13,6 +13,7 @@
 #include <iostream>
 #include <numeric>
 #include <random>
+#include <string_view>
 #include <vector>
 
 
@@ -131,6 +132,20 @@ double test_performance(int size, int num_trials)
 
 int main(int argc, char** argv)
 {
+  if(argc == 2)
+  {
+    std::string_view arg(argv[1]);
+    if(arg != "quick")
+    {
+      std::cerr << "Unrecognized argument \"" << arg << "\"" << std::endl;
+      return -1;
+    }
+
+    test_correctness(1 << 16);
+    std::cout << "OK" << std::endl;
+    return 0;
+  }
+
   std::cout << "Testing correctness... " << std::flush;
   test_correctness(23456789);
   std::cout << "Done." << std::endl;
