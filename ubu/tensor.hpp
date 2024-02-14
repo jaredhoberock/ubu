@@ -39,6 +39,7 @@
 #include "tensor/layout.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/slice.hpp"
+#include "tensor/stack.hpp"
 #include "tensor/traits.hpp"
 #include "tensor/view.hpp"
 
