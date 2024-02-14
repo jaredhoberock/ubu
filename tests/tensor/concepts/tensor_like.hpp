@@ -2,8 +2,11 @@
 #include <concepts>
 #include <string>
 #include <tuple>
+#include <ubu/tensor/concepts/tensor_like.hpp>
+#include <ubu/tensor/concepts/tensor_like_of.hpp>
 #include <ubu/tensor/lattice.hpp>
-#include <ubu/tensor/tensor.hpp>
+#include <ubu/tensor/traits/tensor_element.hpp>
+#include <ubu/tensor/traits/tensor_shape.hpp>
 #include <utility>
 #include <vector>
 
@@ -37,7 +40,7 @@ void test_non_tensor_like()
   static_assert(not ns::tensor_like<T>);
 }
 
-void test_tensor()
+void test_tensor_like()
 {
   // test some tensor_likes
   test_should_be_a_tensor_like<std::vector<int>, int, std::size_t>();

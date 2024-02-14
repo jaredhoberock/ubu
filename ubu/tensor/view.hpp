@@ -3,14 +3,17 @@
 #include "../detail/prologue.hpp"
 
 #include "compose.hpp"
+#include "concepts/sized_tensor_like.hpp"
+#include "concepts/tensor_like.hpp"
 #include "coordinate/element.hpp"
 #include "domain.hpp"
 #include "element_exists.hpp"
-#include "tensor.hpp"
 #include "iterator.hpp"
 #include "layout/layout.hpp"
 #include "shape/shape.hpp"
 #include "slice/slice.hpp"
+#include "traits/tensor_shape.hpp"
+#include "traits/tensor_coordinate.hpp"
 #include <ranges>
 
 namespace ubu

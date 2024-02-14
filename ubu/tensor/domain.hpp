@@ -3,9 +3,11 @@
 #include "../detail/prologue.hpp"
 
 #include "coordinate/compare/is_below.hpp"
+#include "concepts/tensor_like.hpp"
 #include "lattice.hpp"
 #include "shape.hpp"
-#include "tensor.hpp"
+#include "traits/tensor_coordinate.hpp"
+#include "traits/tensor_shape.hpp"
 
 namespace ubu
 {

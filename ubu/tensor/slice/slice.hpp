@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../tensor.hpp"
+#include "../concepts/tensor_like.hpp"
 #include "slice_view.hpp"
 #include "slicer.hpp"
 

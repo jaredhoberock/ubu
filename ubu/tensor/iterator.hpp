@@ -2,10 +2,11 @@
 
 #include "../detail/prologue.hpp"
 
-#include "tensor.hpp"
+#include "concepts.hpp"
 #include "coordinate/element.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "shape/shape.hpp"
+#include "traits.hpp"
 #include <concepts>
 #include <iterator>
 

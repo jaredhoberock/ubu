@@ -4,7 +4,8 @@
 
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
-#include "../tensor.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../traits/tensor_element.hpp"
 
 namespace ubu
 {

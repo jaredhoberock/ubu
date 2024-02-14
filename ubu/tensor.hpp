@@ -29,16 +29,17 @@
 #include "detail/prologue.hpp"
 
 #include "tensor/compose.hpp"
+#include "tensor/concepts.hpp"
 #include "tensor/coordinate.hpp"
 #include "tensor/domain.hpp"
 #include "tensor/element_exists.hpp"
 #include "tensor/fancy_span.hpp"
-#include "tensor/tensor.hpp"
 #include "tensor/iterator.hpp"
 #include "tensor/lattice.hpp"
 #include "tensor/layout.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/slice.hpp"
+#include "tensor/traits.hpp"
 #include "tensor/view.hpp"
 
 #include "detail/epilogue.hpp"

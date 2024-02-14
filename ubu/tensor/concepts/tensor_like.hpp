@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "coordinate/concepts/coordinate.hpp"
-#include "coordinate/zeros.hpp"
-#include "element_exists.hpp"
-#include "shape/shape.hpp"
+#include "../../detail/prologue.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinate/zeros.hpp"
+#include "../element_exists.hpp"
+#include "../shape/shape.hpp"
 #include <concepts>
 #include <ranges>
-#include <type_traits>
 
 namespace ubu
 {
@@ -53,37 +52,7 @@ concept tensor_like =
   }
 ;
 
-template<tensor_like T>
-using tensor_shape_t = shape_t<T>;
-
-template<tensor_like T>
-using tensor_coordinate_t = detail::coordinate_or_default_t<T>;
-
-template<tensor_like T>
-using tensor_reference_t = decltype(element(std::declval<T>(), std::declval<tensor_coordinate_t<T>>()));
-
-template<tensor_like T>
-using tensor_element_t = std::remove_cvref_t<tensor_reference_t<T>>;
-
-template<tensor_like T>
-inline constexpr auto tensor_rank_v = rank_v<tensor_shape_t<T>>;
-
-template<class T, class U>
-concept tensor_like_of =
-  tensor_like<T>
-  and std::same_as<tensor_element_t<T>,U>
-;
-
-template<class T>
-concept sized_tensor_like =
-  tensor_like<T>
-  and requires(T t)
-  {
-    std::ranges::size(t);
-  }
-;
-
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../domain.hpp"
-#include "../tensor.hpp"
+#include "../traits/tensor_element.hpp"
 #include "layout.hpp"
 #include <set>
 

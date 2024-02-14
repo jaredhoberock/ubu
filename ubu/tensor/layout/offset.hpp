@@ -6,7 +6,7 @@
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../compose.hpp"
-#include "../tensor.hpp"
+#include "../traits/tensor_element.hpp"
 #include "../view.hpp"
 #include "layout.hpp"
 #include <span>

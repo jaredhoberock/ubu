@@ -1,11 +1,13 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../concepts/sized_tensor_like.hpp"
 #include "../coordinate/coordinate_cast.hpp"
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
 #include "../shape/shape_size.hpp"
-#include "../tensor.hpp"
+#include "../traits/tensor_coordinate.hpp"
 #include "slice_coordinate.hpp"
 #include "slicer.hpp"
 #include "unslice_coordinate.hpp"

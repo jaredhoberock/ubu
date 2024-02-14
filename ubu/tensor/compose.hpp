@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "tensor.hpp"
+#include "concepts/tensor_like.hpp"
 #include "layout/layout.hpp"
 #include "view.hpp"
 #include <concepts>
