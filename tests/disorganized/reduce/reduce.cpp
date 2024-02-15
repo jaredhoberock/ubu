@@ -1,4 +1,4 @@
-// circle -std=c++20 -I. --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/23.3/cuda/12.0/ -sm_60 --verbose reduce.cpp --libstdc++=11 -L/usr/local/cuda/lib64 -lcudart -o reduce.out
+// circle -std=c++20 -I../../../ --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/23.3/cuda/12.0/ -sm_60 --verbose reduce.cpp --libstdc++=11 -L/usr/local/cuda/lib64 -lcudart -o reduce.out
 
 #include "measure_bandwidth_of_invocation.hpp"
 #include "reduce_kernel.hpp"
