@@ -4,7 +4,7 @@
 
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/coordinate_cast.hpp"
-#include "../coordinate/detail/as_integral.hpp"
+#include "../coordinate/detail/as_integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "detail/approximate_factors.hpp"
 #include "shape_size.hpp"
@@ -42,7 +42,7 @@ constexpr T convert_shape(const S& shape)
   constexpr std::size_t N = rank_v<T>;
 
   // find an approximate factorization of shape
-  std::array<detail::as_integral_t<S>, N> factors = detail::approximate_factors<N>(detail::as_integral(shape));
+  std::array<detail::as_integral_like_t<S>, N> factors = detail::approximate_factors<N>(detail::as_integral_like(shape));
 
   // recurse with each factor
   return detail::tuple_zip_with(T{}, factors, [](auto t, const auto& f)

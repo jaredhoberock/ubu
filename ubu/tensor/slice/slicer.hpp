@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinate/concepts/integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "underscore.hpp"
 #include <tuple>
@@ -72,7 +73,7 @@ constexpr std::size_t underscore_count_v_impl()
   {
     return 1;
   }
-  else if constexpr(std::integral<S> or unit_like<S>)
+  else if constexpr(integral_like<S> or unit_like<S>)
   {
     return 0;
   }

@@ -4,7 +4,7 @@
 
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "detail/as_integral.hpp"
+#include "concepts/integral_like.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include <concepts>
 
@@ -14,9 +14,9 @@ namespace ubu
 
 
 template<scalar_coordinate C1, scalar_coordinate C2>
-constexpr std::integral auto coordinate_sum(const C1& coord1, const C2& coord2)
+constexpr integral_like auto coordinate_sum(const C1& coord1, const C2& coord2)
 {
-  return detail::as_integral(coord1) + detail::as_integral(coord2);
+  return detail::as_integral_like(coord1) + detail::as_integral_like(coord2);
 }
 
 template<nonscalar_coordinate C1, nonscalar_coordinate C2>

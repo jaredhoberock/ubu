@@ -4,6 +4,7 @@
 
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
+#include "../concepts/integral_like.hpp"
 #include "../coordinate_cast.hpp"
 #include "../coordinate_sum.hpp"
 #include "../colexicographical_lift.hpp"
@@ -13,7 +14,7 @@
 namespace ubu
 {
 
-template<coordinate C, congruent<C> S, std::integral I>
+template<coordinate C, congruent<C> S, integral_like I>
 constexpr void colexicographical_advance(C& coord, const S& shape, I n)
 {
   congruent<C> auto delta = colexicographical_lift(n, shape);

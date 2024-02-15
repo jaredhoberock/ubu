@@ -4,7 +4,7 @@
 
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
-#include "../../coordinate/detail/as_integral.hpp"
+#include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <utility>
@@ -17,9 +17,9 @@ namespace detail
 
 
 template<scalar_coordinate D, scalar_coordinate C>
-constexpr std::integral auto apply_stride_impl(const D& stride, const C& coord)
+constexpr integral_like auto apply_stride_impl(const D& stride, const C& coord)
 {
-  return as_integral(stride) * as_integral(coord);
+  return as_integral_like(stride) * as_integral_like(coord);
 }
 
 

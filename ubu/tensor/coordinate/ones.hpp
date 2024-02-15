@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "concepts/coordinate.hpp"
+#include "concepts/integral_like.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include "zeros.hpp"
 #include <concepts>
@@ -14,7 +15,7 @@ namespace detail
 {
 
 
-template<std::integral T>
+template<integral_like T>
 constexpr auto successor_of_each_mode(const T& i)
 {
   return i + 1;

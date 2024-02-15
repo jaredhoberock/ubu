@@ -2,37 +2,41 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../detail/tuple_algorithm.hpp"
 #include <concepts>
-#include <tuple>
-#include <type_traits>
-#include <utility>
 
 namespace ubu::detail
 {
 
 template<class T>
-concept single_integral = 
-  tuple_like_of_size<T,1>
-  and std::integral<std::remove_cvref_t<std::tuple_element_t<0,std::remove_cvref_t<T>>>>
+concept convertible_to_integral_value_type =
+  requires(T i)
+  {
+    // there must be a nested type T::value_type
+    typename T::value_type;
+  }
+  // T::value_type must be std::integral
+  and std::integral<typename T::value_type>
+  // T must be convertible to T::value_type
+  and std::convertible_to<T,typename T::value_type>
 ;
 
-template<class C>
-  requires (std::integral<std::remove_cvref_t<C>> or single_integral<C>)
-constexpr decltype(auto) as_integral(C&& coord)
+// as_integral converts a type into an integral
+template<class I>
+  requires (std::integral<I> or convertible_to_integral_value_type<I>)
+constexpr auto as_integral(const I& i)
 {
-  if constexpr(tuple_like<C>)
+  if constexpr (std::integral<I>)
   {
-    return get<0>(std::forward<C>(coord));
+    // case 0: I is already std::integral
+    return i;
   }
   else
   {
-    return std::forward<C>(coord);
+    // case 1: I has a nested value_type and is convertible to it
+    return static_cast<typename I::value_type>(i);
   }
 }
 
-template<class C>
-using as_integral_t = std::remove_cvref_t<decltype(as_integral(std::declval<C>()))>;
 
 } // end ubu::detail
 

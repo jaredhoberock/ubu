@@ -2,6 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "../../concepts/integral_like.hpp"
 #include <concepts>
 
 
@@ -10,7 +11,7 @@ namespace ubu::detail
 
 
 template<class T>
-concept number = (std::floating_point<T> or std::integral<T>);
+concept number = (std::floating_point<T> or integral_like<T>);
 
 
 template<class T>
@@ -21,7 +22,7 @@ template<class T1, class T2>
 concept same_kind_of_number =
   number<T1>
   and number<T2>
-  and ((std::integral<T1> and std::integral<T2>) or (std::floating_point<T1> and std::floating_point<T2>))
+  and ((integral_like<T1> and integral_like<T2>) or (std::floating_point<T1> and std::floating_point<T2>))
 ;
 
 

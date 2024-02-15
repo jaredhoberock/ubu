@@ -4,12 +4,12 @@
 
 #include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/concepts/integral_like.hpp"
 #include "../../coordinate/concepts/weakly_congruent.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
-#include "../../coordinate/detail/as_integral.hpp"
+#include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "apply_stride.hpp"
-#include <concepts>
 
 
 namespace ubu
@@ -18,10 +18,10 @@ namespace detail
 {
 
 
-template<std::integral R, scalar_coordinate D, scalar_coordinate C>
+template<integral_like R, scalar_coordinate D, scalar_coordinate C>
 constexpr R apply_stride_r_impl(const D& stride, const C& coord)
 {
-  return static_cast<R>(as_integral(stride)) * static_cast<R>(as_integral(coord));
+  return static_cast<R>(as_integral_like(stride)) * static_cast<R>(as_integral_like(coord));
 }
 
 

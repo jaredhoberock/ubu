@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinate/concepts/integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
@@ -39,7 +40,7 @@ constexpr auto slice_coordinate_impl(const C& coord, const K& katana);
 template<detail::tuple_like R, class MaybeUnderscore, class Arg>
 constexpr auto wrap_if_underscore_or_int(const Arg& arg)
 {
-  if constexpr(is_underscore_v<MaybeUnderscore> or std::integral<Arg>)
+  if constexpr(is_underscore_v<MaybeUnderscore> or integral_like<Arg>)
   {
     return make_tuple_similar_to<R>(arg);
   }

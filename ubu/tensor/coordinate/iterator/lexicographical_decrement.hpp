@@ -5,7 +5,7 @@
 #include "../compare/is_below.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/as_integral.hpp"
+#include "../detail/as_integral_like.hpp"
 #include "../zeros.hpp"
 
 
@@ -16,7 +16,7 @@ namespace ubu
 template<scalar_coordinate C, congruent<C> O, congruent<C> E>
 constexpr void lexicographical_decrement(C& coord, const O&, const E&)
 {
-  --detail::as_integral(coord);
+  --detail::as_integral_like(coord);
 }
 
 

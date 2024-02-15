@@ -145,20 +145,6 @@ constexpr constant<detail::parse_int_digits(0, (digits - '0')...)> operator "" _
 
 } // end ubu
 
-namespace std
-{
-
-// specialize is_integral for ubu::constant so that std::integral is true of ubu::constant
-//
-// XXX The behavior of a program that adds specializations for std::is_integral or std::is_integral_v is undefined.
-//
-// we should introduce a weaker integer_like concept and replace most uses of std::integral with integer_like
-// so we don't have to do this hacky stuff
-template<auto v>
-struct is_integral<ubu::constant<v>> : std::is_integral<decltype(v)> {};
-
-} // end std
-
 #if __has_include(<fmt/format.h>)
 
 #include <fmt/format.h>

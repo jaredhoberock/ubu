@@ -4,7 +4,7 @@
 
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/same_rank.hpp"
-#include "../../coordinate/detail/as_integral.hpp"
+#include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "../../coordinate/traits/rank.hpp"
 #include "../../shape/shape_size.hpp"
@@ -22,7 +22,7 @@ namespace detail
 template<scalar_coordinate D, scalar_coordinate S>
 constexpr D compact_column_major_stride_impl(const D& current_stride, const S&)
 {
-  return as_integral(current_stride);
+  return as_integral_like(current_stride);
 }
 
 template<nonscalar_coordinate D, nonscalar_coordinate S>
