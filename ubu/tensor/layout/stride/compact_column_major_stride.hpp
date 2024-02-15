@@ -6,6 +6,7 @@
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/integral_like.hpp"
 #include "../../coordinate/concepts/same_rank.hpp"
+#include "../../coordinate/constant.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "../../coordinate/traits/rank.hpp"
@@ -58,7 +59,9 @@ constexpr congruent<S> auto compact_column_major_stride_impl(const D& current_st
 template<coordinate S>
 constexpr congruent<S> auto compact_column_major_stride(const S& shape)
 {
-  return detail::compact_column_major_stride_impl(1, shape);
+  // XXX ideally, the type of the constant we use here should
+  //     be the same type as coordinate_element_t<0,S>
+  return detail::compact_column_major_stride_impl(1_c, shape);
 }
 
 template<coordinate S>

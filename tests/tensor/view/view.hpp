@@ -79,7 +79,7 @@ void test_slice()
 
     auto column_1 = A.slice(pair(_,1));
 
-    static_assert(std::same_as<decltype(column_1), view<int*, strided_layout<int>>>);
+    static_assert(std::same_as<decltype(column_1), view<int*, strided_layout<int, constant<1>>>>);
 
     assert(equal(expected.begin(), expected.end(), column_1.begin()));
   }
@@ -101,7 +101,7 @@ void test_slice()
 
     auto column_1 = A.slice(pair(_,1));
 
-    static_assert(std::same_as<decltype(column_1), view<span<int>, strided_layout<int>>>);
+    static_assert(std::same_as<decltype(column_1), view<span<int>, strided_layout<int, constant<1>>>>);
 
     assert(equal(expected.begin(), expected.end(), column_1.begin()));
   }
