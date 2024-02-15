@@ -15,7 +15,7 @@ namespace ubu::cuda::detail
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 int max_potential_occupancy(int device, F, int num_threads_per_block, std::size_t dynamic_shared_memory_size)
 {
 #if defined(__CUDACC__)
@@ -40,7 +40,7 @@ int max_potential_occupancy(int device, F, int num_threads_per_block, std::size_
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 std::size_t max_dynamic_shared_memory_size(int device, F, int num_blocks_per_multiprocessor, int num_threads_per_block)
 {
 #if defined(__CUDACC__)
@@ -65,7 +65,7 @@ std::size_t max_dynamic_shared_memory_size(int device, F, int num_blocks_per_mul
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 std::size_t default_dynamic_shared_memory_size(int device, F f, int num_threads_per_block)
 {
   // compute the maximum number of active blocks of F with 0 smem

@@ -25,7 +25,7 @@ namespace detail
 
 
 template<std::invocable<ubu::int2> F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 struct invoke_with_int2
 {
   F f;
@@ -68,7 +68,7 @@ class coop_executor
     auto operator<=>(const coop_executor&) const = default;
 
     template<congruent<shape_type> S, std::invocable<S> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     event bulk_execute_after(const event& before, S shape, F f) const
     {
       // create the function that will be launched as a kernel
@@ -82,7 +82,7 @@ class coop_executor
     }
 
     template<std::invocable F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     event execute_after(const event& before, F f) const
     {
       return bulk_execute_after(before, ones<shape_type>, [f](shape_type)
@@ -93,7 +93,7 @@ class coop_executor
     }
 
     template<congruent<shape_type> S, std::invocable<S, workspace_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     event bulk_execute_with_workspace_after(const event& before, S shape, int2 workspace_shape, F f) const
     {
       // decompose workspace shape

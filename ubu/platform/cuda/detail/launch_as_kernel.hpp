@@ -21,7 +21,7 @@ void workaround_unused_variable_warning(Arg&&) noexcept {}
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
 {
 #if defined(__CUDACC__)
@@ -73,7 +73,7 @@ void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 event launch_as_kernel_after(const event& before, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
 {
   // make the stream wait on the before event

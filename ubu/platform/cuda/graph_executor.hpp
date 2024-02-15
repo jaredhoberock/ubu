@@ -72,7 +72,7 @@ class graph_executor
     }
 
     template<std::regular_invocable<shape_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline graph_node bulk_execute_after(const graph_node& before, shape_type shape, F f) const
     {
       if(before.graph() != graph())
@@ -94,7 +94,7 @@ class graph_executor
     // and then calls the lower-level function
     // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline graph_node bulk_execute_after(const graph_node& before, int2 shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
@@ -108,7 +108,7 @@ class graph_executor
     }
 
     template<std::regular_invocable<shape_type, workspace_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline graph_node bulk_execute_with_workspace_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const
     {
       if(before.graph() != graph())
@@ -140,7 +140,7 @@ class graph_executor
     // and then calls the lower-level function
     // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2, workspace_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline graph_node bulk_execute_with_workspace_after(const graph_node& before, int2 shape, int2 workspace_shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}

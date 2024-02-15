@@ -30,7 +30,7 @@ namespace detail
 
 
 template<std::invocable<thread_id> F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 struct invoke_with_builtin_cuda_indices
 {
   F f;
@@ -79,7 +79,7 @@ class device_executor
     device_executor(const device_executor&) = default;
 
     template<std::regular_invocable<shape_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_after(const event& before, shape_type shape, F f) const
     {
       // create the function that will be launched as a kernel
@@ -96,7 +96,7 @@ class device_executor
     // and then calls the lower-level function
     // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_after(const event& before, int2 shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
@@ -110,7 +110,7 @@ class device_executor
     }
 
     template<std::regular_invocable<shape_type, workspace_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_with_workspace_after(const event& before, shape_type shape, int2 workspace_shape, F f) const
     {
       // decompose workspace shape
@@ -137,7 +137,7 @@ class device_executor
     // and then calls the lower-level function
     // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
     template<std::regular_invocable<int2, workspace_type> F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_with_workspace_after(const event& before, int2 shape, int2 workspace_shape, F f) const
     {
       // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
@@ -151,7 +151,7 @@ class device_executor
     }
 
     template<std::regular_invocable F>
-      requires std::is_trivially_copyable_v<F>
+      requires std::is_trivially_copy_constructible_v<F>
     inline event execute_after(const event& before, F f) const
     {
       return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)

@@ -13,7 +13,7 @@ namespace ubu::cuda::detail
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 __global__ void kernel_entry_point(F f)
 {
   f();

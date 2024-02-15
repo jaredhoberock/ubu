@@ -63,7 +63,7 @@ cudaGraphNode_t make_empty_node(cudaGraph_t graph, cudaGraphNode_t dependency, N
 
 
 template<std::invocable F>
-  requires std::is_trivially_copyable_v<F>
+  requires std::is_trivially_copy_constructible_v<F>
 inline cudaGraphNode_t make_kernel_node(cudaGraph_t graph, cudaGraphNode_t dependency, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, int device, F f)
 {
   cudaGraphNode_t result{};
