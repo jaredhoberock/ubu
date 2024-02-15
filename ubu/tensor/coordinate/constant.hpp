@@ -110,8 +110,8 @@ namespace detail
 {
 
 // parse_int_digits takes a variadic number of digits and converts them into an int
-template<std::same_as<int>... Ts>
-constexpr uint64_t parse_int_digits(uint64_t result, int digit, Ts... digits) noexcept
+template<std::integral R, std::same_as<int>... Ts>
+constexpr R parse_int_digits(R result, int digit, Ts... digits) noexcept
 {
   if constexpr (sizeof...(Ts) == 0)
   {
@@ -119,7 +119,7 @@ constexpr uint64_t parse_int_digits(uint64_t result, int digit, Ts... digits) no
   }
   else
   {
-    return parse_int_digits(10 * result + digit, digits...);
+    return parse_int_digits<R>(10 * result + digit, digits...);
   }
 }
 
@@ -132,9 +132,9 @@ constexpr uint64_t parse_int_digits(uint64_t result, int digit, Ts... digits) no
 //
 //   auto var = 32_c;
 //
-// var has type constant<32ull>.
+// var has type constant<32>.
 template<char... digits>
-constexpr constant<detail::parse_int_digits(0, (digits - '0')...)> operator "" _c() noexcept
+constexpr constant<detail::parse_int_digits<int>(0, (digits - '0')...)> operator "" _c() noexcept
 {
   static_assert((('0' <= digits) && ...) && ((digits <= '9') && ...),
               "Expected 0 <= digit <= 9 for each digit of the integer.");
