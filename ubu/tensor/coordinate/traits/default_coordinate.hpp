@@ -1,25 +1,50 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
+#include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../zeros.hpp"
+#include "../detail/as_integral.hpp"
+#include <concepts>
 
 namespace ubu
 {
+namespace detail
+{
 
-// given some shape S, what is the default type of
-// coordinate we should use for a tensor with that shape?
-// 
-// The purpose of this trait is that some types of shape
-// are constant (i.e., ubu::constant) and cannot be used
-// as coordinates (because they are fixed)
+template<coordinate C>
+constexpr congruent<C> auto convert_non_integral_elements(const C& coord)
+{
+  if constexpr (integral_like<C>)
+  {
+    return as_integral(coord);
+  }
+  else
+  {
+    return tuple_zip_with(coord, [](const auto& c_i)
+    {
+      return convert_non_integral_elements(c_i);
+    });
+  }
+}
+
+} // end detail
+
+
+// Given some shape S, we need some default type of
+// coordinate we should use for a tensor with that shape.
 //
-// To deal with this, we use the type returned by zeros<S>
+// Ordinarily, the coordinate type and shape type would be the same.
 //
-// XXX this isn't right
-//     we should map as_integral across S and use that type
+// The issue is that some types of shape are constant (i.e., ubu::constant)
+// and cannot be used as coordinates into a tensor because such types 
+// only take on a single constant value.
+//
+// To deal with this issue, we use the type returned by
+// convert_non_integral_elements above, which converts any constant parts of
+// S into the corresponding std::integral type which has a dynamic value.
 template<coordinate S>
-using default_coordinate_t = zeros_t<S>;
+using default_coordinate_t = decltype(detail::convert_non_integral_elements(std::declval<S>()));
+
 
 } // end ubu
 
