@@ -163,6 +163,12 @@ class strided_layout
 };
 
 
+// When constructed from just a shape, we want the stride type to be the type
+// returned by compact_column_major_stride(shape)
+template<coordinate S>
+strided_layout(S shape) -> strided_layout<S, compact_column_major_stride_t<S>>;
+
+
 } // end ubu
 
 #if __has_include(<fmt/format.h>)
