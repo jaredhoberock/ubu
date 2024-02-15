@@ -2,7 +2,9 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/concepts/integral_like.hpp"
 #include "../../coordinate/concepts/same_rank.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
@@ -20,14 +22,14 @@ namespace detail
 
 
 template<scalar_coordinate D, scalar_coordinate S>
-constexpr D compact_column_major_stride_impl(const D& current_stride, const S&)
+constexpr integral_like auto compact_column_major_stride_impl(const D& current_stride, const S&)
 {
   return as_integral_like(current_stride);
 }
 
 template<nonscalar_coordinate D, nonscalar_coordinate S>
   requires same_rank<D,S>
-constexpr S compact_column_major_stride_impl(const D& current_stride, const S& shape)
+constexpr congruent<S> auto compact_column_major_stride_impl(const D& current_stride, const S& shape)
 {
   return tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
   {
@@ -36,7 +38,7 @@ constexpr S compact_column_major_stride_impl(const D& current_stride, const S& s
 }
 
 template<scalar_coordinate D, nonscalar_coordinate S>
-constexpr S compact_column_major_stride_impl(const D& current_stride, const S& shape)
+constexpr congruent<S> auto compact_column_major_stride_impl(const D& current_stride, const S& shape)
 {
   auto [_,result] = tuple_fold(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
   {
@@ -54,10 +56,13 @@ constexpr S compact_column_major_stride_impl(const D& current_stride, const S& s
 
 
 template<coordinate S>
-constexpr S compact_column_major_stride(const S& shape)
+constexpr congruent<S> auto compact_column_major_stride(const S& shape)
 {
   return detail::compact_column_major_stride_impl(1, shape);
 }
+
+template<coordinate S>
+using compact_column_major_stride_t = decltype(compact_column_major_stride(std::declval<S>()));
   
 
 } // end ubu::detail
