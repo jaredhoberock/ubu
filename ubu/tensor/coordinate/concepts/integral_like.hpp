@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 #include "../detail/as_integral.hpp"
+#include "../detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <utility>
 
@@ -31,11 +32,11 @@ concept boolean_testable =
 template<class T>
 concept integral_like = requires(T i)
 {
-  { detail::as_integral(i) } -> std::integral;
+  detail::as_integral(i);
 
   // unary operators
-  { detail::as_integral(+i) } -> std::integral;
-  { detail::as_integral(-i) } -> std::integral;
+  detail::as_integral(+i);
+  detail::as_integral(-i);
   { !i } -> detail::boolean_testable;
 
   // binary operators
@@ -47,17 +48,24 @@ concept integral_like = requires(T i)
   { i >= i } -> detail::boolean_testable;
 
   // arithmetic operators
-  { detail::as_integral(i  + i) } -> std::integral;
-  { detail::as_integral(i  - i) } -> std::integral;
-  { detail::as_integral(i  * i) } -> std::integral;
-  { detail::as_integral(i  / i) } -> std::integral;
-  { detail::as_integral(i  % i) } -> std::integral;
-  { detail::as_integral(i  & i) } -> std::integral;
-  { detail::as_integral(i  | i) } -> std::integral;
-  { detail::as_integral(i  ^ i) } -> std::integral;
-  { detail::as_integral(i << i) } -> std::integral;
-  { detail::as_integral(i >> i) } -> std::integral;
-};
+  detail::as_integral(i  + i);
+  detail::as_integral(i  - i);
+  detail::as_integral(i  * i);
+  detail::as_integral(i  / i);
+  detail::as_integral(i  % i);
+  detail::as_integral(i  & i);
+  detail::as_integral(i  | i);
+  detail::as_integral(i  ^ i);
+  detail::as_integral(i << i);
+  detail::as_integral(i >> i);
+}
+
+#if defined(__circle_lang__)
+// XXX WAR https://godbolt.org/z/747sxhzE3
+and not detail::tuple_like<T>
+#endif
+
+;
 
 
 } // end ubu

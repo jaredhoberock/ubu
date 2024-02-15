@@ -23,7 +23,7 @@ concept convertible_to_integral_value_type =
 // as_integral converts a type into an integral
 template<class I>
   requires (std::integral<I> or convertible_to_integral_value_type<I>)
-constexpr auto as_integral(const I& i)
+constexpr std::integral auto as_integral(const I& i)
 {
   if constexpr (std::integral<I>)
   {
