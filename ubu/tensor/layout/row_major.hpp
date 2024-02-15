@@ -11,10 +11,10 @@ namespace ubu
 
 
 template<coordinate S>
-struct row_major : public strided_layout<S,S>
+struct row_major : public strided_layout<S,compact_row_major_stride_t<S>>
 {
   constexpr row_major(S shape)
-    : strided_layout<S,S>{shape, compact_row_major_stride(shape)}
+    : strided_layout<S,compact_row_major_stride_t<S>>{shape, compact_row_major_stride(shape)}
   {}
 
   row_major(const row_major&) = default;

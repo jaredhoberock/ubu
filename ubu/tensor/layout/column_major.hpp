@@ -11,10 +11,10 @@ namespace ubu
 
 
 template<coordinate S>
-struct column_major : public strided_layout<S,S>
+struct column_major : public strided_layout<S,compact_column_major_stride_t<S>>
 {
   constexpr column_major(S shape)
-    : strided_layout<S,S>{shape, compact_column_major_stride(shape)}
+    : strided_layout<S,compact_column_major_stride_t<S>>{shape, compact_column_major_stride(shape)}
   {}
 
   column_major(const column_major&) = default;
