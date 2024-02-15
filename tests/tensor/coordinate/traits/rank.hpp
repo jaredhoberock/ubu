@@ -59,15 +59,6 @@ void test_rank()
   static_assert(1 == ns::rank_v<std::size_t&&>);
   static_assert(1 == ns::rank_v<const std::tuple<char>&>);
 
-  static_assert(1 == ns::rank_v<float>);
-  static_assert(1 == ns::rank(3.14f));
-  static_assert(1 == ns::rank_v<double>);
-  static_assert(1 == ns::rank(3.14));
-  static_assert(1 == ns::rank_v<std::tuple<float>>);
-  static_assert(1 == ns::rank(std::make_tuple(3.14f)));
-  static_assert(1 == ns::rank_v<std::tuple<double>>);
-  static_assert(1 == ns::rank(std::make_tuple(3.14)));
-
   static_assert(2 == ns::rank_v<std::pair<int,int>>);
   static_assert(2 == ns::rank(std::make_pair(13,7)));
   static_assert(2 == ns::rank_v<std::tuple<int,unsigned int>>);

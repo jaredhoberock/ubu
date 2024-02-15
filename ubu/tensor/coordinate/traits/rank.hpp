@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "detail/number.hpp"
+#include "../concepts/integral_like.hpp"
 #include <array>
 #include <concepts>
 #include <tuple>
@@ -67,7 +67,7 @@ struct dispatch_rank
   template<class T>
     requires (not has_rank_static_member_variable<std::remove_cvref_t<T>>
               and not has_rank_static_member_function<std::remove_cvref_t<T>>
-              and number<std::remove_cvref_t<T>>)
+              and integral_like<T>)
   constexpr std::size_t operator()() const
   {
     return 1;
@@ -76,7 +76,7 @@ struct dispatch_rank
   template<class T>
     requires (not has_rank_static_member_variable<std::remove_cvref_t<T>>
               and not has_rank_static_member_function<std::remove_cvref_t<T>>
-              and not number<std::remove_cvref_t<T>>
+              and not integral_like<T>
               and is_tuple_like_of_types_each_with_static_rank<std::remove_cvref_t<T>>::value)
   constexpr std::size_t operator()() const
   {
