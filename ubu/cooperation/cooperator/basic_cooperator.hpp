@@ -46,14 +46,6 @@ struct basic_cooperator
     : coord{c}, shape{s}, workspace_{w}, stack_counter_{0}
   {}
 
-  template<ubu::workspace OtherW, coordinate OtherS, coordinate OtherC>
-    requires (std::convertible_to<OtherW,W> and
-              std::convertible_to<OtherS,S> and
-              std::convertible_to<OtherC,C>)
-  constexpr basic_cooperator(const OtherC& c, const OtherS& s, const OtherW& w)
-    : basic_cooperator{c, s, w}
-  {}
-
   // cooperators with a concurrent workspace can synchronize with the barrier
   template<class = void>
     requires concurrent_workspace<W>
