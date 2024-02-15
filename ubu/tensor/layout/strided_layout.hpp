@@ -22,10 +22,11 @@
 namespace ubu
 {
 
-
-template<coordinate S, stride_for<S> D = S, coordinate R = apply_stride_t<D,S>>
-  requires (congruent<R,apply_stride_t<D,S>>
-            and not std::is_reference_v<R>)
+template<coordinate S,
+         stride_for<S> D = S,
+         coordinate R = apply_stride_t<D,default_coordinate_t<S>>
+        >
+  requires congruent<R,apply_stride_t<D,default_coordinate_t<S>>>
 class strided_layout
 {
   public:
