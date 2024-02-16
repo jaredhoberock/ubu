@@ -78,7 +78,6 @@ struct constant
   CONSTANT_BIN_OP_CONSTANT(*)
   CONSTANT_BIN_OP_CONSTANT(/)
   CONSTANT_BIN_OP_CONSTANT(%)
-  CONSTANT_BIN_OP_CONSTANT(&)
   CONSTANT_BIN_OP_CONSTANT(|)
   CONSTANT_BIN_OP_CONSTANT(^)
   CONSTANT_BIN_OP_CONSTANT(<<)
@@ -148,6 +147,7 @@ constexpr constant<detail::parse_int_digits<int>(0, (digits - '0')...)> operator
 #if __has_include(<fmt/format.h>)
 
 #include <fmt/format.h>
+#include <fmt/color.h>
 
 template<auto v>
 struct fmt::formatter<ubu::constant<v>>
@@ -161,7 +161,7 @@ struct fmt::formatter<ubu::constant<v>>
   template<class FormatContext>
   auto format(const ubu::constant<v>& c, FormatContext& ctx)
   {
-    return fmt::format_to(ctx.out(), "{}", c.value);
+    return fmt::format_to(ctx.out(), fmt::emphasis::bold, "{}_c", c.value);
   }
 };
 
