@@ -150,7 +150,6 @@ namespace detail
 {
 
 
-// XXX this needs to be generalize to all tuple-like types beyond std::tuple and std::pair and std::array
 template<class T>
 struct is_tuple_like_of_types_each_with_static_rank
 {
@@ -172,25 +171,17 @@ concept detected = requires
 } // end rank_impl
 
 
-template<class... Types>
-struct is_tuple_like_of_types_each_with_static_rank<std::tuple<Types...>>
+template<tuple_like T, std::size_t... I>
+constexpr bool is_tuple_like_of_types_each_with_static_rank_impl(std::index_sequence<I...>)
 {
-  // check that each of Types... may be used with the size CPO
-  static constexpr bool value = (... && rank_impl::detected<rank_result_t, Types>);
-};
+  // check that each element type may be used with the rank CPO
+  return (... and rank_impl::detected<rank_result_t, std::tuple_element_t<I,T>>);
+}
 
-template<class T1, class T2>
-struct is_tuple_like_of_types_each_with_static_rank<std::pair<T1,T2>>
+template<tuple_like T>
+struct is_tuple_like_of_types_each_with_static_rank<T>
 {
-  // check that T1 & T1 may be used with the size CPO
-  static constexpr bool value = rank_impl::detected<rank_result_t,T1> and rank_impl::detected<rank_result_t,T2>;
-};
-
-template<class T, std::size_t N>
-struct is_tuple_like_of_types_each_with_static_rank<std::array<T,N>>
-{
-  // check that T may be used with the size CPO
-  static constexpr bool value = rank_impl::detected<rank_result_t,T>;
+  static constexpr bool value = is_tuple_like_of_types_each_with_static_rank_impl<T>(tuple_indices<T>);
 };
 
 

@@ -3,8 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/coordinate/coordinate_cast.hpp"
 #include "../../tensor/coordinate/point.hpp"
 #include <iostream>
+#include <utility>
 
 
 namespace ubu::cuda
@@ -24,15 +26,22 @@ struct thread_id
     : thread{t}, block{b}
   {}
 
+  template<congruent<int3> T, congruent<int3> B>
+  constexpr thread_id(const T& thread, const B& block)
+    : thread_id{coordinate_cast<int3>(thread), coordinate_cast<int3>(block)}
+  {}
+
+  // XXX eliminate this
   constexpr thread_id(int2 thread_and_block)
     : thread{thread_and_block.x, 0, 0},
       block{thread_and_block.y, 0, 0}
   {}
 
-  constexpr static std::size_t rank()
-  {
-    return 2;
-  }
+  // use pair<int3,int3> instead of block_id because thread_id is not yet complete
+  template<congruent<std::pair<int3,int3>> C>
+  constexpr thread_id(const C& thread_and_block)
+    : thread_id{get<0>(thread_and_block), get<1>(thread_and_block)}
+  {}
 
   auto operator<=>(const thread_id&) const = default;
 
