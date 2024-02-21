@@ -11,6 +11,7 @@
 #include "layout/row_major.hpp"
 #include "layout/stride.hpp"
 #include "layout/strided_layout.hpp"
+#include "layout/truncating_layout.hpp"
 
 #include "../detail/epilogue.hpp"
 
