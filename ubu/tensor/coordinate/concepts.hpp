@@ -6,6 +6,7 @@
 #include "concepts/coordinate.hpp"
 #include "concepts/same_rank.hpp"
 #include "concepts/subdimensional.hpp"
+#include "concepts/superdimensional.hpp"
 #include "concepts/weakly_congruent.hpp"
 
 #include "../../detail/epilogue.hpp"
