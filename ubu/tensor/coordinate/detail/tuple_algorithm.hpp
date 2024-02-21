@@ -85,6 +85,17 @@ template<tuple_like T>
 constexpr auto tuple_indices = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
 
 
+// XXX tuple_of_indices would be unnecessary if std::index_sequence was itself a tuple-like
+template<std::size_t... I>
+constexpr auto tuple_of_indices_impl(std::index_sequence<I...>)
+{
+  return std::make_tuple(I...);
+}
+
+template<tuple_like T>
+constexpr std::tuple tuple_of_indices = tuple_of_indices_impl(tuple_indices<T>);
+
+
 template<std::size_t... I>
 constexpr auto reversed_tuple_indices_impl(std::index_sequence<I...>)
 {
@@ -1225,6 +1236,43 @@ constexpr auto unpack_and_invoke(T&& args, F&& f)
 {
   auto indices = tuple_indices<T>;
   return unpack_and_invoke_impl(std::forward<T>(args), std::forward<F>(f), indices);
+}
+
+
+template<tuple_like R, tuple_like T, class F, std::size_t... I>
+constexpr tuple_like auto tuple_static_enumerate_similar_to_impl(const T& tuple, F&& f, std::index_sequence<I...>)
+{
+  return make_tuple_similar_to<R>(f.template operator()<I>(get<I>(tuple))...); 
+}
+
+template<tuple_like R, tuple_like T, class F>
+constexpr tuple_like auto tuple_static_enumerate_similar_to(const T& tuple, F&& f)
+{
+  return tuple_static_enumerate_similar_to_impl<R>(tuple, std::forward<F>(f), tuple_indices<T>);
+}
+
+template<tuple_like T, class F>
+constexpr tuple_like auto tuple_static_enumerate(const T& tuple, F&& f)
+{
+  return tuple_static_enumerate_similar_to<T>(tuple, std::forward<F>(f));
+}
+
+
+template<std::size_t I, tuple_like T, class U>
+  requires tuple_index_for<I,T>
+constexpr tuple_like auto tuple_replace_element(const T& tuple, const U& replacement)
+{
+  return tuple_static_enumerate(tuple, [&]<std::size_t index>(const auto& t_i)
+  {
+    if constexpr (index == I)
+    {
+      return replacement;
+    }
+    else
+    {
+      return t_i;
+    }
+  });
 }
 
 
