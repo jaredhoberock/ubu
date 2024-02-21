@@ -2,6 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../detail/reflection/is_device.hpp"
+#include "../../detail/exception/throw_runtime_error.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/coordinate_cast.hpp"
 #include "../../tensor/coordinate/point.hpp"
@@ -70,6 +72,25 @@ struct thread_id
     return std::move(self.block);
   }
 };
+
+
+inline thread_id this_thread_id()
+{
+#if defined(__CUDACC__)
+  if UBU_TARGET(ubu::detail::is_device())
+  {
+    return {{threadIdx.x, threadIdx.y, threadIdx.z}, {blockIdx.x, blockIdx.y, blockIdx.z}};
+  }
+  else
+  {
+    ubu::detail::throw_runtime_error("cuda::this_thread_id is unavailable in host code");
+    return {};
+  }
+#else
+  ubu::detail::throw_runtime_error("cuda::this_thread_id requires CUDA C++ language support.");
+  return {};
+#endif
+}
 
 
 std::ostream& operator<<(std::ostream& os, const thread_id& id)
