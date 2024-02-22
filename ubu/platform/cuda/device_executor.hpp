@@ -7,16 +7,16 @@
 #include "../../memory/allocator/deallocate_after.hpp"
 #include "../../tensor/coordinate/concepts/congruent.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../tensor/coordinate/concepts/weakly_congruent.hpp"
+#include "../../tensor/coordinate/concepts/strictly_subdimensional.hpp"
+#include "../../tensor/coordinate/coordinate_cast.hpp"
 #include "../../tensor/coordinate/point.hpp"
+#include "../../tensor/coordinate/traits/default_coordinate.hpp"
+#include "../../tensor/layout/truncating_layout.hpp"
 #include "cooperation.hpp"
-#include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_kernel.hpp"
-#include "detail/throw_on_error.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
 #include "thread_id.hpp"
-#include <bit>
 #include <concepts>
 #include <cstddef>
 #include <functional>
@@ -51,6 +51,22 @@ struct invoke_with_builtin_cuda_indices
 };
 
 
+// XXX not sure it's actually good to have this C template parameter
+//     alternatively, we'd simply require std::invocable<cuda::thread_id>
+//     and have assume f would internally convert to C
+template<congruent<thread_id> C, std::invocable<C> F>
+  requires std::is_trivially_copy_constructible_v<F>
+struct invoke_with_this_thread_id
+{
+  F f;
+
+  void operator()() const
+  {
+    std::invoke(f, coordinate_cast<C>(this_thread_id()));
+  }
+};
+
+
 } // end detail
 
 
@@ -78,12 +94,14 @@ class device_executor
 
     device_executor(const device_executor&) = default;
 
-    template<std::regular_invocable<shape_type> F>
+    template<congruent<shape_type> S, std::invocable<default_coordinate_t<S>> F>
       requires std::is_trivially_copy_constructible_v<F>
-    inline event bulk_execute_after(const event& before, shape_type shape, F f) const
+    inline event bulk_execute_after(const event& before, S shape, F f) const
     {
+      using user_coord_type = default_coordinate_t<S>;
+
       // create the function that will be launched as a kernel
-      detail::invoke_with_builtin_cuda_indices<F> kernel{f};
+      detail::invoke_with_this_thread_id<user_coord_type,F> kernel{f};
 
       // convert the shape to dim3s
       auto [block_dim, grid_dim] = as_dim3s(shape);
@@ -92,24 +110,28 @@ class device_executor
       return detail::launch_as_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
     }
 
-    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
-    // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
-    template<std::regular_invocable<int2> F>
+    // this overload of bulk_execute_after one-extends the user's shape type to make
+    // it congruent with shape_type and then calls the lower-level function
+    // XXX move this adaptation into the bulk_execute_after CPO
+    template<strictly_subdimensional<shape_type> S, std::invocable<default_coordinate_t<S>> F>
       requires std::is_trivially_copy_constructible_v<F>
-    inline event bulk_execute_after(const event& before, int2 shape, F f) const
+    inline event bulk_execute_after(const event& before, S user_shape, F f) const
     {
-      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
-      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+      // we'll map native coordinates produced by the executor
+      // to the user's coordinate type via truncation
+      truncating_layout<shape_type,S> layout(user_shape);
 
-      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
+      return bulk_execute_after(before, layout.shape(), [=](auto native_coord)
       {
-        // map the native shape_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
+        std::invoke(f, layout[native_coord]);
       });
     }
 
-    template<std::regular_invocable<shape_type, workspace_type> F>
+    // XXX relax requirements on the type of shape S and workspace_shape W
+    //     these would be:
+    //     1. congruent<S,shape_type>, and
+    //     2. congruent<W,workspace_shape_type>
+    template<std::invocable<shape_type, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_with_workspace_after(const event& before, shape_type shape, int2 workspace_shape, F f) const
     {
@@ -133,28 +155,35 @@ class device_executor
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
 
-    // this overload of bulk_execute_with_workspace_after just does a simple conversion of the user's shape type to shape_type
-    // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
-    template<std::regular_invocable<int2, workspace_type> F>
+    // this overload of bulk_execute_with_workspace_after one-extends the user's shape type to make
+    // it congruent with shape_type and then calls the lower-level function
+    // XXX move this adaptation into the bulk_execute_with_workspace_after CPO
+    //     when we figure out what the legal relaxation of shape's type S would be
+    //
+    //     i think our requirements are:
+    //     1. same_rank<S,workspace_shape_type>, and
+    //     2. subdimensional<S,shape_type>
+    //
+    //     and then the requirement for workspace_shape's type S would be simply congruent<W,workspace_shape_type>
+    template<std::invocable<int2, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_with_workspace_after(const event& before, int2 shape, int2 workspace_shape, F f) const
     {
-      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
-      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
+      // we'll map native coordinates produced by the executor
+      // to the user's coordinate type via truncation
+      truncating_layout<shape_type,int2> layout(shape);
 
-      return bulk_execute_with_workspace_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
+      return bulk_execute_with_workspace_after(before, layout.shape(), workspace_shape, [=](shape_type native_coord, workspace_type ws)
       {
-        // map the native shape_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x}, ws);
+        std::invoke(f, layout[native_coord], ws);
       });
     }
 
-    template<std::regular_invocable F>
+    template<std::invocable F>
       requires std::is_trivially_copy_constructible_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{int3{1,1,1}, int3{1,1,1}}, [f](shape_type)
+      return bulk_execute_after(before, 1, [f](auto)
       {
         // ignore the incoming parameter and just invoke the function
         std::invoke(f);
@@ -198,8 +227,10 @@ class device_executor
 
     constexpr static std::pair<dim3,dim3> as_dim3s(shape_type shape)
     {
-      dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
-      dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
+      auto [num_threads, num_blocks] = shape;
+
+      dim3  grid_dim{static_cast<unsigned int>(get<0>(num_blocks)),  static_cast<unsigned int>(get<1>(num_blocks)),  static_cast<unsigned int>(get<2>(num_blocks))};
+      dim3 block_dim{static_cast<unsigned int>(get<0>(num_threads)), static_cast<unsigned int>(get<1>(num_threads)), static_cast<unsigned int>(get<2>(num_threads))};
 
       return {block_dim, grid_dim};
     }
