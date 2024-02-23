@@ -76,12 +76,18 @@ struct constant
   CONSTANT_BIN_OP_CONSTANT(+)
   CONSTANT_BIN_OP_CONSTANT(-)
   CONSTANT_BIN_OP_CONSTANT(*)
-  CONSTANT_BIN_OP_CONSTANT(/)
-  CONSTANT_BIN_OP_CONSTANT(%)
   CONSTANT_BIN_OP_CONSTANT(|)
   CONSTANT_BIN_OP_CONSTANT(^)
   CONSTANT_BIN_OP_CONSTANT(<<)
   CONSTANT_BIN_OP_CONSTANT(>>)
+
+  // operator/ has an additional requirement that the denominator is not zero
+  template<auto other> requires (other != 0) and requires { v / other; }
+  constexpr constant<(v / other)> operator/(constant<other>) const noexcept { return {}; }
+
+  // operator% has an additional requirement that the denominator is not zero
+  template<auto other> requires (other != 0) and requires { v % other; }
+  constexpr constant<(v % other)> operator%(constant<other>) const noexcept { return {}; }
 
 #undef CONSTANT_BIN_OP_CONSTANT
 
