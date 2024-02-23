@@ -1,13 +1,13 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../concepts/cooperator.hpp"
+#include "../concepts/semicooperator.hpp"
 #include "../size.hpp"
 
 namespace ubu
 {
 
-template<cooperator C>
+template<semicooperator C>
 using cooperator_size_t = decltype(size(std::declval<C>()));
 
 } // end ubu

@@ -6,13 +6,13 @@
 #include "../../tensor/coordinate/coord.hpp"
 #include "../../tensor/layout/column_major.hpp"
 #include "../../tensor/shape/shape.hpp"
-#include "concepts/cooperator.hpp"
+#include "concepts/semicooperator.hpp"
 #include <concepts>
 
 namespace ubu
 {
 
-template<cooperator C>
+template<semicooperator C>
 constexpr integral_like auto id(const C& self)
 {
   column_major layout(shape(self));

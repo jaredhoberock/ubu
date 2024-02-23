@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../descend_with_group_coord.hpp"
-#include "cooperator.hpp"
+#include "semicooperator.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -12,7 +12,7 @@ namespace ubu
 
 template<class T>
 concept hierarchical_cooperator =
-  cooperator<T>
+  semicooperator<T>
   and requires(T arg)
   {
     descend_with_group_coord(arg);
