@@ -127,13 +127,9 @@ class device_executor
       });
     }
 
-    // XXX relax requirements on the type of shape S and workspace_shape W
-    //     these would be:
-    //     1. congruent<S,shape_type>, and
-    //     2. congruent<W,workspace_shape_type>
-    template<std::invocable<shape_type, workspace_type> F>
+    template<congruent<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
-    inline event bulk_execute_with_workspace_after(const event& before, shape_type shape, int2 workspace_shape, F f) const
+    inline event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
     {
       // decompose workspace shape
       auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
@@ -146,7 +142,7 @@ class device_executor
 
       // launch the kernel after the outer buffer is ready
       std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
-      event after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
+      event after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](auto coord)
       {
         std::invoke(f, coord, device_workspace(outer_buffer));
       });
@@ -155,25 +151,17 @@ class device_executor
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
 
-    // this overload of bulk_execute_with_workspace_after one-extends the user's shape type to make
-    // it congruent with shape_type and then calls the lower-level function
+    // this overload of bulk_execute_with_workspace_after one-extends the user's shape type to make it congruent with shape_type
     // XXX move this adaptation into the bulk_execute_with_workspace_after CPO
-    //     when we figure out what the legal relaxation of shape's type S would be
-    //
-    //     i think our requirements are:
-    //     1. same_rank<S,workspace_shape_type>, and
-    //     2. subdimensional<S,shape_type>
-    //
-    //     and then the requirement for workspace_shape's type S would be simply congruent<W,workspace_shape_type>
-    template<std::invocable<int2, workspace_type> F>
-      requires std::is_trivially_copy_constructible_v<F>
-    inline event bulk_execute_with_workspace_after(const event& before, int2 shape, int2 workspace_shape, F f) const
+    template<strictly_subdimensional<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
+      requires (same_rank<S,W> and std::is_trivially_copy_constructible_v<F>)
+    inline event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
     {
       // we'll map native coordinates produced by the executor
       // to the user's coordinate type via truncation
-      truncating_layout<shape_type,int2> layout(shape);
+      truncating_layout<shape_type,S> layout(shape);
 
-      return bulk_execute_with_workspace_after(before, layout.shape(), workspace_shape, [=](shape_type native_coord, workspace_type ws)
+      return bulk_execute_with_workspace_after(before, layout.shape(), workspace_shape, [=](auto native_coord, workspace_type ws)
       {
         std::invoke(f, layout[native_coord], ws);
       });
