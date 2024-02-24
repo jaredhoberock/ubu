@@ -7,6 +7,7 @@
 #include "../../memory/allocator/traits/allocator_happening_t.hpp"
 #include "concepts/executor.hpp"
 #include "detail/default_bulk_execute_with_workspace_after.hpp"
+#include "detail/one_extending_default_bulk_execute_with_workspace_after.hpp"
 #include "traits/executor_happening.hpp"
 #include "traits/executor_workspace.hpp"
 #include <concepts>
@@ -45,8 +46,9 @@ namespace detail
 // 2. exec.bulk_execute_with_workspace_after(before, shape, workspace_shape, f)
 // 3. bulk_execute_with_workspace_after(exec, shape, workspace_shape, f)
 //
-// if dispatch fails to find a customization, it uses the default:
-// 4. allocate_and_zero_after(alloc, ...) then bulk_execute_after(ex, ...) then deallocate_after(alloc, ...)
+// if dispatch fails to find a customization, it uses a default:
+// 4. one_extending_bulk_execute_with_workspace_after(args...), or
+// 5. allocate_and_zero_after(alloc, ...) then bulk_execute_after(ex, ...) then deallocate_after(alloc, ...)
 namespace dispatch_bulk_execute_with_workspace_after
 {
 
@@ -118,12 +120,25 @@ class cpo
       return bulk_execute_with_workspace_after(std::forward<E>(executor), std::forward<B>(before), std::forward<S>(grid_shape), std::forward<W>(workspace_shape), std::forward<F>(function));
     }
 
-    // dispatch path calls default_bulk_execute_with_workspace_after
+    // dispatch path 4 calls one_extending_bulk_execute_with_workspace_after
+    template<executor E, asynchronous_allocator A, happening B, coordinate S, coordinate W, std::invocable<S,executor_workspace_t<E>> F>
+      requires (    not has_customization_0<E&&,A&&,B&&,const S&,const W&,F&&>
+                and not has_customization_1<E&&,A&&,B&&,const S&,const W&,F&&>
+                and not has_customization_2<E&&,A&&,B&&,const S&,const W&,F&&>
+                and not has_customization_3<E&&,A&&,B&&,const S&,const W&,F&&>
+                    and has_one_extending_default_bulk_execute_with_workspace_after<cpo,E&&,A&&,B&&,const S&,const W&,F&&>)
+    constexpr happening auto operator()(E&& executor, A&& alloc, B&& before, S&& grid_shape, W&& workspace_shape, F&& function) const
+    {
+      return one_extending_default_bulk_execute_with_workspace_after(*this, std::forward<E>(executor), std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(grid_shape), std::forward<W>(workspace_shape), std::forward<F>(function));
+    }
+
+    // dispatch path 5 calls default_bulk_execute_with_workspace_after
     template<executor E, asynchronous_allocator A, happening B, coordinate S, std::invocable<S,executor_workspace_t<E>> F>
       requires (    not has_customization_0<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_1<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_2<E&&,A&&,B&&,const S&,std::size_t,F&&>
                 and not has_customization_3<E&&,A&&,B&&,const S&,std::size_t,F&&>
+                and not has_one_extending_default_bulk_execute_with_workspace_after<cpo,E&&,A&&,B&&,const S&,std::size_t,F&&>
                     and has_default_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,std::size_t,F&&>)
     constexpr allocator_happening_t<A> operator()(E&& executor, A&& allocator, B&& before, const S& grid_shape, std::size_t workspace_shape, F&& function) const
     {

@@ -9,6 +9,7 @@
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/concepts/strictly_subdimensional.hpp"
 #include "../../tensor/coordinate/coordinate_cast.hpp"
+#include "../../tensor/coordinate/one_extend_coordinate.hpp"
 #include "../../tensor/coordinate/point.hpp"
 #include "../../tensor/coordinate/traits/default_coordinate.hpp"
 #include "../../tensor/layout/truncating_layout.hpp"
@@ -110,23 +111,6 @@ class device_executor
       return detail::launch_as_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
     }
 
-    // this overload of bulk_execute_after one-extends the user's shape type to make
-    // it congruent with shape_type and then calls the lower-level function
-    // XXX move this adaptation into the bulk_execute_after CPO
-    template<strictly_subdimensional<shape_type> S, std::invocable<default_coordinate_t<S>> F>
-      requires std::is_trivially_copy_constructible_v<F>
-    inline event bulk_execute_after(const event& before, S user_shape, F f) const
-    {
-      // we'll map native coordinates produced by the executor
-      // to the user's coordinate type via truncation
-      truncating_layout<shape_type,S> layout(user_shape);
-
-      return bulk_execute_after(before, layout.shape(), [=](auto native_coord)
-      {
-        std::invoke(f, layout[native_coord]);
-      });
-    }
-
     template<congruent<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
     inline event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
@@ -151,27 +135,11 @@ class device_executor
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
 
-    // this overload of bulk_execute_with_workspace_after one-extends the user's shape type to make it congruent with shape_type
-    // XXX move this adaptation into the bulk_execute_with_workspace_after CPO
-    template<strictly_subdimensional<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
-      requires (same_rank<S,W> and std::is_trivially_copy_constructible_v<F>)
-    inline event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
-    {
-      // we'll map native coordinates produced by the executor
-      // to the user's coordinate type via truncation
-      truncating_layout<shape_type,S> layout(shape);
-
-      return bulk_execute_with_workspace_after(before, layout.shape(), workspace_shape, [=](auto native_coord, workspace_type ws)
-      {
-        std::invoke(f, layout[native_coord], ws);
-      });
-    }
-
     template<std::invocable F>
       requires std::is_trivially_copy_constructible_v<F>
     inline event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, 1, [f](auto)
+      return bulk_execute_after(before, one_extend_coordinate<shape_type>(1), [f](auto)
       {
         // ignore the incoming parameter and just invoke the function
         std::invoke(f);

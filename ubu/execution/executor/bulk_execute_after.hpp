@@ -4,8 +4,9 @@
 
 #include "../../causality/happening.hpp"
 #include "concepts/executor.hpp"
-#include "detail/default_bulk_execute_after.hpp"
 #include "traits/executor_happening.hpp"
+#include "detail/one_extending_default_bulk_execute_after.hpp"
+#include "detail/sequential_default_bulk_execute_after.hpp"
 #include <concepts>
 #include <utility>
 
@@ -50,14 +51,25 @@ class dispatch_bulk_execute_after
       return bulk_execute_after(std::forward<E>(executor), std::forward<B>(before), std::forward<S>(grid_shape), std::forward<F>(function));
     }
 
-    // this dispatch path calls default_bulk_execute_after
+    // this dispatch path calls one_extending_default_bulk_execute_after
     template<executor E, happening B, coordinate S, std::invocable<S> F>
       requires (not has_bulk_execute_after_member_function<E&&,B&&,const S&,F&&>
                 and not has_bulk_execute_after_free_function<E&&,B&&,const S&,F&&>
-                and has_default_bulk_execute_after<E&&,B&&,const S&,F&&>)
+                and has_one_extending_default_bulk_execute_after<dispatch_bulk_execute_after,E&&,B&&,const S&,F&&>)
     constexpr executor_happening_t<E> operator()(E&& executor, B&& before, const S& grid_shape, F&& function) const
     {
-      return default_bulk_execute_after(std::forward<E>(executor), std::forward<B>(before), grid_shape, std::forward<F>(function));
+      return one_extending_default_bulk_execute_after(*this, std::forward<E>(executor), std::forward<B>(before), grid_shape, std::forward<F>(function));
+    }
+
+    // this dispatch path calls sequential_default_bulk_execute_after
+    template<executor E, happening B, coordinate S, std::invocable<S> F>
+      requires (not has_bulk_execute_after_member_function<E&&,B&&,const S&,F&&>
+                and not has_bulk_execute_after_free_function<E&&,B&&,const S&,F&&>
+                and not has_one_extending_default_bulk_execute_after<dispatch_bulk_execute_after,E&&,B&&,const S&,F&&>
+                and has_sequential_default_bulk_execute_after<E&&,B&&,const S&,F&&>)
+    constexpr executor_happening_t<E> operator()(E&& executor, B&& before, const S& grid_shape, F&& function) const
+    {
+      return sequential_default_bulk_execute_after(std::forward<E>(executor), std::forward<B>(before), grid_shape, std::forward<F>(function));
     }
 };
 

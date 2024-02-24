@@ -47,7 +47,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor ex, ubu::cuda::devic
     auto [allocation_ready, partial_results] = allocate_after<partial_sum_type>(alloc, before, num_blocks);
 
     // reduce each tile into a partial result
-    auto first_phase = ex.bulk_execute_after(allocation_ready, ubu::int2(block_size,num_blocks), [=](ubu::int2 idx)
+    auto first_phase = bulk_execute_after(ex, allocation_ready, ubu::int2(block_size,num_blocks), [=](ubu::int2 idx)
     {
       auto [thread,block] = idx;
       reduce_tiles_kernel<block_size>(block, thread, tiles, partial_results, op);
@@ -55,7 +55,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor ex, ubu::cuda::devic
 
     // finish up in a second phase by reducing the partial results
     auto single_tile_of_partial_results = tile(counted(partial_results, num_blocks), num_blocks);
-    auto second_phase = ex.bulk_execute_after(first_phase, ubu::int2(512,1), [=](ubu::int2 idx)
+    auto second_phase = bulk_execute_after(ex, first_phase, ubu::int2(512,1), [=](ubu::int2 idx)
     {
       auto [thread,block] = idx;
       reduce_tiles_kernel<512>(0, thread, single_tile_of_partial_results, result, op);
@@ -66,7 +66,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor ex, ubu::cuda::devic
   }
 
   // the input is small enough that it only requires a single phase 
-  return ex.bulk_execute_after(before, ubu::int2(512,1), [=](ubu::int2 idx)
+  return bulk_execute_after(ex, before, ubu::int2(512,1), [=](ubu::int2 idx)
   {
     auto [thread,block] = idx;
     reduce_tiles_kernel<512>(0, thread, tiles, result, op);
