@@ -4,6 +4,8 @@
 
 #include "../../memory/allocator/allocate_and_zero_after.hpp"
 #include "../../memory/allocator/deallocate_after.hpp"
+#include "../../tensor/coordinate/concepts/congruent.hpp"
+#include "../../tensor/coordinate/one_extend_coordinate.hpp"
 #include "cooperation.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
@@ -71,17 +73,19 @@ class graph_executor
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    template<std::regular_invocable<shape_type> F>
+    template<congruent<shape_type> S, std::invocable<default_coordinate_t<S>> F>
       requires std::is_trivially_copy_constructible_v<F>
-    inline graph_node bulk_execute_after(const graph_node& before, shape_type shape, F f) const
+    inline graph_node bulk_execute_after(const graph_node& before, S shape, F f) const
     {
       if(before.graph() != graph())
       {
         throw std::runtime_error("cuda::graph_executor::bulk_execute_after: before's graph differs from graph_executor's");
       }
 
+      using user_coord_type = default_coordinate_t<S>;
+
       // create the function that will be launched as a kernel
-      detail::invoke_with_builtin_cuda_indices<F> kernel{f};
+      detail::invoke_with_this_thread_id<user_coord_type,F> kernel{f};
 
       // convert the shape to dim3s
       auto [block_dim, grid_dim] = as_dim3s(shape);
@@ -90,26 +94,9 @@ class graph_executor
       return {graph(), detail::make_kernel_node(graph(), before.native_handle(), grid_dim, block_dim, dynamic_smem_size_, device_, kernel), stream()};
     }
 
-    // this overload of bulk_execute_after just does a simple conversion of the user's shape type to shape_type
-    // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_after CPO ought to do, but it's tricky to do it in that location atm
-    template<std::regular_invocable<int2> F>
+    template<congruent<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
-    inline graph_node bulk_execute_after(const graph_node& before, int2 shape, F f) const
-    {
-      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
-      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
-
-      return bulk_execute_after(before, native_shape, [f](shape_type native_coord)
-      {
-        // map the native shape_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x});
-      });
-    }
-
-    template<std::regular_invocable<shape_type, workspace_type> F>
-      requires std::is_trivially_copy_constructible_v<F>
-    inline graph_node bulk_execute_with_workspace_after(const graph_node& before, shape_type shape, int2 workspace_shape, F f) const
+    inline graph_node bulk_execute_with_workspace_after(const graph_node& before, S shape, W workspace_shape, F f) const
     {
       if(before.graph() != graph())
       {
@@ -135,28 +122,11 @@ class graph_executor
       // deallocate outer buffer after the kernel
       return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
     }
-
-    // this overload of bulk_execute_with_workspace_after just does a simple conversion of the user's shape type to shape_type
-    // and then calls the lower-level function
-    // XXX this is the kind of simple adaptation the bulk_execute_with_workspace_after CPO ought to do, but it's tricky to do it in that location atm
-    template<std::regular_invocable<int2, workspace_type> F>
-      requires std::is_trivially_copy_constructible_v<F>
-    inline graph_node bulk_execute_with_workspace_after(const graph_node& before, int2 shape, int2 workspace_shape, F f) const
-    {
-      // map the int2 to {{thread.x,thread.y,thread.z}, {block.x,block.y,block.z}}
-      shape_type native_shape{{shape.x, 1, 1}, {shape.y, 1, 1}};
-
-      return bulk_execute_with_workspace_after(before, native_shape, workspace_shape, [f](shape_type native_coord, workspace_type ws)
-      {
-        // map the native shape_type back into an int2 and invoke
-        std::invoke(f, int2{native_coord.thread.x, native_coord.block.x}, ws);
-      });
-    }
   
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return bulk_execute_after(before, shape_type{ubu::int3{1,1,1}, ubu::int3{1,1,1}}, [f](shape_type)
+      return bulk_execute_after(before, one_extend_coordinate<shape_type>(1), [f](shape_type)
       {
         // ignore the incoming parameter and just invoke the function
         std::invoke(f);
