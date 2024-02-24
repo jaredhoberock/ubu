@@ -27,28 +27,6 @@ namespace detail
 {
 
 
-template<std::invocable<thread_id> F>
-  requires std::is_trivially_copy_constructible_v<F>
-struct invoke_with_builtin_cuda_indices
-{
-  F f;
-
-  void operator()() const
-  {
-#if defined(__CUDACC__)
-    if UBU_TARGET(ubu::detail::is_device())
-    {
-      // create a thread_id from the built-in variables
-      thread_id idx{{threadIdx.x, threadIdx.y, threadIdx.z}, {blockIdx.x, blockIdx.y, blockIdx.z}};
-
-      // invoke the function with the id
-      std::invoke(f, idx);
-    }
-#endif
-  }
-};
-
-
 // XXX not sure it's actually good to have this C template parameter
 //     alternatively, we'd simply require std::invocable<cuda::thread_id>
 //     and have assume f would internally convert to C
