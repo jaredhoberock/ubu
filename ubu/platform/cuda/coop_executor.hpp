@@ -6,6 +6,7 @@
 #include "../../memory/allocator/deallocate_after.hpp"
 #include "../../tensor/coordinate/concepts/congruent.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../tensor/coordinate/coordinate_cast.hpp"
 #include "../../tensor/coordinate/point.hpp"
 #include "cooperation.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
@@ -24,7 +25,7 @@ namespace detail
 {
 
 
-template<std::invocable<ubu::int2> F>
+template<congruent<ubu::int2> C, std::invocable<C> F>
   requires std::is_trivially_copy_constructible_v<F>
 struct invoke_with_int2
 {
@@ -35,7 +36,7 @@ struct invoke_with_int2
 #if defined(__CUDACC__)
     if target(ubu::detail::is_device())
     {
-      std::invoke(f, ubu::int2(threadIdx.x, blockIdx.x));
+      std::invoke(f, coordinate_cast<C>(ubu::int2(threadIdx.x, blockIdx.x)));
     }
 #endif
   }
@@ -67,12 +68,14 @@ class coop_executor
 
     auto operator<=>(const coop_executor&) const = default;
 
-    template<congruent<shape_type> S, std::invocable<S> F>
+    template<congruent<shape_type> S, std::invocable<default_coordinate_t<S>> F>
       requires std::is_trivially_copy_constructible_v<F>
     event bulk_execute_after(const event& before, S shape, F f) const
     {
+      using user_coord_type = default_coordinate_t<S>;
+
       // create the function that will be launched as a kernel
-      detail::invoke_with_int2<F> kernel{f};
+      detail::invoke_with_int2<user_coord_type,F> kernel{f};
 
       // convert the shape to dim3s
       auto [block_dim, grid_dim] = as_dim3s(shape);
@@ -92,9 +95,9 @@ class coop_executor
       });
     }
 
-    template<congruent<shape_type> S, std::invocable<S, workspace_type> F>
+    template<congruent<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>
       requires std::is_trivially_copy_constructible_v<F>
-    event bulk_execute_with_workspace_after(const event& before, S shape, int2 workspace_shape, F f) const
+    event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
     {
       // decompose workspace shape
       auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
