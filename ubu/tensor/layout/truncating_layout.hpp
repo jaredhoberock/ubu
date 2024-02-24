@@ -4,6 +4,7 @@
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/concepts/subdimensional.hpp"
+#include "../coordinate/coordinate_cast.hpp"
 #include "../coordinate/traits/default_coordinate.hpp"
 #include "../coordinate/one_extend_coordinate.hpp"
 #include "../coordinate/truncate_coordinate.hpp"
