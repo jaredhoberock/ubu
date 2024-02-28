@@ -21,7 +21,7 @@ namespace ubu
 template<tensor_like T>
 constexpr lattice<tensor_coordinate_t<T>,tensor_shape_t<T>> domain(const T& tensor)
 {
-  return lattice(shape(tensor));
+  return lattice<tensor_coordinate_t<T>,tensor_shape_t<T>>(shape(tensor));
 }
 
 // returns true if coord[i] is < shape(tensor)[i] for all i in rank_v<C>
