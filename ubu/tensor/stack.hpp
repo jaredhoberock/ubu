@@ -4,6 +4,7 @@
 
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/constant.hpp"
+#include "coordinate/coordinate_cast.hpp"
 #include "coordinate/detail/tuple_algorithm.hpp"
 #include "coordinate/element.hpp"
 #include "concepts/tensor_like.hpp"
@@ -107,7 +108,8 @@ class stacked_view
         }
         else
         {
-          auto local_coord = detail::subtract_element<axis>(coord, bound);
+          // local_coord needs to have the same type as coord, so cast the result of subtract_element
+          C local_coord = coordinate_cast<C>(detail::subtract_element<axis>(coord, bound));
           return std::pair(1, local_coord);
         }
       }
