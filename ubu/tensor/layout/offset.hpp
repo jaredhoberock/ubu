@@ -41,6 +41,11 @@ struct offset_layout : view<detail::add_offset<O>, L>
     : super_t(detail::add_offset<O>{offset}, l)
   {}
 
+  constexpr O offset() const
+  {
+    return super_t::tensor().offset;
+  }
+
   template<class T>
     requires (rank_v<O> == 1)
   friend auto compose(T* ptr, const offset_layout& self)
