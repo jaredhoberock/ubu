@@ -25,8 +25,7 @@ struct constant
   // element(tuple, constant) indexes a tuple-like
   template<detail::tuple_like T>
     requires (std::integral<decltype(v)>
-              and v < std::tuple_size_v<std::remove_cvref_t<T>>
-              and requires(T&& tuple) { get<v>(std::forward<T>(tuple)); })
+              and v < std::tuple_size_v<std::remove_cvref_t<T>>)
   friend constexpr decltype(auto) element(T&& tuple, constant)
   {
     return get<v>(std::forward<T>(tuple));
