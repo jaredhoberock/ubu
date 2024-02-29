@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include <iostream>
 #include <type_traits>
+#include <cstddef>
 
 namespace ubu
 {
@@ -21,6 +22,8 @@ struct underscore_t
   {
     return false;
   }
+
+  static constexpr std::size_t rank = 1;
 };
 
 std::ostream& operator<<(std::ostream& os, underscore_t)
