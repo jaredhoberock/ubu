@@ -23,7 +23,7 @@ struct has_static_rank_member_function
 
 struct has_rank_member_function
 {
-  constexpr static std::size_t rank()
+  constexpr std::size_t rank()
   {
     return 1;
   }

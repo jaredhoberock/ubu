@@ -18,7 +18,16 @@ namespace detail
 template<class T>
 concept has_rank_static_member_variable = requires
 {
+// XXX WAR circle bug
+#if defined(__circle_lang__)
+  T::rank;
+  requires requires(decltype(T::rank) r)
+  {
+    { r } -> std::convertible_to<std::size_t>;
+  };
+#else
   { T::rank } -> std::convertible_to<std::size_t>;
+#endif
 };
 
 
