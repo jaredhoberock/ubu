@@ -6,13 +6,16 @@
 #include "../coordinate/detail/as_integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "../coordinate/traits/rank.hpp"
+#include "../slice/slicer.hpp"
 
 namespace ubu::detail
 {
 
-// subtracts b from a[i] and returns the result as a coordinate congruent to a
-template<std::size_t i, coordinate A, coordinate B>
-  requires ((i < rank_v<A>) and (congruent<B, coordinate_element_t<i,A>>))
+// subtracts b from a[i] and returns a result congruent to a
+template<std::size_t i, semicoordinate A, coordinate B>
+  requires ((i < rank_v<A>)                              // a[i] must exist
+            and coordinate<coordinate_element_t<i,A>>    // a[i] must be a coordinate
+            and congruent<coordinate_element_t<i,A>, B>) // a[i] must be congruent to b
 constexpr congruent<A> auto subtract_element(const A& a, const B& b)
 {
   if constexpr (scalar_coordinate<A>)
