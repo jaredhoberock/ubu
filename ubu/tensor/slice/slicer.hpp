@@ -115,56 +115,43 @@ concept slicer_with_underscore =
 namespace detail
 {
 
-// terminal case 1: the slicer parameter is a scalar slicer
-template<scalar_slicer S, class C>
+
+template<slicer S, semicoordinate C>
 constexpr bool is_slicer_for()
 {
-  return true;
-}
+  if constexpr(scalar_slicer<S>)
+  {
+    // terminal case 1: S is scalar
+    return true;
+  }
+  else if constexpr(not same_tuple_size<S,C>)
+  {
+    // terminal case 2: S has the wrong rank
+    return false;
+  }
+  else
+  {
+    // recursive case: both S and C are tuple-like
+    auto elements_are_slicers = []<std::size_t...I>(std::index_sequence<I...>)
+    {
+      using S_ = std::remove_cvref_t<S>;
+      using C_ = std::remove_cvref_t<C>;
 
-// terminal case 2: the slicer parameter is nonscalar but has the wrong size
-template<nonscalar_slicer S, ubu::detail::tuple_like T>
-  requires (not ubu::detail::same_tuple_size<S,T>)
-constexpr bool is_slicer_for()
-{
-  return false;
-}
+      return (... and is_slicer_for<std::tuple_element_t<I,S_>, std::tuple_element_t<I,C_>>());
+    };
 
-// recursive case: the slicer parameter is nonscalar and has the right size
-// this is a forward declaration for is_slicer_for_recursive_impl
-template<nonscalar_slicer S, ubu::detail::tuple_like T>
-  requires ubu::detail::same_tuple_size<S,T>
-constexpr bool is_slicer_for();
-
-template<nonscalar_slicer S, ubu::detail::tuple_like T>
-constexpr bool is_slicer_for_recursive_impl(std::index_sequence<>)
-{
-  return true;
-}
-
-template<nonscalar_slicer S, ubu::detail::tuple_like T, std::size_t I, std::size_t... Is>
-constexpr bool is_slicer_for_recursive_impl(std::index_sequence<I,Is...>)
-{
-  // check that the first element of S is a slicer for the first element of T and recurse to the rest of the elements
-  return is_slicer_for<std::tuple_element_t<I, std::remove_cvref_t<S>>, std::tuple_element_t<I, std::remove_cvref_t<T>>>()
-         and is_slicer_for_recursive_impl<S,T>(std::index_sequence<Is...>{});
-}
-
-template<nonscalar_slicer S, ubu::detail::tuple_like T>
-  requires ubu::detail::same_tuple_size<S,T>
-constexpr bool is_slicer_for()
-{
-  return is_slicer_for_recursive_impl<S,T>(ubu::detail::tuple_indices<S>);
+    return elements_are_slicers(tuple_indices<S>);
+  }
 }
 
 } // end detail
 
 
-// S is a slicer for a coordinate if S is a slicer of compatible shape
+// S is a slicer for a semicoordinate C if S is a slicer of compatible shape
 template<class S, class C>
 concept slicer_for =
   slicer<S>
-  and (ubu::coordinate<C> or slicer<C>) // a slicer can slice a coordinate or another slicer
+  and semicoordinate<C>
   and detail::is_slicer_for<S,C>()
 ;
 
@@ -179,6 +166,7 @@ concept nonscalar_slicer_for =
   nonscalar_slicer<S>
   and slicer_for<S,C>
 ;
+
 
 } // end ubu
 
