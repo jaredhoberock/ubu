@@ -12,24 +12,24 @@ namespace detail
 
 
 template<class T>
-constexpr bool is_ranked()
+constexpr bool is_semicoordinate()
 {
   if constexpr(not static_rank<T>)
   {
-    // if T doesn't have a static rank, then T is not ranked
+    // if T doesn't have a static rank, then T is not a semicoordinate
     return false;
   }
   else if constexpr(tuple_like<T>)
   {
     // all tuple_like have a static rank
 
-    // T is ranked if all of its tuple elements are also ranked
-    auto all_elements_are_ranked = []<std::size_t... I>(std::index_sequence<I...>)
+    // T is a semicoordinate if all of its tuple elements are semicoordinates
+    auto all_elements_are_semicoordinates = []<std::size_t... I>(std::index_sequence<I...>)
     {
-      return (... and is_ranked<std::tuple_element_t<I,std::remove_cvref_t<T>>>());
+      return (... and is_semicoordinate<std::tuple_element_t<I,std::remove_cvref_t<T>>>());
     };
 
-    return all_elements_are_ranked(tuple_indices<T>);
+    return all_elements_are_semicoordinates(tuple_indices<T>);
   }
   else
   {
@@ -42,9 +42,8 @@ constexpr bool is_ranked()
 } // end detail
 
 
-// XXX if "ranked" is not a good name, then "semicoordinate" may be an alternative
 template<class T>
-concept ranked = detail::is_ranked<T>();
+concept semicoordinate = detail::is_semicoordinate<T>();
 
 
 } // end ubu

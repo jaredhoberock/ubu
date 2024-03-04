@@ -4,8 +4,8 @@
 
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "concepts/ranked.hpp"
 #include "concepts/same_rank.hpp"
+#include "concepts/semicoordinate.hpp"
 #include "concepts/strictly_subdimensional.hpp"
 #include "concepts/subdimensional.hpp"
 #include "concepts/superdimensional.hpp"

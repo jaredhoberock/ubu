@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../detail/tuple_algorithm.hpp"
-#include "ranked.hpp"
 #include "same_rank.hpp"
+#include "semicoordinate.hpp"
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -16,7 +16,7 @@ namespace detail
 {
 
 
-template<ranked T1, ranked T2>
+template<semicoordinate T1, semicoordinate T2>
 constexpr bool is_weakly_congruent()
 {
   if constexpr(rank_v<T1> == 1)
@@ -52,8 +52,8 @@ constexpr bool is_weakly_congruent()
 
 template<class T1, class T2>
 concept weakly_congruent =
-  ranked<T1>
-  and ranked<T2>
+  semicoordinate<T1>
+  and semicoordinate<T2>
   and detail::is_weakly_congruent<T1,T2>()
 ;
 

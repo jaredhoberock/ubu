@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../traits/rank.hpp"
-#include "ranked.hpp"
 #include "same_rank.hpp"
+#include "semicoordinate.hpp"
 #include "weakly_congruent.hpp"
 #include <tuple>
 #include <type_traits>
@@ -17,7 +17,7 @@ namespace detail
 {
 
 
-template<ranked T1, ranked T2>
+template<semicoordinate T1, semicoordinate T2>
 constexpr bool are_congruent()
 {
   if constexpr(same_rank<T1,T2>)
@@ -51,7 +51,7 @@ constexpr bool are_congruent()
 
 // variadic case
 // requiring a third argument disambiguates this function from the one above
-template<ranked T1, ranked T2, ranked T3, ranked... Types>
+template<semicoordinate T1, semicoordinate T2, semicoordinate T3, semicoordinate... Types>
 constexpr bool are_congruent()
 {
   return are_congruent<T1,T2>() and are_congruent<T1,T3,Types...>();
