@@ -2,10 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "coordinate.hpp"
+#include "../detail/tuple_algorithm.hpp"
+#include "ranked.hpp"
 #include "same_rank.hpp"
-#include <concepts>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 
@@ -15,66 +16,46 @@ namespace detail
 {
 
 
-// terminal case 1: both arguments are unrelated types 
-template<class T1, class T2>
+template<ranked T1, ranked T2>
 constexpr bool is_weakly_congruent()
 {
-  return false;
-}
+  if constexpr(rank_v<T1> == 1)
+  {
+    // terminal case 1: T1 has rank 1
+    // rank-1 types are weakly congruent to all other ranked types
+    return true;
+  }
+  else if constexpr(not same_rank<T1,T2>)
+  {
+    // terminal case 2: T1 has rank > 1 and it differs from T2's rank
+    return false;
+  }
+  else
+  {
+    // recursive case: T1 and T2 have the same rank
+    // recurse across all elements
+    auto all_weakly_congruent = []<std::size_t...I>(std::index_sequence<I...>)
+    {
+      using U1 = std::remove_cvref_t<T1>;
+      using U2 = std::remove_cvref_t<T2>;
 
+      return (... and is_weakly_congruent<std::tuple_element_t<I,U1>, std::tuple_element_t<I,U2>>());
+    };
 
-// terminal case 2: both arguments are scalar
-template<scalar_coordinate T1, scalar_coordinate T2>
-constexpr bool is_weakly_congruent()
-{
-  return true;
-}
-
-
-// terminal case 3: the first argument is scalar and the second is nonscalar
-template<scalar_coordinate T1, nonscalar_coordinate T2>
-constexpr bool is_weakly_congruent()
-{
-  return true;
-}
-
-
-// recursive case: both arguments are nonscalar and their ranks are the same
-// this is a forward declaration for is_weakly_congruent_recursive_impl
-template<nonscalar_coordinate T1, nonscalar_coordinate T2>
-  requires same_rank<T1,T2>
-constexpr bool is_weakly_congruent();
-
-
-template<coordinate T1, coordinate T2>
-constexpr bool is_weakly_congruent_recursive_impl(std::index_sequence<>)
-{
-  return true;
-}
-
-
-template<coordinate T1, coordinate T2, std::size_t I, std::size_t... Is>
-constexpr bool is_weakly_congruent_recursive_impl(std::index_sequence<I,Is...>)
-{
-  // check the weak congruency of the first element of each coordinate and recurse to the rest of the elements
-  return is_weakly_congruent<std::tuple_element_t<I,T1>, std::tuple_element_t<I,T2>>() and is_weakly_congruent_recursive_impl<T1,T2>(std::index_sequence<Is...>{});
-}
-
-// recursive case: two nonscalar coordinates
-template<nonscalar_coordinate T1, nonscalar_coordinate T2>
-  requires same_rank<T1,T2>
-constexpr bool is_weakly_congruent()
-{
-  return is_weakly_congruent_recursive_impl<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>>(std::make_index_sequence<rank_v<T1>>{});
+    return all_weakly_congruent(tuple_indices<T1>);
+  }
 }
 
 
 } // end detail
 
 
-// weakly_congruent is recursive concept so it is implemented with SFINAE
 template<class T1, class T2>
-concept weakly_congruent = detail::is_weakly_congruent<T1,T2>();
+concept weakly_congruent =
+  ranked<T1>
+  and ranked<T2>
+  and detail::is_weakly_congruent<T1,T2>()
+;
 
 
 } // end ubu

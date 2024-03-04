@@ -3,10 +3,9 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../traits/rank.hpp"
-#include "coordinate.hpp"
+#include "ranked.hpp"
 #include "same_rank.hpp"
 #include "weakly_congruent.hpp"
-#include <concepts>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -14,63 +13,45 @@
 
 namespace ubu
 {
-
-
 namespace detail
 {
 
 
-// terminal case 1: both arguments are unrelated types
-template<class T1, class T2>
+template<ranked T1, ranked T2>
 constexpr bool are_congruent()
 {
-  return false;
-}
+  if constexpr(same_rank<T1,T2>)
+  {
+    if constexpr(rank_v<T1> == 1)
+    {
+      // terminal case 1: both types have rank 1
+      return true;
+    }
+    else
+    {
+      // recursive case
+      auto elements_are_congruent = []<std::size_t...I>(std::index_sequence<I...>)
+      {
+        using U1 = std::remove_cvref_t<T1>;
+        using U2 = std::remove_cvref_t<T2>;
 
+        return (... and are_congruent<std::tuple_element_t<I,U1>, std::tuple_element_t<I,U2>>());
+      };
 
-// terminal case 2: both arguments are scalar coordinates
-template<scalar_coordinate T1, scalar_coordinate T2>
-constexpr bool are_congruent()
-{
-  return true;
-}
-
-
-// forward declaration of recursive case
-template<nonscalar_coordinate T1, nonscalar_coordinate T2>
-  requires same_rank<T1,T2>
-constexpr bool are_congruent();
-
-
-template<nonscalar_coordinate T1, nonscalar_coordinate T2>
-  requires same_rank<T1,T2>
-constexpr bool are_congruent_recursive_impl(std::index_sequence<>)
-{
-  return true;
-}
-
-
-template<nonscalar_coordinate T1, nonscalar_coordinate T2, std::size_t Index, std::size_t... Indices>
-  requires same_rank<T1,T2>
-constexpr bool are_congruent_recursive_impl(std::index_sequence<Index, Indices...>)
-{
-  // check the congruency of the first element of each coordinate and recurse to the rest of the elements
-  return are_congruent<std::tuple_element_t<Index,T1>, std::tuple_element_t<Index,T2>>() and are_congruent_recursive_impl<T1,T2>(std::index_sequence<Indices...>{});
-}
-
-
-// recursive case: both arguments are nonscalar and their ranks are the same
-template<nonscalar_coordinate T1, nonscalar_coordinate T2>
-  requires same_rank<T1,T2>
-constexpr bool are_congruent()
-{
-  return are_congruent_recursive_impl<std::remove_cvref_t<T1>,std::remove_cvref_t<T2>>(std::make_index_sequence<rank_v<T1>>{});
+      return elements_are_congruent(tuple_indices<T1>);
+    }
+  }
+  else
+  {
+    // terminal case 2: the types' ranks differ
+    return false;
+  }
 }
 
 
 // variadic case
-// requiring a third argument disambiguates this function from the others above
-template<coordinate T1, coordinate T2, coordinate T3, coordinate... Types>
+// requiring a third argument disambiguates this function from the one above
+template<ranked T1, ranked T2, ranked T3, ranked... Types>
 constexpr bool are_congruent()
 {
   return are_congruent<T1,T2>() and are_congruent<T1,T3,Types...>();
