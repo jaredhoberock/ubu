@@ -23,8 +23,22 @@ struct underscore_t
     return false;
   }
 
+  // XXX we can't simply define a static member rank for empty types
+  // like underscore_t due to circle's std::tuple bug
+  //static constexpr std::size_t rank = 1;
+};
+
+// XXX specialize circle_tuple_bug_static_rank_workaround 
+//     to WAR circle's std::tuple bug which interferes with ubu::rank_v
+template<class T>
+struct circle_tuple_bug_static_rank_workaround;
+
+template<>
+struct circle_tuple_bug_static_rank_workaround<underscore_t>
+{
   static constexpr std::size_t rank = 1;
 };
+
 
 std::ostream& operator<<(std::ostream& os, underscore_t)
 {
