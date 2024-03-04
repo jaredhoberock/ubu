@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../detail/tuple_algorithm.hpp"
-#include "same_rank.hpp"
+#include "equal_rank.hpp"
 #include "semicoordinate.hpp"
 #include <tuple>
 #include <type_traits>
@@ -25,14 +25,14 @@ constexpr bool is_weakly_congruent()
     // rank-1 types are weakly congruent to all other ranked types
     return true;
   }
-  else if constexpr(not same_rank<T1,T2>)
+  else if constexpr(not equal_rank<T1,T2>)
   {
     // terminal case 2: T1 has rank > 1 and it differs from T2's rank
     return false;
   }
   else
   {
-    // recursive case: T1 and T2 have the same rank
+    // recursive case: T1 and T2 have equal rank
     // recurse across all elements
     auto all_weakly_congruent = []<std::size_t...I>(std::index_sequence<I...>)
     {

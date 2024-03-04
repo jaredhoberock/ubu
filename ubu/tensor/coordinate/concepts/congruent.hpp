@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../traits/rank.hpp"
-#include "same_rank.hpp"
+#include "equal_rank.hpp"
 #include "semicoordinate.hpp"
 #include "weakly_congruent.hpp"
 #include <tuple>
@@ -20,7 +20,7 @@ namespace detail
 template<semicoordinate T1, semicoordinate T2>
 constexpr bool are_congruent()
 {
-  if constexpr(same_rank<T1,T2>)
+  if constexpr(equal_rank<T1,T2>)
   {
     if constexpr(rank_v<T1> == 1)
     {

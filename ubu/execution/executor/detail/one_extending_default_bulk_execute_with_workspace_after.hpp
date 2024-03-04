@@ -24,7 +24,7 @@ concept has_one_extending_default_bulk_execute_with_workspace_after =
   and happening<H>
   and strictly_subdimensional<S,executor_shape_t<E>>
   and congruent<W,executor_workspace_shape_t<E>>
-  and same_rank<S,W>
+  and equal_rank<S,W>
   and std::invocable<F,default_coordinate_t<S>,executor_workspace_t<E>>
   and requires(CPO bulk_execute_with_workspace_after_cpo, E ex, A alloc, H before, const S& user_shape, const W& workspace_shape)
   {
@@ -43,7 +43,7 @@ template<class CPO,
          congruent<executor_workspace_shape_t<E>> W,
          std::invocable<default_coordinate_t<S>,executor_workspace_t<E>> F
         >
-  requires (same_rank<S,W> and has_one_extending_default_bulk_execute_with_workspace_after<CPO,E&&,A&&,H&&,S,W,F>)
+  requires (equal_rank<S,W> and has_one_extending_default_bulk_execute_with_workspace_after<CPO,E&&,A&&,H&&,S,W,F>)
 executor_happening_t<E> one_extending_default_bulk_execute_with_workspace_after(CPO bulk_execute_with_workspace_after_cpo, E&& ex, A&& alloc, H&& before, const S& user_shape, const W& workspace_shape, F user_function)
 {
   // we'll one-extend the user's requested shape and

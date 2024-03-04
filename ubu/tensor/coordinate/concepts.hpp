@@ -4,7 +4,7 @@
 
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "concepts/same_rank.hpp"
+#include "concepts/equal_rank.hpp"
 #include "concepts/semicoordinate.hpp"
 #include "concepts/strictly_subdimensional.hpp"
 #include "concepts/subdimensional.hpp"

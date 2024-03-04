@@ -31,8 +31,8 @@ constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStrid
 }
 
 // case 2: nonscalar RShape
-template<coordinate LShape, same_rank<LShape> LStride,
-         nonscalar_coordinate RShape, same_rank<RShape> RStride>
+template<coordinate LShape, equal_rank<LShape> LStride,
+         nonscalar_coordinate RShape, equal_rank<RShape> RStride>
 constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStride& lhs_stride,
                                            const RShape& rhs_shape, const RStride& rhs_stride)
 {

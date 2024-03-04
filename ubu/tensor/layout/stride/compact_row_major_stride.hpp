@@ -4,8 +4,8 @@
 
 #include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/concepts/equal_rank.hpp"
 #include "../../coordinate/concepts/integral_like.hpp"
-#include "../../coordinate/concepts/same_rank.hpp"
 #include "../../coordinate/constant.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
@@ -29,7 +29,7 @@ constexpr integral_like auto compact_row_major_stride_impl(const D& current_stri
 }
 
 template<nonscalar_coordinate D, nonscalar_coordinate S>
-  requires same_rank<D,S>
+  requires equal_rank<D,S>
 constexpr congruent<S> auto compact_row_major_stride_impl(const D& current_stride, const S& shape)
 {
   return tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
