@@ -46,6 +46,17 @@ concept block_like =
 ;
 
 
+template<block_like B>
+constexpr int synchronize_and_count(B, bool value)
+{
+#if defined(__CUDACC__)
+  return __syncthreads_count(value);
+#else
+  return -1;
+#endif
+}
+
+
 // overload descend_with_group_coord for 1D block_like groups
 // this allows us to get a warp from a block which doesn't happen
 // to have a hierarchical workspace
