@@ -6,9 +6,9 @@
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/integral_like.hpp"
 #include "../../coordinate/concepts/weakly_congruent.hpp"
-#include "../../coordinate/coordinate_sum.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/math/coordinate_sum.hpp"
 #include "apply_stride.hpp"
 
 

@@ -4,8 +4,8 @@
 
 #include "../concepts/coordinate.hpp"
 #include "../concepts/congruent.hpp"
-#include "../coordinate_difference.hpp"
-#include "../coordinate_sum.hpp"
+#include "../math/coordinate_difference.hpp"
+#include "../math/coordinate_sum.hpp"
 #include "../ones.hpp"
 #include "../zeros.hpp"
 #include "lexicographical_advance.hpp"
