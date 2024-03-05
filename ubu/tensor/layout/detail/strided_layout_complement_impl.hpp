@@ -4,9 +4,9 @@
 
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/math/ceil_div.hpp"
 #include "../strided_layout.hpp"
 #include "../stride/stride_for.hpp"
-#include "ceil_div.hpp"
 #include <algorithm>
 #include <concepts>
 #include <tuple>

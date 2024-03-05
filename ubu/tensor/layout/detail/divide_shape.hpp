@@ -2,10 +2,10 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "ceil_div.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/detail/coordinate_inclusive_scan.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/math/ceil_div.hpp"
 #include <utility>
 
 

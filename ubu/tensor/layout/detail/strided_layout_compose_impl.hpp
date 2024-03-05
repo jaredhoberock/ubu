@@ -4,7 +4,6 @@
 
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
-#include "ceil_div.hpp"
 #include "compatible_shape.hpp"
 #include "compose_strides.hpp"
 #include "divide_shape.hpp"

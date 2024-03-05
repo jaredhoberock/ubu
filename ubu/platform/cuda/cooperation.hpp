@@ -7,6 +7,7 @@
 #include "../../cooperation/cooperator/basic_cooperator.hpp"
 #include "../../cooperation/cooperator/concepts/cooperator.hpp"
 #include "../../cooperation/cooperator/traits/cooperator_thread_scope.hpp"
+#include "../../tensor/coordinate/math/ceil_div.hpp"
 #include "detail/sync_grid.hpp"
 #include <cmath>
 #include <concepts>
@@ -139,13 +140,6 @@ constexpr auto descend_with_group_coord(B block)
 
 namespace detail
 {
-
-
-template<std::integral T>
-constexpr T ceil_div(const T& dividend, const T& divisor)
-{
-  return (dividend + divisor - 1) / divisor;
-}
 
 
 template<class T>
