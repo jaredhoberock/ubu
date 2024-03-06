@@ -9,6 +9,7 @@
 #include "cooperator/subgroup.hpp"
 #include "cooperator/subgroup_and_coord.hpp"
 #include "cooperator/subgroup_and_id.hpp"
+#include "cooperator/subgroup_id.hpp"
 #include "cooperator/id.hpp"
 #include "cooperator/size.hpp"
 #include "cooperator/synchronize.hpp"
