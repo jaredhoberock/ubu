@@ -43,7 +43,7 @@ struct dispatch_synchronize_and_count
   template<cooperator C>
     requires (    not has_synchronize_and_count_member_function<C&&,bool>
               and not has_synchronize_and_count_free_function<C&&,bool>)
-  constexpr cooperator_size_t<C&&> synchronize_and_count(C&& self, bool value) const
+  constexpr cooperator_size_t<C&&> operator()(C&& self, bool value) const
   {
     // XXX the default implementation would allocate some memory and do a reduction
     printf("dispatch_synchronize_and_count: Default unimplemented.\n");
