@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../../../detail/prologue.hpp"
 
-#include "../../../detail/reflection/is_device.hpp"
+#include "../../../../detail/reflection/is_device.hpp"
 #include <atomic>
 #include <cassert>
 #include <concepts>
@@ -132,5 +132,5 @@ inline void sync_grid()
 
 } // end ubu::cuda::detail
 
-#include "../../../detail/epilogue.hpp"
+#include "../../../../detail/epilogue.hpp"
 
