@@ -10,5 +10,3 @@
 
 #include "../detail/epilogue.hpp"
 
-#pragma once
-
