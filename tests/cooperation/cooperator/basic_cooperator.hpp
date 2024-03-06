@@ -59,12 +59,12 @@ void test_basic_cooperator()
   {
     block self(0, 32*32, cta_workspace());
 
-    auto [w, warp_id] = ns::descend_with_group_coord(self);
+    auto [w, warp_id] = ns::subgroup_and_coord(self);
     static_assert(std::same_as<warp, decltype(w)>);
     assert(warp_id == 0);
 
-    // descend(self) should return warp
-    [[maybe_unused]] warp w1 = ns::descend(self);
+    // subgroup(self) should return warp
+    [[maybe_unused]] warp w1 = ns::subgroup(self);
 
     // a warp should be directly constructible from a block
     [[maybe_unused]] auto w2 = warp(self);
@@ -75,12 +75,12 @@ void test_basic_cooperator()
 
     block2d self(ns::int2(0,0), ns::int2(32,32), cta_workspace());
 
-    auto [w, warp_id] = ns::descend_with_group_coord(self);
+    auto [w, warp_id] = ns::subgroup_and_coord(self);
     static_assert(std::same_as<warp, decltype(w)>);
     assert(warp_id == 0);
 
     // descend(self) should return warp
-    [[maybe_unused]] warp w1 = ns::descend(self);
+    [[maybe_unused]] warp w1 = ns::subgroup(self);
 
     // a warp should be directly constructible from a block
     [[maybe_unused]] auto w2 = warp(self);

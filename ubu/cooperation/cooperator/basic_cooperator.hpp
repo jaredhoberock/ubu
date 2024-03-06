@@ -16,7 +16,7 @@
 #include "../workspace/workspace_thread_scope.hpp"
 #include "concepts/cooperator.hpp"
 #include "concepts/hierarchical_cooperator.hpp"
-#include "descend.hpp"
+#include "subgroup.hpp"
 #include "id.hpp"
 #include "size.hpp"
 #include <concepts>
@@ -36,10 +36,11 @@ struct basic_cooperator
 
   // this ctor creates a child cooperator (e.g. a warp) from its parent hierarchical_cooperator
   // XXX we should enable the construction of any grandchild of arbitrary depth
+  // XXX actually we shouldn't even have this ctor
   template<hierarchical_cooperator P>
     requires std::same_as<basic_cooperator, child_cooperator_t<P>>
   constexpr explicit basic_cooperator(const P& parent)
-    : basic_cooperator(descend(parent))
+    : basic_cooperator(subgroup(parent))
   {}
 
   constexpr basic_cooperator(const C& c, const S& s, const W& w = W{})
@@ -80,11 +81,11 @@ struct basic_cooperator
     return {new_coord, new_shape, workspace_};
   }
 
-  // this overload of descend_with_group_coord requires at least rank 2
+  // this overload of subgroup_and_coord requires at least rank 2
   // returns the pair (child_cooperator, child_group_coord)
   template<class = void>
     requires (rank_v<S> > 1 and hierarchical_workspace<W>)
-  constexpr auto descend_with_group_coord() const
+  constexpr auto subgroup_and_coord() const
   {
     using namespace detail;
 
@@ -108,10 +109,10 @@ struct basic_cooperator
     // tile_shape needs to "tile" shape for this to work right
     auto new_shape = std::pair(tile_shape, size(*this) / shape_size(tile_shape));
   
-    return reshape(new_shape).descend_with_group_coord();
+    return reshape(new_shape).subgroup_and_coord();
   }
 
-  // this overload of tile uses the child barrier's size as the tile size
+  // this overload of subgroup_and_coord uses the child barrier's size as the tile size
   // it returns the pair (child_cooperator, child_group_coord)
   // the requirements are kind of elaborate:
   //   * requires a rank 1 shape and hierarchical workspace
@@ -122,7 +123,7 @@ struct basic_cooperator
               and hierarchical_workspace<W_>
               and concurrent_workspace<local_workspace_t<W_>>
               and sized_barrier_like<barrier_t<local_workspace_t<W_>>>)
-  constexpr auto descend_with_group_coord() const
+  constexpr auto subgroup_and_coord() const
   {
     return tile(std::ranges::size(get_barrier(get_local_workspace(workspace_))));
   }

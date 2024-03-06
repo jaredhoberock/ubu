@@ -3,15 +3,15 @@
 #include "../../detail/prologue.hpp"
 
 #include "concepts/hierarchical_cooperator.hpp"
-#include "descend_with_group_coord.hpp"
+#include "subgroup_and_coord.hpp"
 
 namespace ubu
 {
 
 template<hierarchical_cooperator C>
-constexpr cooperator auto descend(const C& self)
+constexpr cooperator auto subgroup(const C& self)
 {
-  return get<0>(descend_with_group_coord(self));
+  return get<0>(subgroup_and_coord(self));
 }
 
 } // end ubu

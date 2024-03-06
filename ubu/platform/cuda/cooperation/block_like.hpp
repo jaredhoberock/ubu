@@ -57,13 +57,13 @@ constexpr int synchronize_and_count(B, bool value)
 }
 
 
-// overload descend_with_group_coord for 1D block_like groups
+// overload subgroup_and_coord for 1D block_like groups
 // this allows us to get a warp from a block which doesn't happen
 // to have a hierarchical workspace
 // returns the pair (warp_cooperator, which_warp)
 template<block_like B>
   requires (rank_v<shape_t<B>> == 1)
-constexpr auto descend_with_group_coord(B block)
+constexpr auto subgroup_and_coord(B block)
 {
   constexpr int warp_size = 32;
   int lane = coord(block) % warp_size;

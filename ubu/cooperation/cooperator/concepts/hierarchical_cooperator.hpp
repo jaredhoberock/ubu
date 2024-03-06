@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../descend_with_group_coord.hpp"
+#include "../subgroup_and_coord.hpp"
 #include "semicooperator.hpp"
 #include <type_traits>
 #include <utility>
@@ -15,12 +15,13 @@ concept hierarchical_cooperator =
   semicooperator<T>
   and requires(T arg)
   {
-    descend_with_group_coord(arg);
+    subgroup_and_coord(arg);
   }
 ;
 
 template<hierarchical_cooperator C>
-using child_cooperator_t = std::remove_cvref_t<decltype(get<0>(descend_with_group_coord(std::declval<C>())))>;
+using child_cooperator_t = std::remove_cvref_t<decltype(get<0>(subgroup_and_coord(std::declval<C>())))>;
+
 
 } // end ubu
 
