@@ -6,12 +6,16 @@
 #include "../../../cooperation/cooperator/traits/cooperator_thread_scope.hpp"
 #include "../../../memory/buffer/empty_buffer.hpp"
 #include "../../../tensor/coordinate/math/ceil_div.hpp"
+#include "../../../tensor/coordinate/constant.hpp"
 #include <optional>
 #include <string_view>
 #include <type_traits>
 
 namespace ubu::cuda
 {
+
+
+constexpr auto warp_size = 32_c;
 
 
 struct warp_workspace
@@ -34,6 +38,7 @@ struct warp_workspace
 };
 
 
+// XXX we may wish to require that size(warp_like) must equal warp_size
 template<class C>
 concept warp_like =
   cooperator<C>
@@ -124,11 +129,8 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
 {
   int num_values = synchronize_and_count(self, value.has_value());
 
-  // XXX warp_like should maybe require that size(self) is constexpr and equal to 32
-  // constexpr int num_threads = size(self);
-  constexpr int warp_size = 32;
-  constexpr int num_threads = warp_size;
-  constexpr int num_passes = 5; // this is log2(warp_size)
+  auto num_threads = warp_size;
+  auto num_passes = 5_c; // this is log2(warp_size)
 
   if(num_values == num_threads)
   {
