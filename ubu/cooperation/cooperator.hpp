@@ -13,6 +13,7 @@
 #include "cooperator/subgroup_id.hpp"
 #include "cooperator/subgroup_size.hpp"
 #include "cooperator/id.hpp"
+#include "cooperator/is_leader.hpp"
 #include "cooperator/size.hpp"
 #include "cooperator/synchronize.hpp"
 #include "cooperator/synchronize_and_count.hpp"
