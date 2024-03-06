@@ -11,6 +11,7 @@
 #include "cooperator/id.hpp"
 #include "cooperator/size.hpp"
 #include "cooperator/synchronize.hpp"
+#include "cooperator/synchronize_and_count.hpp"
 #include "cooperator/traits.hpp"
 
 #include "../detail/epilogue.hpp"
