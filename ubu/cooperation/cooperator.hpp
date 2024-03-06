@@ -11,6 +11,7 @@
 #include "cooperator/subgroup_and_id.hpp"
 #include "cooperator/subgroup_count.hpp"
 #include "cooperator/subgroup_id.hpp"
+#include "cooperator/subgroup_size.hpp"
 #include "cooperator/id.hpp"
 #include "cooperator/size.hpp"
 #include "cooperator/synchronize.hpp"

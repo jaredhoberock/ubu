@@ -5,17 +5,16 @@
 #include "../../tensor/coordinate/concepts/integral_like.hpp"
 #include "concepts/hierarchical_cooperator.hpp"
 #include "size.hpp"
-#include "subgroup_size.hpp"
+#include "subgroup.hpp"
 
 namespace ubu
 {
 
 template<hierarchical_cooperator C>
-constexpr integral_like auto subgroup_count(C group)
+constexpr integral_like auto subgroup_size(C group)
 {
-  return size(group) / subgroup_size(group);
+  return size(subgroup(group));
 }
-
 
 } // end ubu
 
