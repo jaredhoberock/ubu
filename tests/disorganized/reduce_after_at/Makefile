@@ -9,11 +9,11 @@ INCLUDES := -I$(UBU_INC_PATH) -I$(CUDA_INC_PATH)
 CCFLAGS := -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 CUDACXXFLAGS := -libstdc++=11 --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_60
 
-reduce.out: reduce.cpp measure_bandwidth_of_invocation.hpp reduce_kernel.hpp stride.hpp tile.hpp
-	$(CUDACXX) $(CUDACXXFLAGS) reduce.cpp -L$(CUDA_LIB_PATH) -lcudart -o $@
+reduce_after_at.out: reduce_after_at.cpp measure_bandwidth_of_invocation.hpp
+	$(CUDACXX) $(CUDACXXFLAGS) reduce_after_at.cpp -L$(CUDA_LIB_PATH) -lcudart -o $@
 
-# this runs reduce.out sliently and quickly
-test: reduce.out
+# this runs reduce_after_at.out sliently and quickly
+test: reduce_after_at.out
 	./$< quick > /dev/null
 
 all: test
