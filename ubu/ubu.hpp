@@ -32,7 +32,7 @@
 #include "cooperation.hpp"
 #include "execution.hpp"
 #include "memory.hpp"
-#include "platform/cpp.hpp"
+#include "platform.hpp"
 #include "tensor.hpp"
 
 #include "detail/epilogue.hpp"
