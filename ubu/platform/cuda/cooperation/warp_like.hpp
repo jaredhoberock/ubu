@@ -16,6 +16,7 @@ namespace ubu::cuda
 
 
 constexpr auto warp_size = 32_c;
+constexpr auto warp_mask = -1_c; // XXX we need a way to use hexadecimal with _c
 
 
 struct warp_workspace
@@ -67,7 +68,7 @@ constexpr T warp_shuffle_down(const T& x, int offset)
 
   for(int i = 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(0xFFFFFFFF, u.words[i], offset);
+    u.words[i] = __shfl_down_sync(warp_mask, u.words[i], offset);
   }
 
   return u.value;
@@ -98,12 +99,12 @@ constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offs
 
   for(int i= 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(0xFFFFFFFF, u.words[i], offset);
+    u.words[i] = __shfl_down_sync(warp_mask, u.words[i], offset);
   }
 
   // communicate whether or not the words we shuffled came from a valid object
   bool is_valid = x ? true : false;
-  is_valid = __shfl_down_sync(0xFFFFFFFF, is_valid, offset);
+  is_valid = __shfl_down_sync(warp_mask, is_valid, offset);
 
   return is_valid ? std::make_optional(u.value) : std::nullopt;
 #else
@@ -119,7 +120,7 @@ template<warp_like W>
 constexpr int synchronize_and_count(W, bool value)
 {
 #if defined(__CUDACC__)
-  return __popc(__ballot_sync(0xFFFFFFFF, value));
+  return __popc(__ballot_sync(warp_mask, value));
 #else
   return -1;
 #endif
