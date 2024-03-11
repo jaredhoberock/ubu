@@ -52,21 +52,22 @@ namespace detail
 
 template<class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr T shuffle_down(const T& x, int offset, int width)
+constexpr T warp_shuffle_down(const T& x, int offset)
 { 
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
 
-  union
+  union U
   {
     int words[num_words];
     T value;
+    constexpr U(){}
   } u;
   u.value = x;
 
   for(int i = 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset, width);
+    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset);
   }
 
   return u.value;
@@ -78,15 +79,16 @@ constexpr T shuffle_down(const T& x, int offset, int width)
 
 template<class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr std::optional<T> shuffle_down(const std::optional<T>& x, int offset, int width)
+constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offset)
 {
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
 
-  union
+  union U
   {
     int words[num_words];
     T value;
+    constexpr U(){}
   } u;
 
   if(x)
@@ -96,12 +98,12 @@ constexpr std::optional<T> shuffle_down(const std::optional<T>& x, int offset, i
 
   for(int i= 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset, width);
+    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset);
   }
 
   // communicate whether or not the words we shuffled came from a valid object
   bool is_valid = x ? true : false;
-  is_valid = __shfl_down_sync(__activemask(), is_valid, offset, width);
+  is_valid = __shfl_down_sync(__activemask(), is_valid, offset);
 
   return is_valid ? std::make_optional(u.value) : std::nullopt;
 #else
@@ -137,7 +139,7 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
     for(int pass = 0; pass != num_passes; ++pass)
     {
       int offset = 1 << pass;
-      T other = detail::shuffle_down(*value, offset, num_threads);
+      T other = detail::warp_shuffle_down(*value, offset);
       value = binary_op(*value, other);
     }
   }
@@ -146,7 +148,7 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
     for(int pass = 0; pass != num_passes; ++pass)
     {
       int offset = 1 << pass;
-      std::optional other = detail::shuffle_down(value, offset, num_threads);
+      std::optional other = detail::warp_shuffle_down(value, offset);
       if((id(self) + offset < num_values) and other) *value = binary_op(*value, *other);
     }
   }
