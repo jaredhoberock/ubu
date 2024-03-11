@@ -67,7 +67,7 @@ constexpr T warp_shuffle_down(const T& x, int offset)
 
   for(int i = 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset);
+    u.words[i] = __shfl_down_sync(0xFFFFFFFF, u.words[i], offset);
   }
 
   return u.value;
@@ -98,12 +98,12 @@ constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offs
 
   for(int i= 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(__activemask(), u.words[i], offset);
+    u.words[i] = __shfl_down_sync(0xFFFFFFFF, u.words[i], offset);
   }
 
   // communicate whether or not the words we shuffled came from a valid object
   bool is_valid = x ? true : false;
-  is_valid = __shfl_down_sync(__activemask(), is_valid, offset);
+  is_valid = __shfl_down_sync(0xFFFFFFFF, is_valid, offset);
 
   return is_valid ? std::make_optional(u.value) : std::nullopt;
 #else
