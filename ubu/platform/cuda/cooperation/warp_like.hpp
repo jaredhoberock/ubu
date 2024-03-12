@@ -16,7 +16,7 @@ namespace ubu::cuda
 
 
 constexpr auto warp_size = 32_c;
-constexpr auto warp_mask = -1_c; // XXX we need a way to use hexadecimal with _c
+constexpr auto warp_mask = 0xFFFFFFFF_c;
 
 
 struct warp_workspace
