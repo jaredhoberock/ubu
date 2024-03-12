@@ -1,4 +1,4 @@
-#include <ubu/platform/cuda/cooperation/warp_like.hpp>
+#include <ubu/platform/cuda/cooperation/warp.hpp>
 
 void test_warp_mask()
 {

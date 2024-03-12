@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
-#include "cooperation/block_like.hpp"
-#include "cooperation/grid_like.hpp"
-#include "cooperation/warp_like.hpp"
+#include "cooperation/block.hpp"
+#include "cooperation/grid.hpp"
+#include "cooperation/warp.hpp"
 #include "cooperation/detail/sync_grid.hpp"
 #include <cstddef>
 #include <span>
