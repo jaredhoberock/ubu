@@ -65,7 +65,6 @@ template<block_like B>
   requires (rank_v<shape_t<B>> == 1)
 constexpr auto subgroup_and_coord(B block)
 {
-  constexpr int warp_size = 32;
   int lane = coord(block) % warp_size;
   int which_warp = coord(block) / warp_size;
   return std::pair(basic_cooperator(lane, warp_size, warp_workspace{}), which_warp);
