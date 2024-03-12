@@ -14,7 +14,7 @@ namespace ubu::cuda
 
 template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr T shuffle_down(W, const T& x, int offset)
+constexpr T shuffle_up(W, const T& x, int offset)
 { 
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -30,7 +30,7 @@ constexpr T shuffle_down(W, const T& x, int offset)
 
   for(int i = 0; i < num_words; ++i)
   {
-    u.words[i] = __shfl_down_sync(warp_mask, u.words[i], offset);
+    u.words[i] = __shfl_up_sync(warp_mask, u.words[i], offset);
   }
 
   return u.value;
@@ -41,12 +41,12 @@ constexpr T shuffle_down(W, const T& x, int offset)
 
 
 // this overload seems pointless, because std::optional<T> is trivially copyable
-// however, including this overload actually seems to cause shuffle_down to use
+// however, including this overload actually seems to cause shuffle_up to use
 // fewer registers, perhaps because shuffling the optional's valid bit is cheaper than
-// shuffling a full word, maybe because __shfl_down_sync can be implemented with __ballot_sync
+// shuffling a full word, maybe because __shfl_up_sync can be implemented with __ballot_sync
 template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int offset)
+constexpr std::optional<T> shuffle_up(W self, const std::optional<T>& x, int offset)
 {
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -63,10 +63,10 @@ constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int o
     u.value = *x;
   }
 
-  u.value = shuffle_down(self, u.value, offset);
+  u.value = shuffle_up(self, u.value, offset);
 
   // communicate whether or not the value we received came from a valid object
-  bool is_valid = __shfl_down_sync(warp_mask, x.has_value(), offset);
+  bool is_valid = __shfl_up_sync(warp_mask, x.has_value(), offset);
 
   return is_valid ? std::make_optional(u.value) : std::nullopt;
 #else
@@ -78,4 +78,5 @@ constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int o
 } // end ubu::cuda
 
 #include "../../../../detail/epilogue.hpp"
+
 
