@@ -51,9 +51,9 @@ namespace detail
 {
 
 
-template<class T>
+template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr T warp_shuffle_down(const T& x, int offset)
+constexpr T shuffle_down(W, const T& x, int offset)
 { 
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -62,8 +62,9 @@ constexpr T warp_shuffle_down(const T& x, int offset)
   {
     int words[num_words];
     T value;
-    constexpr U(){}
+    constexpr U(){} // this ctor allows the T member w/o trivial ctor
   } u;
+
   u.value = x;
 
   for(int i = 0; i < num_words; ++i)
@@ -73,14 +74,18 @@ constexpr T warp_shuffle_down(const T& x, int offset)
 
   return u.value;
 #else
-  return {};
+  return x;
 #endif
 }
 
 
-template<class T>
+// this overload seems pointless, because std::optional<T> is trivially copyable
+// however, including this overload actually seems to cause warp_shuffle_down to use
+// fewer registers, perhaps because shuffling the optional's valid bit is cheaper than
+// shuffling a full word, maybe because __shfl_down_sync can be implemented with __ballot_sync
+template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offset)
+constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int offset)
 {
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -89,7 +94,7 @@ constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offs
   {
     int words[num_words];
     T value;
-    constexpr U(){}
+    constexpr U(){} // this ctor allows the T member w/o trivial ctor
   } u;
 
   if(x)
@@ -97,18 +102,14 @@ constexpr std::optional<T> warp_shuffle_down(const std::optional<T>& x, int offs
     u.value = *x;
   }
 
-  for(int i= 0; i < num_words; ++i)
-  {
-    u.words[i] = __shfl_down_sync(warp_mask, u.words[i], offset);
-  }
+  u.value = shuffle_down(self, u.value, offset);
 
-  // communicate whether or not the words we shuffled came from a valid object
-  bool is_valid = x ? true : false;
-  is_valid = __shfl_down_sync(warp_mask, is_valid, offset);
+  // communicate whether or not the value we received came from a valid object
+  bool is_valid = __shfl_down_sync(warp_mask, x.has_value(), offset);
 
   return is_valid ? std::make_optional(u.value) : std::nullopt;
 #else
-  return {};
+  return std::nullopt;
 #endif
 }
 
@@ -140,7 +141,7 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
     for(int pass = 0; pass != num_passes; ++pass)
     {
       int offset = 1 << pass;
-      T other = detail::warp_shuffle_down(*value, offset);
+      T other = detail::shuffle_down(self, *value, offset);
       value = binary_op(*value, other);
     }
   }
@@ -149,7 +150,7 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
     for(int pass = 0; pass != num_passes; ++pass)
     {
       int offset = 1 << pass;
-      std::optional other = detail::warp_shuffle_down(value, offset);
+      std::optional other = detail::shuffle_down(self, value, offset);
       if((id(self) + offset < num_values) and other) *value = binary_op(*value, *other);
     }
   }
