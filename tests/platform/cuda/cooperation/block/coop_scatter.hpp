@@ -5,31 +5,6 @@
 #include <ubu/ubu.hpp>
 #include <vector>
 
-template<class V1, class V2>
-std::vector<std::size_t> mismatches(const V1& expected, const V2& test)
-{
-  assert(expected.size() == test.size());
-
-  std::vector<std::size_t> result;
-
-  for(std::size_t i = 0; i < expected.size(); ++i)
-  {
-    if(i < test.size())
-    {
-      if(expected[i] != test[i])
-      {
-        result.push_back(i);
-      }
-    }
-    else
-    {
-      result.push_back(i);
-    }
-  }
-
-  return result;
-}
-
 template<class T>
 using device_vector = std::vector<T, ubu::cuda::managed_allocator<T>>;
 
