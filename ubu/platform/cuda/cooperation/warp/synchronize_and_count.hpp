@@ -2,22 +2,18 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "coop_ballot.hpp"
 #include "warp_like.hpp"
+#include <bit>
 
 namespace ubu::cuda
 {
 
-
 template<warp_like W>
-constexpr int synchronize_and_count(W, bool value)
+constexpr std::uint32_t synchronize_and_count(W warp, bool value)
 {
-#if defined(__CUDACC__)
-  return __popc(__ballot_sync(warp_mask, value));
-#else
-  return -1;
-#endif
+  return std::popcount(coop_ballot(warp, value));
 }
-
 
 } // end ubu::cuda
 
