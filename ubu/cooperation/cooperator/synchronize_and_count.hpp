@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../tensor/coordinate/concepts/integral_like.hpp"
 #include "traits/cooperator_size.hpp"
+#include <cassert>
 
 
 namespace ubu
