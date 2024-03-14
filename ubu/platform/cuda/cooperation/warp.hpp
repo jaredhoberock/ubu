@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "warp/coop_ballot.hpp"
+#include "warp/coop_exclusive_scan.hpp"
 #include "warp/coop_inclusive_scan.hpp"
 #include "warp/coop_reduce.hpp"
 #include "warp/shuffle_down.hpp"
