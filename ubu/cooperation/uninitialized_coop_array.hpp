@@ -10,6 +10,7 @@
 #include "cooperator/traits/cooperator_size.hpp"
 #include <concepts>
 #include <optional>
+#include <memory>
 
 namespace ubu
 {
@@ -44,6 +45,13 @@ class uninitialized_coop_array
     constexpr const T& operator[](I i) const
     {
       return data_[i];
+    }
+
+    template<std::integral I, class... Args>
+      requires std::constructible_from<T,Args&&...>
+    constexpr T& construct_at(I i, Args&&... args)
+    {
+      return *std::construct_at(&data_[i], std::forward<Args>(args)...);
     }
 
     template<std::integral I>
