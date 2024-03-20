@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "../tensor/coordinate/concepts/integral_like.hpp"
-#include "../tensor/coordinate/math/ceil_div.hpp"
-#include "cooperator/concepts/allocating_cooperator.hpp"
-#include "cooperator/concepts/hierarchical_cooperator.hpp"
-#include "cooperator/subgroup.hpp"
-#include "cooperator/subgroup_count.hpp"
-#include "cooperator/subgroup_id.hpp"
-#include "cooperator/subgroup_size.hpp"
-#include "cooperator/synchronize.hpp"
-#include "uninitialized_coop_array.hpp"
+#include "../../detail/prologue.hpp"
+#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "../../tensor/coordinate/math/ceil_div.hpp"
+#include "../cooperator/concepts/allocating_cooperator.hpp"
+#include "../cooperator/concepts/hierarchical_cooperator.hpp"
+#include "../cooperator/subgroup.hpp"
+#include "../cooperator/subgroup_count.hpp"
+#include "../cooperator/subgroup_id.hpp"
+#include "../cooperator/subgroup_size.hpp"
+#include "../cooperator/synchronize.hpp"
+#include "../uninitialized_coop_array.hpp"
 #include <concepts>
 #include <optional>
 
@@ -80,5 +80,5 @@ constexpr std::optional<T> coop_reduce(C self, std::optional<T> value, F binary_
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 
