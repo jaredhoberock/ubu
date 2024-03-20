@@ -48,6 +48,8 @@ constexpr T coop_inclusive_scan(B group, T value, F binary_op)
     value = binary_op(carry, value);
   }
 
+  synchronize(group);
+
   return value;
 }
 
