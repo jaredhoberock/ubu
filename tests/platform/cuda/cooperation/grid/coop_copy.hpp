@@ -24,7 +24,7 @@ void test_coop_copy(int num_blocks_per_grid, int num_warps_per_block, int num_el
 
   bulk_execute(cuda::coop_executor(), shape, [=](ubu::int2 coord)
   {
-    basic_cooperator grid(coord, shape, cuda::concurrent_device_workspace{});
+    basic_cooperator grid(coord, shape, cuda::coop_grid_workspace{});
 
     coop_copy(grid, input_view, result_view);
   });

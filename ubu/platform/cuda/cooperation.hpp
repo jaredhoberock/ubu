@@ -16,8 +16,7 @@ namespace ubu::cuda
 {
 
 
-// XXX this should be named grid_workspace
-struct device_workspace
+struct grid_workspace
 {
   constexpr static const std::string_view thread_scope = "device";
 
@@ -25,7 +24,7 @@ struct device_workspace
   std::span<std::byte> buffer;
   block_workspace local_workspace;
 
-  constexpr device_workspace(std::span<std::byte> outer_buffer)
+  constexpr explicit grid_workspace(std::span<std::byte> outer_buffer = {})
   {
 #if defined(__CUDACC__)
     if UBU_TARGET(ubu::detail::is_device())
@@ -41,17 +40,12 @@ struct device_workspace
     }
 #endif
   }
-
-  constexpr device_workspace()
-    : device_workspace(std::span<std::byte>())
-  {}
 };
 
 
-// XXX this should be named coop_grid_workspace
-struct concurrent_device_workspace : device_workspace
+struct coop_grid_workspace : grid_workspace
 {
-  using device_workspace::device_workspace;
+  using grid_workspace::grid_workspace;
 
   struct barrier_type
   {

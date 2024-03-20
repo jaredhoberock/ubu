@@ -49,7 +49,7 @@ struct invoke_with_int2
 class coop_executor
 {
   public:
-    using workspace_type = concurrent_device_workspace;
+    using workspace_type = coop_grid_workspace;
     using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
     using shape_type = workspace_shape_type;
     using happening_type = cuda::event;
