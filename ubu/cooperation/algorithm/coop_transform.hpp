@@ -17,8 +17,10 @@ constexpr void coop_transform(C self, I input, O output, F f)
 {
   coop_for_each(self, zip(output, input), [f](auto out_and_in)
   {
-    auto&& [out, in] = out_and_in;
-    out = in;
+    auto&& [out,in] = out_and_in;
+
+    // XXX do we need forward on these?
+    out = f(in);
   });
 }
 
