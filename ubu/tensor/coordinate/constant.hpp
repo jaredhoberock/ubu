@@ -5,6 +5,7 @@
 #include "detail/tuple_algorithm.hpp"
 #include "zeros.hpp"
 #include <concepts>
+#include <cstdint>
 #include <limits>
 #include <iostream>
 
