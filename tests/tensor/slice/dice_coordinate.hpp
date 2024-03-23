@@ -46,7 +46,7 @@ void test_dice_coordinate()
   {
     constexpr tuple  coord(    ns::int3(1,2,3),   ns::int2(4,5), ns::int1(6));
     constexpr tuple katana(  make_tuple(1,2,3), make_tuple(_,5), _);
-    constexpr tuple expected(make_tuple(1,2,3), 5);
+    constexpr tuple expected(  ns::int3(1,2,3), 5);
     static_assert(expected == ns::dice_coordinate(coord, katana));
   }
 
