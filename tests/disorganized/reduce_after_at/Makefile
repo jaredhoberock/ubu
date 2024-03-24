@@ -7,7 +7,7 @@ CUDA_INC_PATH := $(CUDA_PATH)/include
 CUDA_LIB_PATH := $(CUDA_PATH)/lib64
 INCLUDES := -I$(UBU_INC_PATH) -I$(CUDA_INC_PATH)
 CCFLAGS := -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
-CUDACXXFLAGS := -libstdc++=11 --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_60
+CUDACXXFLAGS := --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_60
 
 reduce_after_at.out: reduce_after_at.cpp measure_bandwidth_of_invocation.hpp
 	$(CUDACXX) $(CUDACXXFLAGS) reduce_after_at.cpp -L$(CUDA_LIB_PATH) -lcudart -o $@
