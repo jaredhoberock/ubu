@@ -1,0 +1,58 @@
+#pragma once
+
+#include "../../../../detail/prologue.hpp"
+
+#include "../../../../cooperation/uninitialized_coop_array.hpp"
+#include "../../../../cooperation/cooperator.hpp"
+#include "../warp/coop_inclusive_scan.hpp"
+#include "../warp/shuffle_up.hpp"
+#include "block_like.hpp"
+#include <concepts>
+#include <type_traits>
+
+namespace ubu::cuda
+{
+
+
+template<block_like B, class T, std::invocable<T,T> F>
+  requires (std::is_trivially_copy_constructible_v<T> and std::convertible_to<std::invoke_result_t<F,T,T>,T>)
+constexpr T coop_exclusive_scan(B group, T init, T value, F binary_op)
+{
+  // each warp does an inclusive scan
+  value = coop_inclusive_scan(subgroup(group), value, binary_op);
+
+  // shuffle to get the warp's exclusive scan (except for each lane 0)
+  T exclusive_value = shuffle_up(subgroup(group), value, 1);
+
+  // each thread computes its warp's init by summing previous warp sums
+  uninitialized_coop_array<T,B> warp_sums(group, subgroup_count(group));
+
+  if(is_last_in_group(subgroup(group)))
+  {
+    warp_sums[subgroup_id(group)] = value;
+  }
+
+  synchronize(group);
+
+  // each thread accumulates previous warps' sums
+  T carry_in = init;
+
+  #pragma unroll
+  for(int warp = 1; warp < subgroup_count(group); ++warp)
+  {
+    if(subgroup_id(group) >= warp)
+    {
+      carry_in = binary_op(carry_in, warp_sums[warp-1]);
+    }
+  }
+
+  // accumulate the carry-in into our exclusive scan result,
+  // except each lane 0, whose result is simply the warp's carry-in
+  return is_leader(subgroup(group)) ? carry_in : binary_op(carry_in, exclusive_value);
+}
+
+
+} // end ubu::cuda
+
+#include "../../../../detail/epilogue.hpp"
+
