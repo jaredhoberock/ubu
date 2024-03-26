@@ -291,19 +291,42 @@ template<auto v>
 struct fmt::formatter<ubu::constant<v>>
 {
   template<class ParseContext>
-  constexpr auto parse(ParseContext& ctx)
+  constexpr auto parse(ParseContext& ctx) const
   {
     return ctx.begin();
   }
 
   template<class FormatContext>
-  auto format(const ubu::constant<v>& c, FormatContext& ctx)
+  auto format(const ubu::constant<v>& c, FormatContext& ctx) const
   {
     return fmt::format_to(ctx.out(), fmt::emphasis::bold, "{}_c", c.value);
   }
 };
 
 #endif // __has_include
+
+#if __has_include(<format>)
+#include <format>
+#if defined(__cpp_lib_format)
+
+template<auto v>
+struct std::formatter<ubu::constant<v>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx) const
+  {
+    return ctx.begin();
+  }
+
+  template<class FormatContext>
+  auto format(const ubu::constant<v>& c, FormatContext& ctx) const
+  {
+    return std::format_to(ctx.out(), "{}_c", c.value);
+  }
+};
+
+#endif // defined(__cpp_lib_format)
+#endif // __has_include(<format>)
 
 #include "../../detail/epilogue.hpp"
 
