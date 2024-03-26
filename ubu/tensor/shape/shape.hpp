@@ -117,16 +117,11 @@ constexpr inline auto shape_v = constant_value_v<shape_t<T>>;
 
 template<class T>
 concept constant_shaped =
-#if defined(__circle_lang__)
-  // WAR circle bug https://godbolt.org/z/erGajGP5P
-  shaped<T> and constant_valued<shape_t<T>>
-#else
   requires()
   {
     // shape_v must exist
     shape_v<T>;
   }
-#endif
 ;
 
 
