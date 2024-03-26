@@ -745,6 +745,34 @@ struct tuple_element<I,ubu::point<T,N>>
 
 } // end std
 
+#if __has_include(<fmt/format.h>)
+
+#include <fmt/format.h>
+#include <fmt/ranges.h>
+
+template<class T, size_t N>
+struct fmt::formatter<ubu::point<T,N>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx) const
+  {
+    return ctx.begin();
+  }
+
+  template<class FormatContext>
+  auto format(const ubu::point<T,N>& p, FormatContext& ctx) const
+  {
+    // format a point as if it was a tuple
+    // (libfmt would otherwise format a point like a range with square brackets)
+    return std::apply([&](const auto&... elements)
+    {
+      return fmt::format_to(ctx.out(), "{}", std::tuple(elements...));
+    }, p);
+  }
+};
+
+#endif // __has_include
+
 
 #include "../../detail/epilogue.hpp"
 
