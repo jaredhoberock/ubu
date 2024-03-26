@@ -1,3 +1,4 @@
+#include <ubu/miscellaneous/constant_valued.hpp>
 #include <ubu/tensor/coordinate/constant.hpp>
 #include <ubu/tensor/coordinate/concepts/congruent.hpp>
 #include <ubu/tensor/coordinate/concepts/coordinate.hpp>
@@ -14,5 +15,8 @@ void test_concepts()
   static_assert(coordinate<constant<1>>);
   static_assert(congruent<constant<1>, int>);
   static_assert(weakly_congruent<constant<1>, std::pair<int,int>>);
+  static_assert(constant_valued<constant<1>>);
+  static_assert(constant_valued<std::pair<constant<1>, constant<1>>>);
+  static_assert(not constant_valued<std::pair<constant<1>, int>>);
 }
 

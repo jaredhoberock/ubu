@@ -32,6 +32,7 @@
 #include "cooperation.hpp"
 #include "execution.hpp"
 #include "memory.hpp"
+#include "miscellaneous.hpp"
 #include "platform.hpp"
 #include "tensor.hpp"
 
