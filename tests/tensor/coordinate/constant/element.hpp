@@ -120,7 +120,7 @@ void test_element_t()
 }
 
 
-void test_element()
+void test_element_cpo()
 {
   using namespace ns;
 
@@ -220,9 +220,9 @@ void test_element()
 }
 
 
-void test_constant()
+void test_element()
 {
-  test_element();
+  test_element_cpo();
   test_element_t();
 }
 
