@@ -36,10 +36,7 @@ using nested_coordinate_or_default_t = typename nested_coordinate_or_default<T>:
 template<class T>
 concept tensor_like =
   // we must be able to get the shape of a tensor
-  requires(T g)
-  {
-    shape(g);
-  }
+  shaped<T>
 
   // the tensor's coordinate and shape types must be congruent
   and congruent<detail::nested_coordinate_or_default_t<T>, shape_t<T>>

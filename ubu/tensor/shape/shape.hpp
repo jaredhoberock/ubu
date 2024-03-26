@@ -94,9 +94,17 @@ constexpr detail::dispatch_shape shape;
 } // end anonymous namespace
 
 
-
 template<class T>
 using shape_t = decltype(shape(std::declval<T>()));
+
+
+template<class T>
+concept shaped = 
+  requires(T arg)
+  {
+    shape(arg);
+  }
+;
 
 
 } // end ubu
