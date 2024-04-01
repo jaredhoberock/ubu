@@ -48,6 +48,7 @@ constexpr T coop_inclusive_scan(B group, T value, F binary_op)
     value = binary_op(carry, value);
   }
 
+  // XXX this not necessary if we put it in uninitialized_coop_array's dtor
   synchronize(group);
 
   return value;
@@ -109,6 +110,7 @@ constexpr std::optional<T> coop_inclusive_scan(B group, std::optional<T> value, 
     }
   }
 
+  // XXX this is not necessary if we put it in uninitialized_coop_optional_array's dtor
   synchronize(group);
 
   return value;

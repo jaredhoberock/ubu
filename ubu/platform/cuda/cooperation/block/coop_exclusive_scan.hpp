@@ -114,6 +114,7 @@ constexpr std::optional<T> coop_exclusive_scan(B group, std::optional<T> init, s
     }
   }
   
+  // XXX this is not necessary if uninitialized_coop_optional_array's dtor synchronizes
   synchronize(group);
 
   return exclusive_value;
