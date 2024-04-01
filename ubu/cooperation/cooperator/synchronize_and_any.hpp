@@ -22,14 +22,10 @@ concept has_synchronize_and_any_free_function = requires(C self, B value)
   { synchronize_and_any(self, static_cast<bool>(value)) } -> std::convertible_to<bool>;
 };
 
-template<class C, class B>
-concept has_synchronize_and_any_customization = has_synchronize_and_any_member_function<C,B> and has_synchronize_and_any_free_function<C,B>;
-
 // this is the type of synchronize_and_any
 struct dispatch_synchronize_and_any
 {
   template<class C, class B>
-    requires has_synchronize_and_any_customization<C&&,B&&>
   constexpr std::convertible_to<bool> auto operator()(C&& self, B&& value) const
   {
     if constexpr(has_synchronize_and_any_member_function<C&&,B&&>)
@@ -40,7 +36,7 @@ struct dispatch_synchronize_and_any
     {
       return synchronize_and_any(std::forward<C>(self), std::forward<B>(value));
     }
-    else
+    else if constexpr(cooperator<C&&> and std::convertible_to<int,B&&>)
     {
       // cast value to int and count the number of non-zero values
       return synchronize_and_count(std::forward<C>(self), static_cast<int>(std::forward<B>(value))) > 0;
