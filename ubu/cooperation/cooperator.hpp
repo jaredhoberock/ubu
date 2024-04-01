@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "cooperator/basic_cooperator.hpp"
+#include "cooperator/broadcast.hpp"
 #include "cooperator/concepts.hpp"
 #include "cooperator/coop_alloca.hpp"
 #include "cooperator/coop_dealloca.hpp"
