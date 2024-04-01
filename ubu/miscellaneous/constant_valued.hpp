@@ -68,7 +68,8 @@ struct dispatch_get_constant_value
     // XXX this assumes U is default constructible
     return tuple_zip_with(U(), [](const auto& element)
     {
-      return dispatch_get_constant_value<decltype(element)>();
+      dispatch_get_constant_value<decltype(element)> this_cpo;
+      return this_cpo();
     });
   }
 };
