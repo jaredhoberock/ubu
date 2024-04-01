@@ -46,7 +46,8 @@ constexpr std::optional<T> broadcast(S self, const I& broadcaster, const std::op
 
   std::optional<T> result;
 
-  if(synchronize_and_any(self, message.has_value()))
+  // did the broadcaster actually send a non-null message?
+  if(synchronize_and_any(self, id(self) == broadcaster ? message.has_value() : false))
   {
     result = smem[0];
   }
