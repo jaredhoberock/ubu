@@ -4,15 +4,15 @@
 
 #include "concepts/semicooperator.hpp"
 #include "id.hpp"
-#include "size.hpp"
+#include "last_id.hpp"
 
 namespace ubu
 {
 
-template<ubu::semicooperator S>
+template<semicooperator S>
 constexpr bool is_last_in_group(S self)
 {
-  return id(self) == (size(self) - 1);
+  return id(self) == last_id(self);
 }
 
 } // end ubu
