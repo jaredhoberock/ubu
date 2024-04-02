@@ -114,7 +114,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
 {
   using namespace ubu;
 
-  using T = std::iter_value_t<I>;
+  using T = tensor_element_t<I>;
 
   // slices is a matrix indexed by (threadIdx, blockIdx) of 1d slices
   matrix_like auto slices = as_reduction_matrix(input);
