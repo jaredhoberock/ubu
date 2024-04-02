@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 #include "../tensor/coordinate/concepts/integral_like.hpp"
+#include "../tensor/coordinate/math/ceil_div.hpp"
 #include "../tensor/coordinate/traits/default_coordinate.hpp"
 #include "cooperator/concepts/allocating_cooperator.hpp"
 #include "cooperator/coop_alloca.hpp"
