@@ -153,7 +153,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
   // second phase, reduce partial sums
   matrix_like auto partial_sum_slices = as_reduction_matrix(partial_sums);
 
-  auto result_ready = bulk_execute_with_workspace_after(gpu, alloc, partial_sums_ready, partial_sum_slices.shape(), workspace_shape, [=](ubu::int2 idx, workspace auto ws)
+  cuda::event result_ready = bulk_execute_with_workspace_after(gpu, alloc, partial_sums_ready, partial_sum_slices.shape(), workspace_shape, [=](ubu::int2 idx, workspace auto ws)
   {
     // create a cooperator
     basic_cooperator self(idx, shape, ws);
