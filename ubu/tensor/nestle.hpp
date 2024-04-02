@@ -3,14 +3,15 @@
 #include "../detail/prologue.hpp"
 
 #include "concepts/tensor_like.hpp"
-#include "slice/underscore.hpp"
-#include "traits/tensor_shape.hpp"
-#include "traits/tensor_rank.hpp"
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/detail/tuple_algorithm.hpp"
 #include "coordinate/traits/rank.hpp"
 #include "detail/coordinate_cat.hpp"
 #include "detail/coordinate_tail.hpp"
+#include "shape/shape.hpp"
+#include "slice/underscore.hpp"
+#include "traits/tensor_shape.hpp"
+#include "traits/tensor_rank.hpp"
 #include <utility>
 
 namespace ubu
