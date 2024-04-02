@@ -43,6 +43,7 @@
 #include "tensor/slice.hpp"
 #include "tensor/stack.hpp"
 #include "tensor/traits.hpp"
+#include "tensor/vector.hpp"
 #include "tensor/view.hpp"
 #include "tensor/zip.hpp"
 #include "tensor/zip_view.hpp"
