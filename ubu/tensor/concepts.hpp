@@ -2,7 +2,6 @@
 
 #include "../detail/prologue.hpp"
 
-#include "concepts/matrix_like.hpp"
 #include "concepts/same_tensor_rank.hpp"
 #include "concepts/sized_tensor_like.hpp"
 #include "concepts/sized_vector_like.hpp"

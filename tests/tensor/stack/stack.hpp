@@ -1,6 +1,7 @@
 #include <array>
 #include <cassert>
 #include <ubu/tensor/domain.hpp>
+#include <ubu/tensor/matrix/matrix_like.hpp>
 #include <ubu/tensor/stack.hpp>
 #include <ubu/tensor/layout.hpp>
 #include <ubu/tensor/view.hpp>
