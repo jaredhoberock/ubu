@@ -3,6 +3,9 @@
 #include "../detail/prologue.hpp"
 
 #include "../memory/pointer/pointer_like.hpp"
+#include "../miscellaneous/constant_valued.hpp"
+#include "../tensor/coordinate/concepts/integral_like.hpp"
+#include "../tensor/coordinate/constant.hpp"
 #include <concepts>
 #include <cstdint>
 #include <iterator>
@@ -14,13 +17,13 @@ namespace ubu
 {
 
 
-template<pointer_like P, std::size_t Extent = std::dynamic_extent>
+template<pointer_like P, integral_like S = std::size_t>
 class fancy_span
 {
   public:
     using element_type = typename std::pointer_traits<P>::element_type;
     using value_type = std::remove_cv_t<element_type>;
-    using size_type = std::size_t;
+    using size_type = S;
     using difference_type = std::ptrdiff_t;
     using pointer = P;
     using const_pointer = typename std::pointer_traits<pointer>::template rebind<const element_type>;
@@ -29,7 +32,22 @@ class fancy_span
     using iterator = pointer;
     using reverse_iterator = std::reverse_iterator<iterator>;
 
-    static constexpr std::size_t extent = Extent;
+  private:
+    template<integral_like T>
+    static constexpr std::size_t extent_impl()
+    {
+      if constexpr (constant_valued<T>)
+      {
+        return constant_value_v<T>;
+      }
+      else
+      {
+        return std::dynamic_extent;
+      }
+    }
+
+  public:
+    static constexpr std::size_t extent = extent_impl<S>();
 
     template<pointer_like OtherP>
       requires std::convertible_to<OtherP, P>
@@ -52,11 +70,11 @@ class fancy_span
       : fancy_span(first, last - first)
     {}
 
-    template<pointer_like OtherP, std::size_t N>
-      requires ((extent == std::dynamic_extent or N == std::dynamic_extent or N == extent)
+    template<pointer_like OtherP, integral_like OtherS>
+      requires ((extent == std::dynamic_extent or fancy_span<OtherP,OtherS>::extent == std::dynamic_extent or fancy_span<OtherP,OtherS>::extent == extent)
                and std::convertible_to<OtherP,P>)
-    explicit(extent != std::dynamic_extent and N == std::dynamic_extent)
-    constexpr fancy_span(const fancy_span<OtherP,N>& other) noexcept
+    explicit(extent != std::dynamic_extent and fancy_span<OtherP,OtherS>::extent == std::dynamic_extent)
+    constexpr fancy_span(const fancy_span<OtherP,OtherS>& other) noexcept
       : fancy_span(other.data(), other.size())
     {}
 
@@ -105,15 +123,15 @@ class fancy_span
     }
 
     template<int = 0>
-      requires (Extent == std::dynamic_extent)
+      requires (extent == std::dynamic_extent)
     constexpr size_type size() const noexcept
     {
       return size_;
     }
 
     template<int = 0>
-      requires (Extent != std::dynamic_extent)
-    constexpr size_type size() const noexcept
+      requires (extent != std::dynamic_extent)
+    constexpr static size_type size() noexcept
     {
       return extent;
     }
@@ -123,61 +141,67 @@ class fancy_span
       return size() * sizeof(element_type);
     }
 
+    // empty is not static when S is not constant valued
+    template<int = 0>
+      requires (not constant_valued<S>)
     [[nodiscard]] constexpr bool empty() const noexcept
     {
       return size() == 0;
     }
 
-    template<std::size_t Count>
-    constexpr fancy_span<P, Count> first() const
+    // empty is static when S is constant valued
+    template<int = 0>
+      requires constant_valued<S>
+    [[nodiscard]] constexpr static bool empty() noexcept
     {
-      return {data(), Count};
+      return size() == 0;
     }
 
-    constexpr fancy_span<P, std::dynamic_extent> first(size_type count) const
+    template<std::size_t Count>
+    constexpr fancy_span<P, constant<Count>> first() const
+    {
+      return {data(), constant<Count>()};
+    }
+
+    constexpr fancy_span<P> first(size_type count) const
     {
       return {data(), count};
     }
 
     template<std::size_t Count>
-    constexpr fancy_span<P, Count> last() const
+    constexpr fancy_span<P, constant<Count>> last() const
     {
-      return fancy_span<P,Count>{data() + (size() - Count), Count};
+      return fancy_span<P, constant<Count>>{data() + (size() - Count), Count};
     }
 
-    constexpr fancy_span<P, std::dynamic_extent> last(size_type count) const
+    constexpr fancy_span<P> last(size_type count) const
     {
       return {data() + (size() - count), count};
     }
 
+    // the return type of this is a fancy_span
     template<std::size_t Offset,
              std::size_t Count = std::dynamic_extent>
-    constexpr fancy_span<P,subspan_extent<Offset,Count>()> subspan() const
+    constexpr auto subspan() const
     {
-      std::size_t count = (Count == std::dynamic_extent) ? size() - Offset : Count;
-
-      return {data() + Offset, count};
+      if constexpr (Count == std::dynamic_extent)
+      {
+        return fancy_span(data() + Offset, size() - constant<Offset>());
+      }
+      else
+      {
+        return fancy_span(data() + Offset, constant<Count>());
+      }
     }
 
-    constexpr fancy_span<P, std::dynamic_extent> subspan(size_type offset, size_type count) const
+    constexpr fancy_span<P> subspan(size_type offset, size_type count) const
     {
       return {data() + offset, count};
     }
 
   private:
-
-    template<std::size_t Offset, std::size_t Count>
-    static constexpr std::size_t subspan_extent()
-    {
-      if(Count != std::dynamic_extent) return Count;
-
-      if(Extent != std::dynamic_extent) return Extent - Offset;
-
-      return std::dynamic_extent;
-    }
-
     P data_;
-    size_type size_;
+    [[no_unique_address]] size_type size_;
 };
 
 
