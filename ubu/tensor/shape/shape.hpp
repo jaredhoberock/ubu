@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinate.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
 #include <ranges>
 #include <type_traits>
 
