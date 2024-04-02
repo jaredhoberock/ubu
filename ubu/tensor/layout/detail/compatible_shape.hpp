@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/concepts/weakly_congruent.hpp"
 #include "../../coordinate/detail/coordinate_inclusive_scan.hpp"
 #include "../../coordinate/math/ceil_div.hpp"
 #include <utility>
