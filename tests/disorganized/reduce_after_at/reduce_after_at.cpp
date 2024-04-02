@@ -109,70 +109,6 @@ constexpr ubu::matrix_like auto as_reduction_matrix(V vec)
 }
 
 
-// XXX this should be implemented with something that reduces tiles or rows of a matrix or something like that
-//     reduce_rightmost_mode
-//     the idea is that we're producing one sum for each of slice(input, (_, ... i))
-//
-//     we have an executor, it has a rank
-//     we have a tensor, it has the executor's rank + 1
-//     the first mode of the tensor gives the size of the sequential work
-//
-//     requires rank_v<tensor> == rank_v<place> + 1
-//     reduce_outer_slices_after(gpu, alloc, before, tensor, vector, op)
-//
-//     outermost_reduce_after(gpu, alloc, before, tensor, op)
-//     reduce_outermost_after(gpu, alloc, before, tensor, op)
-//
-//     transform_reduce_outermost_after
-//
-//     transform_reduce_outer_after(gpu, alloc, before, tensor, op)
-//
-//     outer_contract_after(gpu, alloc, before, tensor, op);
-
-// XXX R needs to be writeable
-template<ubu::tensor_like_of_rank<3> I, ubu::sized_vector_like R, std::invocable<ubu::tensor_element_t<I>,ubu::tensor_element_t<I>> F>
-ubu::cuda::event reduce_outer_after(ubu::cuda::device_executor ex, ubu::cuda::device_allocator<std::byte> alloc, const ubu::cuda::event& before, I input, R result, F op)
-{
-  using namespace ubu;
-  using T = tensor_element_t<I>;
-
-  assert(shape(result) == get<2>(shape(input)));
-
-  // slices is a matrix indexed by (threadIdx, blockIdx) of 1d slices
-  matrix_like auto slices = as_reduction_matrix(input);
-
-  // each thread of the kernel receives one slice
-  auto shape = ubu::shape(slices);
-  auto [block_size, num_blocks] = shape;
-
-  // each block needs num_warps Ts in its workspace
-  auto block_workspace_size = sizeof(T)*(block_size / cuda::warp_size);
-  std::pair workspace_shape(block_workspace_size, 0_c);
-
-  // execute the kernel
-  return bulk_execute_with_workspace_after(ex, alloc,
-                                           before,
-                                           shape, workspace_shape,
-                                           [=](ubu::int2 idx, workspace auto ws)
-  {
-    // create a cooperator
-    basic_cooperator self(idx, shape, ws);
-
-    // sequentially reduce this thread's slice
-    std::optional partial_sum = reduce(slices[coord(self)], op);
-
-    // cooperatively reduce this block's partial sums
-    std::optional sum = coop_reduce(subgroup(self), partial_sum, op);
-    
-    // if there is a sum, only one thread receives it
-    if(sum)
-    {
-      result[subgroup_id(self)] = *sum;
-    }
-  });
-}
-
-
 template<ubu::sized_vector_like I, std::random_access_iterator R, class F>
 ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::device_allocator<std::byte> alloc, const ubu::cuda::event& before, I input, R result, F op)
 {
@@ -207,8 +143,8 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
     // cooperatively reduce this block's partial sums
     partial_sum = coop_reduce(subgroup(self), partial_sum, op);
 
-    // the block leader stores the block's result (if any)
-    if(is_leader(subgroup(self)) and partial_sum)
+    // if there is a partial_sum, only one thread receives it
+    if(partial_sum)
     {
       partial_sums[subgroup_id(self)] = *partial_sum;
     }
@@ -228,8 +164,8 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
     // cooperatively reduce this block's partial sums
     partial_sum = coop_reduce(subgroup(self), partial_sum, op);
 
-    // the block leader stores the block's result (if any)
-    if(is_leader(subgroup(self)) and partial_sum)
+    // if there is a partial_sum, only one thread receives it
+    if(partial_sum)
     {
       *result = *partial_sum;
     }
