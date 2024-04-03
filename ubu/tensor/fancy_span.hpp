@@ -17,6 +17,9 @@ namespace ubu
 {
 
 
+// XXX it's probably better to have the 2nd template parameter match std::span and just be a normal non-type template parameter 
+//     but then we would want to provide a deduction guide for constant_valued sizes
+//     and also return a constant from .size()
 template<pointer_like P, integral_like S = std::size_t>
 class fancy_span
 {
@@ -112,7 +115,7 @@ class fancy_span
       return *(end() - 1);
     }
 
-    constexpr reference operator[](size_type idx) const
+    constexpr reference operator[](std::size_t idx) const
     {
       return data()[idx];
     }
@@ -205,8 +208,12 @@ class fancy_span
 };
 
 
-template<pointer_like P, std::integral E>
-fancy_span(P, E) -> fancy_span<P>;
+template<pointer_like P, std::integral S>
+fancy_span(P, S) -> fancy_span<P>;
+
+template<pointer_like P, integral_like S>
+  requires (not std::integral<S>)
+fancy_span(P, S) -> fancy_span<P,S>;
 
 
 } // end ubu
