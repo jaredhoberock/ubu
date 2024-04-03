@@ -4,6 +4,7 @@
 
 #include "shape/convert_shape.hpp"
 #include "shape/shape.hpp"
+#include "shape/shape_element.hpp"
 #include "shape/shape_size.hpp"
 
 #include "../detail/epilogue.hpp"
