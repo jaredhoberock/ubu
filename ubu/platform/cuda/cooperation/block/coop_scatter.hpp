@@ -54,6 +54,8 @@ constexpr std::optional<T> coop_scatter(B block, const std::optional<T>& value, 
     result = values[id(block)];
   }
 
+  // XXX think we need a synchronize here
+
   return result;
 }
 
