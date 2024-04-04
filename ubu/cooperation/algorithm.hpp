@@ -5,6 +5,7 @@
 #include "algorithm/coop_copy.hpp"
 #include "algorithm/coop_for_each.hpp"
 #include "algorithm/coop_load.hpp"
+#include "algorithm/coop_load_columns.hpp"
 #include "algorithm/coop_reduce.hpp"
 #include "algorithm/coop_transform.hpp"
 
