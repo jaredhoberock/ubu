@@ -31,6 +31,7 @@ class uninitialized_coop_array
     {}
 
     template<sized_vector_like V>
+      requires std::constructible_from<T,tensor_element_t<V>>
     constexpr uninitialized_coop_array(C& self, V source)
       : uninitialized_coop_array(self, source.size())
     {
