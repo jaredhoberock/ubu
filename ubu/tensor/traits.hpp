@@ -7,6 +7,7 @@
 #include "traits/tensor_rank.hpp"
 #include "traits/tensor_reference.hpp"
 #include "traits/tensor_shape.hpp"
+#include "traits/tensor_size.hpp"
 
 #include "../detail/epilogue.hpp"
 
