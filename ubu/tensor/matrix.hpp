@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "matrix/column_major_matrix_layout.hpp"
 #include "matrix/height.hpp"
 #include "matrix/matrix_like.hpp"
 #include "matrix/width.hpp"
