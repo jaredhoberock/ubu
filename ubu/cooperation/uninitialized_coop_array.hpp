@@ -3,6 +3,11 @@
 #include "../detail/prologue.hpp"
 #include "../tensor/coordinate/concepts/integral_like.hpp"
 #include "../tensor/coordinate/traits/default_coordinate.hpp"
+#include "../tensor/fancy_span.hpp"
+#include "../tensor/traits/tensor_element.hpp"
+#include "../tensor/traits/tensor_size.hpp"
+#include "../tensor/vector/sized_vector_like.hpp"
+#include "algorithm/coop_copy.hpp"
 #include "cooperator/concepts/allocating_cooperator.hpp"
 #include "cooperator/coop_alloca.hpp"
 #include "cooperator/coop_dealloca.hpp"
@@ -25,9 +30,21 @@ class uninitialized_coop_array
         data_{reinterpret_cast<T*>(coop_alloca(self_, size_ * sizeof(T)))}
     {}
 
+    template<sized_vector_like V>
+    constexpr uninitialized_coop_array(C& self, V source)
+      : uninitialized_coop_array(self, source.size())
+    {
+      coop_copy(self, source, all());
+    }
+
     constexpr ~uninitialized_coop_array()
     {
       coop_dealloca(self_, size_ * sizeof(T));
+    }
+
+    constexpr fancy_span<T*,S> all() const
+    {
+      return {data(), size()};
     }
 
     constexpr S size() const
@@ -94,6 +111,9 @@ class uninitialized_coop_array
     [[no_unique_address]] S size_;
     T* data_;  // XXX This member should be a pointer_like related to the result of coop_alloca
 };
+
+template<allocating_cooperator C, sized_vector_like V>
+uninitialized_coop_array(C,V) -> uninitialized_coop_array<tensor_element_t<V>,C,tensor_size_t<V>>;
 
 } // end ubu
 
