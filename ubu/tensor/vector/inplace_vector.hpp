@@ -2,6 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../element_exists.hpp"
+#include "vector_like.hpp"
 #include <concepts>
 #include <iterator>
 #include <memory>
@@ -182,6 +184,18 @@ class inplace_vector
     constexpr bool element_exists(size_type i) const noexcept
     {
       return i < size();
+    }
+
+    template<vector_like V>
+    constexpr void store(V dst) const
+    {
+      for(size_type i = 0; i < N; ++i)
+      {
+        if(i < N and ubu::element_exists(dst, i))
+        {
+          dst[i] = (*this)[i];
+        }
+      }
     }
 
   private:
