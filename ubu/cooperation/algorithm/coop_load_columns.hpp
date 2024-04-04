@@ -14,6 +14,7 @@
 #include "../../tensor/vector/inplace_vector.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
+#include "coop_load.hpp"
 #include <utility>
 
 namespace ubu
