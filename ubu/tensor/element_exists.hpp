@@ -23,36 +23,40 @@ concept has_element_exists_free_function = requires(T arg, C coord)
 };
 
 template<class T>
-concept has_size = requires(T arg)
+concept has_std_ranges_size = requires(T arg)
 {
   std::ranges::size(arg);
 };
 
+template<class T>
+concept has_std_size = requires(T arg)
+{
+  // std::ranges::size rejects a member function .size() which returns ubu::constant, but std::size does not
+  std::size(arg);
+};
 
 struct dispatch_element_exists
 {
   template<class T, class C>
-    requires has_element_exists_member_function<T&&,C&&>
   constexpr bool operator()(T&& arg, C&& coord) const
   {
-    return std::forward<T>(arg).element_exists(std::forward<C>(coord));
-  }
-
-  template<class T, class C>
-    requires (not has_element_exists_member_function<T&&,C&&>
-              and has_element_exists_free_function<T&&,C&&>)
-  constexpr bool operator()(T&& arg, C&& coord) const
-  {
-    return element_exists(std::forward<T>(arg), std::forward<T>(coord));
-  }
-
-  template<class T, class C>
-    requires (not has_element_exists_member_function<T&&,C&&>
-              and not has_element_exists_free_function<T&&,C&&>
-              and has_size<T&&>)
-  constexpr bool operator()(T&&, C&&) const
-  {
-    return true;
+    if constexpr (has_element_exists_member_function<T&&,C&&>)
+    {
+      return std::forward<T>(arg).element_exists(std::forward<C>(coord));
+    }
+    else if constexpr (has_element_exists_free_function<T&&,C&&>)
+    {
+      return element_exists(std::forward<T>(arg), std::forward<C>(coord));
+    }
+    else if constexpr (has_std_ranges_size<T&&> or has_std_size<T&&>)
+    {
+      // XXX we probably need to introduce our own CPO named size
+      return true;
+    }
+    else
+    {
+      static_assert(has_std_size<T&&>, "Couldn't find customization for element_exists.");
+    }
   }
 };
 
