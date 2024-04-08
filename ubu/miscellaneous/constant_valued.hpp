@@ -85,6 +85,9 @@ struct dispatch_get_constant_value
 template<class T>
 inline constexpr detail::dispatch_get_constant_value<T> get_constant_value;
 
+// XXX this should be called something like stateless
+//     and it should just check if T is an empty type
+//     rather than the complicated mechanism above
 template<class T>
 concept constant_valued =
   requires()
