@@ -282,6 +282,29 @@ constexpr constant<detail::parse_integer_literal<digits...>()> operator "" _c() 
 
 } // end ubu
 
+// specialize std::numeric_limits for constant integers
+template<std::integral auto c>
+class std::numeric_limits<ubu::constant<c>>
+{
+  public:
+    static constexpr bool is_specialized = true;
+
+    static constexpr ubu::constant<c> min() noexcept
+    {
+      return {};
+    }
+
+    static constexpr ubu::constant<c> lowest() noexcept
+    {
+      return {};
+    }
+
+    static constexpr ubu::constant<c> max() noexcept
+    {
+      return {};
+    }
+};
+
 #if __has_include(<fmt/format.h>)
 
 #include <fmt/format.h>
