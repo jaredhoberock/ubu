@@ -17,9 +17,14 @@ concept scalar_constant =
   not tuple_like<T>
   and requires()
   {
+    // T::value must exist
     std::remove_cvref_t<T>::value;
 
+    // T::value must be an object
     requires std::is_object_v<decltype(std::remove_cvref_t<T>::value)>;
+
+    // this expression distinguishes a static member variable from a member variable
+    *(&std::remove_cvref_t<T>::value);
   }
 ;
 
