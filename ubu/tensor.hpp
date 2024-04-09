@@ -28,6 +28,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "tensor/all.hpp"
 #include "tensor/compose.hpp"
 #include "tensor/concepts.hpp"
 #include "tensor/coordinate.hpp"
@@ -37,6 +38,7 @@
 #include "tensor/iterator.hpp"
 #include "tensor/lattice.hpp"
 #include "tensor/layout.hpp"
+#include "tensor/mask.hpp"
 #include "tensor/matrix.hpp"
 #include "tensor/nestle.hpp"
 #include "tensor/shape.hpp"
