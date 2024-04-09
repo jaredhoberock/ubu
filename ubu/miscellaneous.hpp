@@ -2,6 +2,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "miscellaneous/bounded.hpp"
 #include "miscellaneous/constant_valued.hpp"
 #include "miscellaneous/smaller.hpp"
 

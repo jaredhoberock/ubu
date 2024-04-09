@@ -11,16 +11,15 @@
 #include <iterator>
 #include <memory>
 #include <span>
+#include <type_traits>
 
 
 namespace ubu
 {
 
 
-// XXX it's probably better to have the 2nd template parameter match std::span and just be a normal non-type template parameter 
-//     but then we would want to provide a deduction guide for constant_valued sizes
-//     and also return a constant from .size()
-template<pointer_like P, integral_like S = std::size_t>
+// S defaults to std::size_t unless P is unusually fancy
+template<pointer_like P, integral_like S = std::make_unsigned_t<typename std::pointer_traits<P>::difference_type>>
 class fancy_span
 {
   public:
@@ -35,42 +34,37 @@ class fancy_span
     using iterator = pointer;
     using reverse_iterator = std::reverse_iterator<iterator>;
 
-  private:
-    template<integral_like T>
-    static constexpr std::size_t extent_impl()
-    {
-      if constexpr (constant_valued<T>)
-      {
-        return constant_value_v<T>;
-      }
-      else
-      {
-        return std::dynamic_extent;
-      }
-    }
-
-  public:
-    static constexpr std::size_t extent = extent_impl<S>();
+    static constexpr size_type extent = std::numeric_limits<S>::max();
 
     template<pointer_like OtherP>
       requires std::convertible_to<OtherP, P>
-    explicit(extent != std::dynamic_extent)
+    explicit(constant_valued<size_type>)
     constexpr fancy_span(OtherP first, size_type count)
       : data_{first},
         size_{count}
     {}
 
     template<int = 0>
-      requires (extent == 0 or extent == std::dynamic_extent)
+      requires (extent == 0 or not constant_valued<size_type>)
     constexpr fancy_span() noexcept
       : fancy_span{P{nullptr},0}
     {}
 
     template<pointer_like OtherP>
       requires (std::convertible_to<OtherP, P> and !std::convertible_to<OtherP, size_type>)
-    explicit(extent != std::dynamic_extent)
+    explicit(constant_valued<size_type>)
     constexpr fancy_span(OtherP first, OtherP last)
       : fancy_span(first, last - first)
+    {}
+
+    template<class R>
+      requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>
+                and std::convertible_to<decltype(std::ranges::data(std::declval<R&&>())), P>
+                and std::convertible_to<std::ranges::range_size_t<R&&>, S>)
+    explicit(constant_valued<size_type>)
+    constexpr fancy_span(R&& range)
+      : fancy_span(std::ranges::data(std::forward<R&&>(range)),
+                   std::ranges::size(std::forward<R&&>(range)))
     {}
 
     template<pointer_like OtherP, integral_like OtherS>
@@ -115,7 +109,8 @@ class fancy_span
       return *(end() - 1);
     }
 
-    constexpr reference operator[](std::size_t idx) const
+    template<integral_like I>
+    constexpr reference operator[](I idx) const
     {
       return data()[idx];
     }
@@ -126,22 +121,31 @@ class fancy_span
     }
 
     template<int = 0>
-      requires (extent == std::dynamic_extent)
+      requires (not constant_valued<S>)
     constexpr size_type size() const noexcept
     {
       return size_;
     }
 
     template<int = 0>
-      requires (extent != std::dynamic_extent)
+      requires constant_valued<S>
     constexpr static size_type size() noexcept
     {
-      return extent;
+      return S{};
     }
 
+    template<int = 0>
+      requires (not constant_valued<S>)
     constexpr size_type size_bytes() const noexcept
     {
       return size() * sizeof(element_type);
+    }
+
+    template<int = 0>
+      requires constant_valued<S>
+    constexpr static auto size_bytes() noexcept
+    {
+      return size() * constant<sizeof(element_type)>();
     }
 
     // empty is not static when S is not constant valued
@@ -160,46 +164,48 @@ class fancy_span
       return size() == 0;
     }
 
-    template<std::size_t Count>
-    constexpr fancy_span<P, constant<Count>> first() const
+    constexpr auto first(integral_like auto count) const
     {
-      return {data(), constant<Count>()};
+      return subspan(0_c, count);
     }
 
-    constexpr fancy_span<P> first(size_type count) const
+    constexpr auto last(integral_like auto count) const
     {
-      return {data(), count};
+      return subspan(size() - count, count);
     }
 
-    template<std::size_t Count>
-    constexpr fancy_span<P, constant<Count>> last() const
+    constexpr auto subspan(integral_like auto offset, integral_like auto count) const
     {
-      return fancy_span<P, constant<Count>>{data() + (size() - Count), Count};
-    }
-
-    constexpr fancy_span<P> last(size_type count) const
-    {
-      return {data() + (size() - count), count};
-    }
-
-    // the return type of this is a fancy_span
-    template<std::size_t Offset,
-             std::size_t Count = std::dynamic_extent>
-    constexpr auto subspan() const
-    {
-      if constexpr (Count == std::dynamic_extent)
+      if constexpr(std::integral<S> and std::integral<decltype(count)>)
       {
-        return fancy_span(data() + Offset, size() - constant<Offset>());
+        // if neither S nor the count are fancy,
+        // just return the same type of span as this span
+        return fancy_span(data() + offset, count);
       }
       else
       {
-        return fancy_span(data() + Offset, constant<Count>());
+        return fancy_span<P,decltype(count)>(data() + offset, count);
       }
     }
 
-    constexpr fancy_span<P> subspan(size_type offset, size_type count) const
+    // tensor-like extensions
+
+    // if the extent is small enough, enable this function
+    // XXX we really need to detect a bounded size_type
+    template<int = 0>
+      requires (extent <= 256)
+    static constexpr size_type shape() noexcept
     {
-      return {data() + offset, count};
+      return extent;
+    }
+
+    // if the extent is small enough, enable this function
+    // XXX we really need to detect a bounded size_type
+    template<integral_like I>
+      requires (extent <= 256)
+    constexpr bool element_exists(I idx) const noexcept
+    {
+      return idx < size();
     }
 
   private:
@@ -207,16 +213,22 @@ class fancy_span
     [[no_unique_address]] size_type size_;
 };
 
-
-template<pointer_like P, std::integral S>
-fancy_span(P, S) -> fancy_span<P>;
-
 template<pointer_like P, integral_like S>
-  requires (not std::integral<S>)
 fancy_span(P, S) -> fancy_span<P,S>;
 
+template<class R>
+  requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>)
+fancy_span(R&&) -> fancy_span<decltype(std::ranges::data(std::declval<R&&>())), std::ranges::range_size_t<R&&>>;
 
 } // end ubu
+
+
+// std::ranges interop
+template<ubu::pointer_like P, ubu::integral_like S>
+inline constexpr bool std::ranges::enable_borrowed_range<ubu::fancy_span<P,S>> = true;
+
+template<ubu::pointer_like P, ubu::integral_like S>
+inline constexpr bool std::ranges::enable_view<ubu::fancy_span<P,S>> = true;
 
 
 #include "../detail/epilogue.hpp"
