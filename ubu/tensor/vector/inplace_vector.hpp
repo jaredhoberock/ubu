@@ -2,7 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/bounded.hpp"
+#include "../coordinate/constant.hpp"
 #include "../element_exists.hpp"
+#include "../fancy_span.hpp"
 #include "vector_like.hpp"
 #include <concepts>
 #include <iterator>
@@ -19,7 +22,7 @@ template<class T, std::size_t N>
 class inplace_vector
 {
   public:
-    using size_type = std::uint8_t; // XXX generalize this
+    using size_type = bounded<N>;
     
     // construct/copy/destroy
     inplace_vector() = default;
@@ -72,14 +75,14 @@ class inplace_vector
       return size_;
     }
 
-    static constexpr size_type max_size() noexcept
+    static constexpr constant<N> max_size() noexcept
     {
-      return N;
+      return {};
     }
 
-    static constexpr size_type capacity() noexcept
+    static constexpr constant<N> capacity() noexcept
     {
-      return N;
+      return {};
     }
 
     // XXX TODO
@@ -196,6 +199,16 @@ class inplace_vector
           dst[i] = (*this)[i];
         }
       }
+    }
+
+    constexpr auto all()
+    {
+      return fancy_span(data(),size());
+    }
+
+    constexpr auto all() const
+    {
+      return fancy_span(data(),size());
     }
 
   private:
