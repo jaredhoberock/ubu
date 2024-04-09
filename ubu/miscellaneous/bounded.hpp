@@ -56,7 +56,7 @@ struct bounded
 
   // binary operators against a value_type
 #define BIN_OP_VALUE(OP)\
-  constexpr auto operator OP (value_type rhs) const noexcept { return value OP rhs; }
+  template<std::integral RHS> constexpr auto operator OP (RHS rhs) const noexcept { return value OP rhs; }
 
     // relational operators
 //  // XXX do we need these, or can we rely on conversion to value_type?
