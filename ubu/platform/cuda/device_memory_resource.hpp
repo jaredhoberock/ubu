@@ -102,6 +102,19 @@ class device_memory_resource
       return stream_;
     }
 
+    // returns the maximum size, in bytes, of the largest
+    // theoretical allocation allocate could accomodate
+    inline std::size_t max_size() const
+    {
+      return detail::temporarily_with_current_device(device(), [=]
+      {
+        std::size_t free_bytes = 0;
+        std::size_t total_bytes = 0;
+        detail::throw_on_error(cudaMemGetInfo(&free_bytes, &total_bytes), "cuda::managed_memory_resource::allocate: after cudaMemGetInfo");
+        return free_bytes;
+      });
+    }
+
     inline bool is_equal(const device_memory_resource& other) const
     {
       return device() == other.device() and stream() == other.stream();

@@ -48,6 +48,13 @@ class managed_allocator : private managed_memory_resource
       return super_t::device();
     }
 
+    // returns the maximum size, in elements, of the largest
+    // theoretical allocation allocate could accomodate
+    inline std::size_t max_size() const
+    {
+      return super_t::max_size() / sizeof(T);
+    }
+
     bool operator==(const managed_allocator& other) const
     {
       return super_t::operator==(other);
