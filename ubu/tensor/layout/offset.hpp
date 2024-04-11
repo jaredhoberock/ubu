@@ -10,6 +10,7 @@
 #include "../traits/tensor_element.hpp"
 #include "../view.hpp"
 #include "../vector/span_like.hpp"
+#include "coshape.hpp"
 #include "layout.hpp"
 
 
@@ -28,13 +29,6 @@ struct add_offset
   {
     return coordinate_sum(offset, coord);
   }
-};
-
-// XXX coshape() needs to be a CPO
-template<class T>
-concept has_coshape = requires(T layout)
-{
-  { layout.coshape() } -> coordinate;
 };
 
 } // end detail
@@ -68,7 +62,7 @@ struct offset_layout : view<detail::add_offset<O>, L>
     auto offset = self.tensor().offset;
     auto new_origin = smaller(offset, s.size());
 
-    if constexpr(detail::has_coshape<L>)
+    if constexpr(coshaped_layout<L>)
     {
       // if the layout has a coshape, we can use it to bound the size of the new span
       auto new_size = smaller(self.layout().coshape(), s.size() - new_origin);
