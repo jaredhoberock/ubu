@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../../miscellaneous/smaller.hpp"
 #include "../../tensor/fancy_span.hpp"
 #include "../../tensor/matrix/contiguous_column_major_matrix_like.hpp"
 #include "../../tensor/matrix/height.hpp"
@@ -28,14 +27,14 @@ constexpr inplace_vector<tensor_element_t<M>, height_v<M>> coop_load_columns(C s
   {
     // in this special case, we can use the entire group to optimize loads
     // the following assumes that M is a particular type of ubu::view
-    auto size = smaller(source.tensor().size(), source.layout().size());
-    return coop_load<height_v<M>>(self, fancy_span(source.tensor().data(), size));
+    // s.t. source.tensor() is span_like
+    return coop_load<height_v<M>>(self, source.tensor());
   }
   else
   {
     // just have each thread load their slice sequentially from the source
     auto my_slice = slice(source, std::pair(_, id(self)));
-    return {my_slice.begin(), my_slice.end()};
+    return load(my_slice);
   }
 }
 

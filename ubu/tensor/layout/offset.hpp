@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/smaller.hpp"
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/math/coordinate_sum.hpp"
@@ -29,6 +30,13 @@ struct add_offset
   }
 };
 
+// XXX coshape() needs to be a CPO
+template<class T>
+concept has_coshape = requires(T layout)
+{
+  { layout.coshape() } -> coordinate;
+};
+
 } // end detail
 
 
@@ -48,18 +56,29 @@ struct offset_layout : view<detail::add_offset<O>, L>
 
   template<class T>
     requires (rank_v<O> == 1)
-  friend auto compose(T* ptr, const offset_layout& self)
+  friend constexpr auto compose(T* ptr, const offset_layout& self)
   {
     return ubu::compose(ptr + self.tensor().offset, self.layout());
   }
 
   template<span_like S>
     requires (rank_v<O> == 1)
-  friend auto compose(S s, const offset_layout& self)
+  friend constexpr auto compose(S s, const offset_layout& self)
   {
     auto offset = self.tensor().offset;
-    std::size_t new_origin = offset <= s.size() ? offset : s.size();
-    return ubu::compose(s.subspan(new_origin), self.layout());
+    auto new_origin = smaller(offset, s.size());
+
+    if constexpr(detail::has_coshape<L>)
+    {
+      // if the layout has a coshape, we can use it to bound the size of the new span
+      auto new_size = smaller(self.layout().coshape(), s.size() - new_origin);
+
+      return ubu::compose(s.subspan(new_origin, new_size), self.layout());
+    }
+    else
+    {
+      return ubu::compose(s.subspan(new_origin), self.layout());
+    }
   }
 };
 

@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../../miscellaneous/smaller.hpp"
 #include "../../tensor/fancy_span.hpp"
 #include "../../tensor/matrix/contiguous_column_major_matrix_like.hpp"
 #include "../../tensor/matrix/height.hpp"
@@ -28,8 +27,8 @@ constexpr void coop_store_columns(C self, const inplace_vector<T,N>& this_column
   {
     // in this special case, we can use the entire group to accelerate stores
     // the following assumes that M is a particular type of ubu::view
-    auto size = smaller(destination.tensor().size(), destination.layout().size());
-    coop_store(self, this_column, fancy_span(destination.tensor().data(), size));
+    // s.t. destination.tensor() is span_like
+    coop_store(self, this_column, destination.tensor());
   }
   else
   {
