@@ -2,7 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../tensor/compose.hpp"
-#include "../../tensor/layout/strided_layout.hpp"
+#include "../../tensor/coordinate/constant.hpp"
+#include "../../tensor/layout/row_major.hpp"
 #include "../../tensor/vector/inplace_vector.hpp"
 #include "../../tensor/vector/vector_like.hpp"
 #include "../cooperator/concepts/semicooperator.hpp"
@@ -21,12 +22,12 @@ namespace ubu
 template<std::size_t N, semicooperator C, vector_like S>
 constexpr inplace_vector<tensor_element_t<S>,N> coop_load_cyclic(C self, S source)
 {
-  // create a 2d, cyclic view of the source
-  // each thread's loads will begin at id(self) and stride through source with a stride of size(self)
-  auto cycled = compose(source, strided_layout(std::pair(N, size(self)), std::pair(size(self), 1_c)));
+  // create a matrix view of the destination
+  // each thread's stores will begin at id(self) and stride through source with a stride of size(self)
+  auto matrix = compose(source, row_major(std::pair(constant<N>(), size(self))));
 
   // get this thread's slice of the view
-  auto thread_slice = slice(cycled, std::pair(_, id(self)));
+  auto thread_slice = slice(matrix, std::pair(_, id(self)));
 
   // load the slice into an inplace_vector
   return {from_vector_like, thread_slice};
