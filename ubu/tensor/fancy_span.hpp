@@ -188,6 +188,11 @@ class fancy_span
       }
     }
 
+    constexpr auto subspan(integral_like auto offset) const
+    {
+      return subspan(offset, size() - offset);
+    }
+
     // tensor-like extensions
 
     // if the extent is small enough, enable this function
