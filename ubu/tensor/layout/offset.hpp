@@ -8,8 +8,8 @@
 #include "../compose.hpp"
 #include "../traits/tensor_element.hpp"
 #include "../view.hpp"
+#include "../vector/span_like.hpp"
 #include "layout.hpp"
-#include <span>
 
 
 namespace ubu
@@ -53,9 +53,9 @@ struct offset_layout : view<detail::add_offset<O>, L>
     return ubu::compose(ptr + self.tensor().offset, self.layout());
   }
 
-  template<class T>
+  template<span_like S>
     requires (rank_v<O> == 1)
-  friend auto compose(const std::span<T>& s, const offset_layout& self)
+  friend auto compose(S s, const offset_layout& self)
   {
     auto offset = self.tensor().offset;
     std::size_t new_origin = offset <= s.size() ? offset : s.size();
