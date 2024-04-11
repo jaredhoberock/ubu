@@ -18,7 +18,7 @@ namespace ubu
 {
 
 // returns a copy of the first at most N * size(block) elements of source
-// the copied elements are returned to each thread of block, in order
+// the copied elements are returned to each thread of self, in order
 //
 // the source is required to be a contiguous span of memory because this
 // operation is optimized for this case only.
