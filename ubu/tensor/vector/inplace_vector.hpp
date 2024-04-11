@@ -263,6 +263,15 @@ template<vector_like V>
   requires constant_shaped<V&&>
 inplace_vector(from_vector_like_t, V&&) -> inplace_vector<tensor_element_t<V&&>, shape_v<V&&>>;
 
+
+// this is just sugar for inplace_vector's ctor
+template<vector_like V>
+  requires constant_shaped<V&&>
+constexpr inplace_vector<tensor_element_t<V&&>, shape_v<V&&>> load(V&& vec)
+{
+  return inplace_vector(from_vector_like, std::forward<V>(vec));
+}
+
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
