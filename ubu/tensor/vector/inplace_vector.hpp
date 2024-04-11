@@ -6,6 +6,8 @@
 #include "../coordinate/constant.hpp"
 #include "../element_exists.hpp"
 #include "../fancy_span.hpp"
+#include "../shape/shape.hpp"
+#include "../traits/tensor_element.hpp"
 #include "vector_like.hpp"
 #include <concepts>
 #include <iterator>
@@ -18,6 +20,10 @@
 namespace ubu
 {
 
+struct from_vector_like_t {};
+
+constexpr inline from_vector_like_t from_vector_like;
+
 template<class T, std::size_t N>
 class inplace_vector
 {
@@ -27,12 +33,44 @@ class inplace_vector
     // construct/copy/destroy
     inplace_vector() = default;
 
+    constexpr inplace_vector(size_type n, const T& value)
+      : size_(n)
+    {
+      #pragma unroll
+      for(size_type i = 0; i != capacity(); ++i)
+      {
+        if(i < size())
+        {
+          std::construct_at(data() + i, value);
+        }
+      }
+    }
+
+    constexpr explicit inplace_vector(size_type n)
+      : inplace_vector(n, T{})
+    {}
+
     template<std::input_iterator I, std::sentinel_for<I> S>
     constexpr inplace_vector(I begin, S end)
     {
+      // XXX this is not gonna be unrolled
       for(; begin != end; ++begin)
       {
         push_back(*begin);
+      }
+    }
+
+    template<vector_like V>
+    constexpr inplace_vector(from_vector_like_t, V&& vec)
+    {
+      #pragma unroll
+      for(size_type i = 0; i < ubu::shape(vec); ++i)
+      {
+        if(i < capacity() and ubu::element_exists(vec, i))
+        {
+          std::construct_at(data() + i, vec[i]);
+          ++size_;
+        }
       }
     }
 
@@ -166,16 +204,19 @@ class inplace_vector
 
     constexpr void clear()
     {
-      //while(size() > 0)
-      //{
-      //  pop_back();
-      //}
-
-      // XXX perhaps this is more likely to be unrolled?
-      for(; size_ > 0; --size_)
+      if constexpr (not std::is_trivially_destructible_v<T>)
       {
-        std::destroy_at(&back());
+        #pragma unroll
+        for(size_type i = 0; i < capacity(); ++i)
+        {
+          if(i < size())
+          {
+            std::destroy_at(data() + i);
+          }
+        }
       }
+
+      size_ = 0;
     }
 
     // tensor-like extensions
@@ -190,11 +231,13 @@ class inplace_vector
     }
 
     template<vector_like V>
+      requires std::convertible_to<T,ubu::tensor_element_t<V>>
     constexpr void store(V dst) const
     {
-      for(size_type i = 0; i < N; ++i)
+      #pragma unroll
+      for(size_type i = 0; i < capacity(); ++i)
       {
-        if(i < N and ubu::element_exists(dst, i))
+        if(i < size() and ubu::element_exists(dst, i))
         {
           dst[i] = (*this)[i];
         }
@@ -215,6 +258,10 @@ class inplace_vector
     std::aligned_storage_t<sizeof(T), alignof(T)> data_[N];
     size_type size_ = 0;
 };
+
+template<vector_like V>
+  requires constant_shaped<V&&>
+inplace_vector(from_vector_like_t, V&&) -> inplace_vector<tensor_element_t<V&&>, shape_v<V&&>>;
 
 } // end ubu
 
