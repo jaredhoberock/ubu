@@ -10,6 +10,7 @@
 #include "algorithm/coop_reduce.hpp"
 #include "algorithm/coop_store.hpp"
 #include "algorithm/coop_store_columns.hpp"
+#include "algorithm/coop_store_cyclic.hpp"
 #include "algorithm/coop_transform.hpp"
 
 #include "../detail/epilogue.hpp"
