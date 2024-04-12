@@ -5,13 +5,14 @@
 #include "../../tensor/coordinate/constant.hpp"
 #include "../../tensor/layout/column_major.hpp"
 #include "../../tensor/slice/slice.hpp"
-#include "../../tensor/matrix/matrix_like.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vector/inplace_vector.hpp"
 #include "../../tensor/vector/span_like.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/synchronize.hpp"
 #include "../uninitialized_coop_array.hpp"
+#include "coop_load_cyclic.hpp"
+#include "coop_store_cyclic.hpp"
 #include <utility>
 
 namespace ubu
@@ -30,28 +31,35 @@ namespace ubu
 template<std::size_t N, allocating_cooperator C, span_like S>
 constexpr inplace_vector<tensor_element_t<S>,N> coop_load(C self, S source)
 {
-  using namespace ubu;
+  using T = tensor_element_t<S>;
 
-  // copy the source into a shared memory stage
-  uninitialized_coop_array stage(self, source);
+  // XXX unintialized_coop_matrix would be nice
+  //     its ctor would have enough knowledge to do an efficient copy
+  uninitialized_coop_array<T,C,tensor_size_t<S>> stage(self, source.size());
 
-  // create a column-major view of the stage
-  std::pair shape(constant<N>(), size(self));
-  matrix_like auto stage2d = compose(stage.all(), column_major(shape));
+  // load in a cyclic order from the source
+  inplace_vector thread_elements = coop_load_cyclic<N>(self, source);
 
-  // get my slice of the stage
+  // store in a cyclic order to the stage
+  coop_store_cyclic(self, thread_elements, stage.all());
+
+  synchronize(self);
+
+  // create a 2d view of the stage
+  auto stage2d = compose(stage.all(), column_major(std::pair(constant<N>(), size(self))));
+
+  // get a view of my slice of the stage
   auto my_slice = slice(stage2d, std::pair(_, id(self)));
 
-  // copy my slice into registers
-  using T = tensor_element_t<S>;
-  inplace_vector<T,N> result(my_slice.begin(), my_slice.end());
+  // load my slice
+  thread_elements = load(my_slice);
 
   // XXX we really shouldn't have to say synchronize here
-  //     what's wrong with uninitialized_coop_array's dtor synchronizing?
+  //     what's wrong with uninitialized_coop_array's dtor synchronize?
   //     actually the right place to put it would be coop_dealloca
   synchronize(self);
 
-  return result;
+  return thread_elements;
 }
 
 } // end ubu
