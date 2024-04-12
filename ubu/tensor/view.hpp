@@ -14,6 +14,7 @@
 #include "slice/slice.hpp"
 #include "traits/tensor_shape.hpp"
 #include "traits/tensor_coordinate.hpp"
+#include "vector/span_like.hpp"
 #include <ranges>
 
 namespace ubu
@@ -111,6 +112,15 @@ class view
     constexpr tensor_like auto slice(const K& katana) const
     {
       return detail::invoke_compose(tensor(), ubu::slice(layout(), katana));
+    }
+
+    // returns .tensor() if it is span_like
+    // this is just provided to make code a bit more readable
+    template<class T_ = Tensor>
+      requires span_like<T_>
+    constexpr span_like auto span() const
+    {
+      return tensor();
     }
 
   private:
