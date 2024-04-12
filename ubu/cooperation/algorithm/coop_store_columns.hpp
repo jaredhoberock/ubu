@@ -28,7 +28,7 @@ constexpr void coop_store_columns(C self, const inplace_vector<T,N>& this_column
     // in this special case, we can use the entire group to accelerate stores
     // the following assumes that M is a particular type of ubu::view
     // s.t. destination.tensor() is span_like
-    coop_store(self, this_column, destination.tensor());
+    coop_store(self, this_column, destination.span());
   }
   else
   {

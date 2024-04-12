@@ -28,7 +28,7 @@ constexpr inplace_vector<tensor_element_t<M>, height_v<M>> coop_load_columns(C s
     // in this special case, we can use the entire group to optimize loads
     // the following assumes that M is a particular type of ubu::view
     // s.t. source.tensor() is span_like
-    return coop_load<height_v<M>>(self, source.tensor());
+    return coop_load<height_v<M>>(self, source.span());
   }
   else
   {
