@@ -31,8 +31,14 @@ struct bounded
 
   // this ctor is provided for CTAD.
   // The second parameter, interpreted as the bound, is otherwise ignored
-  bounded(value_type value, constant<b>)
+  constexpr bounded(value_type value, constant<b>)
     : bounded(value)
+  {}
+
+  template<std::integral auto c>
+    requires (0 <= c and c <= b)
+  constexpr bounded(constant<c>)
+    : bounded(c)
   {}
 
   // conversion to value_type
