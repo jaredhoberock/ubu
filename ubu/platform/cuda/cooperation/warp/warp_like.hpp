@@ -24,7 +24,7 @@ struct warp_workspace
   {
     constexpr static const std::string_view thread_scope = "warp";
 
-    constexpr void arrive_and_wait() const
+    inline void arrive_and_wait() const
     {
 #if defined(__CUDACC__)
       __syncwarp();

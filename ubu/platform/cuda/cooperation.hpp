@@ -51,7 +51,7 @@ struct coop_grid_workspace : grid_workspace
   {
     constexpr static const std::string_view thread_scope = "device";
   
-    constexpr void arrive_and_wait() const
+    inline void arrive_and_wait() const
     {
 #if defined(__CUDACC__)
       detail::sync_grid();
