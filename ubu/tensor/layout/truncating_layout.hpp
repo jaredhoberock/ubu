@@ -17,6 +17,7 @@ namespace ubu
 // this layout simply drops modes (from the right) of coord until
 // it is congruent with To
 template<coordinate From, subdimensional<From> To, congruent<To> R = default_coordinate_t<To>>
+  requires congruent<To,R>
 class truncating_layout
 {
   public:
