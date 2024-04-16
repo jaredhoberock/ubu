@@ -62,7 +62,7 @@ class view
     template<coordinate_for<Layout> C>
     constexpr decltype(auto) operator[](const C& coord) const
     {
-      return ubu::element(tensor_, ubu::element(layout_,coord));
+      return element(tensor_, element(layout_,coord));
     }
 
     // precondition: in_domain(layout(), coord)
@@ -71,7 +71,7 @@ class view
     {
       if (not ubu::element_exists(layout_, coord)) return false;
 
-      auto to_coord = ubu::element(layout_,coord);
+      auto to_coord = element(layout_,coord);
 
       // if Tensor actually fulfills the requirements of tensor_like,
       // check the coordinate produced by the layout against tensor_
