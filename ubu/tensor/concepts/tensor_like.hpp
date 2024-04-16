@@ -42,10 +42,13 @@ concept tensor_like =
   and congruent<detail::nested_coordinate_or_default_t<T>, shape_t<T>>
 
   // we must be able to access an element at a coordinate
-  and requires(T g, detail::nested_coordinate_or_default_t<T> c)
+  and requires(T t, detail::nested_coordinate_or_default_t<T> coord)
   {
-    element(g, c);         // we must be able to get the tensor element at c
-    element_exists(g, c);  // we must be able to check whether the tensor element at c exists
+    // we must be able to get the tensor element at coord
+    element(t, coord);
+
+    // we must be able to check whether the tensor element at coord exists
+    element_exists(t, coord);  
   }
 ;
 
