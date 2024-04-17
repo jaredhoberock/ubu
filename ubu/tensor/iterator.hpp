@@ -38,12 +38,12 @@ class sized_tensor_iterator
 
     sized_tensor_iterator() requires std::default_initializable<T> = default;
 
-    const T& tensor() const
+    constexpr const T& tensor() const
     {
       return tensor_;
     }
 
-    const coord_iterator& coord() const
+    constexpr const coord_iterator& coord() const
     {
       return coord_;
     }
@@ -202,12 +202,12 @@ class unsized_tensor_iterator
 
     unsized_tensor_iterator() requires std::default_initializable<T> = default;
 
-    const T& tensor() const
+    constexpr const T& tensor() const
     {
       return tensor_;
     }
 
-    const coord_iterator& coord() const
+    constexpr const coord_iterator& coord() const
     {
       return coord_;
     }
