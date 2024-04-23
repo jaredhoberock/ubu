@@ -34,7 +34,9 @@ class fancy_span
     using iterator = pointer;
     using reverse_iterator = std::reverse_iterator<iterator>;
 
-    static constexpr size_type extent = std::numeric_limits<S>::max();
+    // note that the type of extent may differ from S
+    // for example, when S is bounded<b>, extent is constant<b>
+    static constexpr integral_like auto extent = std::numeric_limits<S>::max();
 
     template<pointer_like OtherP>
       requires std::convertible_to<OtherP, P>
@@ -57,6 +59,7 @@ class fancy_span
       : fancy_span(first, last - first)
     {}
 
+    // XXX i think using std::ranges::size demotes fancy integers
     template<class R>
       requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>
                 and std::convertible_to<decltype(std::ranges::data(std::declval<R&&>())), P>
@@ -195,19 +198,17 @@ class fancy_span
 
     // tensor-like extensions
 
-    // if the extent is small enough, enable this function
-    // XXX we really need to detect a bounded size_type
+    // enable this function for static cases
     template<int = 0>
-      requires (extent <= 256)
-    static constexpr size_type shape() noexcept
+      requires (extent != std::dynamic_extent)
+    static constexpr integral_like auto shape() noexcept
     {
       return extent;
     }
 
-    // if the extent is small enough, enable this function
-    // XXX we really need to detect a bounded size_type
+    // enable this function for static cases
     template<integral_like I>
-      requires (extent <= 256)
+      requires (extent != std::dynamic_extent)
     constexpr bool element_exists(I idx) const noexcept
     {
       return idx < size();
@@ -221,6 +222,7 @@ class fancy_span
 template<pointer_like P, integral_like S>
 fancy_span(P, S) -> fancy_span<P,S>;
 
+// XXX i think using std::ranges::range_size_t demotes fancy integers
 template<class R>
   requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>)
 fancy_span(R&&) -> fancy_span<decltype(std::ranges::data(std::declval<R&&>())), std::ranges::range_size_t<R&&>>;

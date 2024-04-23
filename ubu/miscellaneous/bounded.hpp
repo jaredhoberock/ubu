@@ -212,9 +212,10 @@ class std::numeric_limits<ubu::bounded<b>> : std::numeric_limits<decltype(b)>
       return limits::lowest();
     }
 
-    static constexpr ubu::bounded<b> max() noexcept
+    // note that max() returns a different type
+    static constexpr ubu::constant<b> max() noexcept
     {
-      return b;
+      return {};
     }
 
     static constexpr ubu::bounded<b> epsilon() noexcept
