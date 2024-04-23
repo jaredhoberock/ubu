@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../detail/reflection/is_host.hpp"
 #include "../../miscellaneous/bounded.hpp"
 #include "../coordinate/constant.hpp"
 #include "../element_exists.hpp"
@@ -162,7 +163,28 @@ class inplace_vector
 
     constexpr std::optional<T> maybe_back() const
     {
-      return empty() ? std::nullopt : std::make_optional(back());
+      if UBU_TARGET(detail::is_host())
+      {
+        return empty() ? std::nullopt : std::make_optional(back());
+      }
+      else
+      {
+        // the loop below seems to avoid generating
+        // spills to local memory in device code
+
+        std::optional<T> result;
+
+        #pragma unroll
+        for(int i = 0; i < capacity(); ++i)
+        {
+          if(i == size() - 1 and not result.has_value())
+          {
+            result = operator[](i);
+          }
+        }
+
+        return result;
+      }
     }
 
     // data access
@@ -242,16 +264,6 @@ class inplace_vector
           dst[i] = (*this)[i];
         }
       }
-    }
-
-    constexpr auto all()
-    {
-      return fancy_span(data(),size());
-    }
-
-    constexpr auto all() const
-    {
-      return fancy_span(data(),size());
     }
 
   private:
