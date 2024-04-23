@@ -2,6 +2,8 @@
 
 #include "../detail/prologue.hpp"
 #include "concepts/tensor_like.hpp"
+#include "fancy_span.hpp"
+#include "vector/span_like.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -53,6 +55,19 @@ struct dispatch_all
     // T is already a view, so this operation is the identity function
     return t;
   }
+
+  template<span_like S>
+    requires (not has_all_member_function<S&&>
+              and not has_all_free_function<S&&>
+              and not trivially_copy_constructible<std::remove_cvref_t<S&&>>)
+  constexpr span_like auto operator()(S&& s) const
+  {
+    // XXX note that we avoid using std::ranges::size so that we don't demote fancy sizes
+    // XXX we really need to have our own size CPO
+    return fancy_span(std::ranges::data(std::forward<S>(s)), std::forward<S>(s).size());
+  }
+
+  // XXX we could have another default path here for std::ranges::random_access_range
 };
 
 } // end detail
