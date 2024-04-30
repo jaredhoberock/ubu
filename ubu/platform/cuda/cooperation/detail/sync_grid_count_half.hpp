@@ -2,27 +2,14 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "../../../../detail/atomic.hpp"
 #include "sync_grid.hpp"
-#include <array>
 #include <atomic>
-#include <concepts>
 #include <nv/target>
+#include <type_traits>
 
 namespace ubu::cuda::detail
 {
-
-
-template<std::integral T>
-  requires (sizeof(T) == sizeof(int))
-inline void store_release(volatile T* ptr, T value)
-{
-  NV_IF_ELSE_TARGET(NV_IS_DEVICE, (
-    asm volatile("st.release.gpu.u32 [%0],%1;" : : "l"((T*)ptr), "r"(value) : "memory");
-  ), (
-    // XXX circle crashes on this alternative to the above:
-    std::atomic_ref(*ptr).store(value, std::memory_order_release);
-  ))
-}
 
 inline uint32_t fetch_add_to_lower_half(std::atomic_ref<uint32_t> number, uint16_t value)
 {
@@ -46,7 +33,7 @@ inline uint32_t fetch_add_to_lower_half(std::atomic_ref<uint32_t> number, uint16
 
 inline uint16_t arrive_and_wait_and_sum(uint16_t value, uint32_t num_expected_threads, uint32_t* counter_and_generation_ptr, uint32_t* accumulator_ptr, uint16_t accumulator_reset_value = 0)
 {
-  using namespace ubu::cuda::detail;
+  using namespace ubu::detail;
 
   const uint32_t generation_bit = 1 << 31;
   const uint32_t counter_mask = generation_bit - 1;
