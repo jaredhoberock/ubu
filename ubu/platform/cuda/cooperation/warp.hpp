@@ -9,6 +9,7 @@
 #include "warp/coop_reduce.hpp"
 #include "warp/shuffle_down.hpp"
 #include "warp/shuffle_up.hpp"
+#include "warp/synchronize_and_all.hpp"
 #include "warp/synchronize_and_any.hpp"
 #include "warp/synchronize_and_count.hpp"
 #include "warp/warp_like.hpp"
