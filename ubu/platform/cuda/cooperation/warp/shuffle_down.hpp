@@ -11,10 +11,9 @@
 namespace ubu::cuda
 {
 
-
 template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr T shuffle_down(W, const T& x, int offset)
+constexpr T shuffle_down(W, int offset, const T& x)
 { 
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -46,7 +45,7 @@ constexpr T shuffle_down(W, const T& x, int offset)
 // shuffling a full word, maybe because __shfl_down_sync can be implemented with __ballot_sync
 template<warp_like W, class T>
   requires std::is_trivially_copy_constructible_v<T>
-constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int offset)
+constexpr std::optional<T> shuffle_down(W self, int offset, const std::optional<T>& x)
 {
 #if defined(__CUDACC__)
   constexpr std::size_t num_words = ceil_div(sizeof(T), sizeof(int));
@@ -63,7 +62,7 @@ constexpr std::optional<T> shuffle_down(W self, const std::optional<T>& x, int o
     u.value = *x;
   }
 
-  u.value = shuffle_down(self, u.value, offset);
+  u.value = shuffle_down(self, offset, u.value);
 
   // communicate whether or not the value we received came from a valid object
   bool is_valid = __shfl_down_sync(warp_mask, x.has_value(), offset);

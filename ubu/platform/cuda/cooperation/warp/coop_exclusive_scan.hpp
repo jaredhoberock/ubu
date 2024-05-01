@@ -23,7 +23,7 @@ constexpr T coop_exclusive_scan(W self, T init, T value, F binary_op)
 
   value = coop_inclusive_scan(self, value, binary_op);
 
-  value = shuffle_up(self, value, 1);
+  value = shuffle_up(self, 1, value);
   if(id(self) == 0)
   {
     value = init;

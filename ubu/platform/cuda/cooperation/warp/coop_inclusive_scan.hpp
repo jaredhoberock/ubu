@@ -18,7 +18,7 @@ constexpr T coop_inclusive_scan(W self, T value, F binary_op)
 {
   for(int offset = 1; offset <= warp_size/2; offset *= 2)
   {
-    T other = shuffle_up(self, value, offset);
+    T other = shuffle_up(self, offset, value);
   
     if(id(self) >= offset)
     {

@@ -23,7 +23,7 @@ constexpr T coop_exclusive_scan(B group, T init, T value, F binary_op)
   value = coop_inclusive_scan(subgroup(group), value, binary_op);
 
   // shuffle to get the warp's exclusive scan (except for each lane 0)
-  T exclusive_value = shuffle_up(subgroup(group), value, 1);
+  T exclusive_value = shuffle_up(subgroup(group), 1, value);
 
   // each thread computes its warp's init by summing previous warp sums
   uninitialized_coop_array<T,B> warp_sums(group, subgroup_count(group));
@@ -61,7 +61,7 @@ constexpr std::optional<T> coop_exclusive_scan(B group, std::optional<T> init, s
   value = coop_inclusive_scan(subgroup(group), value, binary_op);
 
   // shuffle to get the warp's exclusive scan (except for each lane 0)
-  std::optional exclusive_value = shuffle_up(subgroup(group), value, 1);
+  std::optional exclusive_value = shuffle_up(subgroup(group), 1, value);
 
   // each thread computes its warp's init by summing previous warp sums
   uninitialized_coop_optional_array<T,B> warp_sums(group, subgroup_count(group));
