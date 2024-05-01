@@ -3,7 +3,6 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../detail/reflection/is_device.hpp"
-#include "coop_ballot.hpp"
 #include "warp_like.hpp"
 #include <bit>
 
