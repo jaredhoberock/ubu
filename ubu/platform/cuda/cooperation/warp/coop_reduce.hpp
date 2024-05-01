@@ -22,7 +22,7 @@ constexpr std::optional<T> coop_reduce(W self, std::optional<T> value, F binary_
   for(int pass = 0; pass != num_passes; ++pass)
   {
     int offset = 1 << pass;
-    std::optional other = shuffle_down(self, value, offset);
+    std::optional other = shuffle_down(self, offset, value);
 
     if(value and other)
     {
