@@ -8,6 +8,7 @@
 #include "layout/is_injective.hpp"
 #include "layout/layout.hpp"
 #include "layout/lifting_layout.hpp"
+#include "layout/native_layout.hpp"
 #include "layout/offset.hpp"
 #include "layout/row_major.hpp"
 #include "layout/stride.hpp"

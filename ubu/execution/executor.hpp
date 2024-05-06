@@ -13,7 +13,6 @@
 #include "executor/finally_execute_after.hpp"
 #include "executor/first_execute.hpp"
 #include "executor/kernel_layout.hpp"
-#include "executor/native_layout.hpp"
 #include "executor/traits.hpp"
 
 #include "../detail/epilogue.hpp"
