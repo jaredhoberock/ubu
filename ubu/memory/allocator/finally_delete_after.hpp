@@ -57,7 +57,7 @@ struct dispatch_finally_delete_after
   constexpr auto operator()(A&& alloc, E&& exec, B&& before, S span) const
   {
     // discard delete_after's result
-    delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span.data(), span.size());
+    delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span);
   }
 
 };

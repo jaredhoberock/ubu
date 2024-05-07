@@ -4,7 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
-#include "../pointer/pointer_like.hpp"
+#include "../../tensor/vector/span_like.hpp"
 #include "concepts/asynchronous_allocator.hpp"
 #include "deallocate_after.hpp"
 #include "destroy_after.hpp"
@@ -21,17 +21,17 @@ namespace detail
 // XXX this should have a path that attempts a rebind
 
 
-template<class A, class E, class H, class P, class N>
-concept has_delete_after_member_function = requires(A alloc, E exec, H before, P ptr, N n)
+template<class A, class E, class B, class S>
+concept has_delete_after_member_function = requires(A alloc, E exec, B before, S span)
 {
-  {alloc.delete_after(exec, before, ptr, n)} -> happening;
+  {alloc.delete_after(exec, before, span)} -> happening;
 };
 
 
-template<class A, class E, class H, class P, class N>
-concept has_delete_after_free_function = requires(A alloc, E exec, H before, P ptr, N n)
+template<class A, class E, class B, class S>
+concept has_delete_after_free_function = requires(A alloc, E exec, B before, S span)
 {
-  {delete_after(alloc, exec, before, ptr, n)} -> happening;
+  {delete_after(alloc, exec, before, span)} -> happening;
 };
 
 
@@ -39,20 +39,20 @@ concept has_delete_after_free_function = requires(A alloc, E exec, H before, P p
 struct dispatch_delete_after
 {
   // this dispatch path calls the member function
-  template<class Allocator, class Executor, class Happening, class P, class N>
-    requires has_delete_after_member_function<Allocator&&, Executor&&, Happening&&, P&&, N&&>
-  constexpr auto operator()(Allocator&& alloc, Executor&& exec, Happening&& before, P&& ptr, N&& n) const
+  template<class A, class E, class B, class S>
+    requires has_delete_after_member_function<A&&, E&&, B&&, S&&>
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S&& span) const
   {
-    return std::forward<Allocator>(alloc).delete_after(std::forward<Executor>(exec), std::forward<Happening>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return std::forward<A>(alloc).delete_after(std::forward<E>(exec), std::forward<B>(before), std::forward<S>(span));
   }
 
   // this dispatch path calls the free function
-  template<class Allocator, class Executor, class Happening, class P, class N>
-    requires (!has_delete_after_member_function<Allocator&&, Executor&&, Happening&&, P&&, N&&> and
-               has_delete_after_free_function<Allocator&&, Executor&&, Happening&&, P&&, N&&>)
-  constexpr auto operator()(Allocator&& alloc, Executor&& exec, Happening&& before, P&& ptr, N&& n) const
+  template<class A, class E, class B, class S>
+    requires (!has_delete_after_member_function<A&&, E&&, B&&, S&&> and
+               has_delete_after_free_function<A&&, E&&, B&&, S&&>)
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S&& span) const
   {
-    return delete_after(std::forward<Allocator>(alloc), std::forward<Executor>(exec), std::forward<Happening>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), std::forward<S>(span));
   }
 
   // the default path
@@ -60,16 +60,16 @@ struct dispatch_delete_after
   //   2. calls deallocate_after
   //
   //   XXX N should be allocator_traits<A>::size_type
-  template<pointer_like P, asynchronous_allocator_of<pointer_pointee_t<P>> A, executor E, happening H, class N>
-    requires (!has_delete_after_member_function<A&&, E&&, H&&, P, N> and
-              !has_delete_after_free_function<A&&, E&&, H&&, P, N>)
-  constexpr auto operator()(A&& alloc, E&& exec, H&& before, P ptr, N n) const
+  template<span_like S, asynchronous_allocator_of<tensor_element_t<S>> A, executor E, happening B>
+    requires (!has_delete_after_member_function<A&&, E&&, B&&, S> and
+              !has_delete_after_free_function<A&&, E&&, B&&, S>)
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S span) const
   {
     // destroy
-    auto after_destructors = ubu::destroy_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<H>(before), ptr, n);
+    auto after_destructors = ubu::destroy_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span.data(), span.size());
 
     // deallocate
-    return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), ptr, n);
+    return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), span.data(), span.size());
   }
 
 };
