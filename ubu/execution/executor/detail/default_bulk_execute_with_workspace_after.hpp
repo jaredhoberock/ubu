@@ -8,7 +8,6 @@
 #include "../../../memory/allocator/deallocate_after.hpp"
 #include "../../../memory/allocator/traits/allocator_happening_t.hpp"
 #include "../../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../../tensor/fancy_span.hpp"
 #include "../concepts/bulk_executable_on.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"
@@ -55,14 +54,13 @@ allocator_happening_t<A> default_bulk_execute_with_workspace_after(const E& ex, 
 
   // allocate a workspace
   // XXX concurrent executors do not need their workspace zeroed
-  auto [workspace_ready, workspace_ptr] = allocate_and_zero_after<std::byte>(alloc, ex, std::forward<B>(before), workspace_size);
+  auto [workspace_ready, workspace] = allocate_and_zero_after<std::byte>(alloc, ex, std::forward<B>(before), workspace_size);
 
   // execute the user function after the workspace is allocated
-  std::span<std::byte> workspace(workspace_ptr, workspace_size);
   auto execution_finished = bulk_execute_after(ex, std::move(workspace_ready), shape, make_default_bulk_execute_with_workspace_after_invocable<S>(workspace, std::forward<F>(function)));
 
   // deallocate the workspace after the user function executes
-  return deallocate_after(alloc, std::move(execution_finished), fancy_span(workspace_ptr, workspace_size));
+  return deallocate_after(alloc, std::move(execution_finished), workspace);
 }
 
 
