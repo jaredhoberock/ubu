@@ -4,7 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
-#include "../pointer/pointer_like.hpp"
+#include "../../tensor/vector/span_like.hpp"
 #include "concepts/asynchronous_allocator.hpp"
 #include "delete_after.hpp"
 #include <utility>
@@ -16,17 +16,17 @@ namespace detail
 {
 
 
-template<class A, class E, class H, class P, class N>
-concept has_finally_delete_after_member_function = requires(A alloc, E exec, H before, P ptr, N n)
+template<class A, class E, class H, class S>
+concept has_finally_delete_after_member_function = requires(A alloc, E exec, H before, S span)
 {
-  alloc.finally_delete_after(exec, before, ptr, n);
+  alloc.finally_delete_after(exec, before, span);
 };
 
 
-template<class A, class E, class H, class P, class N>
-concept has_finally_delete_after_free_function = requires(A alloc, E exec, H before, P ptr, N n)
+template<class A, class E, class H, class S>
+concept has_finally_delete_after_free_function = requires(A alloc, E exec, H before, S span)
 {
-  finally_delete_after(alloc, exec, before, ptr, n);
+  finally_delete_after(alloc, exec, before, span);
 };
 
 
@@ -34,30 +34,30 @@ concept has_finally_delete_after_free_function = requires(A alloc, E exec, H bef
 struct dispatch_finally_delete_after
 {
   // this dispatch path calls the member function
-  template<class Allocator, class Executor, class Happening, class P, class N>
-    requires has_finally_delete_after_member_function<Allocator&&, Executor&&, Happening&&, P&&, N&&>
-  constexpr auto operator()(Allocator&& alloc, Executor&& exec, Happening&& before, P&& ptr, N&& n) const
+  template<class A, class E, class B, class S>
+    requires has_finally_delete_after_member_function<A&&, E&&, B&&, S&&>
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S&& span) const
   {
-    return std::forward<Allocator>(alloc).finally_delete_after(std::forward<Executor>(exec), std::forward<Happening>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return std::forward<A>(alloc).finally_delete_after(std::forward<E>(exec), std::forward<B>(before), std::forward<S>(span));
   }
 
   // this dispatch path calls the free function
-  template<class Allocator, class Executor, class Happening, class P, class N>
-    requires (!has_finally_delete_after_member_function<Allocator&&, Executor&&, Happening&&, P&&, N&&> and
-               has_finally_delete_after_free_function<Allocator&&, Executor&&, Happening&&, P&&, N&&>)
-  constexpr auto operator()(Allocator&& alloc, Executor&& exec, Happening&& before, P&& ptr, N&& n) const
+  template<class A, class E, class B, class S>
+    requires (!has_finally_delete_after_member_function<A&&, E&&, B&&, S&&> and
+               has_finally_delete_after_free_function<A&&, E&&, B&&, S&&>)
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S&& span) const
   {
-    return finally_delete_after(std::forward<Allocator>(alloc), std::forward<Executor>(exec), std::forward<Happening>(before), std::forward<P>(ptr), std::forward<N>(n));
+    return finally_delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), std::forward<S>(span));
   }
 
   // XXX this needs to require that delete_after is valid
-  template<pointer_like P, asynchronous_allocator_of<pointer_pointee_t<P>> A, executor E, happening H, class N>
-    requires (!has_finally_delete_after_member_function<A&&, E&&, H&&, P, N> and
-              !has_finally_delete_after_free_function<A&&, E&&, H&&, P, N>)
-  constexpr auto operator()(A&& alloc, E&& exec, H&& before, P ptr, N n) const
+  template<span_like S, asynchronous_allocator_of<tensor_element_t<S>> A, executor E, happening B>
+    requires (!has_finally_delete_after_member_function<A&&, E&&, B&&, S> and
+              !has_finally_delete_after_free_function<A&&, E&&, B&&, S>)
+  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S span) const
   {
     // discard delete_after's result
-    delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<H>(before), ptr, n);
+    delete_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span.data(), span.size());
   }
 
 };
@@ -74,8 +74,8 @@ constexpr detail::dispatch_finally_delete_after finally_delete_after;
 } // end anonymous namespace
 
 
-template<class A, class E, class H, class P, class N>
-using finally_delete_after_result_t = decltype(ubu::finally_delete_after(std::declval<A>(), std::declval<E>(), std::declval<H>(), std::declval<P>(), std::declval<N>()));
+template<class A, class E, class B, class S>
+using finally_delete_after_result_t = decltype(ubu::finally_delete_after(std::declval<A>(), std::declval<E>(), std::declval<B>(), std::declval<S>()));
 
 
 } // end ubu
