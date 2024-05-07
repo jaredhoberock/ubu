@@ -7,6 +7,7 @@
 #include "../../detail/exception.hpp"
 #include "../../memory/plain_old_data.hpp"
 #include "../../memory/pointer/remote_ptr.hpp"
+#include "../../tensor/fancy_span.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
 #include "event.hpp"
@@ -190,6 +191,9 @@ class device_memory_loader
 
 template<plain_old_data_or_void T>
 using device_ptr = remote_ptr<T, device_memory_loader>;
+
+template<plain_old_data_or_void T>
+using device_span = fancy_span<device_ptr<T>>;
 
 
 } // end ubu::cuda
