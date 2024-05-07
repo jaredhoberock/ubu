@@ -58,8 +58,6 @@ struct dispatch_delete_after
   // the default path
   //   1. calls destroy_after
   //   2. calls deallocate_after
-  //
-  //   XXX N should be allocator_traits<A>::size_type
   template<span_like S, asynchronous_allocator_of<tensor_element_t<S>> A, executor E, happening B>
     requires (!has_delete_after_member_function<A&&, E&&, B&&, S> and
               !has_delete_after_free_function<A&&, E&&, B&&, S>)
@@ -69,7 +67,7 @@ struct dispatch_delete_after
     auto after_destructors = destroy_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span);
 
     // deallocate
-    return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), span.data(), span.size());
+    return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), span);
   }
 
 };

@@ -75,9 +75,9 @@ class device_allocator : private device_memory_resource
       return {std::move(allocation_ready), d_ptr};
     }
 
-    event deallocate_after(const event& before, pointer ptr, std::size_t n) const
+    event deallocate_after(const event& before, device_span<T> span) const
     {
-      return super_t::deallocate_after(before, ptr.to_address(), sizeof(T) * n);
+      return super_t::deallocate_after(before, span.data().to_address(), span.size_bytes());
     }
 
     int device() const

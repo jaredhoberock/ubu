@@ -8,6 +8,7 @@
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/coordinate_cast.hpp"
 #include "../../tensor/coordinate/point.hpp"
+#include "../../tensor/fancy_span.hpp"
 #include "cooperation.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cooperative_kernel.hpp"
@@ -116,7 +117,7 @@ class coop_executor
       });
 
       // deallocate outer buffer after the kernel
-      return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
+      return deallocate_after(alloc, std::move(after_kernel), fancy_span(outer_buffer_ptr, outer_buffer_size));
     }
 
     constexpr int device() const

@@ -7,7 +7,6 @@
 #include <random>
 #include <span>
 #include <ubu/ubu.hpp>
-#include <ubu/platform/cuda.hpp>
 #include "measure_bandwidth_of_invocation.hpp"
 
 
@@ -172,7 +171,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
   });
 
   // finally, deallocate temporary storage
-  return deallocate_after(alloc, result_ready, temporary_storage, num_blocks);
+  return deallocate_after(alloc, result_ready, fancy_span(temporary_storage, num_blocks));
 }
 
 

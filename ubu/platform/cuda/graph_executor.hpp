@@ -6,6 +6,7 @@
 #include "../../memory/allocator/deallocate_after.hpp"
 #include "../../tensor/coordinate/concepts/congruent.hpp"
 #include "../../tensor/coordinate/one_extend_coordinate.hpp"
+#include "../../tensor/fancy_span.hpp"
 #include "cooperation.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
@@ -120,7 +121,7 @@ class graph_executor
       });
 
       // deallocate outer buffer after the kernel
-      return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
+      return deallocate_after(alloc, std::move(after_kernel), fancy_span(outer_buffer_ptr, outer_buffer_size));
     }
   
     template<std::invocable F>

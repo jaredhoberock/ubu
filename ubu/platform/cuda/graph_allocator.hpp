@@ -104,7 +104,7 @@ class graph_allocator
       return {graph_node{graph(), node, stream()}, ptr};
     }
 
-    graph_node deallocate_after(const graph_node& before, pointer ptr, std::size_t n) const
+    graph_node deallocate_after(const graph_node& before, device_span<T> span) const
     {
       if(before.graph() != graph())
       {
@@ -112,12 +112,12 @@ class graph_allocator
       }
 
       // handle an empty deallocation - CUDA runtime won't accomodate mem free node for 0 bytes
-      if(n == 0)
+      if(span.size() == 0)
       {
         return do_nothing_after(before);
       }
 
-      return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), ptr.to_address()), stream()};
+      return {graph(), detail::make_mem_free_node(graph(), before.native_handle(), span.data().to_address()), stream()};
     }
 
     auto operator<=>(const graph_allocator&) const = default;

@@ -1,14 +1,14 @@
+#include <memory>
 #include <ubu/causality/future/intrusive_future.hpp>
 #include <ubu/causality/future/invoke_after.hpp>
 #include <ubu/causality/past_event.hpp>
 #include <ubu/execution/executor.hpp>
 #include <ubu/memory/allocator.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/tensor/fancy_span.hpp>
 
 #define NDEBUG
 #include <cassert>
-
-#include <memory>
 
 namespace ns = ubu;
 
@@ -24,9 +24,9 @@ struct trivial_asynchronous_allocator : public std::allocator<T>
     return {{}, ptr};
   }
   
-  ns::past_event deallocate_after(const ns::past_event&, T* ptr, std::size_t n)
+  ns::past_event deallocate_after(const ns::past_event&, ns::fancy_span<T*> span)
   {
-    std::allocator<T>::deallocate(ptr, sizeof(T) * n);
+    std::allocator<T>::deallocate(span.data(), span.size_bytes());
     return {};
   }
 
@@ -60,7 +60,7 @@ void test_asynchronous_allocation_and_asynchronous_deletion()
 
   auto [ready, ptr] = ns::first_allocate<T>(alloc, 1);
   
-  auto all_done = ns::deallocate_after(alloc, ready, ptr, 1);
+  auto all_done = ns::deallocate_after(alloc, ready, ns::fancy_span(ptr, 1));
   
   ns::wait(all_done);
 }
