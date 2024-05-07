@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/initial_happening.hpp"
-#include "../../tensor/fancy_span.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocation.hpp"
 #include "concepts/asynchronous_allocator.hpp"
@@ -117,8 +116,7 @@ struct dispatch_first_allocate
               and not has_first_allocate_customization<T, rebind_allocator_result_t<T,A&&>, S>)
   constexpr asynchronous_allocation auto operator()(A&& alloc, S shape) const
   {
-    auto [after, ptr] = allocate_after<T>(std::forward<A>(alloc), initial_happening(alloc), shape);
-    return std::pair(std::move(after), fancy_span(ptr, shape));
+    return allocate_after<T>(std::forward<A>(alloc), initial_happening(alloc), shape);
   }
 };
 

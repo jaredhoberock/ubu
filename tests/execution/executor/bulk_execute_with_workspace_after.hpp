@@ -33,10 +33,10 @@ struct inline_allocator : std::allocator<T>
 
   auto allocate_after(happening_type, std::size_t n) const
   {
-    return std::pair(ns::past_event(), std::allocator<T>().allocate(n));
+    return std::pair(ns::past_event(), std::span(std::allocator<T>().allocate(n), n));
   }
 
-  happening_type deallocate_after(happening_type, ns::fancy_span<T*> span) const
+  happening_type deallocate_after(happening_type, std::span<T> span) const
   {
     std::allocator<T>().deallocate(span.data(), span.size());
     return {};

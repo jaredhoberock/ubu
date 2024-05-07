@@ -17,11 +17,11 @@ struct trivial_asynchronous_allocator : public std::allocator<T>
 {
   using happening_type = ns::past_event;
 
-  std::pair<ns::past_event, T*> allocate_after(const ns::past_event& before, std::size_t n)
+  std::pair<ns::past_event, std::span<T>> allocate_after(const ns::past_event& before, std::size_t n)
   {
-    T* ptr = std::allocator<T>::allocate(sizeof(T) * n);
+    T* ptr = std::allocator<T>::allocate(n);
   
-    return {{}, ptr};
+    return {{}, std::span(ptr,n)};
   }
   
   ns::past_event deallocate_after(const ns::past_event&, ns::fancy_span<T*> span)

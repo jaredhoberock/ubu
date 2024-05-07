@@ -6,7 +6,6 @@
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vector/span_like.hpp"
 #include "rebind_allocator.hpp"
-#include <type_traits>
 #include <utility>
 
 namespace ubu

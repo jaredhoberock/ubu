@@ -31,11 +31,11 @@ void test_asynchronous_allocation()
 
     event ready = ns::initial_happening(alloc);
 
-    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
+    auto [e, span] = alloc.allocate_after(std::move(ready), 1);
 
     e.wait();
 
-    alloc.deallocate(ptr, 1);
+    alloc.deallocate(span.data(), span.size());
   }
 
   {
@@ -43,9 +43,9 @@ void test_asynchronous_allocation()
 
     event ready = ns::initial_happening(alloc);
 
-    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
+    auto [e, span] = alloc.allocate_after(std::move(ready), 1);
 
-    event all_done = alloc.deallocate_after(e, device_span<T>(ptr, 1));
+    event all_done = alloc.deallocate_after(e, span);
 
     all_done.wait();
   }

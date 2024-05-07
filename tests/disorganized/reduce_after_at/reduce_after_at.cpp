@@ -128,7 +128,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
 
   // zeroth phase, allocate temporary storage for sums
   auto [temporary_storage_ready, temporary_storage] = allocate_after<T>(alloc, before, num_blocks);
-  std::span partial_sums(temporary_storage.to_raw_pointer(), num_blocks);
+  std::span partial_sums(temporary_storage.data().to_raw_pointer(), num_blocks);
 
   // first phase, create partial sums
   cuda::event partial_sums_ready = bulk_execute_with_workspace_after(gpu, alloc, temporary_storage_ready, shape, workspace_shape, [=](ubu::int2 idx, workspace auto ws)
@@ -171,7 +171,7 @@ ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::devi
   });
 
   // finally, deallocate temporary storage
-  return deallocate_after(alloc, result_ready, fancy_span(temporary_storage, num_blocks));
+  return deallocate_after(alloc, result_ready, temporary_storage);
 }
 
 

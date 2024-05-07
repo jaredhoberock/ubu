@@ -69,7 +69,7 @@ class graph_allocator
       return {graph(), detail::make_empty_node(graph()), stream()};
     }
 
-    std::pair<graph_node, pointer> allocate_after(const graph_node& before, std::size_t n) const
+    std::pair<graph_node, device_span<T>> allocate_after(const graph_node& before, std::size_t n) const
     {
       if(before.graph() != graph())
       {
@@ -79,21 +79,19 @@ class graph_allocator
       // handle an empty allocation - CUDA runtime won't accomodate mem alloc node for 0 bytes
       if(n == 0)
       {
-        return {do_nothing_after(before), nullptr};
+        return {do_nothing_after(before), device_span<T>()};
       }
 
       auto [node, ptr] = detail::make_mem_alloc_node(graph(), before.native_handle(), alloc_.device(), sizeof(T) * n);
 
       pointer d_ptr{reinterpret_cast<T*>(ptr), alloc_.device()};
 
-      return {graph_node{graph(), node, stream()}, d_ptr};
+      return {graph_node{graph(), node, stream()}, device_span<T>(d_ptr, n)};
     }
 
     std::pair<graph_node, device_span<T>> allocate_and_zero_after(const graph_node& before, std::size_t n) const
     {
-      auto [after_allocation, ptr] = allocate_after(before, n);
-
-      device_span<T> span(ptr, n);
+      auto [after_allocation, span] = allocate_after(before, n);
 
       // handle an empty allocation - CUDA runtime won't accomodate a memset node for 0 bytes
       if(n == 0)
@@ -101,7 +99,7 @@ class graph_allocator
         return {std::move(after_allocation), span};
       }
 
-      cudaGraphNode_t node = detail::make_memset_node(graph(), after_allocation.native_handle(), ptr.to_raw_pointer(), 0, sizeof(T) * n);
+      cudaGraphNode_t node = detail::make_memset_node(graph(), after_allocation.native_handle(), span.data().to_raw_pointer(), 0, span.size_bytes());
 
       return {graph_node{graph(), node, stream()}, span};
     }

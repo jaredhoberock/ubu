@@ -7,7 +7,6 @@
 #include "../../execution/executor/execute_after.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
-#include "../../tensor/fancy_span.hpp"
 #include "../pointer/pointer_like.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocation.hpp"
@@ -215,17 +214,17 @@ struct dispatch_allocate_and_zero_after
   constexpr asynchronous_allocation auto operator()(A&& alloc, E&& exec, B&& before, S shape) const
   {
     // asynchronously allocate the memory
-    auto [allocation_finished, ptr] = allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape));
+    auto [allocation_finished, span] = allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape));
 
     // asynchronously zero the bits
     // XXX this needs to be bulk_execute_after when we support tensor allocation
-    happening auto zero_finished = execute_after(std::forward<E>(exec), std::move(allocation_finished), [=]
+    happening auto zero_finished = execute_after(std::forward<E>(exec), std::move(allocation_finished), [ptr = span.data(), sz = span.size_bytes()]
     {
-      memset(ptr, 0, sizeof(T) * shape);
+      memset(ptr, 0, sz);
     });
 
     // return the pair
-    return std::pair(std::move(zero_finished), fancy_span(ptr, shape));
+    return std::pair(std::move(zero_finished), span);
   }
 };
 

@@ -34,11 +34,11 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
 
     auto ready = initial_happening(alloc);
 
-    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
+    auto [e, span] = alloc.allocate_after(std::move(ready), 1);
 
     wait(e);
 
-    alloc.deallocate(ptr, 1);
+    alloc.deallocate(span.data(), span.size());
   }
 
   {
@@ -46,9 +46,9 @@ void test_asynchronous_allocation(ns::cuda::graph_allocator<T> alloc)
 
     auto ready = initial_happening(alloc);
 
-    auto [e, ptr] = alloc.allocate_after(std::move(ready), 1);
+    auto [e, span] = alloc.allocate_after(std::move(ready), 1);
 
-    auto all_done = alloc.deallocate_after(e, cuda::device_span<T>(ptr, 1));
+    auto all_done = alloc.deallocate_after(e, span);
 
     wait(all_done);
   }
