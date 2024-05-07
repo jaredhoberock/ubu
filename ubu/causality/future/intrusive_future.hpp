@@ -173,7 +173,7 @@ class intrusive_future
       //return invoke_after(ex, alloc, std::forward<H>(before), std::forward<F>(f), std::move(*this), std::move(future_args)...);
 
       // allocate storage for the result after before is ready
-      auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
+      auto [result_allocation_ready, result_span] = first_allocate<R>(alloc, 1);
 
       // create a happening dependent on before, the allocation, and future_args
       auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<OtherH>(before), this->ready(), future_args.ready()...);
@@ -181,7 +181,7 @@ class intrusive_future
       try
       {
         // when everything is ready, invoke f and construct the result
-        auto result_ready = execute_after(ex, std::move(inputs_ready), [ptr_to_result = ptr_to_result, f = std::move(f), ptr_to_arg1 = this->data(), ... ptrs_to_args = future_args.data()]
+        auto result_ready = execute_after(ex, std::move(inputs_ready), [ptr_to_result = result_span.data(), f = std::move(f), ptr_to_arg1 = this->data(), ... ptrs_to_args = future_args.data()]
         {
           construct_at(ptr_to_result, std::invoke(f, std::move(*ptr_to_arg1), std::move(*ptrs_to_args)...));
         });
@@ -194,7 +194,7 @@ class intrusive_future
         }, std::move(*this), std::move(future_args)...);
 
         // return a new future
-        return {std::move(result_ready), ptr_to_result, alloc, ex};
+        return {std::move(result_ready), result_span.data(), alloc, ex};
       }
       catch(...)
       {
@@ -203,7 +203,7 @@ class intrusive_future
       }
 
       // XXX until we can handle exceptions, just return this to make everything compile
-      return {std::move(result_allocation_ready), ptr_to_result, alloc, ex};
+      return {std::move(result_allocation_ready), result_span.data(), alloc, ex};
     }
 
 

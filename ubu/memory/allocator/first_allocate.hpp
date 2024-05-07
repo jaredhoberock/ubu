@@ -3,7 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../causality/initial_happening.hpp"
+#include "../../tensor/fancy_span.hpp"
 #include "allocate_after.hpp"
+#include "concepts/asynchronous_allocation.hpp"
+#include "concepts/asynchronous_allocator.hpp"
 #include "traits/allocator_value_t.hpp"
 #include <memory>
 #include <type_traits>
@@ -11,53 +14,48 @@
 
 namespace ubu
 {
-
 namespace detail
 {
 
 
-template<class T, class A, class N>
-concept has_first_allocate_member_function_template = requires(A alloc, N n)
+template<class T, class A, class S>
+concept has_first_allocate_member_function_template = requires(A alloc, S shape)
 {
-  // XXX this should check that the result is a pair<happening,pointer>
-  alloc.template first_allocate<T>(n);
+  { alloc.template first_allocate<T>(shape) } -> asynchronous_allocation_congruent_with<S>;
 };
 
 
-template<class T, class A, class N>
-concept has_first_allocate_free_function_template = requires(A alloc, N n)
+template<class T, class A, class S>
+concept has_first_allocate_free_function_template = requires(A alloc, S shape)
 {
-  // XXX this should check that the result is a pair<happening,pointer>
-  first_allocate<T>(alloc, n);
+  { first_allocate<T>(alloc, shape) } -> asynchronous_allocation_congruent_with<S>;
 };
 
 
-template<class T, class A, class N>
-concept has_first_allocate_member_function = requires(A alloc, N n)
+template<class T, class A, class S>
+concept has_first_allocate_member_function = requires(A alloc, S shape)
 {
-  requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
+  requires std::same_as<T, allocator_value_t<A>>;
 
-  // XXX this should check that the result is a pair<happening,pointer>
-  alloc.first_allocate(n);
+  { alloc.first_allocate(shape) } -> asynchronous_allocation_congruent_with<S>;
 };
 
 
-template<class T, class A, class N>
-concept has_first_allocate_free_function = requires(A alloc, N n)
+template<class T, class A, class S>
+concept has_first_allocate_free_function = requires(A alloc, S shape)
 {
-  requires std::same_as<T, typename std::allocator_traits<std::remove_cvref_t<A>>::value_type>;
+  requires std::same_as<T, allocator_value_t<A>>;
 
-  // XXX this should check that the result is a pair<happening,pointer>
-  first_allocate(alloc, n);
+  { first_allocate(alloc, shape) } -> asynchronous_allocation_congruent_with<S>;
 };
 
 
-template<class T, class A, class N>
+template<class T, class A, class S>
 concept has_first_allocate_customization =
-  has_first_allocate_member_function_template<T,A,N>
-  or has_first_allocate_free_function_template<T,A,N>
-  or has_first_allocate_member_function<T,A,N>
-  or has_first_allocate_free_function<T,A,N>
+  has_first_allocate_member_function_template<T,A,S>
+  or has_first_allocate_free_function_template<T,A,S>
+  or has_first_allocate_member_function<T,A,S>
+  or has_first_allocate_free_function<T,A,S>
 ;
 
 
@@ -66,67 +64,61 @@ template<class T>
 struct dispatch_first_allocate
 {
   // this path calls the member function template
-  template<class Alloc, class N>
-    requires has_first_allocate_member_function_template<T, Alloc&&, N&&>
-  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  template<class A, class S>
+    requires has_first_allocate_member_function_template<T, A&&, S&&>
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S&& shape) const
   {
-    return std::forward<Alloc>(alloc).template first_allocate<T>(std::forward<N>(n));
+    return std::forward<A>(alloc).template first_allocate<T>(std::forward<S>(shape));
   }
   
   // this path calls the free function template
-  template<class Alloc, class N>
-    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
-              and has_first_allocate_free_function_template<T, Alloc&&, N&&>)
-  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  template<class A, class S>
+    requires (not has_first_allocate_member_function_template<T, A&&, S&&>
+              and has_first_allocate_free_function_template<T, A&&, S&&>)
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S&& shape) const
   {
-    return first_allocate<T>(std::forward<Alloc>(alloc), std::forward<N>(n));
+    return first_allocate<T>(std::forward<A>(alloc), std::forward<S>(shape));
   }
 
   // this path calls the member function
-  template<class Alloc, class N>
-    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
-              and has_first_allocate_member_function<T, Alloc&&, N&&>)
-  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  template<class A, class S>
+    requires (not has_first_allocate_member_function_template<T, A&&, S&&>
+              and not has_first_allocate_free_function_template<T, A&&, S&&>
+              and has_first_allocate_member_function<T, A&&, S&&>)
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S&& shape) const
   {
-    return std::forward<Alloc>(alloc).first_allocate(std::forward<N>(n));
+    return std::forward<A>(alloc).first_allocate(std::forward<S>(shape));
   }
 
   // this path calls the free function
-  template<class Alloc, class N>
-    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_member_function<T, Alloc&&, N&&>
-              and has_first_allocate_free_function<T, Alloc&&, N&&>)
-  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  template<class A, class S>
+    requires (not has_first_allocate_member_function_template<T, A&&, S&&>
+              and not has_first_allocate_free_function_template<T, A&&, S&&>
+              and not has_first_allocate_member_function<T, A&&, S&&>
+              and has_first_allocate_free_function<T, A&&, S&&>)
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S&& shape) const
   {
-    return first_allocate(std::forward<Alloc>(alloc), std::forward<N>(n));
+    return first_allocate(std::forward<A>(alloc), std::forward<S>(shape));
   }
 
   // this dispatch path tries to rebind and then call first_allocate again
-  template<class Alloc, class N>
-    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_member_function<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function<T, Alloc&&, N&&>
-              and has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
-  constexpr auto operator()(Alloc&& alloc, N&& n) const
+  template<class A, class S>
+    requires (not has_first_allocate_customization<T,A&&,S&&>
+              and has_first_allocate_customization<T, rebind_allocator_result_t<T,A&&>, S&&>)
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S&& shape) const
   {
-    auto rebound_alloc = rebind_allocator<T>(std::forward<Alloc>(alloc));
-    return (*this)(rebound_alloc, std::forward<N>(n));
+    auto rebound_alloc = rebind_allocator<T>(std::forward<A>(alloc));
+    return (*this)(rebound_alloc, std::forward<S>(shape));
   }
 
   // this dispatch path calls allocate_after
-  template<class Alloc, class N>
-    requires (!has_first_allocate_member_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function_template<T, Alloc&&, N&&>
-              and !has_first_allocate_member_function<T, Alloc&&, N&&>
-              and !has_first_allocate_free_function<T, Alloc&&, N&&>
-              and !has_first_allocate_customization<T, rebind_allocator_result_t<T,Alloc&&>, N&&>)
-  constexpr auto operator()(Alloc&& alloc, N&& n) const ->
-    decltype(allocate_after<T>(std::forward<Alloc>(alloc), initial_happening(std::forward<Alloc>(alloc)), std::forward<N>(n)))
+  template<asynchronous_allocator A, coordinate S>
+    requires (not has_first_allocate_customization<T, A&&, S>
+              and not has_first_allocate_customization<T, rebind_allocator_result_t<T,A&&>, S>)
+  constexpr asynchronous_allocation auto operator()(A&& alloc, S shape) const
   {
-    return allocate_after<T>(std::forward<Alloc>(alloc), initial_happening(std::forward<Alloc>(alloc)), std::forward<N>(n));
+    auto [after, ptr] = allocate_after<T>(std::forward<A>(alloc), initial_happening(alloc), shape);
+    return std::pair(std::move(after), fancy_span(ptr, shape));
   }
 };
 
@@ -143,8 +135,8 @@ constexpr detail::dispatch_first_allocate<T> first_allocate;
 } // end anonymous namespace
 
 
-template<class T, class A, class N>
-using first_allocate_result_t = decltype(first_allocate<T>(std::declval<A>(), std::declval<N>()));
+template<class T, class A, class S>
+using first_allocate_result_t = decltype(first_allocate<T>(std::declval<A>(), std::declval<S>()));
 
 
 } // end ubu
