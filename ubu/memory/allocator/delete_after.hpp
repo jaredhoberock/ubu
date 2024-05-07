@@ -66,7 +66,7 @@ struct dispatch_delete_after
   constexpr auto operator()(A&& alloc, E&& exec, B&& before, S span) const
   {
     // destroy
-    auto after_destructors = ubu::destroy_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span.data(), span.size());
+    auto after_destructors = destroy_after(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), span);
 
     // deallocate
     return deallocate_after(std::forward<A>(alloc), std::move(after_destructors), span.data(), span.size());
