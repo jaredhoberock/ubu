@@ -33,10 +33,14 @@ struct dispatch_deallocate
     std::allocator_traits<std::decay_t<Alloc>>::deallocate(std::forward<Alloc>(alloc), std::forward<P>(p), std::forward<N>(n));
   }
 
-  // this path attempts to first rebind_allocator and then recurse
+  // this path first rebind_allocators and then recurses
   template<class Alloc, pointer_like P, class N>
-    requires (!has_allocator_traits_deallocate<Alloc&&,P,N&&> and
-              has_rebind_allocator<pointer_pointee_t<P>,Alloc&&>)
+    requires (not has_allocator_traits_deallocate<Alloc&&,P,N&&>
+              and has_rebind_allocator<pointer_pointee_t<P>,Alloc&&>)
+              and has_allocator_traits_deallocate<
+                rebind_allocator_result_t<pointer_pointee_t<P>,Alloc&&>,
+                P, N&&
+              >
   constexpr decltype(auto) operator()(Alloc&& alloc, P p, N&& n) const
   {
     auto rebound_alloc = rebind_allocator<pointer_pointee_t<P>>(std::forward<Alloc>(alloc));
