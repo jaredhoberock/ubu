@@ -412,6 +412,114 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
 };
 
 
+template<ubu::tensor_like T>
+class enumerated_tensor_iterator : public ubu::tensor_iterator<T>
+{
+  private:
+    using super_t = ubu::tensor_iterator<T>;
+
+  public:
+    // ctors
+    using super_t::super_t;
+
+    // this iterator returns the pair (tensor_coordinate_t, tensor_reference_t) when dereferenced
+    using value_type = std::pair<ubu::tensor_coordinate_t<T>, typename super_t::reference>;
+
+    constexpr value_type operator*() const
+    {
+      auto coord_iter = super_t::coord();
+      return {*coord_iter, super_t::operator*()};
+    }
+
+    template<std::random_access_iterator S = super_t>
+    constexpr value_type operator[](std::iter_difference_t<S> n) const
+    {
+      auto coord_iter = super_t::coord();
+      return {coord_iter[n], super_t::operator[](n)};
+    }
+
+    // XXX we wouldn't have to include the stuff that follows if the base classes used deduced this 
+
+    constexpr enumerated_tensor_iterator& operator++()
+    {
+      super_t::operator++();
+      return *this;
+    }
+
+    constexpr enumerated_tensor_iterator operator++(int)
+    {
+      enumerated_tensor_iterator result = *this;
+      ++(*this);
+      return result;
+    }
+
+    // XXX if we instead try using super_t::operator== for this operator, std::regular complains because of reasons
+    bool operator==(const enumerated_tensor_iterator&) const = default;
+
+    using super_t::operator!=;
+
+    // bidirectional_iterator requirements
+    constexpr enumerated_tensor_iterator& operator--()
+    {
+      super_t::operator--();
+      return *this;
+    }
+
+    constexpr enumerated_tensor_iterator operator--(int)
+    {
+      enumerated_tensor_iterator result = *this;
+      --(*this);
+      return result;
+    }
+
+    // random_access_iterator requirements
+    template<std::random_access_iterator S = super_t>
+    constexpr enumerated_tensor_iterator& operator+=(std::iter_difference_t<S> n)
+    {
+      super_t::operator+=(n);
+      return *this;
+    }
+
+    template<std::random_access_iterator S = super_t>
+    constexpr enumerated_tensor_iterator& operator-=(std::iter_difference_t<S> n)
+    {
+      super_t::operator-=(n);
+      return *this;
+    }
+
+    template<std::random_access_iterator S = super_t>
+    constexpr enumerated_tensor_iterator operator+(std::iter_difference_t<S> n) const
+    {
+      enumerated_tensor_iterator result{*this};
+      return result += n;
+    }
+
+    template<std::random_access_iterator S = super_t>
+    friend constexpr enumerated_tensor_iterator operator+(std::iter_difference_t<S> n, const enumerated_tensor_iterator& self)
+    {
+      return self + n;
+    }
+
+    template<std::random_access_iterator S = super_t>
+    constexpr enumerated_tensor_iterator operator-(std::iter_difference_t<S> n) const
+    {
+      enumerated_tensor_iterator result{*this};
+      return result -= n;
+    }
+
+    template<std::random_access_iterator S = super_t>
+    constexpr auto operator-(const enumerated_tensor_iterator& rhs) const
+    {
+      return super_t::operator-(rhs);
+    }
+};
+
+
+// XXX this deduction guide becomes unnecessary after P2582
+template<ubu::tensor_like T>
+enumerated_tensor_iterator(T) -> enumerated_tensor_iterator<T>;
+
+
 } // end ubu
 
 #include "../detail/epilogue.hpp"

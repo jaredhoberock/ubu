@@ -34,6 +34,7 @@
 #include "tensor/coordinate.hpp"
 #include "tensor/domain.hpp"
 #include "tensor/element_exists.hpp"
+#include "tensor/enumerate.hpp"
 #include "tensor/fancy_span.hpp"
 #include "tensor/iterator.hpp"
 #include "tensor/lattice.hpp"
