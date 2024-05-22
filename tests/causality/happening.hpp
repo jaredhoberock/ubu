@@ -18,9 +18,18 @@ __global__ void device_invoke(F f)
 namespace ns = ubu;
 
 
+struct happening_with_static_member_function
+{
+  static happening_with_static_member_function initial_happening()
+  {
+    return {};
+  }
+};
+
+
 struct happening_with_member_function
 {
-  happening_with_member_function after_all(const happening_with_member_function&) const
+  happening_with_member_function initial_happening() const
   {
     return {};
   }
@@ -29,7 +38,7 @@ struct happening_with_member_function
 
 struct happening_with_free_function {};
 
-happening_with_free_function after_all(const happening_with_free_function&, const happening_with_free_function&)
+happening_with_free_function initial_happening(happening_with_free_function)
 {
   return {};
 }
@@ -37,6 +46,8 @@ happening_with_free_function after_all(const happening_with_free_function&, cons
 
 void test()
 {
+  static_assert(ns::happening<happening_with_static_member_function>);
+
   static_assert(ns::happening<happening_with_member_function>);
 
   static_assert(ns::happening<happening_with_free_function>);

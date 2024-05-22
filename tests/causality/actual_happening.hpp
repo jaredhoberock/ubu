@@ -20,14 +20,14 @@ namespace ns = ubu;
 
 struct actual_happening_with_member_functions
 {
+  static actual_happening_with_member_functions initial_happening()
+  {
+    return {};
+  }
+
   bool has_happened() const
   {
     return true;
-  }
-
-  actual_happening_with_member_functions after_all(const actual_happening_with_member_functions&) const
-  {
-    return {};
   }
 };
 
@@ -40,7 +40,7 @@ struct actual_happening_with_has_happened_member
   }
 };
 
-actual_happening_with_has_happened_member after_all(const actual_happening_with_has_happened_member&, const actual_happening_with_has_happened_member&)
+actual_happening_with_has_happened_member initial_happening(actual_happening_with_has_happened_member)
 {
   return {};
 }
@@ -48,20 +48,20 @@ actual_happening_with_has_happened_member after_all(const actual_happening_with_
 
 struct actual_happening_with_free_functions {};
 
+actual_happening_with_free_functions initial_happening(actual_happening_with_free_functions)
+{
+  return {};
+}
+
 bool has_happened(const actual_happening_with_free_functions&)
 {
   return true;
 }
 
-actual_happening_with_free_functions after_all(const actual_happening_with_free_functions&, const actual_happening_with_free_functions&)
-{
-  return {};
-}
-
 
 struct actual_happening_with_has_happened_free_function
 {
-  actual_happening_with_has_happened_free_function after_all(const actual_happening_with_has_happened_free_function&) const
+  static actual_happening_with_has_happened_free_function initial_happening()
   {
     return {};
   }

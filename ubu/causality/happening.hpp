@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "after_all.hpp"
+#include "initial_happening.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -16,10 +16,10 @@ concept happening =
   std::is_nothrow_move_constructible_v<H>
   and std::is_nothrow_destructible_v<H>
 
-  // a happening must be the effect of two lvalue refs
-  and requires(std::remove_cvref_t<H>& h1, std::remove_cvref_t<H>& h2)
+  // a happening must support initial_happening, and its result type must match its argument type
+  and requires(std::remove_cvref_t<H>& h)
   {
-    { ubu::after_all(std::move(h1), std::move(h2)) } -> std::same_as<std::remove_cvref_t<H>>;
+    { initial_happening(h) } -> std::same_as<std::remove_cvref_t<H>>;
   }
 ;
 

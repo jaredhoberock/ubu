@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "happening.hpp"
 #include <concepts>
+#include <future>
 #include <type_traits>
 
 
@@ -17,29 +17,28 @@ namespace detail
 template<class T>
 concept has_initial_happening_member_function = requires(T arg)
 {
-  {arg.initial_happening()} -> happening;
+  // XXX this should require that the result is an object
+  arg.initial_happening();
 };
 
 template<class T>
 concept has_initial_happening_free_function = requires(T arg)
 {
-  {initial_happening(arg)} -> happening;
+  // XXX this should require that the result is an object
+  initial_happening(arg);
 };
 
 template<class T>
 concept has_happening_type_member_type = requires
 {
   typename std::decay_t<T>::happening_type;
-  requires happening<typename std::decay_t<T>::happening_type>;
 };
 
 template<class T>
 concept has_initial_happening_static_member_function = requires
 {
-  requires happening<T>;
-
-  // the result of initial_happening() be the same happening type as T
-  {T::initial_happening()} -> std::same_as<T>;
+  // XXX this should require that the result is an object
+  T::initial_happening();
 };
 
 
@@ -69,6 +68,17 @@ struct dispatch_initial_happening
   {
     using happening_type = typename std::decay_t<T>::happening_type;
     return happening_type::initial_happening();
+  }
+
+  // customization for std::future<void>
+  // XXX per the comment in after_all.hpp, rather than provide this customization for std::future<void>,
+  // maybe we should just implement a bare-bones c++ event type using standard synchronization primitives
+  // and allow std::future<void> to be created from that
+  inline std::future<void> operator()(const std::future<void>&) const
+  {
+    std::promise<void> p;
+    p.set_value();
+    return p.get_future();
   }
 };
 
