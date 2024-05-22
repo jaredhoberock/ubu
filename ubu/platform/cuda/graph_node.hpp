@@ -36,6 +36,11 @@ class graph_node
       return graph_;
     }
 
+    inline graph_node initial_happening() const
+    {
+      return {graph(), detail::make_empty_node(graph()), stream_};
+    }
+
     inline void wait()
     {
       detail::instantiate_and_enable_connected_subgraph_and_launch(stream_, graph(), native_handle()).wait();
