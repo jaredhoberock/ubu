@@ -3,7 +3,7 @@
 #include "detail/prologue.hpp"
 
 #include "causality/actual_happening.hpp"
-#include "causality/because_of.hpp"
+#include "causality/after_all.hpp"
 #include "causality/future.hpp"
 #include "causality/happening.hpp"
 #include "causality/has_happened.hpp"

@@ -23,7 +23,7 @@ struct past_event
     return {};
   }
 
-  past_event because_of(const past_event&...) const
+  past_event after_all(const past_event&...) const
   {
     return {};
   }
