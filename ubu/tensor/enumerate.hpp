@@ -1,17 +1,28 @@
 #pragma once
 
+#include "../detail/prologue.hpp"
+
+#include "all.hpp"
+#include "concepts/tensor_like.hpp"
+#include "iterator.hpp"
 #include <ranges>
-#include <ubu/ubu.hpp>
 #include <utility>
 
-template<ubu::tensor_like T>
+namespace ubu
+{
+
+template<tensor_like T>
 constexpr std::ranges::range auto enumerate(T&& tensor)
 {
-  auto view = ubu::all(std::forward<T>(tensor));
+  auto view = all(std::forward<T>(tensor));
 
-  ubu::enumerated_tensor_iterator begin(view);
-  ubu::tensor_sentinel end;
+  enumerated_tensor_iterator begin(view);
+  tensor_sentinel end;
 
   return std::ranges::subrange(begin, end);
 }
+
+} // end ubu
+
+#include "../detail/epilogue.hpp"
 
