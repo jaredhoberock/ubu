@@ -141,9 +141,9 @@ class event
     }
 
     template<std::same_as<event>... Es>
-    event because_of(const Es&... es) const
+    event after_all(const Es&... es) const
     {
-      return {0, *this, es...};
+      return {device_, *this, es...};
     }
 
   private:
@@ -186,7 +186,7 @@ class event
         origin_target_{current_target()}
     {}
 
-    // this ctor is available to because_of
+    // this ctor is available to after_all
     template<std::same_as<event>... Es>
     event(int device, const event& e, const Es&... es)
       : event{device}

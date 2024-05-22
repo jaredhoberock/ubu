@@ -42,7 +42,7 @@ class graph_node
     }
 
     template<std::same_as<graph_node>... Nodes>
-    graph_node because_of(const Nodes&... nodes) const
+    graph_node after_all(const Nodes&... nodes) const
     {
       return {graph(), detail::make_empty_node(graph_, native_handle(), nodes.native_handle()...), stream_};
     }

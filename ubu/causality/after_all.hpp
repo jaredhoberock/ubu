@@ -15,47 +15,47 @@ namespace detail
 
 
 template<class C, class... Cs>
-concept has_because_of_member_function = requires(C c, Cs... cs)
+concept has_after_all_member_function = requires(C c, Cs... cs)
 {
-  c.because_of(cs...);
+  c.after_all(cs...);
 };
 
 template<class C, class... Cs>
-concept has_because_of_free_function = requires(C c, Cs... cs)
+concept has_after_all_free_function = requires(C c, Cs... cs)
 {
-  because_of(c,cs...);
+  after_all(c,cs...);
 };
 
 template<class C, class... Cs>
-concept has_because_of_customization = 
-  has_because_of_member_function<C,Cs...> or
-  has_because_of_free_function<C,Cs...>
+concept has_after_all_customization = 
+  has_after_all_member_function<C,Cs...> or
+  has_after_all_free_function<C,Cs...>
 ;
 
 
-struct dispatch_because_of
+struct dispatch_after_all
 {
   template<class C, class... Cs>
-    requires has_because_of_member_function<C&&,Cs&&...>
+    requires has_after_all_member_function<C&&,Cs&&...>
   constexpr auto operator()(C&& c, Cs&&... cs) const
   {
-    return std::forward<C>(c).because_of(std::forward<Cs>(cs)...);
+    return std::forward<C>(c).after_all(std::forward<Cs>(cs)...);
   }
 
   template<class C, class... Cs>
-    requires (!has_because_of_member_function<C&&,Cs&&...> and
-               has_because_of_free_function<C&&,Cs&&...>)
+    requires (    not has_after_all_member_function<C&&,Cs&&...>
+              and has_after_all_free_function<C&&,Cs&&...>)
   constexpr auto operator()(C&& c, Cs&&... cs) const
   {
-    return because_of(std::forward<C>(c), std::forward<Cs>(cs)...);
+    return after_all(std::forward<C>(c), std::forward<Cs>(cs)...);
   }
 
 
   // a single cause 
   template<class C>
-    requires (!has_because_of_member_function<C&&> and
-              !has_because_of_free_function<C&&> and
-              std::constructible_from<std::remove_cvref_t<C>, C&&>)
+    requires (    not has_after_all_member_function<C&&>
+              and not has_after_all_free_function<C&&>
+              and std::constructible_from<std::remove_cvref_t<C>, C&&>)
   constexpr std::remove_cvref_t<C> operator()(C&& cause) const
   {
     return std::forward<C>(cause);
@@ -64,9 +64,9 @@ struct dispatch_because_of
 
   // at least three causes
   template<class C1, class C2, class C3, class... Cs>
-    requires (!has_because_of_member_function<C1&&,C2&&,C3&&,Cs&&...> and
-              !has_because_of_free_function<C1&&,C2&&,C3&&,Cs&&...> and
-              has_because_of_customization<C1&&,C2&&>)
+    requires (    not has_after_all_member_function<C1&&,C2&&,C3&&,Cs&&...>
+              and not has_after_all_free_function<C1&&,C2&&,C3&&,Cs&&...>
+              and has_after_all_customization<C1&&,C2&&>)
   constexpr auto operator()(C1&& c1, C2&& c2, C3&& c3, Cs&&... cs) const
   {
     // combine c1 and c2
@@ -98,13 +98,13 @@ struct dispatch_because_of
 namespace
 {
 
-constexpr detail::dispatch_because_of because_of;
+constexpr detail::dispatch_after_all after_all;
 
 } // end anonymous namespace
 
 
 template<class C, class... Cs>
-using because_of_result_t = decltype(ubu::because_of(std::declval<C>(), std::declval<Cs>()...));
+using after_all_result_t = decltype(after_all(std::declval<C>(), std::declval<Cs>()...));
 
 
 } // end ubu

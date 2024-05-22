@@ -20,7 +20,7 @@ namespace ns = ubu;
 
 struct happening_with_member_function
 {
-  happening_with_member_function because_of(const happening_with_member_function&) const
+  happening_with_member_function after_all(const happening_with_member_function&) const
   {
     return {};
   }
@@ -29,7 +29,7 @@ struct happening_with_member_function
 
 struct happening_with_free_function {};
 
-happening_with_free_function because_of(const happening_with_free_function&, const happening_with_free_function&)
+happening_with_free_function after_all(const happening_with_free_function&, const happening_with_free_function&)
 {
   return {};
 }

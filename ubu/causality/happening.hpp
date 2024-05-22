@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "because_of.hpp"
+#include "after_all.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -19,7 +19,7 @@ concept happening =
   // a happening must be the effect of two lvalue refs
   and requires(std::remove_cvref_t<H>& h1, std::remove_cvref_t<H>& h2)
   {
-    { ubu::because_of(std::move(h1), std::move(h2)) } -> std::same_as<std::remove_cvref_t<H>>;
+    { ubu::after_all(std::move(h1), std::move(h2)) } -> std::same_as<std::remove_cvref_t<H>>;
   }
 ;
 

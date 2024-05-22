@@ -25,7 +25,7 @@ struct actual_happening_with_member_functions
     return true;
   }
 
-  actual_happening_with_member_functions because_of(const actual_happening_with_member_functions&) const
+  actual_happening_with_member_functions after_all(const actual_happening_with_member_functions&) const
   {
     return {};
   }
@@ -40,7 +40,7 @@ struct actual_happening_with_has_happened_member
   }
 };
 
-actual_happening_with_has_happened_member because_of(const actual_happening_with_has_happened_member&, const actual_happening_with_has_happened_member&)
+actual_happening_with_has_happened_member after_all(const actual_happening_with_has_happened_member&, const actual_happening_with_has_happened_member&)
 {
   return {};
 }
@@ -53,7 +53,7 @@ bool has_happened(const actual_happening_with_free_functions&)
   return true;
 }
 
-actual_happening_with_free_functions because_of(const actual_happening_with_free_functions&, const actual_happening_with_free_functions&)
+actual_happening_with_free_functions after_all(const actual_happening_with_free_functions&, const actual_happening_with_free_functions&)
 {
   return {};
 }
@@ -61,7 +61,7 @@ actual_happening_with_free_functions because_of(const actual_happening_with_free
 
 struct actual_happening_with_has_happened_free_function
 {
-  actual_happening_with_has_happened_free_function because_of(const actual_happening_with_has_happened_free_function&) const
+  actual_happening_with_has_happened_free_function after_all(const actual_happening_with_has_happened_free_function&) const
   {
     return {};
   }

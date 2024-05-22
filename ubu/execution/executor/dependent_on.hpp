@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../causality/because_of.hpp"
+#include "../../causality/after_all.hpp"
 #include "../../causality/happening.hpp"
 #include "../../causality/wait.hpp"
 #include "concepts/executor.hpp"
@@ -51,13 +51,13 @@ struct dispatch_dependent_on
     return dependent_on(std::forward<E>(executor), std::forward<Happenings>(happenings)...);
   }
 
-  // the default path drops the executor and calls because_of
+  // the default path drops the executor and calls after_all
   template<executor E, happening... Happenings>
     requires (!has_dependent_on_member_function<E&&,Happenings&&...> and
               !has_dependent_on_free_function<E&&,Happenings&&...>)
   constexpr auto operator()(E&&, Happenings&&... happenings) const
   {
-    return because_of(std::forward<Happenings>(happenings)...);
+    return after_all(std::forward<Happenings>(happenings)...);
   }
 };
 
