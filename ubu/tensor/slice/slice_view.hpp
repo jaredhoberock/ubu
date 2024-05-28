@@ -40,9 +40,8 @@ class slice_view
       return tensor_[tensor_coord];
     }
 
-    // XXX providing element_exists when T is sized is a pessimization
-    // XXX we only need to provide element_exists if T is sparse,
-    //     but std::ranges::size doesn't seem to work correctly
+    template<class T_ = T>
+      requires sized_tensor_like<T_>
     constexpr bool element_exists(shape_type coord) const
     {
       auto tensor_coord = coordinate_cast<tensor_coordinate_t<T>>(unslice_coordinate(coord, katana_));

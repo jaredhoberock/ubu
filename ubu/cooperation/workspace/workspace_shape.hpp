@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../memory/buffer/get_buffer.hpp"
+#include "../../miscellaneous/size.hpp"
 #include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
 #include "../../tensor/coordinate/point.hpp"
 #include "hierarchical_workspace.hpp"
 #include "workspace.hpp"
-#include <ranges>
 #include <utility>
 
 namespace ubu
@@ -17,13 +17,13 @@ namespace ubu
 template<workspace W>
 inline constexpr auto workspace_shape(W ws)
 {
-  return std::ranges::size(get_buffer(ws));
+  return size(get_buffer(ws));
 }
 
 template<hierarchical_workspace W>
 inline constexpr auto workspace_shape(W ws)
 {
-  return detail::tuple_append(detail::ensure_tuple_similar_to<size2>(workspace_shape(get_local_workspace(ws))), std::ranges::size(get_buffer(ws)));
+  return detail::tuple_append(detail::ensure_tuple_similar_to<size2>(workspace_shape(get_local_workspace(ws))), size(get_buffer(ws)));
 }
 
 template<workspace W>

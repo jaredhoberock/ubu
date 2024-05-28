@@ -38,12 +38,6 @@ concept has_shape_free_function = requires(T arg)
   { shape(arg) } -> coordinate;
 };
 
-template<class T>
-concept has_ranges_size = requires(T arg)
-{
-  { std::ranges::size(arg) } -> coordinate;
-};
-
 
 struct dispatch_shape
 {
@@ -75,7 +69,7 @@ struct dispatch_shape
     requires (not has_shape_member_variable<T&&>
               and not has_shape_member_function<T&&>
               and not has_shape_free_function<T&&>
-              and has_ranges_size<T&&>)
+              and std::ranges::sized_range<T&&>)
   constexpr coordinate auto operator()(T&& arg) const
   {
     return std::ranges::size(std::forward<T>(arg));

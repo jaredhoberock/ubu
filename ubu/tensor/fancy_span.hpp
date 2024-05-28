@@ -60,6 +60,7 @@ class fancy_span
     {}
 
     // XXX i think using std::ranges::size demotes fancy integers
+    //     we should use span_like here
     template<class R>
       requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>
                 and std::convertible_to<decltype(std::ranges::data(std::declval<R&&>())), P>
@@ -223,6 +224,7 @@ template<pointer_like P, integral_like S>
 fancy_span(P, S) -> fancy_span<P,S>;
 
 // XXX i think using std::ranges::range_size_t demotes fancy integers
+//     we should use span_like here
 template<class R>
   requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>)
 fancy_span(R&&) -> fancy_span<decltype(std::ranges::data(std::declval<R&&>())), std::ranges::range_size_t<R&&>>;

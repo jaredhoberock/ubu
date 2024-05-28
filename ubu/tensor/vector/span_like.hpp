@@ -11,6 +11,7 @@ namespace ubu
 {
 
 // something is span-like if it is 1D, sized, and provides access to its data
+// XXX we also need to require that T is a view
 template<class T>
 concept span_like =
   sized_vector_like<T>

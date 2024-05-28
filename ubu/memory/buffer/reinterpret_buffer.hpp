@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/size.hpp"
 #include "buffer_like.hpp"
 #include <cstddef>
 #include <ranges>
@@ -18,7 +19,7 @@ constexpr std::span<T> reinterpret_buffer(B buffer, std::size_t num_objects)
 template<class T, buffer_like B>
 constexpr std::span<T> reinterpret_buffer(B buffer)
 {
-  return reinterpret_buffer<T>(buffer, std::ranges::size(buffer) / sizeof(T));
+  return reinterpret_buffer<T>(buffer, size(buffer) / sizeof(T));
 }
 
 } // end ubu

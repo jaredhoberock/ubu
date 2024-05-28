@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../memory/buffer/empty_buffer.hpp"
+#include "../../miscellaneous/size.hpp"
 #include "../../tensor/coordinate/colexicographical_lift.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
@@ -125,7 +126,7 @@ struct basic_cooperator
               and sized_barrier_like<barrier_t<local_workspace_t<W_>>>)
   constexpr auto subgroup_and_coord() const
   {
-    return tile(std::ranges::size(get_barrier(get_local_workspace(workspace_))));
+    return tile(size(get_barrier(get_local_workspace(workspace_))));
   }
 
   private:
