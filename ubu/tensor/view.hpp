@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../miscellaneous/size.hpp"
 #include "compose.hpp"
 #include "concepts/sized_tensor_like.hpp"
 #include "concepts/tensor_like.hpp"
@@ -15,7 +16,6 @@
 #include "traits/tensor_shape.hpp"
 #include "traits/tensor_coordinate.hpp"
 #include "vector/span_like.hpp"
-#include <ranges>
 
 namespace ubu
 {
@@ -55,7 +55,7 @@ class view
       requires (not tensor_like<T_> and sized_tensor_like<L_>)
     constexpr auto size() const
     {
-      return std::ranges::size(layout_);
+      return ubu::size(layout_);
     }
 
     // precondition: element_exists(coord)

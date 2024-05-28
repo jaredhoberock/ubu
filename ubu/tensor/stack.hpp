@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../miscellaneous/size.hpp"
 #include "compose.hpp"
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/constant.hpp"
@@ -20,7 +21,6 @@
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
 #include "traits/tensor_reference.hpp"
-#include <ranges>
 #include <span>
 #include <type_traits>
 
@@ -94,7 +94,7 @@ class stacked_view
       requires (sized_tensor_like<A_> and sized_tensor_like<B_>)
     constexpr auto size() const
     {
-      return std::ranges::size(a_) + std::ranges::size(b_);
+      return ubu::size(a_) + ubu::size(b_);
     }
 
     template<slicer_for<shape_type> K, class A_ = A, class B_ = B>

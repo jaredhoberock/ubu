@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/size.hpp"
 #include "../../tensor/traits/tensor_reference.hpp"
 #include "../../tensor/compose.hpp"
 #include "../../tensor/concepts/tensor_like.hpp"
@@ -12,7 +13,6 @@
 #include "../cooperator/size.hpp"
 #include "../cooperator/synchronize.hpp"
 #include <concepts>
-#include <ranges>
 #include <utility>
 
 namespace ubu
@@ -41,7 +41,7 @@ constexpr void coop_for_each(C self, T tensor, F f)
   if constexpr (vector_like<T>)
   {
     // fold the vector into a matrix and recurse to the else branch
-    std::pair shape(ceil_div(std::ranges::size(tensor), size(self)), size(self));
+    std::pair shape(ceil_div(size(tensor), size(self)), size(self));
 
     coop_for_each(self, compose(tensor, row_major(shape)), f);
   }

@@ -10,6 +10,7 @@ namespace ubu
 {
 
 
+// XXX we should make buffer_like a refinement of span_like
 template<class T>
 concept buffer_like =
   std::ranges::view<std::remove_cvref_t<T>>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
+#include "../miscellaneous/size.hpp"
 #include "concepts/tensor_like.hpp"
 #include "fancy_span.hpp"
 #include "vector/span_like.hpp"
@@ -62,9 +63,7 @@ struct dispatch_all
               and not trivially_copy_constructible<std::remove_cvref_t<S&&>>)
   constexpr span_like auto operator()(S&& s) const
   {
-    // XXX note that we avoid using std::ranges::size so that we don't demote fancy sizes
-    // XXX we really need to have our own size CPO
-    return fancy_span(std::ranges::data(std::forward<S>(s)), std::forward<S>(s).size());
+    return fancy_span(std::ranges::data(std::forward<S>(s)), size(std::forward<S>(s)));
   }
 
   // XXX we could have another default path here for std::ranges::random_access_range

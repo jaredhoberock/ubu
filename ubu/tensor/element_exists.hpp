@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
+#include "../miscellaneous/size.hpp"
 #include <concepts>
 #include <ranges>
 #include <utility>
@@ -22,19 +23,6 @@ concept has_element_exists_free_function = requires(T arg, C coord)
   { element_exists(arg, coord) } -> std::convertible_to<bool>;
 };
 
-template<class T>
-concept has_std_ranges_size = requires(T arg)
-{
-  std::ranges::size(arg);
-};
-
-template<class T>
-concept has_std_size = requires(T arg)
-{
-  // std::ranges::size rejects a member function .size() which returns ubu::constant, but std::size does not
-  std::size(arg);
-};
-
 struct dispatch_element_exists
 {
   template<class T, class C>
@@ -48,14 +36,13 @@ struct dispatch_element_exists
     {
       return element_exists(std::forward<T>(arg), std::forward<C>(coord));
     }
-    else if constexpr (has_std_ranges_size<T&&> or has_std_size<T&&>)
+    else if constexpr (sized<T&&>)
     {
-      // XXX we probably need to introduce our own CPO named size
       return true;
     }
     else
     {
-      static_assert(has_std_size<T&&>, "Couldn't find customization for element_exists.");
+      static_assert(sized<T&&>, "Couldn't find customization for element_exists.");
     }
   }
 };

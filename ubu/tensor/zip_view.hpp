@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../miscellaneous/size.hpp"
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/concepts/coordinate.hpp"
 #include "concepts/sized_tensor_like.hpp"
@@ -14,7 +15,6 @@
 #include "traits/tensor_coordinate.hpp"
 #include "traits/tensor_reference.hpp"
 #include "traits/tensor_shape.hpp"
-#include <ranges>
 #include <tuple>
 
 
@@ -56,7 +56,7 @@ class zip_view
       requires (sized_tensor_like<T_> and (... and sized_tensor_like<Ts>))
     constexpr auto size() const
     {
-      return std::ranges::size(get<0>(tuple_of_tensors_));
+      return ubu::size(get<0>(tuple_of_tensors_));
     }
 
     template<coordinate_for<T> C>

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/size.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../element_exists.hpp"
 #include "../iterator.hpp"
 #include "../shape/shape.hpp"
-#include <ranges>
 #include <type_traits>
 
 namespace ubu
@@ -34,7 +34,7 @@ class uniform_masked_view
       requires sized_tensor_like<T>
     constexpr auto size() const
     {
-      return std::ranges::size(tensor_);
+      return ubu::size(tensor_);
     }
 
     // precondition: element_exists(coord)
