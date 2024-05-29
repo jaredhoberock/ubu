@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection/is_host.hpp"
-#include "../../miscellaneous/bounded.hpp"
-#include "../coordinate/constant.hpp"
+#include "../../miscellaneous/constant.hpp"
+#include "../../miscellaneous/integral/bounded.hpp"
 #include "../element_exists.hpp"
 #include "../fancy_span.hpp"
 #include "../shape/shape.hpp"

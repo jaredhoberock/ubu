@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/constant.hpp"
+#include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/concepts/equal_rank.hpp"
-#include "../../coordinate/concepts/integral_like.hpp"
-#include "../../coordinate/constant.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"
 #include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "../../coordinate/traits/rank.hpp"

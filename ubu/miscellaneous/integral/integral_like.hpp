@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
-#include "../detail/as_integral.hpp"
-#include "../detail/tuple_algorithm.hpp"
+#include "../../detail/prologue.hpp"
+#include "detail/as_integral.hpp"
 #include <concepts>
 #include <utility>
 
@@ -58,17 +57,10 @@ concept integral_like = requires(T i)
   detail::as_integral(i  ^ i);
   detail::as_integral(i << i);
   detail::as_integral(i >> i);
-}
-
-#if defined(__circle_lang__)
-// XXX WAR https://godbolt.org/z/747sxhzE3
-and not detail::tuple_like<T>
-#endif
-
-;
+};
 
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

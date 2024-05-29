@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
+#include "../../../miscellaneous/integral/detail/as_integral.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/as_integral.hpp"
 #include <concepts>
 
 namespace ubu

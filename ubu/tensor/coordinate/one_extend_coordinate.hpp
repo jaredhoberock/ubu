@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "concepts/integral_like.hpp"
 #include "concepts/subdimensional.hpp"
 #include "concepts/weakly_congruent.hpp"
 #include "detail/tuple_algorithm.hpp"

@@ -1,5 +1,5 @@
-#include <ubu/miscellaneous/bounded.hpp>
-#include <ubu/tensor/coordinate/constant.hpp>
+#include <ubu/miscellaneous/constant.hpp>
+#include <ubu/miscellaneous/integral/bounded.hpp>
 #include <functional>
 #include <iostream>
 

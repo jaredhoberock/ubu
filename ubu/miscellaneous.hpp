@@ -2,10 +2,9 @@
 
 #include "detail/prologue.hpp"
 
-#include "miscellaneous/bounded.hpp"
+#include "miscellaneous/constant.hpp"
 #include "miscellaneous/constant_valued.hpp"
-#include "miscellaneous/size.hpp"
-#include "miscellaneous/smaller.hpp"
+#include "miscellaneous/integral.hpp"
 
 #include "detail/epilogue.hpp"
 

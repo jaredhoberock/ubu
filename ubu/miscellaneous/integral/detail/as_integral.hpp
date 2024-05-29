@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../miscellaneous/constant_valued.hpp"
+#include "../../constant_valued.hpp"
 #include <concepts>
 #include <type_traits>
 

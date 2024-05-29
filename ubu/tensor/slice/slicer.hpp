@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/concepts/integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "underscore.hpp"
 #include <tuple>

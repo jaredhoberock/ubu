@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/smaller.hpp"
+#include "../../miscellaneous/integral/smaller.hpp"
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/math/coordinate_sum.hpp"
+#include "../coordinate/coordinate_sum.hpp"
 #include "../compose.hpp"
 #include "../traits/tensor_element.hpp"
 #include "../view.hpp"

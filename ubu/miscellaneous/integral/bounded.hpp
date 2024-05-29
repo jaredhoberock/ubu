@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "../tensor/coordinate/constant.hpp"
+#include "../../detail/prologue.hpp"
+#include "../constant.hpp"
 #include <concepts>
 #include <iostream>
 #include <limits>
@@ -249,5 +249,5 @@ class std::numeric_limits<ubu::bounded<b>> : std::numeric_limits<decltype(b)>
     }
 };
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

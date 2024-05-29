@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinate/constant.hpp>
+#include <ubu/miscellaneous/constant.hpp>
 #include <ubu/tensor/coordinate/iterator/colexicographical_iterator.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <utility>

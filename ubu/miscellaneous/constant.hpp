@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
-#include "concepts/coordinate.hpp"
-#include "detail/tuple_algorithm.hpp"
-#include "zeros.hpp"
+#include "../detail/prologue.hpp"
+#include "../tensor/coordinate/concepts/coordinate.hpp"
+#include "../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../tensor/coordinate/zeros.hpp"
 #include <concepts>
 #include <cstdint>
 #include <limits>
@@ -97,6 +97,7 @@ struct constant
 
 
 // specialize zeros<constant<v>>
+// XXX we need a better way do make zeros work without this file depending on stuff underneath tensor/coordinate/
 template<auto v>
   requires coordinate<decltype(v)>
 constexpr auto zeros<constant<v>> = zeros<decltype(v)>;
@@ -351,5 +352,5 @@ struct std::formatter<ubu::constant<v>>
 #endif // defined(__cpp_lib_format)
 #endif // __has_include(<format>)
 
-#include "../../detail/epilogue.hpp"
+#include "../detail/epilogue.hpp"
 

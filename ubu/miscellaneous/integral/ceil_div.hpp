@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../concepts/integral_like.hpp"
 #include "../constant.hpp"
+#include "integral_like.hpp"
 
 namespace ubu
 {
@@ -18,5 +18,5 @@ constexpr integral_like auto ceil_div(T1 dividend, T2 divisor)
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

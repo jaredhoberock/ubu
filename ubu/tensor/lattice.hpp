@@ -4,9 +4,9 @@
 
 #include "coordinate/compare/is_below.hpp"
 #include "coordinate/concepts/coordinate.hpp"
+#include "coordinate/coordinate_sum.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
 #include "coordinate/iterator/lexicographical_iterator.hpp"
-#include "coordinate/math/coordinate_sum.hpp"
 #include "coordinate/traits/rank.hpp"
 #include "coordinate/zeros.hpp"
 #include "shape/shape_size.hpp"

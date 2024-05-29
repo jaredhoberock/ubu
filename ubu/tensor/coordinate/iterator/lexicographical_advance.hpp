@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../concepts/integral_like.hpp"
 #include "../coordinate_cast.hpp"
-#include "../math/coordinate_sum.hpp"
+#include "../coordinate_sum.hpp"
 #include "../lexicographical_lift.hpp"
 
 

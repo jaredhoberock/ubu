@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../concepts/integral_like.hpp"
+#include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <tuple>

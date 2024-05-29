@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "concepts/coordinate.hpp"
-#include "concepts/integral_like.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include "zeros.hpp"
 #include <concepts>
