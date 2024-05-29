@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/coordinate/concepts/integral_like.hpp"
 #include "../detail/tag_invoke.hpp"
+#include "integral_like.hpp"
 #include <concepts>
 #include <ranges>
 #include <utility>

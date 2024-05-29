@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../tensor/coordinate/concepts/integral_like.hpp"
 #include "../constant_valued.hpp"
+#include "integral_like.hpp"
 
 namespace ubu
 {

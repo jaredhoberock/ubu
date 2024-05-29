@@ -4,7 +4,7 @@
 
 #include "../memory/pointer/pointer_like.hpp"
 #include "../miscellaneous/constant_valued.hpp"
-#include "../tensor/coordinate/concepts/integral_like.hpp"
+#include "../miscellaneous/integral/integral_like.hpp"
 #include "../tensor/coordinate/constant.hpp"
 #include <concepts>
 #include <cstdint>

@@ -2,9 +2,9 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../../coordinate/concepts/congruent.hpp"
 #include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/concepts/integral_like.hpp"
 #include "../../coordinate/concepts/weakly_congruent.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
 #include "../../coordinate/detail/as_integral_like.hpp"

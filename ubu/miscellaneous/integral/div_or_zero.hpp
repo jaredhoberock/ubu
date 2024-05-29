@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "integral_like.hpp"
 
 namespace ubu
 {

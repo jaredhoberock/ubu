@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "concepts/hierarchical_cooperator.hpp"
 #include "size.hpp"
 #include "subgroup.hpp"

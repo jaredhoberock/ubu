@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../../layout/stride/apply_stride.hpp"
 #include "../../layout/stride/compact_column_major_stride.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../concepts/congruent.hpp"
-#include "../concepts/integral_like.hpp"
 #include "../coordinate_difference.hpp"
 
 namespace ubu

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../tensor/coordinate/concepts/integral_like.hpp"
+#include "../miscellaneous/integral/integral_like.hpp"
 #include "../tensor/coordinate/traits/default_coordinate.hpp"
 #include "../tensor/fancy_span.hpp"
 #include "../tensor/traits/tensor_element.hpp"

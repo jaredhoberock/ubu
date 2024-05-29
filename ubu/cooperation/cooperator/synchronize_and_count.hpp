@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "traits/cooperator_size.hpp"
 #include <cassert>
 

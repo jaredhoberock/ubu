@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
-#include "../detail/as_integral.hpp"
+#include "../../detail/prologue.hpp"
+#include "detail/as_integral.hpp"
 #include <concepts>
 #include <utility>
 
@@ -62,5 +62,5 @@ concept integral_like = requires(T i)
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 
