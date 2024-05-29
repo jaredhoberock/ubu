@@ -7,7 +7,7 @@
 #include "../concepts/coordinate.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/integral_like.hpp"
-#include "../math/coordinate_difference.hpp"
+#include "../coordinate_difference.hpp"
 
 namespace ubu
 {

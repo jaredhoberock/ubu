@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/math/ceil_div.hpp"
+#include "../../../../miscellaneous/integral/ceil_div.hpp"
 #include "warp_like.hpp"
 #include <concepts>
 #include <optional>

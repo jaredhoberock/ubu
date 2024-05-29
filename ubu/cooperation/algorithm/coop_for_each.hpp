@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/integral/ceil_div.hpp"
 #include "../../miscellaneous/integral/size.hpp"
 #include "../../tensor/traits/tensor_reference.hpp"
 #include "../../tensor/compose.hpp"
 #include "../../tensor/concepts/tensor_like.hpp"
-#include "../../tensor/coordinate/math/ceil_div.hpp"
 #include "../../tensor/layout/row_major.hpp"
 #include "../../tensor/vector/vector_like.hpp"
 #include "../cooperator/concepts/cooperator.hpp"

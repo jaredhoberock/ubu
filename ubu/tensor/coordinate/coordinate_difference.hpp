@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../concepts/congruent.hpp"
-#include "../concepts/coordinate.hpp"
-#include "../concepts/integral_like.hpp"
-#include "../detail/tuple_algorithm.hpp"
+#include "concepts/congruent.hpp"
+#include "concepts/coordinate.hpp"
+#include "concepts/integral_like.hpp"
+#include "detail/tuple_algorithm.hpp"
 
 
 namespace ubu
@@ -31,5 +31,5 @@ constexpr congruent<C1> auto coordinate_difference(const C1& coord1, const C2& c
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

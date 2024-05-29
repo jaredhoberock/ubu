@@ -7,7 +7,7 @@
 #include "../concepts/integral_like.hpp"
 #include "../coordinate_cast.hpp"
 #include "../colexicographical_lift.hpp"
-#include "../math/coordinate_sum.hpp"
+#include "../coordinate_sum.hpp"
 #include <concepts>
 
 
