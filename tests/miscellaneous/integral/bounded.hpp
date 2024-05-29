@@ -1,4 +1,4 @@
-#include <ubu/miscellaneous/bounded.hpp>
+#include <ubu/miscellaneous/integral/bounded.hpp>
 #include <ubu/tensor/coordinate/constant.hpp>
 #include <functional>
 #include <iostream>

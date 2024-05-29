@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../tensor/coordinate/concepts/integral_like.hpp"
-#include "detail/tag_invoke.hpp"
+#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "../detail/tag_invoke.hpp"
 #include <concepts>
 #include <ranges>
 #include <utility>
@@ -74,5 +74,5 @@ concept sized =
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

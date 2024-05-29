@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/size.hpp"
+#include "../../miscellaneous/integral/size.hpp"
 #include "../../tensor/coordinate/concepts/integral_like.hpp"
 #include "../../tensor/shape/shape.hpp"
 #include "../../tensor/shape/shape_size.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../miscellaneous/size.hpp"
+#include "../miscellaneous/integral/size.hpp"
 #include "concepts/tensor_like.hpp"
 #include "fancy_span.hpp"
 #include "vector/span_like.hpp"

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "../tensor/coordinate/concepts/integral_like.hpp"
-#include "constant_valued.hpp"
+#include "../../detail/prologue.hpp"
+#include "../../tensor/coordinate/concepts/integral_like.hpp"
+#include "../constant_valued.hpp"
 
 namespace ubu
 {
@@ -32,5 +32,5 @@ constexpr integral_like auto smaller(A a, B b)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

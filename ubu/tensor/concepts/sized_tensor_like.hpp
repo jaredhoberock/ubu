@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/size.hpp"
+#include "../../miscellaneous/integral/size.hpp"
 #include "tensor_like.hpp"
 #include <ranges>
 
