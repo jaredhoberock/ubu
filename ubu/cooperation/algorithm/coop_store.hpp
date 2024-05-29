@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/constant.hpp"
 #include "../../tensor/compose.hpp"
-#include "../../tensor/coordinate/constant.hpp"
 #include "../../tensor/layout/column_major.hpp"
 #include "../../tensor/slice/slice.hpp"
 #include "../../tensor/matrix/matrix_like.hpp"

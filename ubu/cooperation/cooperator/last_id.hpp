@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/coordinate/constant.hpp"
+#include "../../miscellaneous/constant.hpp"
 #include "concepts/semicooperator.hpp"
 #include "size.hpp"
 

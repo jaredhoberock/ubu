@@ -2,10 +2,10 @@
 
 #include "../detail/prologue.hpp"
 
+#include "../miscellaneous/constant.hpp"
 #include "../miscellaneous/integral/size.hpp"
 #include "compose.hpp"
 #include "coordinate/concepts/congruent.hpp"
-#include "coordinate/constant.hpp"
 #include "coordinate/coordinate_cast.hpp"
 #include "coordinate/detail/tuple_algorithm.hpp"
 #include "coordinate/element.hpp"

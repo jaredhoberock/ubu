@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../constant.hpp"
 #include "integral_like.hpp"
-#include "../../tensor/coordinate/constant.hpp"
 
 namespace ubu
 {

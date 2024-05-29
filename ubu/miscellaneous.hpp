@@ -2,6 +2,7 @@
 
 #include "detail/prologue.hpp"
 
+#include "miscellaneous/constant.hpp"
 #include "miscellaneous/constant_valued.hpp"
 #include "miscellaneous/integral.hpp"
 

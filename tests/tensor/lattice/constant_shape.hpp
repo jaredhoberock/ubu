@@ -2,8 +2,8 @@
 #include <cassert>
 #include <tuple>
 #include <utility>
+#include <ubu/miscellaneous/constant.hpp>
 #include <ubu/tensor/coordinate/compare.hpp>
-#include <ubu/tensor/coordinate/constant.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <ubu/tensor/lattice.hpp>
 

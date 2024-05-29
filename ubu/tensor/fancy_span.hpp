@@ -3,9 +3,9 @@
 #include "../detail/prologue.hpp"
 
 #include "../memory/pointer/pointer_like.hpp"
+#include "../miscellaneous/constant.hpp"
 #include "../miscellaneous/constant_valued.hpp"
 #include "../miscellaneous/integral/integral_like.hpp"
-#include "../tensor/coordinate/constant.hpp"
 #include <concepts>
 #include <cstdint>
 #include <iterator>

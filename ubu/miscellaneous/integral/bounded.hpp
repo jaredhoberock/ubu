@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../tensor/coordinate/constant.hpp"
+#include "../constant.hpp"
 #include <concepts>
 #include <iostream>
 #include <limits>
