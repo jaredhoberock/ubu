@@ -2,9 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/integral/integral_like.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/colexicographical_lift.hpp"
 #include "../compose.hpp"
+#include "../shape/shape_size.hpp"
 
 namespace ubu
 {
@@ -21,7 +23,7 @@ class lift
     lift(const lift&) = default;
 
     template<weakly_congruent<To> From>
-    constexpr To operator[](const From& coord) const
+    constexpr ubu::congruent<To> auto operator[](const From& coord) const
     {
       return colexicographical_lift(coord, coshape());
     }
@@ -51,6 +53,11 @@ class lifting_layout : public lift<To>
     constexpr From shape() const
     {
       return shape_;
+    }
+
+    constexpr integral_like auto size() const
+    {
+      return shape_size(shape());
     }
   
     template<layout_for<lifting_layout> L>
