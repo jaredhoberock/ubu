@@ -4,7 +4,7 @@
 
 #include "concepts/tensor_like.hpp"
 #include "layout/layout.hpp"
-#include "view.hpp"
+#include "composed_view.hpp"
 #include <concepts>
 #include <utility>
 
@@ -13,10 +13,10 @@ namespace ubu
 namespace detail
 {
 
-// view and compose have a cyclic dependency and can't use each other directly
-// declare detail::make_view for compose's use
+// composed_view and compose have a cyclic dependency and can't use each other directly
+// declare detail::make_composed_view for compose's use
 template<class T, layout_for<T> L>
-constexpr auto make_view(T t, L l);
+constexpr auto make_composed_view(T t, L l);
 
 template<class R, class A, class B>
 concept composition_of_tensors =
@@ -59,7 +59,7 @@ struct dispatch_compose
               and not has_compose_free_function<A&&,B&&>)
   constexpr tensor_like auto operator()(A&& a, B&& b) const
   {
-    return detail::make_view(std::forward<A>(a), std::forward<B>(b));
+    return detail::make_composed_view(std::forward<A>(a), std::forward<B>(b));
   }
 };
 
@@ -75,7 +75,7 @@ constexpr detail::dispatch_compose compose;
 namespace detail
 {
 
-// view and compose have a cyclic dependency and can't use each other directly
+// composed_view and compose have a cyclic dependency and can't use each other directly
 // define detail::invoke_compose as soon as compose's definition is available
 template<class... Args>
 constexpr auto invoke_compose(Args&&... args)

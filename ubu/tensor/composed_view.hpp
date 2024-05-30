@@ -22,8 +22,8 @@ namespace ubu
 namespace detail
 {
 
-// view and compose have a cyclic dependency and can't use each other directly
-// declare detail::invoke_compose for view's use
+// composed_view and compose have a cyclic dependency and can't use each other directly
+// declare detail::invoke_compose for composed_view's use
 template<class... Args>
 constexpr auto invoke_compose(Args&&... args);
 
@@ -34,17 +34,17 @@ constexpr auto invoke_compose(Args&&... args);
 // i.e., Tensor can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
 
 template<class Tensor, layout_for<Tensor> Layout>
-class view
+class composed_view
 {
   public:
     using shape_type = tensor_shape_t<Layout>;
     using coordinate_type = tensor_coordinate_t<Layout>;
 
-    constexpr view(Tensor tensor, Layout layout)
+    constexpr composed_view(Tensor tensor, Layout layout)
       : tensor_{tensor}, layout_{layout}
     {}
 
-    view(const view&) = default;
+    composed_view(const composed_view&) = default;
 
     constexpr shape_type shape() const
     {
@@ -97,7 +97,7 @@ class view
 
     // begin is a template because tensor_iterator requires its template
     // parameter to be a complete type
-    template<class Self = view>
+    template<class Self = composed_view>
     constexpr tensor_iterator<Self> begin() const
     {
       return {*this};
@@ -131,12 +131,12 @@ class view
 namespace detail
 {
 
-// view and compose have a cyclic dependency and can't use each other directly
-// define detail::make_view as soon as view's definition is available
+// composed_view and compose have a cyclic dependency and can't use each other directly
+// define detail::make_composed_view as soon as composed_view's definition is available
 template<class T, layout_for<T> L>
-constexpr auto make_view(T t, L l)
+constexpr auto make_composed_view(T t, L l)
 {
-  return view<T,L>(t,l);
+  return composed_view<T,L>(t,l);
 }
 
 

@@ -1,10 +1,10 @@
 #include <array>
 #include <cassert>
+#include <ubu/tensor/composed_view.hpp>
 #include <ubu/tensor/domain.hpp>
 #include <ubu/tensor/matrix/matrix_like.hpp>
 #include <ubu/tensor/stack.hpp>
 #include <ubu/tensor/layout.hpp>
-#include <ubu/tensor/view.hpp>
 
 namespace ns = ubu;
 
@@ -48,7 +48,7 @@ void test_stack()
       std::array<int,12> expected_data = { 0, 3, 0, 2,
                                            1, 4, 1, 3,
                                            2, 5,-1,-1 };
-      view expected(expected_data.data(), row_major(ns::int2(3,4)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(3,4)));
 
       assert(are_equal(expected, result));
     }
@@ -60,7 +60,7 @@ void test_stack()
       std::array<int,12> expected_data = { 0, 2, 0, 3,
                                            1, 3, 1, 4,
                                           -1,-1, 2, 5 };
-      view expected(expected_data.data(), row_major(ns::int2(3,4)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(3,4)));
 
       assert(are_equal(expected, result));
     }
@@ -80,7 +80,7 @@ void test_stack()
                                            0, 2,
                                            1, 3 };
 
-      view expected(expected_data.data(), row_major(ns::int2(5,2)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(5,2)));
 
       assert(are_equal(expected, result));
     }
@@ -95,7 +95,7 @@ void test_stack()
                                            1, 4,
                                            2, 5 };
 
-      view expected(expected_data.data(), row_major(ns::int2(5,2)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(5,2)));
 
       assert(are_equal(expected, result));
     }
@@ -112,7 +112,7 @@ void test_stack()
       std::array<int,6> expected_data = { 0, 0,
                                           1, 1,
                                           2,-1 };
-      view expected(expected_data.data(), row_major(ns::int2(3,2)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(3,2)));
 
       assert(are_equal(expected, result));
     }
@@ -124,7 +124,7 @@ void test_stack()
       std::array<int,6> expected_data = { 0, 0,
                                           1, 1,
                                          -1, 2 };
-      view expected(expected_data.data(), row_major(ns::int2(3,2)));
+      composed_view expected(expected_data.data(), row_major(ns::int2(3,2)));
 
       assert(are_equal(expected, result));
     }

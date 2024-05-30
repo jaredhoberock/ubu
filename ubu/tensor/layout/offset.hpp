@@ -8,7 +8,7 @@
 #include "../coordinate/coordinate_sum.hpp"
 #include "../compose.hpp"
 #include "../traits/tensor_element.hpp"
-#include "../view.hpp"
+#include "../composed_view.hpp"
 #include "../vector/span_like.hpp"
 #include "coshape.hpp"
 #include "layout.hpp"
@@ -35,9 +35,9 @@ struct add_offset
 
 
 template<layout L, coordinate O>
-struct offset_layout : view<detail::add_offset<O>, L>
+struct offset_layout : composed_view<detail::add_offset<O>, L>
 {
-  using super_t = view<detail::add_offset<O>, L>;
+  using super_t = composed_view<detail::add_offset<O>, L>;
 
   constexpr offset_layout(L l, O offset)
     : super_t(detail::add_offset<O>{offset}, l)

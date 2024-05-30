@@ -115,7 +115,7 @@ void test_slice()
       auto result = slice(composition, pair(_,1));
 
       // the result should have a particular type
-      using expected_t = view<std::span<int>, strided_layout<int,constant<1>>>;
+      using expected_t = composed_view<std::span<int>, strided_layout<int,constant<1>>>;
       static_assert(std::same_as<expected_t, decltype(result)>);
 
       assert(are_equal(expected, result));
@@ -130,7 +130,7 @@ void test_slice()
       auto result = slice(composition, pair(_,2));
 
       // the result should have a particular type
-      using expected_t = view<std::span<int>, strided_layout<int,constant<1>>>;
+      using expected_t = composed_view<std::span<int>, strided_layout<int,constant<1>>>;
       static_assert(std::same_as<expected_t, decltype(result)>);
 
       assert(are_equal(expected, result));

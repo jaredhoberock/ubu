@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <ubu/tensor/composed_view.hpp>
 #include <ubu/tensor/domain.hpp>
 #include <ubu/tensor/lattice.hpp>
 #include <ubu/tensor/layout/strided_layout.hpp>
 #include <ubu/tensor/shape/shape_size.hpp>
 #include <ubu/tensor/slice/slice.hpp>
-#include <ubu/tensor/view.hpp>
 
 namespace ns = ubu;
 
@@ -48,7 +48,7 @@ constexpr auto partition_for_reduction(const T* ptr, std::size_t n)
   ns::int3 shape(work_per_thread, block_size, num_tiles);
   ns::int3 stride(block_size, 1, tile_size);
 
-  return ns::view(ptr, ns::strided_layout(shape, stride));
+  return ns::composed_view(ptr, ns::strided_layout(shape, stride));
 }
 
 void test1()
@@ -59,7 +59,7 @@ void test1()
   std::vector<ns::int3> data(n);
 
   // label each element with its coordinate of the partioning
-  ns::view view = partition_for_reduction(data.data(), data.size());
+  ns::composed_view view = partition_for_reduction(data.data(), data.size());
 
   assert(ns::shape_size(view.shape()) == n);
 

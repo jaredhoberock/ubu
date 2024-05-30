@@ -7,7 +7,7 @@
 #include <ubu/tensor/layout/column_major.hpp>
 #include <ubu/tensor/layout/row_major.hpp>
 #include <ubu/tensor/shape/shape_size.hpp>
-#include <ubu/tensor/view.hpp>
+#include <ubu/tensor/composed_view.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -24,7 +24,7 @@ void test(S shape)
     lattice tensor(shape);
     column_major layout(shape);
 
-    view v(tensor, layout);
+    composed_view v(tensor, layout);
 
     for(auto c : domain(v))
     {
@@ -42,7 +42,7 @@ void test(S shape)
     lattice tensor(shape);
     row_major layout(shape);
 
-    view v(tensor, layout);
+    composed_view v(tensor, layout);
 
     for(auto c : domain(v))
     {
@@ -63,8 +63,8 @@ void test_slice()
   iota(tensor.begin(), tensor.end(), 0);
 
   {
-    // test slice of a view<T*,...>
-    view A(tensor.data(), column_major(shape));
+    // test slice of a composed_view<T*,...>
+    composed_view A(tensor.data(), column_major(shape));
 
     // A is
     // +---+---+---+
@@ -79,14 +79,14 @@ void test_slice()
 
     auto column_1 = A.slice(pair(_,1));
 
-    static_assert(std::same_as<decltype(column_1), view<int*, strided_layout<int, constant<1>>>>);
+    static_assert(std::same_as<decltype(column_1), composed_view<int*, strided_layout<int, constant<1>>>>);
 
     assert(equal(expected.begin(), expected.end(), column_1.begin()));
   }
 
   {
-    // test slice of a view<std::span<T>, ...>
-    view A(span(tensor.data(), tensor.size()), column_major(shape));
+    // test slice of a composed_view<std::span<T>, ...>
+    composed_view A(span(tensor.data(), tensor.size()), column_major(shape));
 
     // A is
     // +---+---+---+
@@ -101,13 +101,13 @@ void test_slice()
 
     auto column_1 = A.slice(pair(_,1));
 
-    static_assert(std::same_as<decltype(column_1), view<span<int>, strided_layout<int, constant<1>>>>);
+    static_assert(std::same_as<decltype(column_1), composed_view<span<int>, strided_layout<int, constant<1>>>>);
 
     assert(equal(expected.begin(), expected.end(), column_1.begin()));
   }
 }
 
-void test_view()
+void test_composed_view()
 {
   using namespace std;
 
