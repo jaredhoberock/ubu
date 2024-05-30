@@ -12,6 +12,7 @@
 #include "concepts/tensor_like.hpp"
 #include "concepts/same_tensor_rank.hpp"
 #include "concepts/sized_tensor_like.hpp"
+#include "concepts/view.hpp"
 #include "detail/stacked_shape.hpp"
 #include "detail/subtract_element.hpp"
 #include "domain.hpp"
@@ -21,6 +22,7 @@
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
 #include "traits/tensor_reference.hpp"
+#include <ranges>
 #include <span>
 #include <type_traits>
 
@@ -29,20 +31,20 @@ namespace ubu
 {
 
 
-template<std::size_t axis_, tensor_like A, same_tensor_rank<A> B, class R = std::common_type_t<tensor_reference_t<A>, tensor_reference_t<B>>>
-  requires (axis_ <= tensor_rank_v<A>)
+template<std::size_t axis_, view A, view B, class R = std::common_type_t<tensor_reference_t<A>, tensor_reference_t<B>>>
+  requires (axis_ <= tensor_rank_v<A> and same_tensor_rank<A,B>)
 class stacked_view;
 
 
 template<std::size_t axis, tensor_like A, same_tensor_rank<A> B>
   requires (axis <= tensor_rank_v<A>)
-constexpr stacked_view<axis,A,B> stack(A a, B b);
+constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b);
 
 
 // presents of a single view of two tensors stacked along the given axis
-template<std::size_t axis_, tensor_like A, same_tensor_rank<A> B, class R>
-  requires (axis_ <= tensor_rank_v<A>)
-class stacked_view
+template<std::size_t axis_, view A, view B, class R>
+  requires (axis_ <= tensor_rank_v<A> and same_tensor_rank<A,B>)
+class stacked_view : public std::ranges::view_base
 {
   public:
     static constexpr constant<axis_> axis;
@@ -116,7 +118,7 @@ class stacked_view
 
     template<class T, class Self = stacked_view>
       requires layout_for<Self, std::span<T>>
-    friend auto compose(const std::span<T>& s, const stacked_view& self)
+    friend view auto compose(const std::span<T>& s, const stacked_view& self)
     {
       return stack<axis_>(ubu::compose(s, self.a()), ubu::compose(s, self.b()));
     }
@@ -191,9 +193,9 @@ class stacked_view
 
 template<std::size_t axis, tensor_like A, same_tensor_rank<A> B>
   requires (axis <= tensor_rank_v<A>)
-constexpr stacked_view<axis,A,B> stack(A a, B b)
+constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b)
 {
-  return {a,b};
+  return {all(std::forward<A>(a)), all(std::forward<B>(b))};
 }
 
 

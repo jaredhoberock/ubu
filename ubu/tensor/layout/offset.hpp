@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integral/smaller.hpp"
+#include "../all.hpp"
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/coordinate_sum.hpp"
@@ -35,6 +36,7 @@ struct add_offset
 
 
 template<layout L, coordinate O>
+  requires view<L>
 struct offset_layout : composed_view<detail::add_offset<O>, L>
 {
   using super_t = composed_view<detail::add_offset<O>, L>;
@@ -78,9 +80,9 @@ struct offset_layout : composed_view<detail::add_offset<O>, L>
 
 
 template<layout L, congruent<tensor_element_t<L>> O>
-constexpr auto offset(L layout, O offset)
+constexpr view auto offset(L&& layout, O offset)
 {
-  return offset_layout(layout, offset);
+  return offset_layout(all(std::forward<L>(layout)), offset);
 }
 
 

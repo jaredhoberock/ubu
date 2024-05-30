@@ -7,6 +7,7 @@
 #include "../coordinate/colexicographical_lift.hpp"
 #include "../compose.hpp"
 #include "../shape/shape_size.hpp"
+#include <ranges>
 
 namespace ubu
 {
@@ -41,7 +42,7 @@ class lift
 // also specializes compose
 template<coordinate From, coordinate To>
   requires weakly_congruent<From,To>
-class lifting_layout : public lift<To>
+class lifting_layout : public lift<To>, std::ranges::view_base
 {
   public:
     constexpr lifting_layout(const From& s, const To& c)

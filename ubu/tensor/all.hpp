@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 #include "../miscellaneous/integral/size.hpp"
 #include "concepts/tensor_like.hpp"
+#include "concepts/view.hpp"
 #include "fancy_span.hpp"
 #include "vector/span_like.hpp"
 #include <type_traits>
@@ -19,22 +20,20 @@ concept trivially_copy_constructible = std::is_trivially_copy_constructible_v<T>
 template<class T>
 concept has_all_member_function = requires(T t)
 {
-  { t.all() } -> tensor_like;
-  { t.all() } -> trivially_copy_constructible;
+  { std::forward<T>(t).all() } -> view;
 };
 
 template<class T>
 concept has_all_free_function = requires(T t)
 {
-  { all(t) } -> tensor_like;
-  { all(t) } -> trivially_copy_constructible;
+  { all(std::forward<T>(t)) } -> view;
 };
 
 struct dispatch_all
 {
   template<class T>
     requires has_all_member_function<T>
-  constexpr tensor_like auto operator()(T&& t) const
+  constexpr view auto operator()(T&& t) const
   {
     return std::forward<T>(t).all();
   }
@@ -42,25 +41,25 @@ struct dispatch_all
   template<class T>
     requires (not has_all_member_function<T>
               and has_all_free_function<T>)
-  constexpr tensor_like auto operator()(T&& t) const
+  constexpr view auto operator()(T&& t) const
   {
     return all(std::forward<T>(t));
   }
 
-  template<tensor_like T>
+  template<view T>
     requires (not has_all_member_function<T>
-              and not has_all_free_function<T>
-              and trivially_copy_constructible<T>)
+              and not has_all_free_function<T>)
   constexpr T operator()(T t) const
   {
     // T is already a view, so this operation is the identity function
     return t;
   }
 
+  // XXX are there span_like types that are not also views?
   template<span_like S>
     requires (not has_all_member_function<S&&>
               and not has_all_free_function<S&&>
-              and not trivially_copy_constructible<std::remove_cvref_t<S&&>>)
+              and not view<std::remove_cvref_t<S&&>>)
   constexpr span_like auto operator()(S&& s) const
   {
     return fancy_span(std::ranges::data(std::forward<S>(s)), size(std::forward<S>(s)));

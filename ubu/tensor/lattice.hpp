@@ -13,6 +13,7 @@
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
+#include <ranges>
 
 
 namespace ubu
@@ -20,7 +21,7 @@ namespace ubu
 
 
 template<coordinate C, congruent<C> S = C>
-class lattice
+class lattice : public std::ranges::view_base
 {
   public:
     using coordinate_type = C;

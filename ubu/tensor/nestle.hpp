@@ -2,7 +2,9 @@
 
 #include "../detail/prologue.hpp"
 
+#include "all.hpp"
 #include "concepts/tensor_like.hpp"
+#include "concepts/view.hpp"
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/detail/tuple_algorithm.hpp"
 #include "coordinate/traits/rank.hpp"
@@ -12,18 +14,19 @@
 #include "slice/underscore.hpp"
 #include "traits/tensor_shape.hpp"
 #include "traits/tensor_rank.hpp"
+#include <ranges>
 #include <utility>
 
 namespace ubu
 {
 
 
-template<tensor_like T>
+template<view T>
   requires (tensor_rank_v<T> > 1)
-class nestled_view
+class nestled_view : public std::ranges::view_base
 {
   public:
-    constexpr nestled_view(const T& tensor)
+    constexpr nestled_view(T tensor)
       : tensor_{tensor}
     {}
 
@@ -56,9 +59,9 @@ class nestled_view
 // XXX in general we would like to be able to nestle up to rank-1 leading dims
 template<tensor_like T>
   requires (tensor_rank_v<T> > 1)
-constexpr nestled_view<T> nestle(const T& tensor)
+constexpr auto nestle(T&& tensor)
 {
-  return {tensor};
+  return nestled_view(all(std::forward<T>(tensor)));
 }
 
 

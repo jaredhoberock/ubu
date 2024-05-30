@@ -3,10 +3,11 @@
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integral/size.hpp"
 #include "../concepts/sized_tensor_like.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/view.hpp"
 #include "../element_exists.hpp"
 #include "../iterator.hpp"
 #include "../shape/shape.hpp"
+#include <ranges>
 #include <type_traits>
 
 namespace ubu
@@ -14,9 +15,8 @@ namespace ubu
 
 // XXX ideally, we want a general masked_view<tensor_like T, mask M>
 //     where a mask is a tensor_like of booleans
-template<tensor_like T>
-  requires std::is_trivially_copy_constructible_v<T>
-class uniform_masked_view
+template<view T>
+class uniform_masked_view : public std::ranges::view_base
 {
   public:
     constexpr uniform_masked_view(T tensor, bool mask)
@@ -30,8 +30,7 @@ class uniform_masked_view
       return ubu::shape(tensor_);
     }
 
-    template<class T_ = T>
-      requires sized_tensor_like<T>
+    template<sized_tensor_like T_ = T>
     constexpr auto size() const
     {
       return ubu::size(tensor_);

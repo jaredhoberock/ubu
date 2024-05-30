@@ -6,7 +6,7 @@
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/concepts/coordinate.hpp"
 #include "concepts/sized_tensor_like.hpp"
-#include "concepts/tensor_like.hpp"
+#include "concepts/view.hpp"
 #include "element_exists.hpp"
 #include "iterator.hpp"
 #include "shape/shape.hpp"
@@ -15,6 +15,7 @@
 #include "traits/tensor_coordinate.hpp"
 #include "traits/tensor_reference.hpp"
 #include "traits/tensor_shape.hpp"
+#include <ranges>
 #include <tuple>
 
 
@@ -32,9 +33,9 @@ constexpr auto invoke_zip(Args&&... args);
 } // end detail
 
 
-template<tensor_like T, tensor_like... Ts>
+template<view T, view... Ts>
   requires (... and congruent<tensor_shape_t<T>, tensor_shape_t<Ts>>)
-class zip_view
+class zip_view : public std::ranges::view_base
 {
   public:
     using coordinate_type = tensor_coordinate_t<T>;
@@ -89,7 +90,7 @@ class zip_view
     }
 
     template<slicer_for<coordinate_type> K>
-    constexpr tensor_like auto slice(const K& katana) const
+    constexpr view auto slice(const K& katana) const
     {
       return std::apply([=](const auto&... tensors)
       {
@@ -107,9 +108,9 @@ namespace detail
 
 // zip_view and zip have a cyclic dependency and can't use each other directly
 // define detail::make_zip_view as soon as zip_view's definition is available
-template<tensor_like T, tensor_like... Ts>
+template<view T, view... Ts>
   requires (... and congruent<tensor_shape_t<T>, tensor_shape_t<Ts>>)
-constexpr tensor_like auto make_zip_view(T tensor, Ts... tensors)
+constexpr view auto make_zip_view(T tensor, Ts... tensors)
 {
   return zip_view<T,Ts...>(tensor, tensors...);
 }

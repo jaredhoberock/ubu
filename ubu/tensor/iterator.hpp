@@ -19,6 +19,7 @@ struct tensor_sentinel {};
 
 
 template<sized_tensor_like T>
+  requires view<T>
 class sized_tensor_iterator
 {
   public:
@@ -180,7 +181,7 @@ class sized_tensor_iterator
 
 
 template<tensor_like T>
-  requires (not sized_tensor_like<T>)
+  requires (not sized_tensor_like<T> and view<T>)
 class unsized_tensor_iterator
 {
   public:
@@ -277,7 +278,8 @@ template<tensor_like T>
 class tensor_iterator;
 
 
-template<sized_tensor_like T>
+template<view T>
+  requires sized_tensor_like<T>
 class tensor_iterator<T> : public sized_tensor_iterator<T>
 {
   private:
@@ -371,7 +373,7 @@ class tensor_iterator<T> : public sized_tensor_iterator<T>
 };
 
 
-template<tensor_like T>
+template<view T>
   requires (not sized_tensor_like<T>)
 class tensor_iterator<T> : public unsized_tensor_iterator<T>
 {
@@ -412,7 +414,7 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
 };
 
 
-template<ubu::tensor_like T>
+template<view T>
 class enumerated_tensor_iterator : public ubu::tensor_iterator<T>
 {
   private:
@@ -516,7 +518,7 @@ class enumerated_tensor_iterator : public ubu::tensor_iterator<T>
 
 
 // XXX this deduction guide becomes unnecessary after P2582
-template<ubu::tensor_like T>
+template<view T>
 enumerated_tensor_iterator(T) -> enumerated_tensor_iterator<T>;
 
 

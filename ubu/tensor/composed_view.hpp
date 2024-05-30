@@ -16,6 +16,7 @@
 #include "traits/tensor_shape.hpp"
 #include "traits/tensor_coordinate.hpp"
 #include "vector/span_like.hpp"
+#include <ranges>
 
 namespace ubu
 {
@@ -34,7 +35,7 @@ constexpr auto invoke_compose(Args&&... args);
 // i.e., Tensor can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
 
 template<class Tensor, layout_for<Tensor> Layout>
-class composed_view
+class composed_view : public std::ranges::view_base
 {
   public:
     using shape_type = tensor_shape_t<Layout>;

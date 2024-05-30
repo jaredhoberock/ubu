@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../concepts/tensor_like.hpp"
 #include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/view.hpp"
 #include "../coordinate/coordinate_cast.hpp"
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
@@ -11,13 +11,14 @@
 #include "slice_coordinate.hpp"
 #include "slicer.hpp"
 #include "unslice_coordinate.hpp"
+#include <ranges>
 #include <utility>
 
 namespace ubu
 {
 
-template<tensor_like T, slicer_for<tensor_shape_t<T>> S>
-class slice_view
+template<view T, slicer_for<tensor_shape_t<T>> S>
+class slice_view : public std::ranges::view_base
 {
   public:
     constexpr slice_view(T tensor, S katana)

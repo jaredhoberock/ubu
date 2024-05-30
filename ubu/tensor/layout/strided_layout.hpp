@@ -16,6 +16,7 @@
 #include "stride/compact_column_major_stride.hpp"
 #include "stride/stride_for.hpp"
 #include <concepts>
+#include <ranges>
 #include <type_traits>
 
 
@@ -27,7 +28,7 @@ template<coordinate S,
          coordinate R = apply_stride_t<D,default_coordinate_t<S>>
         >
   requires congruent<R,apply_stride_t<D,default_coordinate_t<S>>>
-class strided_layout
+class strided_layout : public std::ranges::view_base
 {
   public:
     constexpr strided_layout(S shape, D stride)
