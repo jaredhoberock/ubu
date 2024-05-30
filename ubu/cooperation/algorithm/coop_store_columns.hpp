@@ -13,7 +13,7 @@
 #include "../../tensor/vector/inplace_vector.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
-#include "coop_load.hpp"
+#include "coop_store.hpp"
 #include <utility>
 
 namespace ubu
