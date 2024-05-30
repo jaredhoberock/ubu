@@ -96,7 +96,8 @@ ubu::cuda::event inclusive_scan_after(ubu::cuda::device_executor gpu, ubu::cuda:
   std::pair shape(block_size, num_blocks);
   std::pair workspace_shape(sizeof(T) * tile_size, dynamic_size_in_bytes_of_lookback_array<T>(num_blocks));
 
-  // sm_80: 59 registers / 398.244 GB/s ~ 91% peak bandwidth on RTX 3070
+  // sm_80: 61 registers / 399.384 GB/s ~ 91% peak bandwidth on RTX 3070
+  // circle build 201, llvm 18
   return bulk_execute_with_workspace_after(gpu, alloc,
                                            before,
                                            shape, workspace_shape,
@@ -254,7 +255,7 @@ double theoretical_peak_bandwidth_in_gigabytes_per_second()
   return (memory_clock_mhz * memory_bus_width_bits * 2 / 8.0) / 1024.0;
 }
 
-// XXX the reason this kernel's performance is so low is because circle build ca. 04/2024 is generating a stack frame for inclusive_scan_after's lambda
+// XXX the reason this kernel's performance is so low is because circle build 201 is generating a stack frame for inclusive_scan_after's lambda
 //     without the stack frame, the performance should be ~91% peak bandwidth
 //constexpr double performance_regression_threshold_as_percentage_of_peak_bandwidth = 0.90;
 //constexpr double performance_progression_threshold_as_percentage_of_peak_bandwidth = 0.92;
