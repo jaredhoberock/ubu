@@ -5,7 +5,9 @@
 #include "concepts/tensor_like.hpp"
 #include "concepts/view.hpp"
 #include "fancy_span.hpp"
+#include "vector/contiguous_vector_like.hpp"
 #include "vector/span_like.hpp"
+#include <iterator>
 #include <type_traits>
 #include <utility>
 
@@ -32,15 +34,15 @@ concept has_all_free_function = requires(T t)
 struct dispatch_all
 {
   template<class T>
-    requires has_all_member_function<T>
+    requires has_all_member_function<T&&>
   constexpr view auto operator()(T&& t) const
   {
     return std::forward<T>(t).all();
   }
 
   template<class T>
-    requires (not has_all_member_function<T>
-              and has_all_free_function<T>)
+    requires (not has_all_member_function<T&&>
+              and has_all_free_function<T&&>)
   constexpr view auto operator()(T&& t) const
   {
     return all(std::forward<T>(t));
@@ -55,14 +57,24 @@ struct dispatch_all
     return t;
   }
 
-  // XXX are there span_like types that are not also views?
-  template<span_like S>
-    requires (not has_all_member_function<S&&>
-              and not has_all_free_function<S&&>
-              and not view<std::remove_cvref_t<S&&>>)
-  constexpr span_like auto operator()(S&& s) const
+  template<contiguous_vector_like V>
+    requires (not has_all_member_function<V&&>
+              and not has_all_free_function<V&&>
+              and not view<std::remove_cvref_t<V&&>>)
+  constexpr view auto operator()(V&& vec) const
   {
-    return fancy_span(std::ranges::data(std::forward<S>(s)), size(std::forward<S>(s)));
+    return fancy_span(std::data(std::forward<V>(vec)), size(std::forward<V>(vec)));
+  }
+
+  // XXX consider eliminating this function since a span_like is already a view
+  template<span_like S>
+    requires (not has_all_member_function<S>
+              and not has_all_free_function<S>
+              and not view<std::remove_cvref_t<S>>)
+  constexpr span_like auto operator()(S s) const
+  {
+    // XXX I think this should be std::data instead of std::ranges::data
+    return fancy_span(std::ranges::data(s), size(s));
   }
 
   // XXX we could have another default path here for std::ranges::random_access_range
