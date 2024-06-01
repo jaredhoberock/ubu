@@ -3,24 +3,74 @@
 #include "../detail/prologue.hpp"
 
 #include "all.hpp"
-#include "concepts/tensor_like.hpp"
+#include "coordinate/element.hpp"
+#include "element_exists.hpp"
+#include "concepts/view.hpp"
 #include "iterator.hpp"
+#include "traits/tensor_reference.hpp"
 #include <ranges>
 #include <utility>
 
 namespace ubu
 {
 
-template<tensor_like T>
-constexpr std::ranges::range auto enumerate(T&& tensor)
+
+template<view V>
+class enumerated_view : public std::ranges::view_base
 {
-  auto view = all(std::forward<T>(tensor));
+  public:
+    constexpr enumerated_view(V tensor)
+      : tensor_(tensor)
+    {}
 
-  enumerated_tensor_iterator begin(view);
-  tensor_sentinel end;
+    enumerated_view(const enumerated_view&) = default; 
 
-  return std::ranges::subrange(begin, end);
+    using shape_type = tensor_shape_t<V>;
+
+    constexpr shape_type shape() const
+    {
+      return ubu::shape(tensor_);
+    }
+
+    // returns the pair (coord, tensor[coord])
+    template<congruent<shape_type> C>
+    constexpr std::pair<C, tensor_reference_t<V>> operator[](const C& coord) const
+    {
+      return {coord, ubu::element(tensor_, coord)};
+    }
+
+    template<congruent<shape_type> C>
+    constexpr bool element_exists(const C& coord) const
+    {
+      return ubu::element_exists(tensor_, coord);
+    }
+
+    // begin is a template because tensor_iterator requires its template
+    // parameter to be a complete type
+    template<class Self = enumerated_view>
+    constexpr tensor_iterator<Self> begin() const
+    {
+      return {*this};
+    }
+
+    constexpr tensor_sentinel end() const
+    {
+      return {};
+    }
+
+    // XXX consider customizing slice
+
+  private:
+    V tensor_;
+};
+
+
+template<tensor_like T>
+constexpr enumerated_view<all_t<T&&>> enumerate(T&& tensor)
+{
+  return {all(std::forward<T>(tensor))};
 }
+
 
 } // end ubu
 
