@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "all.hpp"
 #include "concepts.hpp"
 #include "coordinate/element.hpp"
 #include "coordinate/iterator/colexicographical_iterator.hpp"
@@ -412,6 +413,31 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
     using super_t::operator==;
     using super_t::operator!=;
 };
+
+
+template<tensor_like T>
+constexpr tensor_iterator<all_t<T&>> begin(T& tensor)
+{
+  return {all(tensor)};
+}
+
+template<tensor_like T>
+constexpr tensor_iterator<all_t<const T&>> begin(const T& tensor)
+{
+  return {all(tensor)};
+}
+
+template<tensor_like T>
+constexpr tensor_sentinel end(T&)
+{
+  return {};
+}
+
+template<tensor_like T>
+constexpr tensor_sentinel end(const T&)
+{
+  return {};
+}
 
 
 } // end ubu
