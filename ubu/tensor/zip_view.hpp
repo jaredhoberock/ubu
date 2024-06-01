@@ -8,7 +8,6 @@
 #include "concepts/sized_tensor_like.hpp"
 #include "concepts/view.hpp"
 #include "element_exists.hpp"
-#include "iterator.hpp"
 #include "shape/shape.hpp"
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
@@ -76,17 +75,6 @@ class zip_view : public std::ranges::view_base
       {
         return (... and ubu::element_exists(tensors, coord));
       }, tuple_of_tensors_);
-    }
-
-    template<class Self = zip_view>
-    constexpr tensor_iterator<Self> begin() const
-    {
-      return {*this};
-    }
-
-    constexpr tensor_sentinel end() const
-    {
-      return {};
     }
 
     template<slicer_for<coordinate_type> K>

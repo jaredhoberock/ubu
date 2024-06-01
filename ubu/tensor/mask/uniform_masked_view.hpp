@@ -5,7 +5,6 @@
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../element_exists.hpp"
-#include "../iterator.hpp"
 #include "../shape/shape.hpp"
 #include <ranges>
 #include <type_traits>
@@ -53,19 +52,6 @@ class uniform_masked_view : public std::ranges::view_base
     constexpr T tensor() const
     {
       return tensor_;
-    }
-
-    // begin is a template because tensor_iterator requires its template
-    // parameter to be a complete type
-    template<class Self = uniform_masked_view>
-    constexpr tensor_iterator<Self> begin() const
-    {
-      return {*this};
-    }
-    
-    constexpr tensor_sentinel end() const
-    {
-      return {};
     }
 
     // XXX a customization of slice would return mask(slice(tensor_), mask_)

@@ -6,7 +6,6 @@
 #include "coordinate/element.hpp"
 #include "element_exists.hpp"
 #include "concepts/view.hpp"
-#include "iterator.hpp"
 #include "traits/tensor_reference.hpp"
 #include <ranges>
 #include <utility>
@@ -43,19 +42,6 @@ class enumerated_view : public std::ranges::view_base
     constexpr bool element_exists(const C& coord) const
     {
       return ubu::element_exists(tensor_, coord);
-    }
-
-    // begin is a template because tensor_iterator requires its template
-    // parameter to be a complete type
-    template<class Self = enumerated_view>
-    constexpr tensor_iterator<Self> begin() const
-    {
-      return {*this};
-    }
-
-    constexpr tensor_sentinel end() const
-    {
-      return {};
     }
 
     // XXX consider customizing slice

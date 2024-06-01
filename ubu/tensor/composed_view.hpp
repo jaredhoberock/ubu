@@ -9,7 +9,6 @@
 #include "coordinate/element.hpp"
 #include "domain.hpp"
 #include "element_exists.hpp"
-#include "iterator.hpp"
 #include "layout/layout.hpp"
 #include "shape/shape.hpp"
 #include "slice/slice.hpp"
@@ -94,19 +93,6 @@ class composed_view : public std::ranges::view_base
     constexpr Layout layout() const
     {
       return layout_;
-    }
-
-    // begin is a template because tensor_iterator requires its template
-    // parameter to be a complete type
-    template<class Self = composed_view>
-    constexpr tensor_iterator<Self> begin() const
-    {
-      return {*this};
-    }
-    
-    constexpr tensor_sentinel end() const
-    {
-      return {};
     }
 
     template<slicer_for<coordinate_type> K>

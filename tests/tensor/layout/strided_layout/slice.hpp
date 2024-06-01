@@ -2,6 +2,8 @@
 #include <array>
 #include <cassert>
 #include <iostream>
+#include <ranges>
+#include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/layout/strided_layout.hpp>
 #include <ubu/tensor/layout/stride/compact_row_major_stride.hpp>
 #include <utility>
@@ -29,7 +31,7 @@ void test_slice()
 
     std::array<int,3> expected{{6,7,8}};
 
-    assert(std::equal(expected.begin(), expected.end(), column_2.begin()));
+    assert(ranges::equal(expected, column_2));
   }
 
   {
@@ -49,7 +51,7 @@ void test_slice()
 
     std::array<int,3> expected{{2,6,10}};
 
-    assert(std::equal(expected.begin(), expected.end(), column_2.begin()));
+    assert(ranges::equal(expected, column_2));
   }
 }
 

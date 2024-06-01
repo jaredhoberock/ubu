@@ -5,6 +5,7 @@
 #include <ranges>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <ubu/tensor/enumerate.hpp>
+#include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/lattice.hpp>
 #include <vector>
 

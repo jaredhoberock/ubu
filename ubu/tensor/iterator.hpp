@@ -416,24 +416,28 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
 
 
 template<tensor_like T>
+  requires (not requires(T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<T&>> begin(T& tensor)
 {
   return {all(tensor)};
 }
 
 template<tensor_like T>
+  requires (not requires(const T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<const T&>> begin(const T& tensor)
 {
   return {all(tensor)};
 }
 
 template<tensor_like T>
+  requires (not requires(T& tensor) { tensor.end(); })
 constexpr tensor_sentinel end(T&)
 {
   return {};
 }
 
 template<tensor_like T>
+  requires (not requires(const T& tensor) { tensor.end(); })
 constexpr tensor_sentinel end(const T&)
 {
   return {};

@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <cassert>
 #include <numeric>
+#include <ranges>
 #include <ubu/tensor/coordinate/compare.hpp>
 #include <ubu/tensor/domain.hpp>
+#include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/lattice.hpp>
 #include <ubu/tensor/layout/column_major.hpp>
 #include <ubu/tensor/layout/row_major.hpp>
@@ -33,7 +35,7 @@ void test(S shape)
       assert(expected == result);
     }
 
-    assert(std::is_sorted(domain(v).begin(), domain(v).end(), ns::colex_less));
+    assert(std::ranges::is_sorted(domain(v), ns::colex_less));
   }
 
   {
@@ -81,7 +83,7 @@ void test_slice()
 
     static_assert(std::same_as<decltype(column_1), composed_view<int*, strided_layout<int, constant<1>>>>);
 
-    assert(equal(expected.begin(), expected.end(), column_1.begin()));
+    assert(ranges::equal(expected, column_1));
   }
 
   {
@@ -103,7 +105,7 @@ void test_slice()
 
     static_assert(std::same_as<decltype(column_1), composed_view<span<int>, strided_layout<int, constant<1>>>>);
 
-    assert(equal(expected.begin(), expected.end(), column_1.begin()));
+    assert(ranges::equal(expected, column_1));
   }
 }
 
