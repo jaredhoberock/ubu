@@ -2,10 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../memory/pointer/pointer_like.hpp"
-#include "../concepts/view.hpp"
-#include "../iterator.hpp"
 #include "sized_vector_like.hpp"
 #include <concepts>
+#include <iterator> // for std::data
 
 namespace ubu
 {
