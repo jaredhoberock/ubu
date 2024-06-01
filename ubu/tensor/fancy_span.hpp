@@ -6,6 +6,9 @@
 #include "../miscellaneous/constant.hpp"
 #include "../miscellaneous/constant_valued.hpp"
 #include "../miscellaneous/integral/integral_like.hpp"
+#include "../miscellaneous/integral/size.hpp"
+#include "traits/tensor_size.hpp"
+#include "vector/contiguous_vector_like.hpp"
 #include <concepts>
 #include <cstdint>
 #include <iterator>
@@ -60,16 +63,13 @@ class fancy_span
       : fancy_span(first, last - first)
     {}
 
-    // XXX i think using std::ranges::size demotes fancy integers
-    //     we should use span_like here
-    template<class R>
-      requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>
-                and std::convertible_to<decltype(std::ranges::data(std::declval<R&&>())), P>
-                and std::convertible_to<std::ranges::range_size_t<R&&>, S>)
+    template<contiguous_vector_like V>
+      requires (    std::convertible_to<decltype(std::data(std::declval<V&&>())), P>
+                and std::convertible_to<tensor_size_t<V&&>, S>)
     explicit(constant_valued<size_type>)
-    constexpr fancy_span(R&& range)
-      : fancy_span(std::ranges::data(std::forward<R&&>(range)),
-                   std::ranges::size(std::forward<R&&>(range)))
+    constexpr fancy_span(V&& vec)
+      : fancy_span(std::data(std::forward<V&&>(vec)),
+                   ubu::size(std::forward<V&&>(vec)))
     {}
 
     template<pointer_like OtherP, integral_like OtherS>
@@ -224,11 +224,8 @@ class fancy_span
 template<pointer_like P, integral_like S>
 fancy_span(P, S) -> fancy_span<P,S>;
 
-// XXX i think using std::ranges::range_size_t demotes fancy integers
-//     we should use span_like here
-template<class R>
-  requires (std::ranges::contiguous_range<R&&> and std::ranges::sized_range<R&&>)
-fancy_span(R&&) -> fancy_span<decltype(std::ranges::data(std::declval<R&&>())), std::ranges::range_size_t<R&&>>;
+template<contiguous_vector_like V>
+fancy_span(V&&) -> fancy_span<decltype(std::data(std::declval<V&&>())), tensor_size_t<V&&>>;
 
 } // end ubu
 
