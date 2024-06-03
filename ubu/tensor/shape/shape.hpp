@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/integral/size.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
-#include <ranges>
 #include <type_traits>
 
 namespace ubu
@@ -69,10 +69,10 @@ struct dispatch_shape
     requires (not has_shape_member_variable<T&&>
               and not has_shape_member_function<T&&>
               and not has_shape_free_function<T&&>
-              and std::ranges::sized_range<T&&>)
+              and sized<T&&>)
   constexpr coordinate auto operator()(T&& arg) const
   {
-    return std::ranges::size(std::forward<T>(arg));
+    return ubu::size(std::forward<T>(arg));
   }
 }; // end dispatch_shape
 

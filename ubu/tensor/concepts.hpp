@@ -7,6 +7,7 @@
 #include "concepts/tensor_like.hpp"
 #include "concepts/tensor_like_of.hpp"
 #include "concepts/tensor_like_of_rank.hpp"
+#include "concepts/view.hpp"
 
 #include "../detail/epilogue.hpp"
 

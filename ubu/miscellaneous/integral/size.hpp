@@ -5,7 +5,6 @@
 #include "../detail/tag_invoke.hpp"
 #include "integral_like.hpp"
 #include <concepts>
-#include <ranges>
 #include <utility>
 
 namespace ubu
@@ -30,7 +29,6 @@ concept has_size_customization =
   tag_invocable<CPO, T>
   or has_size_member_function<T>
   or has_size_free_function<T>
-  or std::ranges::sized_range<T>
 ;
 
 struct dispatch_size
@@ -46,13 +44,9 @@ struct dispatch_size
     {
       return std::forward<T>(arg).size();
     }
-    else if constexpr(has_size_free_function<T&&>)
-    {
-      return size(std::forward<T>(arg));
-    }
     else
     {
-      return std::ranges::size(std::forward<T>(arg));
+      return size(std::forward<T>(arg));
     }
   }
 };

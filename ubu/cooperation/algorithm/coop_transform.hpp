@@ -4,7 +4,7 @@
 
 #include "../../tensor/traits/tensor_reference.hpp"
 #include "../../tensor/concepts/tensor_like.hpp"
-#include "../../tensor/zip.hpp"
+#include "../../tensor/views/zip.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include <concepts>
 

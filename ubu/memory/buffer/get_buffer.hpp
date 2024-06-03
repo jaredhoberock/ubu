@@ -14,17 +14,8 @@ namespace detail
 template<class T>
 concept has_buffer_member_variable = requires(T arg)
 {
-// XXX WAR circle bug
-#if defined(__circle_lang__)
-  arg.buffer;
-  requires requires(decltype(arg.buffer) buf)
-  {
-    { buf } -> buffer_like;
-  };
-#else
   arg.buffer;
   buffer_like<decltype(arg.buffer)>;
-#endif
 };
 
 template<class T>
@@ -43,34 +34,31 @@ concept has_get_buffer_free_function = requires(T arg)
 struct dispatch_get_buffer
 {
   template<buffer_like B>
-  constexpr B&& operator()(B&& buf) const
+  constexpr B operator()(B buf) const
   {
-    return std::forward<B>(buf);
+    return buf;
   }
 
   template<class T>
-    requires (not buffer_like<T>
-              and has_buffer_member_variable<T&&>)
-  constexpr buffer_like decltype(auto) operator()(T&& arg) const
+    requires has_buffer_member_variable<T&&>
+  constexpr buffer_like auto operator()(T&& arg) const
   {
     return std::forward<T>(arg).buffer;
   }
 
   template<class T>
-    requires (not buffer_like<T>
-              and not has_buffer_member_variable<T&&>
+    requires (not has_buffer_member_variable<T&&>
               and has_get_buffer_member_function<T&&>)
-  constexpr buffer_like decltype(auto) operator()(T&& arg) const
+  constexpr buffer_like auto operator()(T&& arg) const
   {
     return std::forward<T>(arg).get_buffer();
   }
 
   template<class T>
-    requires (not buffer_like<T>
-              and not has_buffer_member_variable<T&&>
+    requires (not has_buffer_member_variable<T&&>
               and not has_get_buffer_member_function<T&&>
               and has_get_buffer_free_function<T&&>)
-  constexpr buffer_like decltype(auto) operator()(T&& arg) const
+  constexpr buffer_like auto operator()(T&& arg) const
   {
     return get_buffer(std::forward<T>(arg));
   }

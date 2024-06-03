@@ -4,7 +4,7 @@
 
 #include "../../../causality/happening.hpp"
 #include "../../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../../tensor/lattice.hpp"
+#include "../../../tensor/views/lattice.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"
 #include "../traits/executor_happening.hpp"

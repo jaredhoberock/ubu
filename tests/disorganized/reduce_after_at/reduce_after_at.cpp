@@ -15,8 +15,8 @@ constexpr std::optional<ubu::tensor_element_t<T>> reduce(T tensor, F binary_op)
 {
   std::optional<ubu::tensor_element_t<T>> result;
 
-  auto i = tensor.begin();
-  auto end = tensor.end();
+  auto i = ubu::begin(tensor);
+  auto end = ubu::end(tensor);
   
   if(i != end)
   {

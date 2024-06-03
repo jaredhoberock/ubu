@@ -7,7 +7,7 @@
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 
 #undef NDEBUG
 #include <cassert>

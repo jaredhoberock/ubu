@@ -10,8 +10,8 @@
 #include <ubu/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/tensor/coordinate/colexicographical_lift.hpp>
-#include <ubu/tensor/layout/stride/apply_stride.hpp>
-#include <ubu/tensor/layout/stride/compact_column_major_stride.hpp>
+#include <ubu/tensor/views/layout/stride/apply_stride.hpp>
+#include <ubu/tensor/views/layout/stride/compact_column_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>

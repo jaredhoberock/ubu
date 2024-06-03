@@ -108,7 +108,7 @@ struct basic_cooperator
     // and replace them with tile_shape
     // the final dimension becomes the remainder
     // tile_shape needs to "tile" shape for this to work right
-    auto new_shape = std::pair(tile_shape, size(*this) / shape_size(tile_shape));
+    auto new_shape = std::pair(tile_shape, size() / shape_size(tile_shape));
   
     return reshape(new_shape).subgroup_and_coord();
   }
@@ -126,7 +126,15 @@ struct basic_cooperator
               and sized_barrier_like<barrier_t<local_workspace_t<W_>>>)
   constexpr auto subgroup_and_coord() const
   {
-    return tile(size(get_barrier(get_local_workspace(workspace_))));
+    return tile(ubu::size(get_barrier(get_local_workspace(workspace_))));
+  }
+
+  // XXX WAR circle's problem dispatching ubu::size
+  //     this member shouldn't be necessary because the tag_invoke(size, semicooperator)
+  //     is supposed to be sufficient to provide a size for basic_cooperator
+  constexpr auto size() const
+  {
+    return shape_size(shape);
   }
 
   private:
