@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../concepts/tensor_like.hpp"
-#include "../layout/layout.hpp"
 #include "composed_view.hpp"
+#include "layout/layout.hpp"
 #include <concepts>
 #include <utility>
 

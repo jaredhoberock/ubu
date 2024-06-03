@@ -35,7 +35,6 @@
 #include "tensor/fancy_span.hpp"
 #include "tensor/iterator.hpp"
 #include "tensor/lattice.hpp"
-#include "tensor/layout.hpp"
 #include "tensor/matrix.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/traits.hpp"

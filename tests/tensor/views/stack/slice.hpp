@@ -1,7 +1,7 @@
 #include <array>
 #include <cassert>
 #include <ubu/tensor/domain.hpp>
-#include <ubu/tensor/layout.hpp>
+#include <ubu/tensor/views/layout.hpp>
 #include <ubu/tensor/views/slice.hpp>
 #include <ubu/tensor/views/stack.hpp>
 #include <utility>

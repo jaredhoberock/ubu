@@ -6,10 +6,10 @@
 #include <ubu/tensor/domain.hpp>
 #include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/lattice.hpp>
-#include <ubu/tensor/layout/column_major.hpp>
-#include <ubu/tensor/layout/row_major.hpp>
 #include <ubu/tensor/shape/shape_size.hpp>
 #include <ubu/tensor/views/composed_view.hpp>
+#include <ubu/tensor/views/layout/column_major.hpp>
+#include <ubu/tensor/views/layout/row_major.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 

@@ -5,7 +5,7 @@
 #include "../../../causality/happening.hpp"
 #include "../../../tensor/coordinate/concepts/strictly_subdimensional.hpp"
 #include "../../../tensor/coordinate/traits/default_coordinate.hpp"
-#include "../../../tensor/layout/truncating_layout.hpp"
+#include "../../../tensor/views/layout/truncating_layout.hpp"
 #include "../concepts/executor.hpp"
 #include "../traits/executor_happening.hpp"
 #include "../traits/executor_shape.hpp"

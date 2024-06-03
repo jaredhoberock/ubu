@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../layout/layout.hpp"
-#include "../layout/stride/stride_element.hpp"
+#include "../views/layout/layout.hpp"
+#include "../views/layout/stride/stride_element.hpp"
 #include "matrix_like.hpp"
 
 namespace ubu

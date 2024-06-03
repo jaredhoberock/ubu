@@ -8,11 +8,11 @@
 #include "../coordinate/element.hpp"
 #include "../domain.hpp"
 #include "../element_exists.hpp"
-#include "../layout/layout.hpp"
 #include "../shape/shape.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../vector/span_like.hpp"
+#include "layout/layout.hpp"
 #include "slice/slice.hpp"
 #include "compose.hpp"
 #include <ranges>

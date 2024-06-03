@@ -2,8 +2,8 @@
 #include <cassert>
 #include <ubu/tensor/domain.hpp>
 #include <ubu/tensor/matrix/matrix_like.hpp>
-#include <ubu/tensor/layout.hpp>
 #include <ubu/tensor/views/composed_view.hpp>
+#include <ubu/tensor/views/layout.hpp>
 #include <ubu/tensor/views/stack.hpp>
 
 namespace ns = ubu;
