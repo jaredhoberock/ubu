@@ -7,10 +7,10 @@
 #include "../coordinate/concepts/congruent.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/coordinate_sum.hpp"
-#include "../compose.hpp"
 #include "../traits/tensor_element.hpp"
-#include "../composed_view.hpp"
 #include "../vector/span_like.hpp"
+#include "../views/compose.hpp"
+#include "../views/composed_view.hpp"
 #include "coshape.hpp"
 #include "layout.hpp"
 

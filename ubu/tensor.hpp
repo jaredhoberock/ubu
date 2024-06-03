@@ -29,8 +29,6 @@
 #include "detail/prologue.hpp"
 
 #include "tensor/all.hpp"
-#include "tensor/compose.hpp"
-#include "tensor/composed_view.hpp"
 #include "tensor/concepts.hpp"
 #include "tensor/coordinate.hpp"
 #include "tensor/domain.hpp"
@@ -48,6 +46,7 @@
 #include "tensor/stack.hpp"
 #include "tensor/traits.hpp"
 #include "tensor/vector.hpp"
+#include "tensor/views.hpp"
 #include "tensor/zip.hpp"
 #include "tensor/zip_view.hpp"
 

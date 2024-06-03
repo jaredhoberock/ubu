@@ -1,20 +1,20 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integral/size.hpp"
+#include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../coordinate/element.hpp"
+#include "../domain.hpp"
+#include "../element_exists.hpp"
+#include "../layout/layout.hpp"
+#include "../shape/shape.hpp"
+#include "../slice/slice.hpp"
+#include "../traits/tensor_shape.hpp"
+#include "../traits/tensor_coordinate.hpp"
+#include "../vector/span_like.hpp"
 #include "compose.hpp"
-#include "concepts/sized_tensor_like.hpp"
-#include "concepts/tensor_like.hpp"
-#include "coordinate/element.hpp"
-#include "domain.hpp"
-#include "element_exists.hpp"
-#include "layout/layout.hpp"
-#include "shape/shape.hpp"
-#include "slice/slice.hpp"
-#include "traits/tensor_shape.hpp"
-#include "traits/tensor_coordinate.hpp"
-#include "vector/span_like.hpp"
 #include <ranges>
 
 namespace ubu
@@ -132,5 +132,5 @@ constexpr auto make_composed_view(T t, L l)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

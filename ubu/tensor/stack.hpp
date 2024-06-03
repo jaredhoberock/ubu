@@ -4,7 +4,6 @@
 
 #include "../miscellaneous/constant.hpp"
 #include "../miscellaneous/integral/size.hpp"
-#include "compose.hpp"
 #include "coordinate/concepts/congruent.hpp"
 #include "coordinate/coordinate_cast.hpp"
 #include "coordinate/detail/tuple_algorithm.hpp"
@@ -22,6 +21,7 @@
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
 #include "traits/tensor_reference.hpp"
+#include "views/compose.hpp"
 #include <ranges>
 #include <span>
 #include <type_traits>

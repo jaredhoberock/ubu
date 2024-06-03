@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "concepts/tensor_like.hpp"
-#include "layout/layout.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../layout/layout.hpp"
 #include "composed_view.hpp"
 #include <concepts>
 #include <utility>
@@ -87,5 +87,5 @@ constexpr auto invoke_compose(Args&&... args)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

@@ -5,8 +5,8 @@
 #include "../../miscellaneous/integral/integral_like.hpp"
 #include "../coordinate/concepts/coordinate.hpp"
 #include "../coordinate/colexicographical_lift.hpp"
-#include "../compose.hpp"
 #include "../shape/shape_size.hpp"
+#include "../views/compose.hpp"
 #include <ranges>
 
 namespace ubu
