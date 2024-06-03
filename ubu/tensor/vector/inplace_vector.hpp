@@ -69,6 +69,8 @@ class inplace_vector
       {
         if(i < capacity() and ubu::element_exists(vec, i))
         {
+          // XXX we need to move vec[i] if this was called from the move ctor
+          //     and possibly in other cases
           std::construct_at(data() + i, vec[i]);
           ++size_;
         }
@@ -77,10 +79,25 @@ class inplace_vector
 
     inplace_vector(const inplace_vector&) = default;
 
-    constexpr ~inplace_vector()
+    inplace_vector(const inplace_vector& other) requires(not std::is_trivially_copy_constructible_v<T>)
+      : inplace_vector(from_vector_like, other)
+    {}
+
+    inplace_vector(inplace_vector&&) = default;
+
+    inplace_vector(inplace_vector&& other) requires(not std::is_trivially_move_constructible_v<T>)
+      : inplace_vector(from_vector_like, std::move(other))
+    {}
+
+    ~inplace_vector() = default;
+
+    constexpr ~inplace_vector() requires(not std::is_trivially_destructible_v<T>)
     {
       clear();
     }
+
+    inplace_vector& operator=(const inplace_vector&) = default;
+    inplace_vector& operator=(inplace_vector&&) = default;
 
     // iterators
     constexpr T* begin() noexcept
