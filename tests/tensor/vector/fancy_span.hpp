@@ -1,8 +1,8 @@
 #include <cassert>
 #include <concepts>
 #include <iostream>
-#include <ubu/tensor/fancy_span.hpp>
 #include <ubu/miscellaneous/integral/bounded.hpp>
+#include <ubu/tensor/vector/fancy_span.hpp>
 
 void test_fancy_span()
 {

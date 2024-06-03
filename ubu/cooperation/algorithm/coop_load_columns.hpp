@@ -3,7 +3,6 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../../tensor/fancy_span.hpp"
 #include "../../tensor/matrix/contiguous_column_major_matrix_like.hpp"
 #include "../../tensor/matrix/height.hpp"
 #include "../../tensor/matrix/matrix_like.hpp"
@@ -26,7 +25,7 @@ constexpr inplace_vector<tensor_element_t<M>, height_v<M>> coop_load_columns(C s
   if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix_like<M>)
   {
     // in this special case, we can use the entire group to optimize loads
-    // the following assumes that M is a particular type of ubu::view
+    // the following assumes that M is a particular type of composed_view
     // s.t. source.tensor() is span_like
     return coop_load<height_v<M>>(self, source.span());
   }

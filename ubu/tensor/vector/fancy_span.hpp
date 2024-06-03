@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../memory/pointer/pointer_like.hpp"
-#include "../miscellaneous/constant.hpp"
-#include "../miscellaneous/constant_valued.hpp"
-#include "../miscellaneous/integral/integral_like.hpp"
-#include "../miscellaneous/integral/size.hpp"
-#include "traits/tensor_size.hpp"
-#include "vector/contiguous_vector_like.hpp"
+#include "../../memory/pointer/pointer_like.hpp"
+#include "../../miscellaneous/constant.hpp"
+#include "../../miscellaneous/constant_valued.hpp"
+#include "../../miscellaneous/integral/integral_like.hpp"
+#include "../../miscellaneous/integral/size.hpp"
+#include "../traits/tensor_size.hpp"
+#include "contiguous_vector_like.hpp"
 #include <concepts>
 #include <cstdint>
 #include <iterator>
@@ -238,5 +238,5 @@ template<ubu::pointer_like P, ubu::integral_like S>
 inline constexpr bool std::ranges::enable_view<ubu::fancy_span<P,S>> = true;
 
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 
