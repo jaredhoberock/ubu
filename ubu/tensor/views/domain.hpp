@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "coordinate/compare/is_below.hpp"
-#include "concepts/tensor_like.hpp"
+#include "../coordinate/compare/is_below.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../shape.hpp"
+#include "../traits/tensor_coordinate.hpp"
+#include "../traits/tensor_shape.hpp"
 #include "lattice.hpp"
-#include "shape.hpp"
-#include "traits/tensor_coordinate.hpp"
-#include "traits/tensor_shape.hpp"
 
 namespace ubu
 {
 
-// domain(tensor) returns a c++ Range of coordinates representing the domain of tensor
+// domain(tensor) returns a view of coordinates representing the domain of tensor
 // XXX if T has a layout, then the order of the coordinates of the range
 // returned really ought to be in "layout order"
 // maybe another way to implement the result of domain would be to apply
@@ -33,5 +33,5 @@ constexpr bool in_domain(const T& tensor, const C& coord)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

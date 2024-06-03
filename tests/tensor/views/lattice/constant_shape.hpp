@@ -1,40 +1,43 @@
 #include <algorithm>
+#include <cassert>
+#include <tuple>
+#include <utility>
+#include <ubu/miscellaneous/constant.hpp>
 #include <ubu/tensor/coordinate/compare.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 
-#undef NDEBUG
-#include <cassert>
+namespace ns = ubu;
 
-void test_colex_begin_end()
+void test_constant_shape()
 {
-  namespace ns = ubu;
+  using namespace ubu;
 
   {
     int origin = 13;
-    int shape = 7;
+    auto shape = 7_c;
 
-    ns::lattice<int> l(origin, shape);
+    ns::lattice l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.colex_begin(); i != l.colex_end(); ++i, ++linear_idx)
+    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
     {
       auto result = *i;
       auto expected = l[linear_idx];
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.colex_begin(), l.colex_end(), ns::colex_less));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 
   {
     ns::int2 origin = {13,7};
-    ns::int2 shape = {3,2};
+    std::pair shape = {3_c,2_c};
 
-    ns::lattice<ns::int2> l(origin, shape);
+    ns::lattice l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.colex_begin(); i != l.colex_end(); ++i, ++linear_idx)
+    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
     {
       auto result = *i;
       auto expected = l[linear_idx];
@@ -47,25 +50,24 @@ void test_colex_begin_end()
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.colex_begin(), l.colex_end(), ns::colex_less));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 
   {
     ns::int3 origin = {13,7,42};
-    ns::int3 shape = {3,2,1};
+    std::tuple shape = {3_c,2_c,1_c};
 
-    ns::lattice<ns::int3> l(origin, shape);
+    ns::lattice l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.colex_begin(); i != l.colex_end(); ++i, ++linear_idx)
+    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
     {
       auto result = *i;
       auto expected = l[linear_idx];
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.colex_begin(), l.colex_end(), ns::colex_less));
+    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 }
-
 

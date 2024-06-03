@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../domain.hpp"
 #include "../../traits/tensor_element.hpp"
+#include "../domain.hpp"
 #include "layout.hpp"
 #include <set>
 

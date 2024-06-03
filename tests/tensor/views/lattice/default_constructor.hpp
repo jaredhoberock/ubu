@@ -1,5 +1,5 @@
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 
 #undef NDEBUG
 #include <cassert>

@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <ubu/tensor/coordinate/compare.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
-void test_begin_end()
+void test_lex_begin_end()
 {
   namespace ns = ubu;
 
@@ -17,14 +17,14 @@ void test_begin_end()
     ns::lattice<int> l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
+    for(auto i = l.lex_begin(); i != l.lex_end(); ++i, ++linear_idx)
     {
       auto result = *i;
       auto expected = l[linear_idx];
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
+    assert(std::is_sorted(l.lex_begin(), l.lex_end(), ns::lex_less));
   }
 
   {
@@ -34,10 +34,10 @@ void test_begin_end()
     ns::lattice<ns::int2> l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
+    for(auto i = l.lex_begin(); i != l.lex_end(); ++i, ++linear_idx)
     {
       auto result = *i;
-      auto expected = l[linear_idx];
+      auto expected = ns::lexicographical_lift(linear_idx, shape) + origin;
       if(expected != result)
       {
         std::cout << "linear_idx: " << linear_idx << std::endl;
@@ -47,7 +47,7 @@ void test_begin_end()
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
+    assert(std::is_sorted(l.lex_begin(), l.lex_end(), ns::lex_less));
   }
 
   {
@@ -57,15 +57,14 @@ void test_begin_end()
     ns::lattice<ns::int3> l(origin, shape);
 
     int linear_idx = 0;
-    for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
+    for(auto i = l.lex_begin(); i != l.lex_end(); ++i, ++linear_idx)
     {
       auto result = *i;
-      auto expected = l[linear_idx];
+      auto expected = ns::lexicographical_lift(linear_idx, shape) + origin;
       assert(expected == result);
     }
 
-    assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
+    assert(std::is_sorted(l.lex_begin(), l.lex_end(), ns::lex_less));
   }
 }
-
 

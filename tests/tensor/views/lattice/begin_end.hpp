@@ -1,23 +1,20 @@
 #include <algorithm>
-#include <cassert>
-#include <tuple>
-#include <utility>
-#include <ubu/miscellaneous/constant.hpp>
 #include <ubu/tensor/coordinate/compare.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 
-namespace ns = ubu;
+#undef NDEBUG
+#include <cassert>
 
-void test_constant_shape()
+void test_begin_end()
 {
-  using namespace ubu;
+  namespace ns = ubu;
 
   {
     int origin = 13;
-    auto shape = 7_c;
+    int shape = 7;
 
-    ns::lattice l(origin, shape);
+    ns::lattice<int> l(origin, shape);
 
     int linear_idx = 0;
     for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
@@ -32,9 +29,9 @@ void test_constant_shape()
 
   {
     ns::int2 origin = {13,7};
-    std::pair shape = {3_c,2_c};
+    ns::int2 shape = {3,2};
 
-    ns::lattice l(origin, shape);
+    ns::lattice<ns::int2> l(origin, shape);
 
     int linear_idx = 0;
     for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
@@ -55,9 +52,9 @@ void test_constant_shape()
 
   {
     ns::int3 origin = {13,7,42};
-    std::tuple shape = {3_c,2_c,1_c};
+    ns::int3 shape = {3,2,1};
 
-    ns::lattice l(origin, shape);
+    ns::lattice<ns::int3> l(origin, shape);
 
     int linear_idx = 0;
     for(auto i = l.begin(); i != l.end(); ++i, ++linear_idx)
@@ -70,4 +67,5 @@ void test_constant_shape()
     assert(std::is_sorted(l.begin(), l.end(), ns::colex_less));
   }
 }
+
 

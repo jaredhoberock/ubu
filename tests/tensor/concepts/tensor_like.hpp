@@ -5,9 +5,9 @@
 #include <ubu/tensor/concepts/tensor_like.hpp>
 #include <ubu/tensor/concepts/tensor_like_of.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
 #include <ubu/tensor/traits/tensor_element.hpp>
 #include <ubu/tensor/traits/tensor_shape.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 #include <utility>
 #include <vector>
 

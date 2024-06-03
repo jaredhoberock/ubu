@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "coordinate/compare/is_below.hpp"
-#include "coordinate/concepts/coordinate.hpp"
-#include "coordinate/coordinate_sum.hpp"
-#include "coordinate/iterator/colexicographical_iterator.hpp"
-#include "coordinate/iterator/lexicographical_iterator.hpp"
-#include "coordinate/traits/rank.hpp"
-#include "coordinate/zeros.hpp"
-#include "shape/shape_size.hpp"
+#include "../coordinate/compare/is_below.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinate/coordinate_sum.hpp"
+#include "../coordinate/iterator/colexicographical_iterator.hpp"
+#include "../coordinate/iterator/lexicographical_iterator.hpp"
+#include "../coordinate/traits/rank.hpp"
+#include "../coordinate/zeros.hpp"
+#include "../shape/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
@@ -158,5 +158,5 @@ lattice(const S&) -> lattice<S,S>;
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

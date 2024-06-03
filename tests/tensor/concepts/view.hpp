@@ -6,7 +6,7 @@
 #include <tuple>
 #include <ubu/tensor/concepts/view.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/lattice.hpp>
 #include <utility>
 #include <vector>
 
