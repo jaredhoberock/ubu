@@ -2,7 +2,6 @@
 
 #include "../detail/prologue.hpp"
 
-#include "all.hpp"
 #include "concepts/tensor_like.hpp"
 #include "concepts/view.hpp"
 #include "coordinate/concepts/congruent.hpp"
@@ -14,6 +13,7 @@
 #include "slice/underscore.hpp"
 #include "traits/tensor_shape.hpp"
 #include "traits/tensor_rank.hpp"
+#include "views/all.hpp"
 #include <ranges>
 #include <utility>
 

@@ -28,7 +28,6 @@
 
 #include "detail/prologue.hpp"
 
-#include "tensor/all.hpp"
 #include "tensor/concepts.hpp"
 #include "tensor/coordinate.hpp"
 #include "tensor/domain.hpp"

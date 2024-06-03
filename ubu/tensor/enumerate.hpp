@@ -2,11 +2,11 @@
 
 #include "../detail/prologue.hpp"
 
-#include "all.hpp"
 #include "coordinate/element.hpp"
 #include "element_exists.hpp"
 #include "concepts/view.hpp"
 #include "traits/tensor_reference.hpp"
+#include "views/all.hpp"
 #include <ranges>
 #include <utility>
 

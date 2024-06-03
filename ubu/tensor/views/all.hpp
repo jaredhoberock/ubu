@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "../miscellaneous/integral/size.hpp"
-#include "concepts/tensor_like.hpp"
-#include "concepts/view.hpp"
-#include "fancy_span.hpp"
-#include "vector/contiguous_vector_like.hpp"
-#include "vector/span_like.hpp"
+#include "../../detail/prologue.hpp"
+#include "../../miscellaneous/integral/size.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../concepts/view.hpp"
+#include "../fancy_span.hpp"
+#include "../vector/contiguous_vector_like.hpp"
+#include "../vector/span_like.hpp"
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -89,5 +89,5 @@ using all_t = decltype(all(std::declval<T>()));
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

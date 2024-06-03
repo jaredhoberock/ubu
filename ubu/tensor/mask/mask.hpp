@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../all.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
+#include "../views/all.hpp"
 #include "uniform_masked_view.hpp"
 #include <utility>
 
