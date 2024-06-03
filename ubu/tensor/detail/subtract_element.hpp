@@ -6,7 +6,6 @@
 #include "../coordinate/detail/as_integral_like.hpp"
 #include "../coordinate/detail/tuple_algorithm.hpp"
 #include "../coordinate/traits/rank.hpp"
-#include "../slice/slicer.hpp"
 
 namespace ubu::detail
 {

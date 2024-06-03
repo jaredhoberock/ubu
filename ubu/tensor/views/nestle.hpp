@@ -10,10 +10,10 @@
 #include "../detail/coordinate_cat.hpp"
 #include "../detail/coordinate_tail.hpp"
 #include "../shape/shape.hpp"
-#include "../slice/underscore.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_rank.hpp"
 #include "all.hpp"
+#include "slice/underscore.hpp"
 #include <ranges>
 #include <utility>
 

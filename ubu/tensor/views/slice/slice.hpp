@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
-#include "../concepts/tensor_like.hpp"
-#include "../concepts/view.hpp"
-#include "../views/all.hpp"
+#include "../../../detail/prologue.hpp"
+#include "../../concepts/tensor_like.hpp"
+#include "../../concepts/view.hpp"
+#include "../all.hpp"
 #include "sliced_view.hpp"
 #include "slicer.hpp"
 
@@ -61,5 +61,5 @@ constexpr detail::dispatch_slice slice;
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

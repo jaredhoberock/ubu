@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 #include "unslicer.hpp"
@@ -111,5 +111,5 @@ constexpr ubu::slicer auto unslice_coordinate(const C& coord, const K& katana)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

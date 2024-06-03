@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
-#include "../concepts/sized_tensor_like.hpp"
-#include "../concepts/view.hpp"
-#include "../coordinate/coordinate_cast.hpp"
-#include "../element_exists.hpp"
-#include "../shape/shape.hpp"
-#include "../shape/shape_size.hpp"
-#include "../traits/tensor_coordinate.hpp"
+#include "../../../detail/prologue.hpp"
+#include "../../concepts/sized_tensor_like.hpp"
+#include "../../concepts/view.hpp"
+#include "../../coordinate/coordinate_cast.hpp"
+#include "../../element_exists.hpp"
+#include "../../shape/shape.hpp"
+#include "../../shape/shape_size.hpp"
+#include "../../traits/tensor_coordinate.hpp"
 #include "slice_coordinate.hpp"
 #include "slicer.hpp"
 #include "unslice_coordinate.hpp"
@@ -64,5 +64,5 @@ class sliced_view : public std::ranges::view_base
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

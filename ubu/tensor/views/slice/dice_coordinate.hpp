@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
 #include "opposite_slicer.hpp"
 #include "slice_coordinate.hpp"
@@ -17,5 +17,5 @@ constexpr slicer auto dice_coordinate(const C& coord, const K& katana)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

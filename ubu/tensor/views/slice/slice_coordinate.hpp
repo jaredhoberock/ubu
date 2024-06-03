@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/integral_like.hpp"
-#include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/integral/integral_like.hpp"
+#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 #include <tuple>
@@ -86,5 +86,5 @@ constexpr slicer auto slice_coordinate(const C& coord, const K& katana)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

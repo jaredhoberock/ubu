@@ -1,5 +1,5 @@
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/slice/slice_coordinate.hpp>
+#include <ubu/tensor/views/slice/slice_coordinate.hpp>
 
 namespace ns = ubu;
 

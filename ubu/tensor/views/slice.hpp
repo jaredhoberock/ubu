@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
 #include "slice/dice_coordinate.hpp"
 #include "slice/opposite_slicer.hpp"
@@ -12,4 +12,4 @@
 #include "slice/unslice_coordinate.hpp"
 #include "slice/unslicer.hpp"
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"

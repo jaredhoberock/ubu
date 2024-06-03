@@ -1,8 +1,8 @@
 #include <cassert>
 #include <tuple>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/slice/slice_coordinate.hpp>
-#include <ubu/tensor/slice/unslice_coordinate.hpp>
+#include <ubu/tensor/views/slice/slice_coordinate.hpp>
+#include <ubu/tensor/views/slice/unslice_coordinate.hpp>
 
 namespace ns = ubu;
 

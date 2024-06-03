@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "../coordinate/traits/rank.hpp"
+#include "../../coordinate/traits/rank.hpp"
 #include "slicer.hpp"
 #include <tuple>
 #include <type_traits>
@@ -19,5 +19,5 @@ concept unslicer_for =
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

@@ -18,9 +18,9 @@
 #include "../element_exists.hpp"
 #include "../layout/layout.hpp"
 #include "../shape/shape.hpp"
-#include "../slice/slice.hpp"
-#include "../slice/slicer.hpp"
 #include "../traits/tensor_reference.hpp"
+#include "slice/slice.hpp"
+#include "slice/slicer.hpp"
 #include "compose.hpp"
 #include <ranges>
 #include <span>

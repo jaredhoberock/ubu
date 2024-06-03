@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinate/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 
@@ -50,5 +50,5 @@ constexpr slicer auto opposite_slicer(const C& coord, const K& katana)
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 
