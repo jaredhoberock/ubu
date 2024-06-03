@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integral/size.hpp"
-#include "../concepts/sized_tensor_like.hpp"
-#include "../concepts/view.hpp"
-#include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../../../detail/prologue.hpp"
+#include "../../../miscellaneous/integral/size.hpp"
+#include "../../concepts/sized_tensor_like.hpp"
+#include "../../concepts/view.hpp"
+#include "../../element_exists.hpp"
+#include "../../shape/shape.hpp"
 #include <ranges>
 #include <type_traits>
 
@@ -63,5 +63,5 @@ class uniform_masked_view : public std::ranges::view_base
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 
