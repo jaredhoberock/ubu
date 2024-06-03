@@ -9,6 +9,7 @@
 #include "../../tensor/layout/row_major.hpp"
 #include "../../tensor/vector/vector_like.hpp"
 #include "../../tensor/views/compose.hpp"
+#include "../../tensor/views/nestle.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include "../cooperator/size.hpp"
 #include "../cooperator/synchronize.hpp"

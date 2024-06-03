@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "concepts/tensor_like.hpp"
-#include "concepts/view.hpp"
-#include "coordinate/concepts/congruent.hpp"
-#include "coordinate/detail/tuple_algorithm.hpp"
-#include "coordinate/traits/rank.hpp"
-#include "detail/coordinate_cat.hpp"
-#include "detail/coordinate_tail.hpp"
-#include "shape/shape.hpp"
-#include "slice/underscore.hpp"
-#include "traits/tensor_shape.hpp"
-#include "traits/tensor_rank.hpp"
-#include "views/all.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../concepts/view.hpp"
+#include "../coordinate/concepts/congruent.hpp"
+#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinate/traits/rank.hpp"
+#include "../detail/coordinate_cat.hpp"
+#include "../detail/coordinate_tail.hpp"
+#include "../shape/shape.hpp"
+#include "../slice/underscore.hpp"
+#include "../traits/tensor_shape.hpp"
+#include "../traits/tensor_rank.hpp"
+#include "all.hpp"
 #include <ranges>
 #include <utility>
 
@@ -67,5 +67,5 @@ constexpr auto nestle(T&& tensor)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 
