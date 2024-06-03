@@ -8,6 +8,8 @@
 #include "views/enumerate.hpp"
 #include "views/nestle.hpp"
 #include "views/stack.hpp"
+#include "views/zip.hpp"
+#include "views/zip_view.hpp"
 
 #include "../detail/epilogue.hpp"
 

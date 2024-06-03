@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../miscellaneous/integral/size.hpp"
-#include "coordinate/concepts/congruent.hpp"
-#include "coordinate/concepts/coordinate.hpp"
-#include "concepts/sized_tensor_like.hpp"
-#include "concepts/view.hpp"
-#include "element_exists.hpp"
-#include "shape/shape.hpp"
-#include "slice/slice.hpp"
-#include "slice/slicer.hpp"
-#include "traits/tensor_coordinate.hpp"
-#include "traits/tensor_reference.hpp"
-#include "traits/tensor_shape.hpp"
+#include "../../miscellaneous/integral/size.hpp"
+#include "../coordinate/concepts/congruent.hpp"
+#include "../coordinate/concepts/coordinate.hpp"
+#include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/view.hpp"
+#include "../element_exists.hpp"
+#include "../shape/shape.hpp"
+#include "../slice/slice.hpp"
+#include "../slice/slicer.hpp"
+#include "../traits/tensor_coordinate.hpp"
+#include "../traits/tensor_reference.hpp"
+#include "../traits/tensor_shape.hpp"
 #include <ranges>
 #include <tuple>
 
@@ -108,5 +108,5 @@ constexpr view auto make_zip_view(T tensor, Ts... tensors)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

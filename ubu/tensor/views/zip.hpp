@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "concepts/tensor_like.hpp"
-#include "concepts/view.hpp"
-#include "coordinate/concepts/congruent.hpp"
-#include "traits/tensor_shape.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../concepts/view.hpp"
+#include "../coordinate/concepts/congruent.hpp"
+#include "../traits/tensor_shape.hpp"
 #include <utility>
 
 namespace ubu
@@ -83,5 +83,5 @@ constexpr auto invoke_zip(Args&&... args)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

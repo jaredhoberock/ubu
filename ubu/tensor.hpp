@@ -43,8 +43,6 @@
 #include "tensor/traits.hpp"
 #include "tensor/vector.hpp"
 #include "tensor/views.hpp"
-#include "tensor/zip.hpp"
-#include "tensor/zip_view.hpp"
 
 #include "detail/epilogue.hpp"
 
