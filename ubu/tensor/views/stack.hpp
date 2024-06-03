@@ -1,27 +1,27 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../miscellaneous/constant.hpp"
-#include "../miscellaneous/integral/size.hpp"
-#include "coordinate/concepts/congruent.hpp"
-#include "coordinate/coordinate_cast.hpp"
-#include "coordinate/detail/tuple_algorithm.hpp"
-#include "coordinate/element.hpp"
-#include "concepts/tensor_like.hpp"
-#include "concepts/same_tensor_rank.hpp"
-#include "concepts/sized_tensor_like.hpp"
-#include "concepts/view.hpp"
-#include "detail/stacked_shape.hpp"
-#include "detail/subtract_element.hpp"
-#include "domain.hpp"
-#include "element_exists.hpp"
-#include "layout/layout.hpp"
-#include "shape/shape.hpp"
-#include "slice/slice.hpp"
-#include "slice/slicer.hpp"
-#include "traits/tensor_reference.hpp"
-#include "views/compose.hpp"
+#include "../../miscellaneous/constant.hpp"
+#include "../../miscellaneous/integral/size.hpp"
+#include "../coordinate/concepts/congruent.hpp"
+#include "../coordinate/coordinate_cast.hpp"
+#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinate/element.hpp"
+#include "../concepts/tensor_like.hpp"
+#include "../concepts/same_tensor_rank.hpp"
+#include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/view.hpp"
+#include "../detail/stacked_shape.hpp"
+#include "../detail/subtract_element.hpp"
+#include "../domain.hpp"
+#include "../element_exists.hpp"
+#include "../layout/layout.hpp"
+#include "../shape/shape.hpp"
+#include "../slice/slice.hpp"
+#include "../slice/slicer.hpp"
+#include "../traits/tensor_reference.hpp"
+#include "compose.hpp"
 #include <ranges>
 #include <span>
 #include <type_traits>
@@ -201,5 +201,5 @@ constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

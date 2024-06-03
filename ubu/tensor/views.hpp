@@ -7,6 +7,7 @@
 #include "views/composed_view.hpp"
 #include "views/enumerate.hpp"
 #include "views/nestle.hpp"
+#include "views/stack.hpp"
 
 #include "../detail/epilogue.hpp"
 

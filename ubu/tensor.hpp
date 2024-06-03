@@ -40,7 +40,6 @@
 #include "tensor/matrix.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/slice.hpp"
-#include "tensor/stack.hpp"
 #include "tensor/traits.hpp"
 #include "tensor/vector.hpp"
 #include "tensor/views.hpp"

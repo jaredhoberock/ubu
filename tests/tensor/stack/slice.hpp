@@ -1,9 +1,9 @@
 #include <array>
 #include <cassert>
 #include <ubu/tensor/domain.hpp>
-#include <ubu/tensor/stack.hpp>
 #include <ubu/tensor/layout.hpp>
 #include <ubu/tensor/slice.hpp>
+#include <ubu/tensor/views/stack.hpp>
 #include <utility>
 
 // all elements of expected must exist
