@@ -6,7 +6,7 @@
 #include "slice/opposite_slicer.hpp"
 #include "slice/slice.hpp"
 #include "slice/slice_coordinate.hpp"
-#include "slice/slice_view.hpp"
+#include "slice/sliced_view.hpp"
 #include "slice/slicer.hpp"
 #include "slice/underscore.hpp"
 #include "slice/unslice_coordinate.hpp"

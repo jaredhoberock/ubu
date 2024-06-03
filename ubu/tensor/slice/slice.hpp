@@ -4,7 +4,7 @@
 #include "../all.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "slice_view.hpp"
+#include "sliced_view.hpp"
 #include "slicer.hpp"
 
 namespace ubu
@@ -46,7 +46,7 @@ struct dispatch_slice
               and not has_slice_free_function<A&&,K&&>)
   constexpr view auto operator()(A&& arg, K&& katana) const
   {
-    return slice_view(all(std::forward<A>(arg)), std::forward<K>(katana));
+    return sliced_view(all(std::forward<A>(arg)), std::forward<K>(katana));
   }
 };
 

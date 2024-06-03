@@ -18,10 +18,10 @@ namespace ubu
 {
 
 template<view T, slicer_for<tensor_shape_t<T>> S>
-class slice_view : public std::ranges::view_base
+class sliced_view : public std::ranges::view_base
 {
   public:
-    constexpr slice_view(T tensor, S katana)
+    constexpr sliced_view(T tensor, S katana)
       : tensor_{tensor}, katana_{katana}
     {}
 
