@@ -5,6 +5,7 @@
 #include "views/all.hpp"
 #include "views/compose.hpp"
 #include "views/composed_view.hpp"
+#include "views/enumerate.hpp"
 
 #include "../detail/epilogue.hpp"
 

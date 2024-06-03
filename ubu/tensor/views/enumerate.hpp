@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "coordinate/element.hpp"
-#include "element_exists.hpp"
-#include "concepts/view.hpp"
-#include "traits/tensor_reference.hpp"
-#include "views/all.hpp"
+#include "../coordinate/element.hpp"
+#include "../element_exists.hpp"
+#include "../concepts/view.hpp"
+#include "../traits/tensor_reference.hpp"
+#include "all.hpp"
 #include <ranges>
 #include <utility>
 
@@ -60,5 +60,5 @@ constexpr enumerated_view<all_t<T&&>> enumerate(T&& tensor)
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

@@ -4,9 +4,9 @@
 #include <numeric>
 #include <ranges>
 #include <ubu/tensor/coordinate/point.hpp>
-#include <ubu/tensor/enumerate.hpp>
 #include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/lattice.hpp>
+#include <ubu/tensor/views/enumerate.hpp>
 #include <vector>
 
 void test_enumerate()
