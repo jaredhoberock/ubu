@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../causality/after_all.hpp"
 #include "../../causality/happening.hpp"
-#include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
 #include "../pointer.hpp"
 #include "destroy.hpp"
@@ -78,9 +78,9 @@ struct dispatch_destroy_after
               !has_destroy_after_free_function<A&&, E&&, H&&, P&&, allocator_size_t<A>> and
               std::is_trivially_destructible_v<pointer_pointee_t<P>>
              )
-  constexpr auto operator()(A&& alloc, E&& exec, H&& before, P ptr, allocator_size_t<A> n) const
+  constexpr auto operator()(A&&, E&& exec, H&& before, P ptr, allocator_size_t<A> n) const
   {
-    return dependent_on(std::forward<E>(exec), std::forward<H>(before));
+    return after_all(std::forward<H>(before));
   }
 };
 

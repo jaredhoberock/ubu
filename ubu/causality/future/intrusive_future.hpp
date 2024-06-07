@@ -14,6 +14,7 @@
 #include "../../memory/pointer/construct_at.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/zeros.hpp"
+#include "../after_all.hpp"
 #include "../happening.hpp"
 #include <cassert>
 #include <concepts>
@@ -175,7 +176,7 @@ class intrusive_future
       auto [result_allocation_ready, ptr_to_result] = first_allocate<R>(alloc, 1);
 
       // create a happening dependent on before, the allocation, and future_args
-      auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<OtherH>(before), this->ready(), future_args.ready()...);
+      auto inputs_ready = after_all(std::move(result_allocation_ready), std::forward<OtherH>(before), this->ready(), future_args.ready()...);
 
       try
       {
