@@ -4,7 +4,7 @@
 #include <ubu/execution/executor.hpp>
 #include <ubu/memory/allocator.hpp>
 #include <ubu/platform/cpp/inline_executor.hpp>
-#include <ubu/tensor/fancy_span.hpp>
+#include <ubu/tensor/vector/fancy_span.hpp>
 
 #define NDEBUG
 #include <cassert>

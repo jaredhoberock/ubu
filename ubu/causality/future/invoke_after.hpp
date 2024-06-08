@@ -5,7 +5,7 @@
 #include "../../execution/executor.hpp"
 #include "../../memory/allocator.hpp"
 #include "../../memory/pointer/construct_at.hpp"
-#include "../../tensor/fancy_span.hpp"
+#include "../../tensor/vector/fancy_span.hpp"
 #include "../happening.hpp"
 #include "intrusive_future.hpp"
 #include <concepts>

@@ -14,7 +14,7 @@
 #include "../../memory/pointer/construct_at.hpp"
 #include "../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../tensor/coordinate/zeros.hpp"
-#include "../../tensor/fancy_span.hpp"
+#include "../../tensor/vector/fancy_span.hpp"
 #include "../happening.hpp"
 #include <cassert>
 #include <concepts>

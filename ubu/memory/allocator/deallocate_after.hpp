@@ -58,13 +58,13 @@ struct dispatch_deallocate_after
 
   // this dispatch path first does rebind_allocator and then recurses
   template<class A, class B, span_like S>
-    requires (not has_deallocate_after_customization<A&&,B&&,S&&> and
+    requires (not has_deallocate_after_customization<A&&,B&&,S> and
               has_rebind_allocator<tensor_element_t<S>,A&&> and
               has_deallocate_after_customization<
-                rebind_allocator_result_t<tensor_element_t<S&&>,A&&>,
+                rebind_allocator_result_t<tensor_element_t<S>,A&&>,
                 B&&, S&&
               >)
-  constexpr decltype(auto) operator()(A&& alloc, B&& before, S&& span) const
+  constexpr decltype(auto) operator()(A&& alloc, B&& before, S span) const
   {
     auto rebound_alloc = rebind_allocator<tensor_element_t<S>>(std::forward<A>(alloc));
     return (*this)(rebound_alloc, std::forward<B>(before), std::forward<S>(span));

@@ -7,7 +7,7 @@
 #include "../../detail/exception.hpp"
 #include "../../memory/plain_old_data.hpp"
 #include "../../memory/pointer/remote_ptr.hpp"
-#include "../../tensor/fancy_span.hpp"
+#include "../../tensor/vector/fancy_span.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
 #include "event.hpp"
