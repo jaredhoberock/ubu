@@ -281,13 +281,13 @@ void report_performance(std::ostream& os, double bandwidth)
 
   if(pct_peak_bandwidth < expected_performance.first)
   {
-    os << "Regression detected." << std::endl;
     os << "Regression threshold: " << expected_performance.first << "%" << std::endl;
+    os << "Regression detected." << std::endl;
   }
   else if(pct_peak_bandwidth > expected_performance.second)
   {
-    os << "Progression detected." << std::endl;
     os << "Progression threshold: " << expected_performance.second << "%" << std::endl;
+    os << "Progression detected." << std::endl;
   }
 }
 
