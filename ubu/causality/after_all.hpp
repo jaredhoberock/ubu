@@ -3,7 +3,9 @@
 #include "../detail/prologue.hpp"
 
 #include "happening.hpp"
+#include <numeric>
 #include <future>
+#include <ranges>
 #include <utility>
 #include <type_traits>
 
@@ -89,6 +91,16 @@ struct dispatch_after_all
       f1.wait();
       f2.wait();
     });
+  }
+
+  // customization for a range of happenings
+  // XXX a similar specialization for a tensor might be useful
+  //     we could do a hierarchical reduction along mode boundaries
+  template<std::ranges::range R>
+    requires happening<std::ranges::range_value_t<R>>
+  inline happening auto operator()(R&& rng) const
+  {
+    return std::accumulate(std::ranges::begin(rng), std::ranges::end(rng), initial_happening(rng), *this);
   }
 };
 
