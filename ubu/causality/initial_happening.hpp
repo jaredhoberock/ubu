@@ -2,9 +2,10 @@
 
 #include "../detail/prologue.hpp"
 
-#include <concepts>
 #include <future>
+#include <ranges>
 #include <type_traits>
+#include <utility>
 
 
 namespace ubu
@@ -31,6 +32,7 @@ concept has_initial_happening_free_function = requires(T arg)
 template<class T>
 concept has_happening_type_member_type = requires
 {
+  // XXX this should require that this type is an object
   typename std::decay_t<T>::happening_type;
 };
 
@@ -40,6 +42,20 @@ concept has_initial_happening_static_member_function = requires
   // XXX this should require that the result is an object
   T::initial_happening();
 };
+
+template<class T>
+concept has_happening_type_member_type_with_initial_happening_static_member_function =
+  has_happening_type_member_type<T>
+  and has_initial_happening_static_member_function<typename std::decay_t<T>::happening_type>
+;
+
+
+template<class T>
+concept has_initial_happening_customization =
+  has_initial_happening_member_function<T>
+  or has_initial_happening_free_function<T>
+  or has_happening_type_member_type_with_initial_happening_static_member_function<T>
+;
 
 
 struct dispatch_initial_happening
@@ -52,18 +68,17 @@ struct dispatch_initial_happening
   }
 
   template<class T>
-    requires (!has_initial_happening_member_function<T> and
-               has_initial_happening_free_function<T>)
+    requires (not has_initial_happening_member_function<T>
+              and has_initial_happening_free_function<T>)
   constexpr auto operator()(T&& arg) const
   {
     return initial_happening(std::forward<T>(arg));
   }
 
   template<class T>
-    requires (!has_initial_happening_member_function<T> and
-              !has_initial_happening_free_function<T> and
-              has_happening_type_member_type<T> and
-              has_initial_happening_static_member_function<typename std::decay_t<T>::happening_type>)
+    requires (    not has_initial_happening_member_function<T>
+              and not has_initial_happening_free_function<T>
+              and has_happening_type_member_type_with_initial_happening_static_member_function<T>)
   constexpr auto operator()(T&&) const
   {
     using happening_type = typename std::decay_t<T>::happening_type;
@@ -80,6 +95,16 @@ struct dispatch_initial_happening
     p.set_value();
     return p.get_future();
   }
+
+  // customization for a range of happenings
+  // XXX a similar specialization for a tensor might be useful
+  template<std::ranges::range R>
+    requires (not has_initial_happening_customization<R&&>
+              and has_initial_happening_customization<std::ranges::range_value_t<R&&>>)
+  constexpr auto operator()(R&& rng) const
+  {
+    return (*this)(*std::ranges::begin(rng));
+  }
 };
 
 
@@ -95,7 +120,7 @@ constexpr detail::dispatch_initial_happening initial_happening;
 
 
 template<class T>
-using initial_happening_result_t = decltype(ubu::initial_happening(std::declval<T>()));
+using initial_happening_result_t = decltype(initial_happening(std::declval<T>()));
 
 
 } // end ubu
