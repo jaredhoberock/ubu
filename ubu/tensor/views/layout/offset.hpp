@@ -47,33 +47,33 @@ struct offset_layout : composed_view<detail::add_offset<O>, L>
 
   constexpr O offset() const
   {
-    return super_t::tensor().offset;
+    return super_t::a().offset;
   }
 
   template<class T>
     requires (rank_v<O> == 1)
   friend constexpr auto compose(T* ptr, const offset_layout& self)
   {
-    return ubu::compose(ptr + self.tensor().offset, self.layout());
+    return ubu::compose(ptr + self.a().offset, self.b());
   }
 
   template<span_like S>
     requires (rank_v<O> == 1)
   friend constexpr auto compose(S s, const offset_layout& self)
   {
-    auto offset = self.tensor().offset;
+    auto offset = self.a().offset;
     auto new_origin = smaller(offset, s.size());
 
     if constexpr(coshaped_layout<L>)
     {
       // if the layout has a coshape, we can use it to bound the size of the new span
-      auto new_size = smaller(self.layout().coshape(), s.size() - new_origin);
+      auto new_size = smaller(self.b().coshape(), s.size() - new_origin);
 
-      return ubu::compose(s.subspan(new_origin, new_size), self.layout());
+      return ubu::compose(s.subspan(new_origin, new_size), self.b());
     }
     else
     {
-      return ubu::compose(s.subspan(new_origin), self.layout());
+      return ubu::compose(s.subspan(new_origin), self.b());
     }
   }
 };
