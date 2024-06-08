@@ -6,6 +6,7 @@
 #include "../../memory/allocator.hpp"
 #include "../../memory/pointer/construct_at.hpp"
 #include "../../tensor/vector/fancy_span.hpp"
+#include "../after_all.hpp"
 #include "../happening.hpp"
 #include "intrusive_future.hpp"
 #include <concepts>
@@ -28,7 +29,7 @@ intrusive_future<R,A,E> invoke_after(const E& ex, const A& alloc, H&& before, F&
   auto [result_allocation_ready, result_span] = first_allocate<R>(alloc, 1);
 
   // create a happening dependent on before, the allocation, and future_args
-  auto inputs_ready = dependent_on(ex, std::move(result_allocation_ready), std::forward<H>(before), future_args.ready()...);
+  auto inputs_ready = after_all(std::move(result_allocation_ready), std::forward<H>(before), future_args.ready()...);
 
   try
   {

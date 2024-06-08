@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../causality/after_all.hpp"
 #include "../../causality/happening.hpp"
-#include "../../execution/executor/dependent_on.hpp"
 #include "../../execution/executor/execute_after.hpp"
 #include "../../tensor/vector/span_like.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
@@ -77,9 +77,9 @@ struct dispatch_destroy_after
               !has_destroy_after_free_function<A&&, E&&, B&&, S> and
               std::is_trivially_destructible_v<tensor_element_t<S>>
              )
-  constexpr auto operator()(A&& alloc, E&& exec, B&& before, S span) const
+  constexpr auto operator()(A&&, E&&, B&& before, S span) const
   {
-    return dependent_on(std::forward<E>(exec), std::forward<B>(before));
+    return after_all(std::forward<B>(before));
   }
 };
 
