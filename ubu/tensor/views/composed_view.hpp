@@ -34,6 +34,7 @@ constexpr auto invoke_compose(Args&&... args);
 // i.e., Tensor can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
 
 template<class Tensor, layout_for<Tensor> Layout>
+  requires std::is_object_v<Tensor>
 class composed_view : public std::ranges::view_base
 {
   public:
@@ -121,6 +122,7 @@ namespace detail
 // composed_view and compose have a cyclic dependency and can't use each other directly
 // define detail::make_composed_view as soon as composed_view's definition is available
 template<class T, layout_for<T> L>
+  requires std::is_object_v<T>
 constexpr auto make_composed_view(T t, L l)
 {
   return composed_view<T,L>(t,l);
