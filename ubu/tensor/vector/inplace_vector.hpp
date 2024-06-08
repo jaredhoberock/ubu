@@ -69,8 +69,7 @@ class inplace_vector
       {
         if(i < capacity() and ubu::element_exists(vec, i))
         {
-          // XXX we need to move vec[i] if this was called from the move ctor
-          //     and possibly in other cases
+          // XXX we may need to move vec[i] vec was moved into this ctor
           std::construct_at(data() + i, vec[i]);
           ++size_;
         }
@@ -79,15 +78,27 @@ class inplace_vector
 
     inplace_vector(const inplace_vector&) = default;
 
-    inplace_vector(const inplace_vector& other) requires(not std::is_trivially_copy_constructible_v<T>)
+    constexpr inplace_vector(const inplace_vector& other) requires(std::is_copy_constructible_v<T> and not std::is_trivially_copy_constructible_v<T>)
       : inplace_vector(from_vector_like, other)
     {}
 
     inplace_vector(inplace_vector&&) = default;
 
-    inplace_vector(inplace_vector&& other) requires(not std::is_trivially_move_constructible_v<T>)
-      : inplace_vector(from_vector_like, std::move(other))
-    {}
+    constexpr inplace_vector(inplace_vector&& other) requires(std::is_move_constructible_v<T> and not std::is_trivially_move_constructible_v<T>)
+    {
+      // XXX ideally, we would just forward to the from_vector_like ctor
+      //     but we don't currently have a good way to create a moving view
+      #pragma unroll
+      for(size_type i = 0; i < ubu::shape(other); ++i)
+      {
+        if(i < capacity() and ubu::element_exists(other, i))
+        {
+          std::construct_at(data() + i, std::move(other[i]));
+        }
+      }
+
+      size_ = other.size_;
+    }
 
     ~inplace_vector() = default;
 
