@@ -622,6 +622,16 @@ class point : public detail::point_base<T,N>
     }
 
 
+    // conversion to std::tuple
+    constexpr auto as_tuple() const
+    {
+      return detail::unpack_and_invoke(*this, [](const auto... elements)
+      {
+        return std::tuple(elements...);
+      });
+    }
+
+
     friend std::ostream& operator<<(std::ostream& os, const point& self)
     {
       return detail::tuple_output(os, self);
@@ -764,12 +774,13 @@ struct fmt::formatter<ubu::point<T,N>>
   {
     // format a point as if it was a tuple
     // (libfmt would otherwise format a point like a range with square brackets)
-    return std::apply([&](const auto&... elements)
-    {
-      return fmt::format_to(ctx.out(), "{}", std::tuple(elements...));
-    }, p);
+    return fmt::format_to(ctx.out(), "{}", p.as_tuple());
   }
 };
+
+// disable fmt detecting ubu::point as a range (in favor of the formatter above)
+template<class T, size_t N>
+struct fmt::is_range<ubu::point<T,N>, char> : std::false_type {};
 
 #endif // __has_include
 
