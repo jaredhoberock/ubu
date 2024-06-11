@@ -5,7 +5,7 @@
 #include <ranges>
 #include <ubu/tensors/iterators.hpp>
 #include <ubu/tensors/views/layouts/strided_layout.hpp>
-#include <ubu/tensors/views/layouts/stride/compact_row_major_stride.hpp>
+#include <ubu/tensors/views/layouts/strides/compact_row_major_stride.hpp>
 #include <utility>
 
 namespace ns = ubu;

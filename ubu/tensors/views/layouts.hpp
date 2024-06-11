@@ -11,7 +11,7 @@
 #include "layouts/native_layout.hpp"
 #include "layouts/offset.hpp"
 #include "layouts/row_major.hpp"
-#include "layouts/stride.hpp"
+#include "layouts/strides.hpp"
 #include "layouts/strided_layout.hpp"
 #include "layouts/truncating_layout.hpp"
 

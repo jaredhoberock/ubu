@@ -4,7 +4,7 @@
 
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "strided_layout.hpp"
-#include "stride/compact_row_major_stride.hpp"
+#include "strides/compact_row_major_stride.hpp"
 
 namespace ubu
 {

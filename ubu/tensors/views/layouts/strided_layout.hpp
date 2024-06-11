@@ -11,10 +11,10 @@
 #include "detail/strided_layout_compose_impl.hpp"
 #include "layout.hpp"
 #include "offset.hpp"
-#include "stride/apply_stride.hpp"
-#include "stride/apply_stride_r.hpp"
-#include "stride/compact_column_major_stride.hpp"
-#include "stride/stride_for.hpp"
+#include "strides/apply_stride.hpp"
+#include "strides/apply_stride_r.hpp"
+#include "strides/compact_column_major_stride.hpp"
+#include "strides/stride_for.hpp"
 #include <concepts>
 #include <ranges>
 #include <type_traits>

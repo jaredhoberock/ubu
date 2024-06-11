@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../views/layouts/layout.hpp"
-#include "../views/layouts/stride/stride_element.hpp"
+#include "../views/layouts/strides/stride_element.hpp"
 #include "matrix_like.hpp"
 
 namespace ubu

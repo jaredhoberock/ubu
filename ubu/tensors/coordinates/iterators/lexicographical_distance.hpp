@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integral/integral_like.hpp"
-#include "../../views/layouts/stride/apply_stride.hpp"
-#include "../../views/layouts/stride/compact_row_major_stride.hpp"
+#include "../../views/layouts/strides/apply_stride.hpp"
+#include "../../views/layouts/strides/compact_row_major_stride.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../concepts/congruent.hpp"
 #include "../coordinate_difference.hpp"
