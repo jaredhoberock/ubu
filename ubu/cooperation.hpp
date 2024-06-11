@@ -5,7 +5,7 @@
 #include "cooperation/algorithm.hpp"
 #include "cooperation/barriers.hpp"
 #include "cooperation/cooperator.hpp"
-#include "cooperation/workspace.hpp"
+#include "cooperation/workspaces.hpp"
 #include "cooperation/uninitialized_coop_array.hpp"
 #include "cooperation/uninitialized_coop_optional_array.hpp"
 

@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/workspace/workspace_shape.hpp"
+#include "../../../../cooperation/workspaces/workspace_shape.hpp"
 #include "executor_workspace.hpp"
 #include <type_traits>
 
