@@ -13,7 +13,7 @@
 #include "../../memory/allocators/finally_delete_after.hpp"
 #include "../../memory/allocators/first_allocate.hpp"
 #include "../../memory/allocators/traits.hpp"
-#include "../../memory/pointer/construct_at.hpp"
+#include "../../memory/pointers/construct_at.hpp"
 #include "../after_all.hpp"
 #include "../happening.hpp"
 #include <cassert>

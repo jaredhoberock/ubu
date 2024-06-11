@@ -4,7 +4,7 @@
 
 #include "../../execution/executor.hpp"
 #include "../../memory/allocators.hpp"
-#include "../../memory/pointer/construct_at.hpp"
+#include "../../memory/pointers/construct_at.hpp"
 #include "../after_all.hpp"
 #include "../happening.hpp"
 #include "intrusive_future.hpp"

@@ -5,7 +5,7 @@
 #include "../../causality/after_all.hpp"
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/execute_after.hpp"
-#include "../pointer.hpp"
+#include "../pointers.hpp"
 #include "destroy.hpp"
 #include "traits/allocator_size_t.hpp"
 #include "traits/allocator_value_t.hpp"

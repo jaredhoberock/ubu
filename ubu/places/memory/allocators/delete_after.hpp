@@ -4,7 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
-#include "../pointer/pointer_like.hpp"
+#include "../pointers/pointer_like.hpp"
 #include "concepts/asynchronous_allocator.hpp"
 #include "deallocate_after.hpp"
 #include "destroy_after.hpp"

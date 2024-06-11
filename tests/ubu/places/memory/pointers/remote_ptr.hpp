@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <ubu/places/causality/past_event.hpp>
-#include <ubu/places/memory/pointer/remote_ptr.hpp>
+#include <ubu/places/memory/pointers/remote_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>

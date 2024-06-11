@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../pointer.hpp"
+#include "../pointers.hpp"
 #include "rebind_allocator.hpp"
 #include <memory>
 #include <type_traits>

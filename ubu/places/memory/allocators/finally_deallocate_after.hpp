@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../pointer.hpp"
+#include "../pointers.hpp"
 #include "rebind_allocator.hpp"
 #include <type_traits>
 #include <utility>

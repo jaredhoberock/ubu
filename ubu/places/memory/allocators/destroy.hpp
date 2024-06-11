@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../pointer/destroy_at.hpp"
+#include "../pointers/destroy_at.hpp"
 #include <type_traits>
 #include <utility>
 
