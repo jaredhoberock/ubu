@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "coordinate/colexicographical_lift.hpp"
-#include "coordinate/compare.hpp"
+#include "coordinate/comparisons.hpp"
 #include "coordinate/concepts.hpp"
 #include "coordinate/coord.hpp"
 #include "coordinate/coordinate_cast.hpp"

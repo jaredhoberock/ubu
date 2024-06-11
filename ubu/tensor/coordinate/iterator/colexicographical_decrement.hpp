@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../compare/is_below.hpp"
+#include "../comparisons/is_below.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../detail/as_integral_like.hpp"
