@@ -1,7 +1,7 @@
-#include <ubu/causality/wait.hpp>
-#include <ubu/execution/executor/concepts/executor.hpp>
-#include <ubu/execution/executor/finally_execute_after.hpp>
-#include <ubu/execution/executor/first_execute.hpp>
+#include <ubu/places/causality/wait.hpp>
+#include <ubu/places/execution/executor/concepts/executor.hpp>
+#include <ubu/places/execution/executor/finally_execute_after.hpp>
+#include <ubu/places/execution/executor/first_execute.hpp>
 #include <ubu/platform/cuda/callback_executor.hpp>
 
 #undef NDEBUG

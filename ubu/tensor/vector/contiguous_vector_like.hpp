@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../memory/pointer/pointer_like.hpp"
+
+#include "../../places/memory/pointer/pointer_like.hpp"
 #include "sized_vector_like.hpp"
 #include <concepts>
 #include <iterator> // for std::data

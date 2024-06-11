@@ -2,12 +2,12 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../causality/initial_happening.hpp"
-#include "../../causality/wait.hpp"
 #include "../../detail/exception.hpp"
-#include "../../memory/plain_old_data.hpp"
-#include "../../memory/pointer/remote_ptr.hpp"
 #include "../../tensor/vector/fancy_span.hpp"
+#include "../../places/causality/initial_happening.hpp"
+#include "../../places/causality/wait.hpp"
+#include "../../places/memory/plain_old_data.hpp"
+#include "../../places/memory/pointer/remote_ptr.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
 #include "event.hpp"

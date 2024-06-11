@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../causality/actual_happening.hpp"
-#include "../../causality/past_event.hpp"
-#include "../../causality/wait.hpp"
+#include "../../places/causality/actual_happening.hpp"
+#include "../../places/causality/past_event.hpp"
+#include "../../places/causality/wait.hpp"
 #include <concepts>
 #include <functional>
 

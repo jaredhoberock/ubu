@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../memory/pointer/remote_ptr.hpp"
-#include "../../memory/plain_old_data.hpp"
+#include "../../places/memory/pointer/remote_ptr.hpp"
+#include "../../places/memory/plain_old_data.hpp"
 #include "detail/throw_on_cl_error.hpp"
 #include <stdexcept>
 #include <string>
