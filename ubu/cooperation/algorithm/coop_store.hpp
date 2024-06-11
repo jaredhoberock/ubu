@@ -8,7 +8,7 @@
 #include "../../tensor/vectors/span_like.hpp"
 #include "../../tensor/views/compose.hpp"
 #include "../../tensor/views/layouts/column_major.hpp"
-#include "../../tensor/views/slice/slice.hpp"
+#include "../../tensor/views/slices/slice.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/synchronize.hpp"
 #include "../uninitialized_coop_array.hpp"

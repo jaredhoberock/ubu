@@ -11,7 +11,7 @@
 #include "views/layouts.hpp"
 #include "views/masks.hpp"
 #include "views/nestle.hpp"
-#include "views/slice.hpp"
+#include "views/slices.hpp"
 #include "views/stack.hpp"
 #include "views/transform.hpp"
 #include "views/zip.hpp"

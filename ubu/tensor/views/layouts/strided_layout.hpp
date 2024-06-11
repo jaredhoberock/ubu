@@ -4,9 +4,9 @@
 
 #include "../../coordinates.hpp"
 #include "../../shapes/shape_size.hpp"
-#include "../slice/dice_coordinate.hpp"
-#include "../slice/slice_coordinate.hpp"
-#include "../slice/slicer.hpp"
+#include "../slices/dice_coordinate.hpp"
+#include "../slices/slice_coordinate.hpp"
+#include "../slices/slicer.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "layout.hpp"

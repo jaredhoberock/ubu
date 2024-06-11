@@ -9,7 +9,7 @@
 #include "../../tensor/shapes/shape_element.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vectors/inplace_vector.hpp"
-#include "../../tensor/views/slice/slice.hpp"
+#include "../../tensor/views/slices/slice.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include "coop_load.hpp"

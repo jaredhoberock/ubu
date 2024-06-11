@@ -2,7 +2,7 @@
 #include <cassert>
 #include <ubu/tensor/views/domain.hpp>
 #include <ubu/tensor/views/layouts.hpp>
-#include <ubu/tensor/views/slice.hpp>
+#include <ubu/tensor/views/slices.hpp>
 #include <ubu/tensor/views/stack.hpp>
 #include <utility>
 

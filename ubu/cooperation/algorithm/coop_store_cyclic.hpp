@@ -7,7 +7,7 @@
 #include "../../tensor/vectors/vector_like.hpp"
 #include "../../tensor/views/compose.hpp"
 #include "../../tensor/views/layouts/row_major.hpp"
-#include "../../tensor/views/slice/slice.hpp"
+#include "../../tensor/views/slices/slice.hpp"
 #include <concepts>
 #include <utility>
 

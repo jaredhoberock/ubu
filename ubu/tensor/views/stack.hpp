@@ -20,8 +20,8 @@
 #include "../vectors/span_like.hpp"
 #include "domain.hpp"
 #include "layouts/layout.hpp"
-#include "slice/slice.hpp"
-#include "slice/slicer.hpp"
+#include "slices/slice.hpp"
+#include "slices/slicer.hpp"
 #include "compose.hpp"
 #include <ranges>
 #include <type_traits>

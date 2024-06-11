@@ -6,7 +6,7 @@
 #include <ubu/tensor/views/domain.hpp>
 #include <ubu/tensor/views/lattice.hpp>
 #include <ubu/tensor/views/layouts/strided_layout.hpp>
-#include <ubu/tensor/views/slice/slice.hpp>
+#include <ubu/tensor/views/slices/slice.hpp>
 
 namespace ns = ubu;
 

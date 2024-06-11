@@ -12,8 +12,8 @@
 #include "../traits/tensor_coordinate.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "../traits/tensor_shape.hpp"
-#include "slice/slice.hpp"
-#include "slice/slicer.hpp"
+#include "slices/slice.hpp"
+#include "slices/slicer.hpp"
 #include <ranges>
 #include <tuple>
 
