@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "future/intrusive_future.hpp"
-#include "future/invoke_after.hpp"
+#include "futures/intrusive_future.hpp"
+#include "futures/invoke_after.hpp"
 
 #include "../../detail/epilogue.hpp"
 

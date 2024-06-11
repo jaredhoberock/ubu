@@ -1,5 +1,5 @@
-#include <ubu/places/causality/future/intrusive_future.hpp>
-#include <ubu/places/causality/future/invoke_after.hpp>
+#include <ubu/places/causality/futures/intrusive_future.hpp>
+#include <ubu/places/causality/futures/invoke_after.hpp>
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/execution/executors.hpp>
 #include <ubu/places/memory/allocators.hpp>
