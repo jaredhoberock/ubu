@@ -77,8 +77,17 @@ class strided_layout : public std::ranges::view_base
 
     constexpr R coshape() const
     {
-      R last_position = operator[](size() - 1);
-      return coordinate_sum(last_position, ones<decltype(last_position)>);
+      // this check avoids a divide by zero in operator[] that occurs
+      // when one of the modes of shape is zero
+      if(size() != 0)
+      {
+        R last_position = operator[](size() - 1);
+        return coordinate_sum(last_position, ones<decltype(last_position)>);
+      }
+      else
+      {
+        return zeros<R>;
+      }
     }
 
     // XXX the return type of this should be constrained to layout
