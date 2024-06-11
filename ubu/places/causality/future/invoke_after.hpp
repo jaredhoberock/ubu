@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../execution/executor.hpp"
-#include "../../memory/allocator.hpp"
+#include "../../memory/allocators.hpp"
 #include "../../memory/pointer/construct_at.hpp"
 #include "../after_all.hpp"
 #include "../happening.hpp"

@@ -4,7 +4,7 @@
 
 #include "../../causality/initial_happening.hpp"
 #include "../../causality/wait.hpp"
-#include "../../memory/allocator/concepts/asynchronous_allocator.hpp"
+#include "../../memory/allocators/concepts/asynchronous_allocator.hpp"
 #include "concepts/bulk_executable_with_workspace_on.hpp"
 #include <utility>
 

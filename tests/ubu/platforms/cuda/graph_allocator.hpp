@@ -1,6 +1,6 @@
 #include <ubu/places/causality/initial_happening.hpp>
 #include <ubu/places/causality/wait.hpp>
-#include <ubu/places/memory/allocator/concepts/asynchronous_allocator.hpp>
+#include <ubu/places/memory/allocators/concepts/asynchronous_allocator.hpp>
 #include <ubu/platforms/cuda/graph_allocator.hpp>
 
 namespace ns = ubu;
