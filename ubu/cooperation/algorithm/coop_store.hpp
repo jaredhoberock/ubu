@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant.hpp"
-#include "../../tensor/matrix/matrix_like.hpp"
+#include "../../tensor/matrices/matrix_like.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vectors/inplace_vector.hpp"
 #include "../../tensor/vectors/span_like.hpp"

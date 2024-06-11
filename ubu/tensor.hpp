@@ -32,7 +32,7 @@
 #include "tensor/coordinates.hpp"
 #include "tensor/element_exists.hpp"
 #include "tensor/iterator.hpp"
-#include "tensor/matrix.hpp"
+#include "tensor/matrices.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/traits.hpp"
 #include "tensor/vectors.hpp"

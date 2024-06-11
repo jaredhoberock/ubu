@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../../tensor/matrix/contiguous_column_major_matrix_like.hpp"
-#include "../../tensor/matrix/height.hpp"
-#include "../../tensor/matrix/matrix_like.hpp"
+#include "../../tensor/matrices/contiguous_column_major_matrix_like.hpp"
+#include "../../tensor/matrices/height.hpp"
+#include "../../tensor/matrices/matrix_like.hpp"
 #include "../../tensor/shape/shape_element.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vectors/inplace_vector.hpp"
