@@ -1,5 +1,5 @@
 #include <ubu/places/causality/past_event.hpp>
-#include <ubu/places/execution/executor/concepts/executor.hpp>
+#include <ubu/places/execution/executors/concepts/executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -24,7 +24,8 @@ struct executor_with_execute_after_member
 
   using happening_type = ns::past_event;
 
-  ns::past_event execute_after(ns::past_event, auto&& f) const
+  template<class F>
+  ns::past_event execute_after(ns::past_event, F&& f) const
   {
     f();
     return {};
@@ -40,7 +41,8 @@ struct executor_with_execute_after_free_function
   using happening_type = ns::past_event;
 };
 
-ns::past_event execute_after(const executor_with_execute_after_free_function&, ns::past_event, auto&& f)
+template<class F>
+ns::past_event execute_after(const executor_with_execute_after_free_function&, ns::past_event, F&& f)
 {
   f();
   return {};
@@ -50,16 +52,20 @@ ns::past_event execute_after(const executor_with_execute_after_free_function&, n
 void test()
 {
   {
-    static_assert(ns::executor<executor_with_execute_after_member>);
+    auto lambda = []{};
+
+    static_assert(ns::executor_of<executor_with_execute_after_member, decltype(lambda)>);
   }
 
   {
-    static_assert(ns::executor<executor_with_execute_after_free_function>);
+    auto lambda = []{};
+
+    static_assert(ns::executor_of<executor_with_execute_after_free_function, decltype(lambda)>);
   }
 }
 
 
-void test_executor()
+void test_executor_of()
 {
   test();
 

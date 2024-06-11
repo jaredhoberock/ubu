@@ -4,7 +4,7 @@
 #include <ubu/cooperation/algorithms/coop_reduce.hpp>
 #include <ubu/cooperation/cooperators/basic_cooperator.hpp>
 #include <ubu/cooperation/cooperators/is_leader.hpp>
-#include <ubu/places/execution/executor/bulk_execute_with_workspace.hpp>
+#include <ubu/places/execution/executors/bulk_execute_with_workspace.hpp>
 #include <ubu/platforms/cuda/device_allocator.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
 #include <ubu/platforms/cuda/managed_allocator.hpp>

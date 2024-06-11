@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../causality/happening.hpp"
-#include "../../execution/executor/concepts/executor.hpp"
+#include "../../execution/executors/concepts/executor.hpp"
 #include "../pointers/pointer_like.hpp"
 #include "concepts/asynchronous_allocator.hpp"
 #include "deallocate_after.hpp"

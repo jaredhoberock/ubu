@@ -1,4 +1,4 @@
-#include <ubu/places/execution/executor/execute_kernel.hpp>
+#include <ubu/places/execution/executors/execute_kernel.hpp>
 #include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG

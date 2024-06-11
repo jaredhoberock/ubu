@@ -1,7 +1,7 @@
 #include <ubu/places/causality/happening.hpp>
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/causality/wait.hpp>
-#include <ubu/places/execution/executor/execute_after.hpp>
+#include <ubu/places/execution/executors/execute_after.hpp>
 
 #undef NDEBUG
 #include <cassert>

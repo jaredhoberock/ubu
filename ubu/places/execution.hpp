@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
-#include "execution/executor.hpp"
+#include "execution/executors.hpp"
 
 #include "../detail/epilogue.hpp"
 

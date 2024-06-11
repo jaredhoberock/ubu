@@ -2,7 +2,7 @@
 #include <optional>
 #include <span>
 #include <ubu/cooperation/cooperators/basic_cooperator.hpp>
-#include <ubu/places/execution/executor/bulk_execute.hpp>
+#include <ubu/places/execution/executors/bulk_execute.hpp>
 #include <ubu/platforms/cuda/cooperation.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
 #include <ubu/platforms/cuda/managed_allocator.hpp>

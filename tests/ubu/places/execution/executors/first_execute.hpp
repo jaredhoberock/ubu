@@ -1,8 +1,11 @@
 #include <ubu/places/causality/past_event.hpp>
-#include <ubu/places/execution/executor/first_execute.hpp>
+#include <ubu/places/execution/executors/first_execute.hpp>
+#include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>
+
+#include <thread>
 
 #ifdef __CUDACC__
 #include <cuda_runtime_api.h>
@@ -40,19 +43,34 @@ ns::past_event first_execute(const has_first_execute_free_function&, F&& f)
 void test()
 {
   {
-    auto lambda = []{};
+    has_first_execute_member_function ex;
 
-    static_assert(std::is_same_v<ns::past_event, ns::first_execute_result_t<has_first_execute_member_function, decltype(lambda)>>, "Expected past_event.");
+    bool invoked = false;
+    auto e = ns::first_execute(ex, [&]{ invoked = true; });
+    ns::wait(e);
+    assert(invoked);
   }
 
   {
-    auto lambda = []{};
+    has_first_execute_free_function ex;
 
-    static_assert(std::is_same_v<ns::past_event, ns::first_execute_result_t<has_first_execute_free_function, decltype(lambda)>>, "Expected past_event.");
+    bool invoked = false;
+    auto e = ns::first_execute(ex, [&]{ invoked = true; });
+    ns::wait(e);
+    assert(invoked);
+  }
+
+  {
+    ns::cpp::inline_executor ex;
+
+    bool invoked = false;
+    auto e = ns::first_execute(ex, [&]{ invoked = true; });
+    ns::wait(e);
+    assert(invoked);
   }
 }
 
-void test_first_execute_result_t()
+void test_first_execute()
 {
   test();
 

@@ -1,6 +1,6 @@
 #include <ubu/places/causality/happening.hpp>
 #include <ubu/places/causality/past_event.hpp>
-#include <ubu/places/execution/executor/execute_after.hpp>
+#include <ubu/places/execution/executors/finally_execute_after.hpp>
 #include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG
@@ -20,48 +20,44 @@ __global__ void device_invoke(F f)
 
 namespace ns = ubu;
 
-struct has_execute_after_member_function
+struct has_finally_execute_after_member_function
 {
   template<ns::happening H, class F>
-  ns::past_event execute_after(H&& before, F&& f) const
+  void finally_execute_after(H&& before, F&& f) const
   {
     ns::wait(std::move(before));
     f();
-    return {};
   }
 };
 
 
-struct has_execute_after_free_function {};
+struct has_finally_execute_after_free_function {};
 
 template<ns::happening H, class F>
-ns::past_event execute_after(const has_execute_after_free_function&, H&& before, F&& f)
+void finally_execute_after(const has_finally_execute_after_free_function&, H&& before, F&& f)
 {
   ns::wait(std::move(before));
   f();
-  return {};
 }
 
 
 void test()
 {
   {
-    has_execute_after_member_function ex;
+    has_finally_execute_after_member_function ex;
     ns::past_event before;
 
     bool invoked = false;
-    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
-    ns::wait(e);
+    ns::finally_execute_after(ex, before, [&]{ invoked = true; });
     assert(invoked);
   }
 
   {
-    has_execute_after_free_function ex;
+    has_finally_execute_after_free_function ex;
     ns::past_event before;
 
     bool invoked = false;
-    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
-    ns::wait(e);
+    ns::finally_execute_after(ex, before, [&]{ invoked = true; });
     assert(invoked);
   }
 
@@ -70,13 +66,12 @@ void test()
     ns::past_event before;
 
     bool invoked = false;
-    auto e = ns::execute_after(ex, before, [&]{ invoked = true; });
-    ns::wait(e);
+    ns::finally_execute_after(ex, before, [&]{ invoked = true; });
     assert(invoked);
   }
 }
 
-void test_execute_after()
+void test_finally_execute_after()
 {
   test();
 

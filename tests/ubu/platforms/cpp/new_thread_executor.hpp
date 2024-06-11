@@ -1,8 +1,8 @@
 #include <ubu/places/causality/wait.hpp>
-#include <ubu/places/execution/executor/concepts/executor.hpp>
-#include <ubu/places/execution/executor/execute_after.hpp>
-#include <ubu/places/execution/executor/finally_execute_after.hpp>
-#include <ubu/places/execution/executor/first_execute.hpp>
+#include <ubu/places/execution/executors/concepts/executor.hpp>
+#include <ubu/places/execution/executors/execute_after.hpp>
+#include <ubu/places/execution/executors/finally_execute_after.hpp>
+#include <ubu/places/execution/executors/first_execute.hpp>
 #include <ubu/platforms/cpp/new_thread_executor.hpp>
 
 #undef NDEBUG

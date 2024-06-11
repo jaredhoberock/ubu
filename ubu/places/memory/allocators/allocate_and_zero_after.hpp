@@ -4,8 +4,8 @@
 
 #include "../../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "../../causality/happening.hpp"
-#include "../../execution/executor/concepts/executor.hpp"
-#include "../../execution/executor/execute_after.hpp"
+#include "../../execution/executors/concepts/executor.hpp"
+#include "../../execution/executors/execute_after.hpp"
 #include "../pointers/pointer_like.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocator.hpp"

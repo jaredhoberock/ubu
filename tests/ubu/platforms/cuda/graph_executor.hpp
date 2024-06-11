@@ -1,10 +1,10 @@
 #include <array>
 #include <ubu/cooperation/workspaces/get_local_workspace.hpp>
 #include <ubu/places/causality.hpp>
-#include <ubu/places/execution/executor/bulk_execute_after.hpp>
-#include <ubu/places/execution/executor/concepts/executor.hpp>
-#include <ubu/places/execution/executor/execute_kernel.hpp>
-#include <ubu/places/execution/executor/first_execute.hpp>
+#include <ubu/places/execution/executors/bulk_execute_after.hpp>
+#include <ubu/places/execution/executors/concepts/executor.hpp>
+#include <ubu/places/execution/executors/execute_kernel.hpp>
+#include <ubu/places/execution/executors/first_execute.hpp>
 #include <ubu/places/memory/buffers/reinterpret_buffer.hpp>
 #include <ubu/platforms/cuda/graph_executor.hpp>
 #include <ubu/tensors/coordinates/colexicographical_lift.hpp>

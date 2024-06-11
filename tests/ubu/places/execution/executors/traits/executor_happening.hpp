@@ -1,4 +1,4 @@
-#include <ubu/places/execution/executor/traits/executor_happening.hpp>
+#include <ubu/places/execution/executors/traits/executor_happening.hpp>
 
 #undef NDEBUG
 #include <cassert>
