@@ -4,7 +4,7 @@
 
 #include "concepts.hpp"
 #include "coordinate/element.hpp"
-#include "coordinate/iterator/colexicographical_iterator.hpp"
+#include "coordinate/iterators/colexicographical_iterator.hpp"
 #include "shape/shape.hpp"
 #include "traits.hpp"
 #include "views/all.hpp"

@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <ubu/tensor/coordinate/compare.hpp>
+#include <ubu/tensor/coordinate/comparisons.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <ubu/tensor/views/lattice.hpp>
 

@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <cassert>
-#include <ubu/tensor/coordinate/compare.hpp>
+#include <ubu/tensor/coordinate/comparisons.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <ubu/tensor/shape/convert_shape.hpp>
 #include <ubu/tensor/shape/shape_size.hpp>

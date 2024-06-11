@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/compare.hpp"
+#include "../../../../tensor/coordinate/comparisons.hpp"
 #include "../../../../tensor/coordinate/concepts/coordinate.hpp"
 #include "../../../../tensor/coordinate/zeros.hpp"
 #include "../../../../tensor/shape.hpp"

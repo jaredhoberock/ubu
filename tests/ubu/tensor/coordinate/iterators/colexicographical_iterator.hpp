@@ -1,5 +1,5 @@
 #include <ubu/miscellaneous/constant.hpp>
-#include <ubu/tensor/coordinate/iterator/colexicographical_iterator.hpp>
+#include <ubu/tensor/coordinate/iterators/colexicographical_iterator.hpp>
 #include <ubu/tensor/coordinate/point.hpp>
 #include <utility>
 

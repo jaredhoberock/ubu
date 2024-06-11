@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "compare/lexicographical_compare_coordinates.hpp"
+#include "comparisons/lexicographical_compare_coordinates.hpp"
 #include "detail/tuple_algorithm.hpp"
 #include "traits/rank.hpp"
 #include <array>
