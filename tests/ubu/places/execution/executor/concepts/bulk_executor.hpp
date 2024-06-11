@@ -1,6 +1,6 @@
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/execution/executor/concepts/bulk_executor.hpp>
-#include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

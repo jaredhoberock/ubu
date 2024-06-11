@@ -1,4 +1,4 @@
-#include <ubu/platform/cuda/thread_id.hpp>
+#include <ubu/platforms/cuda/thread_id.hpp>
 #include <ubu/tensor/coordinates/concepts/congruent.hpp>
 #include <ubu/tensor/coordinates/concepts/coordinate.hpp>
 #include <ubu/tensor/coordinates/concepts/weakly_congruent.hpp>

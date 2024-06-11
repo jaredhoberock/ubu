@@ -1,6 +1,6 @@
 #include <ubu/places/causality/initial_happening.hpp>
 #include <ubu/places/execution/executor/concepts/executor.hpp>
-#include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

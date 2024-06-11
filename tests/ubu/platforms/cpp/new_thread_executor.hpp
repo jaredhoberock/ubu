@@ -3,7 +3,7 @@
 #include <ubu/places/execution/executor/execute_after.hpp>
 #include <ubu/places/execution/executor/finally_execute_after.hpp>
 #include <ubu/places/execution/executor/first_execute.hpp>
-#include <ubu/platform/cpp/new_thread_executor.hpp>
+#include <ubu/platforms/cpp/new_thread_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

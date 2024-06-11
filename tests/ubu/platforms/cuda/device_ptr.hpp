@@ -1,5 +1,5 @@
-#include <ubu/platform/cuda/device_memory_resource.hpp>
-#include <ubu/platform/cuda/device_ptr.hpp>
+#include <ubu/platforms/cuda/device_memory_resource.hpp>
+#include <ubu/platforms/cuda/device_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>

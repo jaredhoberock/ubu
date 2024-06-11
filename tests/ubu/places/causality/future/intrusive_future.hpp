@@ -3,7 +3,7 @@
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/execution/executor.hpp>
 #include <ubu/places/memory/allocator.hpp>
-#include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/platforms/cpp/inline_executor.hpp>
 
 #define NDEBUG
 #include <cassert>

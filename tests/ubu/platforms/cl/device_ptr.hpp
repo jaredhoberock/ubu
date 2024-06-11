@@ -1,6 +1,6 @@
-#include <ubu/platform/cl/context.hpp>
-#include <ubu/platform/cl/device_allocator.hpp>
-#include <ubu/platform/cl/device_ptr.hpp>
+#include <ubu/platforms/cl/context.hpp>
+#include <ubu/platforms/cl/device_allocator.hpp>
+#include <ubu/platforms/cl/device_ptr.hpp>
 
 #undef NDEBUG
 #include <cassert>

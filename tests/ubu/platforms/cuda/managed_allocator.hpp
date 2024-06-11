@@ -1,6 +1,6 @@
 #include <ubu/places/memory/allocator/concepts/allocator.hpp>
-#include <ubu/platform/cuda/device_executor.hpp>
-#include <ubu/platform/cuda/managed_allocator.hpp>
+#include <ubu/platforms/cuda/device_executor.hpp>
+#include <ubu/platforms/cuda/managed_allocator.hpp>
 
 namespace ns = ubu;
 

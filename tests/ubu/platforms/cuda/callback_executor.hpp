@@ -2,7 +2,7 @@
 #include <ubu/places/execution/executor/concepts/executor.hpp>
 #include <ubu/places/execution/executor/finally_execute_after.hpp>
 #include <ubu/places/execution/executor/first_execute.hpp>
-#include <ubu/platform/cuda/callback_executor.hpp>
+#include <ubu/platforms/cuda/callback_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

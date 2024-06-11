@@ -7,7 +7,6 @@
 #include <random>
 #include <span>
 #include <ubu/ubu.hpp>
-#include <ubu/platform/cuda.hpp>
 #include "measure_bandwidth_of_invocation.hpp"
 
 

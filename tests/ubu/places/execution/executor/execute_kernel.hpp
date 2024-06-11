@@ -1,5 +1,5 @@
 #include <ubu/places/execution/executor/execute_kernel.hpp>
-#include <ubu/platform/cpp/inline_executor.hpp>
+#include <ubu/platforms/cpp/inline_executor.hpp>
 
 #undef NDEBUG
 #include <cassert>

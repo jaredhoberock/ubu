@@ -1,4 +1,4 @@
-#include <ubu/platform/cuda/managed_memory_resource.hpp>
+#include <ubu/platforms/cuda/managed_memory_resource.hpp>
 
 #undef NDEBUG
 #include <cassert>
