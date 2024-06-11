@@ -1,5 +1,5 @@
 #include <iostream>
-#include <ubu/tensor.hpp>
+#include <ubu/tensors.hpp>
 #include <utility>
 
 #undef NDEBUG

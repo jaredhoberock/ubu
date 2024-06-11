@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinates/concepts/weakly_congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/weakly_congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

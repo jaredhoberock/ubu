@@ -2,14 +2,14 @@
 #include <cassert>
 #include <numeric>
 #include <ranges>
-#include <ubu/tensor/coordinates/comparisons.hpp>
-#include <ubu/tensor/iterators.hpp>
-#include <ubu/tensor/shapes/shape_size.hpp>
-#include <ubu/tensor/views/composed_view.hpp>
-#include <ubu/tensor/views/domain.hpp>
-#include <ubu/tensor/views/lattice.hpp>
-#include <ubu/tensor/views/layouts/column_major.hpp>
-#include <ubu/tensor/views/layouts/row_major.hpp>
+#include <ubu/tensors/coordinates/comparisons.hpp>
+#include <ubu/tensors/iterators.hpp>
+#include <ubu/tensors/shapes/shape_size.hpp>
+#include <ubu/tensors/views/composed_view.hpp>
+#include <ubu/tensors/views/domain.hpp>
+#include <ubu/tensors/views/lattice.hpp>
+#include <ubu/tensors/views/layouts/column_major.hpp>
+#include <ubu/tensors/views/layouts/row_major.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 

@@ -1,5 +1,5 @@
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/shapes/shape_size.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/shapes/shape_size.hpp>
 
 #undef NDEBUG
 #include <cassert>

@@ -28,15 +28,15 @@
 
 #include "detail/prologue.hpp"
 
-#include "tensor/concepts.hpp"
-#include "tensor/coordinates.hpp"
-#include "tensor/element_exists.hpp"
-#include "tensor/iterators.hpp"
-#include "tensor/matrices.hpp"
-#include "tensor/shapes.hpp"
-#include "tensor/traits.hpp"
-#include "tensor/vectors.hpp"
-#include "tensor/views.hpp"
+#include "tensors/concepts.hpp"
+#include "tensors/coordinates.hpp"
+#include "tensors/element_exists.hpp"
+#include "tensors/iterators.hpp"
+#include "tensors/matrices.hpp"
+#include "tensors/shapes.hpp"
+#include "tensors/traits.hpp"
+#include "tensors/vectors.hpp"
+#include "tensors/views.hpp"
 
 #include "detail/epilogue.hpp"
 

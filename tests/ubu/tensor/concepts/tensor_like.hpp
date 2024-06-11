@@ -2,12 +2,12 @@
 #include <concepts>
 #include <string>
 #include <tuple>
-#include <ubu/tensor/concepts/tensor_like.hpp>
-#include <ubu/tensor/concepts/tensor_like_of.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/traits/tensor_element.hpp>
-#include <ubu/tensor/traits/tensor_shape.hpp>
-#include <ubu/tensor/views/lattice.hpp>
+#include <ubu/tensors/concepts/tensor_like.hpp>
+#include <ubu/tensors/concepts/tensor_like_of.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/traits/tensor_element.hpp>
+#include <ubu/tensors/traits/tensor_shape.hpp>
+#include <ubu/tensors/views/lattice.hpp>
 #include <utility>
 #include <vector>
 

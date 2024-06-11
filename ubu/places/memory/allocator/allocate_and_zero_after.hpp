@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../tensor/coordinates/detail/tuple_algorithm.hpp"
+#include "../../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "../../causality/happening.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
 #include "../../execution/executor/execute_after.hpp"

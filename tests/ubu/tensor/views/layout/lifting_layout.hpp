@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <cassert>
-#include <ubu/tensor/coordinates/comparisons.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/shapes/convert_shape.hpp>
-#include <ubu/tensor/shapes/shape_size.hpp>
-#include <ubu/tensor/views/layouts/lifting_layout.hpp>
+#include <ubu/tensors/coordinates/comparisons.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/shapes/convert_shape.hpp>
+#include <ubu/tensors/shapes/shape_size.hpp>
+#include <ubu/tensors/views/layouts/lifting_layout.hpp>
 
 namespace ns = ubu;
 

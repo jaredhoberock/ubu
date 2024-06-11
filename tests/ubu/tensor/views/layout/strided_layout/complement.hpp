@@ -1,5 +1,5 @@
 #include <concepts>
-#include <ubu/tensor/views/layouts/strided_layout.hpp>
+#include <ubu/tensors/views/layouts/strided_layout.hpp>
 
 #undef NDEBUG
 #include <cassert>

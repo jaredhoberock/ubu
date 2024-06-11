@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinates/concepts/congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

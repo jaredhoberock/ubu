@@ -2,9 +2,9 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinates/concepts/congruent.hpp"
-#include "../../../../tensor/coordinates/concepts/coordinate.hpp"
-#include "../../../../tensor/coordinates/concepts/weakly_congruent.hpp"
+#include "../../../../tensors/coordinates/concepts/congruent.hpp"
+#include "../../../../tensors/coordinates/concepts/coordinate.hpp"
+#include "../../../../tensors/coordinates/concepts/weakly_congruent.hpp"
 #include "../traits/executor_coordinate.hpp"
 #include "../traits/executor_happening.hpp"
 #include "../traits/executor_shape.hpp"

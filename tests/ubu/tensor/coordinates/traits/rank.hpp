@@ -1,5 +1,5 @@
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/coordinates/traits/rank.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/traits/rank.hpp>
 #include <tuple>
 #include <utility>
 

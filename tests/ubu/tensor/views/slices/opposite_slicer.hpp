@@ -1,6 +1,6 @@
 #include <cassert>
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/views/slices/dice_coordinate.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/views/slices/dice_coordinate.hpp>
 
 namespace ns = ubu;
 

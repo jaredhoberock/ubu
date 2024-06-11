@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinates/concepts/coordinate.hpp"
-#include "../../../../tensor/views/lattice.hpp"
+#include "../../../../tensors/coordinates/concepts/coordinate.hpp"
+#include "../../../../tensors/views/lattice.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"

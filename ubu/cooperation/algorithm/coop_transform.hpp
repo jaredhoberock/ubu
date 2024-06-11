@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/traits/tensor_reference.hpp"
-#include "../../tensor/concepts/tensor_like.hpp"
-#include "../../tensor/views/zip.hpp"
+#include "../../tensors/traits/tensor_reference.hpp"
+#include "../../tensors/concepts/tensor_like.hpp"
+#include "../../tensors/views/zip.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include <concepts>
 

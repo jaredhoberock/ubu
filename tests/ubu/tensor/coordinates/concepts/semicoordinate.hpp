@@ -1,5 +1,5 @@
-#include <ubu/tensor/coordinates/concepts/semicoordinate.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/concepts/semicoordinate.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
 #include <utility>
 #include <tuple>
 #include <array>

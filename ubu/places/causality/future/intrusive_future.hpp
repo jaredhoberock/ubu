@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../detail/for_each_arg.hpp"
-#include "../../../tensor/coordinates/concepts/coordinate.hpp"
-#include "../../../tensor/coordinates/zeros.hpp"
+#include "../../../tensors/coordinates/concepts/coordinate.hpp"
+#include "../../../tensors/coordinates/zeros.hpp"
 #include "../../execution/executor/bulk_execute_after.hpp"
 #include "../../execution/executor/concepts/executor.hpp"
 #include "../../execution/executor/traits/executor_workspace_shape.hpp"

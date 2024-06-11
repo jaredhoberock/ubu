@@ -1,10 +1,10 @@
 #include <array>
 #include <cassert>
-#include <ubu/tensor/matrices/matrix_like.hpp>
-#include <ubu/tensor/views/composed_view.hpp>
-#include <ubu/tensor/views/domain.hpp>
-#include <ubu/tensor/views/layouts.hpp>
-#include <ubu/tensor/views/stack.hpp>
+#include <ubu/tensors/matrices/matrix_like.hpp>
+#include <ubu/tensors/views/composed_view.hpp>
+#include <ubu/tensors/views/domain.hpp>
+#include <ubu/tensors/views/layouts.hpp>
+#include <ubu/tensors/views/stack.hpp>
 
 namespace ns = ubu;
 

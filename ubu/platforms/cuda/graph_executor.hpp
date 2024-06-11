@@ -4,8 +4,8 @@
 
 #include "../../places/memory/allocator/allocate_and_zero_after.hpp"
 #include "../../places/memory/allocator/deallocate_after.hpp"
-#include "../../tensor/coordinates/concepts/congruent.hpp"
-#include "../../tensor/coordinates/one_extend_coordinate.hpp"
+#include "../../tensors/coordinates/concepts/congruent.hpp"
+#include "../../tensors/coordinates/one_extend_coordinate.hpp"
 #include "cooperation.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"

@@ -2,9 +2,9 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinates/concepts/strictly_subdimensional.hpp"
-#include "../../../../tensor/coordinates/traits/default_coordinate.hpp"
-#include "../../../../tensor/views/layouts/truncating_layout.hpp"
+#include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensors/coordinates/traits/default_coordinate.hpp"
+#include "../../../../tensors/views/layouts/truncating_layout.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/executor.hpp"
 #include "../traits/executor_happening.hpp"

@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant.hpp"
-#include "../../tensor/vectors/inplace_vector.hpp"
-#include "../../tensor/vectors/vector_like.hpp"
-#include "../../tensor/views/compose.hpp"
-#include "../../tensor/views/layouts/row_major.hpp"
+#include "../../tensors/vectors/inplace_vector.hpp"
+#include "../../tensors/vectors/vector_like.hpp"
+#include "../../tensors/views/compose.hpp"
+#include "../../tensors/views/layouts/row_major.hpp"
 #include "../cooperator/concepts/semicooperator.hpp"
 #include <utility>
 

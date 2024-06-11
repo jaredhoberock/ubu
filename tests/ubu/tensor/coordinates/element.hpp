@@ -1,7 +1,7 @@
 #include <array>
 #include <concepts>
-#include <ubu/tensor/coordinates/element.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/element.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
 
 #undef NDEBUG
 #include <cassert>

@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <ubu/tensor/shapes/shape_size.hpp>
-#include <ubu/tensor/views/composed_view.hpp>
-#include <ubu/tensor/views/domain.hpp>
-#include <ubu/tensor/views/lattice.hpp>
-#include <ubu/tensor/views/layouts/strided_layout.hpp>
-#include <ubu/tensor/views/slices/slice.hpp>
+#include <ubu/tensors/shapes/shape_size.hpp>
+#include <ubu/tensors/views/composed_view.hpp>
+#include <ubu/tensors/views/domain.hpp>
+#include <ubu/tensors/views/lattice.hpp>
+#include <ubu/tensors/views/layouts/strided_layout.hpp>
+#include <ubu/tensors/views/slices/slice.hpp>
 
 namespace ns = ubu;
 

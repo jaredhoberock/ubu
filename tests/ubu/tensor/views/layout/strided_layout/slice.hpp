@@ -3,9 +3,9 @@
 #include <cassert>
 #include <iostream>
 #include <ranges>
-#include <ubu/tensor/iterators.hpp>
-#include <ubu/tensor/views/layouts/strided_layout.hpp>
-#include <ubu/tensor/views/layouts/stride/compact_row_major_stride.hpp>
+#include <ubu/tensors/iterators.hpp>
+#include <ubu/tensors/views/layouts/strided_layout.hpp>
+#include <ubu/tensors/views/layouts/stride/compact_row_major_stride.hpp>
 #include <utility>
 
 namespace ns = ubu;

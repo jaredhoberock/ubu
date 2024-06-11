@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integral/size.hpp"
 #include "../../places/memory/buffer/get_buffer.hpp"
-#include "../../tensor/coordinates/detail/tuple_algorithm.hpp"
-#include "../../tensor/coordinates/point.hpp"
+#include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
+#include "../../tensors/coordinates/point.hpp"
 #include "hierarchical_workspace.hpp"
 #include "workspace.hpp"
 #include <utility>

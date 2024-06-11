@@ -3,7 +3,7 @@
 #include "../detail/prologue.hpp"
 #include "../miscellaneous/integral/ceil_div.hpp"
 #include "../miscellaneous/integral/integral_like.hpp"
-#include "../tensor/coordinates/traits/default_coordinate.hpp"
+#include "../tensors/coordinates/traits/default_coordinate.hpp"
 #include "cooperator/concepts/allocating_cooperator.hpp"
 #include "cooperator/coop_alloca.hpp"
 #include "cooperator/coop_dealloca.hpp"

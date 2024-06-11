@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../tensor/traits/tensor_element.hpp"
-#include "../../../tensor/vectors/span_like.hpp"
+#include "../../../tensors/traits/tensor_element.hpp"
+#include "../../../tensors/vectors/span_like.hpp"
 #include <cstddef>
 
 namespace ubu

@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinates/concepts/superdimensional.hpp>
+#include <ubu/tensors/coordinates/concepts/superdimensional.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
 #include <cassert>
 
 template<class T, class... Types>

@@ -1,6 +1,6 @@
 #include <ubu/miscellaneous/constant.hpp>
-#include <ubu/tensor/coordinates/iterators/lexicographical_iterator.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/iterators/lexicographical_iterator.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
 #include <utility>
 
 namespace ns = ubu;

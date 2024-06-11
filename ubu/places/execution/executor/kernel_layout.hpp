@@ -2,12 +2,12 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../tensor/coordinates/concepts/coordinate.hpp"
-#include "../../../tensor/shapes/convert_shape.hpp"
-#include "../../../tensor/views/compose.hpp"
-#include "../../../tensor/views/layouts/identity_layout.hpp"
-#include "../../../tensor/views/layouts/lifting_layout.hpp"
-#include "../../../tensor/views/layouts/native_layout.hpp"
+#include "../../../tensors/coordinates/concepts/coordinate.hpp"
+#include "../../../tensors/shapes/convert_shape.hpp"
+#include "../../../tensors/views/compose.hpp"
+#include "../../../tensors/views/layouts/identity_layout.hpp"
+#include "../../../tensors/views/layouts/lifting_layout.hpp"
+#include "../../../tensors/views/layouts/native_layout.hpp"
 #include "concepts/executor.hpp"
 #include "traits/executor_coordinate.hpp"
 

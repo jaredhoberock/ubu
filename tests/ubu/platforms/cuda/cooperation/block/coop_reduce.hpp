@@ -8,7 +8,7 @@
 #include <ubu/platforms/cuda/device_allocator.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
 #include <ubu/platforms/cuda/managed_allocator.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
 #include <vector>
 
 namespace ns = ubu;

@@ -3,10 +3,10 @@
 #include <iostream>
 #include <numeric>
 #include <ranges>
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/iterators.hpp>
-#include <ubu/tensor/views/enumerate.hpp>
-#include <ubu/tensor/views/lattice.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/iterators.hpp>
+#include <ubu/tensors/views/enumerate.hpp>
+#include <ubu/tensors/views/lattice.hpp>
 #include <vector>
 
 void test_enumerate()

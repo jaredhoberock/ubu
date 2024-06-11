@@ -3,9 +3,9 @@
 #include <tuple>
 #include <utility>
 #include <ubu/miscellaneous/constant.hpp>
-#include <ubu/tensor/coordinates/comparisons.hpp>
-#include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/views/lattice.hpp>
+#include <ubu/tensors/coordinates/comparisons.hpp>
+#include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/views/lattice.hpp>
 
 namespace ns = ubu;
 

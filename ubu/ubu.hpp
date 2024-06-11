@@ -32,7 +32,7 @@
 #include "miscellaneous.hpp"
 #include "places.hpp"
 #include "platforms.hpp"
-#include "tensor.hpp"
+#include "tensors.hpp"
 
 #include "detail/epilogue.hpp"
 

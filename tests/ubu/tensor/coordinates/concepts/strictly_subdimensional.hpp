@@ -1,6 +1,6 @@
-#include <ubu/tensor/coordinates/concepts/congruent.hpp>
-#include <ubu/tensor/coordinates/concepts/strictly_subdimensional.hpp>
-#include <ubu/tensor/coordinates/concepts/weakly_congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/strictly_subdimensional.hpp>
+#include <ubu/tensors/coordinates/concepts/weakly_congruent.hpp>
 #include <array>
 #include <tuple>
 #include <utility>

@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/traits/tensor_reference.hpp"
-#include "../../tensor/concepts/tensor_like.hpp"
+#include "../../tensors/traits/tensor_reference.hpp"
+#include "../../tensors/concepts/tensor_like.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include "coop_transform.hpp"
 #include <concepts>

@@ -1,8 +1,8 @@
 #include <ubu/miscellaneous/constant.hpp>
 #include <ubu/miscellaneous/constant_valued.hpp>
 #include <ubu/miscellaneous/integral/integral_like.hpp>
-#include <ubu/tensor/coordinates/concepts/congruent.hpp>
-#include <ubu/tensor/coordinates/concepts/coordinate.hpp>
+#include <ubu/tensors/coordinates/concepts/congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/coordinate.hpp>
 #include <utility>
 
 namespace ns = ubu;
