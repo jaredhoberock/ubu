@@ -31,7 +31,7 @@
 #include "tensor/concepts.hpp"
 #include "tensor/coordinates.hpp"
 #include "tensor/element_exists.hpp"
-#include "tensor/iterator.hpp"
+#include "tensor/iterators.hpp"
 #include "tensor/matrices.hpp"
 #include "tensor/shapes.hpp"
 #include "tensor/traits.hpp"

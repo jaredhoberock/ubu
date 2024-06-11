@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <ranges>
-#include <ubu/tensor/iterator.hpp>
+#include <ubu/tensor/iterators.hpp>
 #include <ubu/tensor/views/layout/strided_layout.hpp>
 #include <ubu/tensor/views/layout/stride/compact_row_major_stride.hpp>
 #include <utility>

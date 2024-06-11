@@ -1,5 +1,5 @@
 #include <concepts>
-#include <ubu/tensor/iterator.hpp>
+#include <ubu/tensor/iterators.hpp>
 #include <span>
 
 namespace ns = ubu;
