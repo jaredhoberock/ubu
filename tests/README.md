@@ -11,5 +11,6 @@ Protip: to get color-coded build output, pipe to `ccze`:
 # Subdirectories
 
     * `ubu` : Unit tests for functionality defined by the library.
-    * `zippyness` : Performance regression tests for parallel algorithms implemented using library components. So-named to force this subdirectory to build last.
+    * `zippyness` : Performance regression tests for parallel algorithms implemented using library components.
+                    So-named to force this subdirectory to build last.
 
