@@ -33,7 +33,7 @@
 #include "tensor/element_exists.hpp"
 #include "tensor/iterator.hpp"
 #include "tensor/matrices.hpp"
-#include "tensor/shape.hpp"
+#include "tensor/shapes.hpp"
 #include "tensor/traits.hpp"
 #include "tensor/vectors.hpp"
 #include "tensor/views.hpp"

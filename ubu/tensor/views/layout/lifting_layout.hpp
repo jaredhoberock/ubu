@@ -5,7 +5,7 @@
 #include "../../../miscellaneous/integral/integral_like.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/colexicographical_lift.hpp"
-#include "../../shape/shape_size.hpp"
+#include "../../shapes/shape_size.hpp"
 #include "../compose.hpp"
 #include <ranges>
 

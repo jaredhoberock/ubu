@@ -7,7 +7,7 @@
 #include "../concepts/tensor_like.hpp"
 #include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../vectors/span_like.hpp"

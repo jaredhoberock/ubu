@@ -9,7 +9,7 @@
 #include "../coordinates/iterators/lexicographical_iterator.hpp"
 #include "../coordinates/traits/rank.hpp"
 #include "../coordinates/zeros.hpp"
-#include "../shape/shape_size.hpp"
+#include "../shapes/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>

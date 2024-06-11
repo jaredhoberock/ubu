@@ -6,7 +6,7 @@
 #include "../../tensor/matrices/contiguous_column_major_matrix_like.hpp"
 #include "../../tensor/matrices/height.hpp"
 #include "../../tensor/matrices/matrix_like.hpp"
-#include "../../tensor/shape/shape_element.hpp"
+#include "../../tensor/shapes/shape_element.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
 #include "../../tensor/vectors/inplace_vector.hpp"
 #include "../../tensor/views/slice/slice.hpp"

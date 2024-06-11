@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../tensor/coordinates/concepts/coordinate.hpp"
-#include "../../../tensor/shape/convert_shape.hpp"
+#include "../../../tensor/shapes/convert_shape.hpp"
 #include "../../../tensor/views/compose.hpp"
 #include "../../../tensor/views/layout/identity_layout.hpp"
 #include "../../../tensor/views/layout/lifting_layout.hpp"

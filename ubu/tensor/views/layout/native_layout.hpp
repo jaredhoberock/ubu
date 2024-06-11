@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../shape/shape.hpp"
+#include "../../shapes/shape.hpp"
 #include "column_major.hpp"
 #include "layout.hpp"
 #include <utility>

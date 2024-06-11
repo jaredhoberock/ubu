@@ -6,7 +6,7 @@
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/integral/bounded.hpp"
 #include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_element.hpp"
 #include "fancy_span.hpp"
 #include "vector_like.hpp"

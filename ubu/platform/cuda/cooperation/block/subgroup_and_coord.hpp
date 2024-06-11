@@ -4,7 +4,7 @@
 
 #include "../../../../cooperation/cooperator/basic_cooperator.hpp"
 #include "../../../../tensor/coordinates/traits/rank.hpp"
-#include "../../../../tensor/shape/shape.hpp"
+#include "../../../../tensor/shapes/shape.hpp"
 #include "../warp/warp_like.hpp"
 #include "block_like.hpp"
 #include <utility>

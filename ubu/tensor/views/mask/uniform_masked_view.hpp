@@ -5,7 +5,7 @@
 #include "../../concepts/sized_tensor_like.hpp"
 #include "../../concepts/view.hpp"
 #include "../../element_exists.hpp"
-#include "../../shape/shape.hpp"
+#include "../../shapes/shape.hpp"
 #include <ranges>
 #include <type_traits>
 

@@ -4,7 +4,7 @@
 #include <ranges>
 #include <ubu/tensor/coordinates/comparisons.hpp>
 #include <ubu/tensor/iterator.hpp>
-#include <ubu/tensor/shape/shape_size.hpp>
+#include <ubu/tensor/shapes/shape_size.hpp>
 #include <ubu/tensor/views/composed_view.hpp>
 #include <ubu/tensor/views/domain.hpp>
 #include <ubu/tensor/views/lattice.hpp>

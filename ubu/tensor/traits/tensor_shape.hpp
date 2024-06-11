@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 
 namespace ubu
 {

@@ -5,7 +5,7 @@
 #include "concepts.hpp"
 #include "coordinates/element.hpp"
 #include "coordinates/iterators/colexicographical_iterator.hpp"
-#include "shape/shape.hpp"
+#include "shapes/shape.hpp"
 #include "traits.hpp"
 #include "views/all.hpp"
 #include <concepts>

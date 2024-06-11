@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <ubu/tensor/shape/shape_size.hpp>
+#include <ubu/tensor/shapes/shape_size.hpp>
 #include <ubu/tensor/views/composed_view.hpp>
 #include <ubu/tensor/views/domain.hpp>
 #include <ubu/tensor/views/lattice.hpp>

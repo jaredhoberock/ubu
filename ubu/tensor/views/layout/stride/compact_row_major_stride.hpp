@@ -10,7 +10,7 @@
 #include "../../../coordinates/detail/as_integral_like.hpp"
 #include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "../../../coordinates/traits/rank.hpp"
-#include "../../../shape/shape_size.hpp"
+#include "../../../shapes/shape_size.hpp"
 #include <concepts>
 #include <tuple>
 #include <utility>

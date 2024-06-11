@@ -8,7 +8,7 @@
 #include "../../coordinates/traits/default_coordinate.hpp"
 #include "../../coordinates/one_extend_coordinate.hpp"
 #include "../../coordinates/truncate_coordinate.hpp"
-#include "../../shape/shape_size.hpp"
+#include "../../shapes/shape_size.hpp"
 #include <ranges>
 
 namespace ubu

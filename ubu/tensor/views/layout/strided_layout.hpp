@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../coordinates.hpp"
-#include "../../shape/shape_size.hpp"
+#include "../../shapes/shape_size.hpp"
 #include "../slice/dice_coordinate.hpp"
 #include "../slice/slice_coordinate.hpp"
 #include "../slice/slicer.hpp"

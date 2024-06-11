@@ -15,7 +15,7 @@
 #include "../detail/stacked_shape.hpp"
 #include "../detail/subtract_element.hpp"
 #include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "../vectors/span_like.hpp"
 #include "domain.hpp"

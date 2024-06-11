@@ -8,7 +8,7 @@
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "../traits/tensor_shape.hpp"

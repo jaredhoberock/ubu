@@ -4,7 +4,7 @@
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/traits/default_coordinate.hpp"
 #include "../element_exists.hpp"
-#include "../shape/shape.hpp"
+#include "../shapes/shape.hpp"
 #include <concepts>
 #include <ranges>
 

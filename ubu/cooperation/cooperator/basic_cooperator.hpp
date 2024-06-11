@@ -8,7 +8,7 @@
 #include "../../tensor/coordinates/concepts/coordinate.hpp"
 #include "../../tensor/coordinates/detail/tuple_algorithm.hpp"
 #include "../../tensor/coordinates/traits/rank.hpp"
-#include "../../tensor/shape/shape_size.hpp"
+#include "../../tensor/shapes/shape_size.hpp"
 #include "../barrier/arrive_and_wait.hpp"
 #include "../barrier/sized_barrier_like.hpp"
 #include "../workspace/get_local_workspace.hpp"
