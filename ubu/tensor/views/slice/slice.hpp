@@ -6,6 +6,7 @@
 #include "../all.hpp"
 #include "sliced_view.hpp"
 #include "slicer.hpp"
+#include "underscore.hpp"
 
 namespace ubu
 {
@@ -42,11 +43,20 @@ struct dispatch_slice
   }
 
   template<tensor_like A, slicer_for<tensor_shape_t<A>> K>
-    requires (not has_slice_member_function<A&&,K&&>
-              and not has_slice_free_function<A&&,K&&>)
-  constexpr view auto operator()(A&& arg, K&& katana) const
+    requires (not has_slice_member_function<A&&,K>
+              and not has_slice_free_function<A&&,K>)
+  constexpr view auto operator()(A&& arg, K katana) const
   {
-    return sliced_view(all(std::forward<A>(arg)), std::forward<K>(katana));
+    if constexpr (is_underscore_v<K>)
+    {
+      // when katana is _, we simply return all of arg
+      return all(std::forward<A>(arg));
+    }
+    else
+    {
+      // otherwise, return a sliced_view of all of arg
+      return sliced_view(all(std::forward<A>(arg)), katana);
+    }
   }
 };
 
