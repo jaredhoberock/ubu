@@ -4,7 +4,7 @@
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/causality/wait.hpp>
 #include <ubu/places/execution/executor/bulk_execute_with_workspace_after.hpp>
-#include <ubu/places/memory/buffer/reinterpret_buffer.hpp>
+#include <ubu/places/memory/buffers/reinterpret_buffer.hpp>
 #include <ubu/platforms/cpp/inline_executor.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
 #include <ubu/tensors/views/lattice.hpp>

@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/size.hpp"
-#include "../../places/memory/buffer/empty_buffer.hpp"
+#include "../../places/memory/buffers/empty_buffer.hpp"
 #include "../../tensors/coordinates/colexicographical_lift.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../tensors/coordinates/detail/tuple_algorithm.hpp"

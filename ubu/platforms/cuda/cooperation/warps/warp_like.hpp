@@ -5,7 +5,7 @@
 #include "../../../../cooperation/cooperators/concepts/cooperator.hpp"
 #include "../../../../cooperation/cooperators/traits/cooperator_thread_scope.hpp"
 #include "../../../../miscellaneous/constant.hpp"
-#include "../../../../places/memory/buffer/empty_buffer.hpp"
+#include "../../../../places/memory/buffers/empty_buffer.hpp"
 #include <string_view>
 
 namespace ubu::cuda

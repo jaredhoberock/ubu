@@ -7,7 +7,7 @@
 #include <ubu/places/execution/executor/execute_kernel.hpp>
 #include <ubu/places/execution/executor/finally_execute_after.hpp>
 #include <ubu/places/execution/executor/first_execute.hpp>
-#include <ubu/places/memory/buffer/reinterpret_buffer.hpp>
+#include <ubu/places/memory/buffers/reinterpret_buffer.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
 #include <ubu/tensors/coordinates/colexicographical_lift.hpp>
 #include <ubu/tensors/views/layouts/strides/apply_stride.hpp>

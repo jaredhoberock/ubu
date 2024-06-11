@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
-#include "../../places/memory/buffer/get_buffer.hpp"
+#include "../../places/memory/buffers/get_buffer.hpp"
 #include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "hierarchical_workspace.hpp"
