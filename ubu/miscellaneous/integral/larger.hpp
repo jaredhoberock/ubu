@@ -7,15 +7,15 @@
 namespace ubu
 {
 
-// smaller exists as an alternative to std::min without its failings
+// larger exists as an alternative to std::max without its failings
 // 1. it returns a copy of its parameter, not a reference
 // 2. the types of its parameters can differ
 // 3. it can be passed to algorithms
-constexpr inline auto smaller = [](integral_like auto a, integral_like auto b)
+constexpr inline auto larger = [](integral_like auto a, integral_like auto b)
 {
   if constexpr (constant_valued<decltype(a)> and constant_valued<decltype(b)>)
   {
-    if constexpr (b < a)
+    if constexpr (a < b)
     {
       return b;
     }
@@ -28,11 +28,12 @@ constexpr inline auto smaller = [](integral_like auto a, integral_like auto b)
   {
     // the if constexprs above avoid the possible conversion
     // incurred by this use of the ternary operator
-    return b < a ? b : a;
+    return a < b ? b : a;
   }
 };
 
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
+
 

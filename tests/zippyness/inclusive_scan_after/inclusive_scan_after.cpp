@@ -262,6 +262,35 @@ double theoretical_peak_bandwidth_in_gigabytes_per_second()
 constexpr double performance_regression_threshold_as_percentage_of_peak_bandwidth = 0.19;
 constexpr double performance_progression_threshold_as_percentage_of_peak_bandwidth = 0.20;
 
+constexpr std::pair expected_performance(performance_regression_threshold_as_percentage_of_peak_bandwidth, performance_progression_threshold_as_percentage_of_peak_bandwidth);
+
+constexpr bool unexpected_performance(double bandwidth)
+{
+  double pct_peak_performance = bandwidth / theoretical_peak_bandwidth_in_gigabytes_per_second();
+
+  return pct_peak_performance < expected_performance.first or pct_peak_performance > expected_performance.second;
+}
+
+void report_performance(std::ostream& os, double bandwidth)
+{
+  double peak_bandwidth = theoretical_peak_bandwidth_in_gigabytes_per_second();
+  double pct_peak_bandwidth = bandwidth / peak_bandwidth;
+
+  os << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
+  os << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
+
+  if(pct_peak_bandwidth < expected_performance.first)
+  {
+    os << "Regression threshold: " << expected_performance.first << "%" << std::endl;
+    os << "Regression detected." << std::endl;
+  }
+  else if(pct_peak_bandwidth > expected_performance.second)
+  {
+    os << "Progression threshold: " << expected_performance.second << "%" << std::endl;
+    os << "Progression detected." << std::endl;
+  }
+}
+
 int main(int argc, char** argv)
 {
   std::size_t performance_size = ubu::cuda::device_allocator<int>().max_size() / 3;
@@ -290,22 +319,12 @@ int main(int argc, char** argv)
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  double peak_bandwidth = theoretical_peak_bandwidth_in_gigabytes_per_second();
-  std::cout << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
+  std::ostream& os = unexpected_performance(bandwidth) ? std::cerr : std::cout;
 
-  double pct_peak_bandwidth = bandwidth / peak_bandwidth;
-  std::cout << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
+  report_performance(os, bandwidth);
 
-  if(pct_peak_bandwidth < performance_regression_threshold_as_percentage_of_peak_bandwidth)
+  if(unexpected_performance(bandwidth))
   {
-    std::cerr << "Theoretical peak bandwidth: " << peak_bandwidth << " GB/s " << std::endl;
-    std::cerr << "Regression detected." << std::endl;
-    return -1;
-  }
-  else if(pct_peak_bandwidth > performance_progression_threshold_as_percentage_of_peak_bandwidth)
-  {
-    std::cerr << "Theoretical peak bandwidth: " << peak_bandwidth << " GB/s " << std::endl;
-    std::cerr << "Progression detected." << std::endl;
     return -1;
   }
 

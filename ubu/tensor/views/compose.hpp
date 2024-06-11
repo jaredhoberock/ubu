@@ -6,6 +6,7 @@
 #include "composed_view.hpp"
 #include "layout/layout.hpp"
 #include <concepts>
+#include <type_traits>
 #include <utility>
 
 namespace ubu
@@ -15,8 +16,9 @@ namespace detail
 
 // composed_view and compose have a cyclic dependency and can't use each other directly
 // declare detail::make_composed_view for compose's use
-template<class T, layout_for<T> L>
-constexpr auto make_composed_view(T t, L l);
+template<class A, layout_for<A> B>
+  requires std::is_object_v<A>
+constexpr auto make_composed_view(A a, B b);
 
 template<class R, class A, class B>
 concept composition_of_tensors =

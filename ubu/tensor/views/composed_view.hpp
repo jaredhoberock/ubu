@@ -30,89 +30,92 @@ constexpr auto invoke_compose(Args&&... args);
 } // end detail
 
 
-// XXX consider requiring that Tensor and Layout be trivially relocatable
-// i.e., Tensor can't be std::vector, but it could be a view of std::vector (e.g. a pointer into std::vector)
-
-template<class Tensor, layout_for<Tensor> Layout>
+template<class A, layout_for<A> B>
+  requires std::is_object_v<A>
 class composed_view : public std::ranges::view_base
 {
   public:
-    using shape_type = tensor_shape_t<Layout>;
-    using coordinate_type = tensor_coordinate_t<Layout>;
+    using shape_type = tensor_shape_t<B>;
+    using coordinate_type = tensor_coordinate_t<B>;
 
-    constexpr composed_view(Tensor tensor, Layout layout)
-      : tensor_{tensor}, layout_{layout}
+    constexpr composed_view(A a, B b)
+      : a_{a}, b_{b}
     {}
 
     composed_view(const composed_view&) = default;
 
     constexpr shape_type shape() const
     {
-      return ubu::shape(layout_);
+      return ubu::shape(b_);
     }
 
-    template<class T_ = Tensor, class L_ = Layout>
-      requires (not tensor_like<T_> and sized_tensor_like<L_>)
+    template<class A_ = A, class B_ = B>
+      requires (not tensor_like<A_> and sized_tensor_like<B_>)
     constexpr auto size() const
     {
-      return ubu::size(layout_);
+      return ubu::size(b_);
     }
 
     // precondition: element_exists(coord)
-    template<coordinate_for<Layout> C>
+    template<coordinate_for<B> C>
     constexpr decltype(auto) operator[](const C& coord) const
     {
-      return element(tensor_, element(layout_,coord));
+      return element(a_, element(b_,coord));
     }
 
-    // precondition: in_domain(layout(), coord)
-    template<coordinate_for<Layout> C>
+    // precondition: in_domain(b(), coord)
+    template<coordinate_for<B> C>
     constexpr bool element_exists(const C& coord) const
     {
-      if (not ubu::element_exists(layout_, coord)) return false;
+      if (not ubu::element_exists(b_, coord)) return false;
 
-      auto to_coord = element(layout_,coord);
+      auto a_coord = element(b_,coord);
 
-      // if Tensor actually fulfills the requirements of tensor_like,
-      // check the coordinate produced by the layout against tensor_
-      // otherwise, we assume that the layout always perfectly covers tensor_
-      if constexpr (tensor_like<Tensor>)
+      // if A actually fulfills the requirements of tensor_like,
+      // check the coordinate produced by the layout against a_
+      // otherwise, we assume that the layout always perfectly covers a_
+      if constexpr (tensor_like<A>)
       {
-        if (not in_domain(tensor_, to_coord)) return false;
-        if (not ubu::element_exists(tensor_, to_coord)) return false;
+        if (not in_domain(a_, a_coord)) return false;
+        if (not ubu::element_exists(a_, a_coord)) return false;
       }
 
       return true;
     }
 
-    constexpr Tensor tensor() const
+    constexpr A a() const
     {
-      return tensor_;
+      return a_;
     }
 
-    constexpr Layout layout() const
+    constexpr B b() const
     {
-      return layout_;
+      return b_;
     }
 
     template<slicer_for<coordinate_type> K>
     constexpr tensor_like auto slice(const K& katana) const
     {
-      return detail::invoke_compose(tensor(), ubu::slice(layout(), katana));
+      return detail::invoke_compose(a_, ubu::slice(b_, katana));
     }
 
-    // returns .tensor() if it is span_like
-    // this is just provided to make code a bit more readable
-    template<class T_ = Tensor>
-      requires span_like<T_>
+    // returns .a() if it is span_like
+    template<span_like S = A>
     constexpr span_like auto span() const
     {
-      return tensor();
+      return a();
+    }
+
+    // returns .b() if it is a layout
+    template<ubu::layout L = B>
+    constexpr ubu::layout auto layout() const
+    {
+      return b();
     }
 
   private:
-    Tensor tensor_;
-    Layout layout_;
+    A a_;
+    B b_;
 };
 
 namespace detail
@@ -120,10 +123,11 @@ namespace detail
 
 // composed_view and compose have a cyclic dependency and can't use each other directly
 // define detail::make_composed_view as soon as composed_view's definition is available
-template<class T, layout_for<T> L>
-constexpr auto make_composed_view(T t, L l)
+template<class A, layout_for<A> B>
+  requires std::is_object_v<A>
+constexpr auto make_composed_view(A a, B b)
 {
-  return composed_view<T,L>(t,l);
+  return composed_view<A,B>(a,b);
 }
 
 

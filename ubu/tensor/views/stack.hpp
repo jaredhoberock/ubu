@@ -17,13 +17,13 @@
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
 #include "../traits/tensor_reference.hpp"
+#include "../vector/span_like.hpp"
 #include "domain.hpp"
 #include "layout/layout.hpp"
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
 #include "compose.hpp"
 #include <ranges>
-#include <span>
 #include <type_traits>
 
 
@@ -116,9 +116,9 @@ class stacked_view : public std::ranges::view_base
       return (stratum == 0) ? ubu::slice(a(), local_katana) : ubu::slice(b(), local_katana);
     }
 
-    template<class T, class Self = stacked_view>
-      requires layout_for<Self, std::span<T>>
-    friend view auto compose(const std::span<T>& s, const stacked_view& self)
+    template<span_like S, class Self = stacked_view>
+      requires layout_for<Self, S>
+    friend view auto compose(S s, const stacked_view& self)
     {
       return stack<axis_>(ubu::compose(s, self.a()), ubu::compose(s, self.b()));
     }

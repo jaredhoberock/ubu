@@ -13,6 +13,7 @@
 #include "views/nestle.hpp"
 #include "views/slice.hpp"
 #include "views/stack.hpp"
+#include "views/transform.hpp"
 #include "views/zip.hpp"
 #include "views/zip_view.hpp"
 
