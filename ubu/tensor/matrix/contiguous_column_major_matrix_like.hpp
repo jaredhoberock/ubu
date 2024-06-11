@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../vector/span_like.hpp"
+#include "../vectors/span_like.hpp"
 #include "column_major_matrix_layout.hpp"
 #include "matrix_like.hpp"
 

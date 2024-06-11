@@ -1,5 +1,5 @@
 #include <type_traits>
-#include <ubu/tensor/vector/inplace_vector.hpp>
+#include <ubu/tensor/vectors/inplace_vector.hpp>
 
 void test_inplace_vector()
 {

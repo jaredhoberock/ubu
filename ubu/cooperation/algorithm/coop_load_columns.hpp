@@ -8,7 +8,7 @@
 #include "../../tensor/matrix/matrix_like.hpp"
 #include "../../tensor/shape/shape_element.hpp"
 #include "../../tensor/traits/tensor_element.hpp"
-#include "../../tensor/vector/inplace_vector.hpp"
+#include "../../tensor/vectors/inplace_vector.hpp"
 #include "../../tensor/views/slice/slice.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/concepts/cooperator.hpp"

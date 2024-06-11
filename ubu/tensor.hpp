@@ -35,7 +35,7 @@
 #include "tensor/matrix.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/traits.hpp"
-#include "tensor/vector.hpp"
+#include "tensor/vectors.hpp"
 #include "tensor/views.hpp"
 
 #include "detail/epilogue.hpp"

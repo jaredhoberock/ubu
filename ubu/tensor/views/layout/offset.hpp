@@ -7,7 +7,7 @@
 #include "../../coordinate/concepts/coordinate.hpp"
 #include "../../coordinate/coordinate_sum.hpp"
 #include "../../traits/tensor_element.hpp"
-#include "../../vector/span_like.hpp"
+#include "../../vectors/span_like.hpp"
 #include "../all.hpp"
 #include "../compose.hpp"
 #include "../composed_view.hpp"

@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 #include "../../../tensor/traits/tensor_element.hpp"
-#include "../../../tensor/vector/span_like.hpp"
+#include "../../../tensor/vectors/span_like.hpp"
 #include <cstddef>
 
 namespace ubu

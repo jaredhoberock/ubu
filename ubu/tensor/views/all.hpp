@@ -4,9 +4,9 @@
 #include "../../miscellaneous/integral/size.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../vector/contiguous_vector_like.hpp"
-#include "../vector/fancy_span.hpp"
-#include "../vector/span_like.hpp"
+#include "../vectors/contiguous_vector_like.hpp"
+#include "../vectors/fancy_span.hpp"
+#include "../vectors/span_like.hpp"
 #include <iterator>
 #include <type_traits>
 #include <utility>

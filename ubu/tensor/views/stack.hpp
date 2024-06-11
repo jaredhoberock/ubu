@@ -17,7 +17,7 @@
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
 #include "../traits/tensor_reference.hpp"
-#include "../vector/span_like.hpp"
+#include "../vectors/span_like.hpp"
 #include "domain.hpp"
 #include "layout/layout.hpp"
 #include "slice/slice.hpp"

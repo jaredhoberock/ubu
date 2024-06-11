@@ -6,7 +6,7 @@
 #include "../../miscellaneous/integral/size.hpp"
 #include "../../tensor/traits/tensor_reference.hpp"
 #include "../../tensor/concepts/tensor_like.hpp"
-#include "../../tensor/vector/vector_like.hpp"
+#include "../../tensor/vectors/vector_like.hpp"
 #include "../../tensor/views/compose.hpp"
 #include "../../tensor/views/layout/row_major.hpp"
 #include "../../tensor/views/nestle.hpp"
