@@ -22,7 +22,7 @@ namespace detail
 {
 
 
-// XXX reorganize this into ubu/algorithm/sequential/for_each.hpp if we decide that's necessary
+// XXX reorganize this into ubu/algorithms/sequential/for_each.hpp if we decide that's necessary
 template<ubu::tensor_like T, std::invocable<ubu::tensor_reference_t<T>> F>
 constexpr void for_each(T tensor, F f)
 {

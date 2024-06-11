@@ -7,7 +7,7 @@
 #include "../tensors/traits/tensor_size.hpp"
 #include "../tensors/vectors/fancy_span.hpp"
 #include "../tensors/vectors/sized_vector_like.hpp"
-#include "algorithm/coop_copy.hpp"
+#include "algorithms/coop_copy.hpp"
 #include "cooperators/concepts/allocating_cooperator.hpp"
 #include "cooperators/coop_alloca.hpp"
 #include "cooperators/coop_dealloca.hpp"

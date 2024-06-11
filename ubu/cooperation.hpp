@@ -2,7 +2,7 @@
 
 #include "detail/prologue.hpp"
 
-#include "cooperation/algorithm.hpp"
+#include "cooperation/algorithms.hpp"
 #include "cooperation/barriers.hpp"
 #include "cooperation/cooperators.hpp"
 #include "cooperation/workspaces.hpp"

@@ -1,7 +1,7 @@
 #include <cassert>
 #include <optional>
 #include <span>
-#include <ubu/cooperation/algorithm/coop_reduce.hpp>
+#include <ubu/cooperation/algorithms/coop_reduce.hpp>
 #include <ubu/cooperation/cooperators/basic_cooperator.hpp>
 #include <ubu/cooperation/cooperators/is_leader.hpp>
 #include <ubu/places/execution/executor/bulk_execute_with_workspace.hpp>
