@@ -8,8 +8,8 @@
 #include <ubu/tensor/views/composed_view.hpp>
 #include <ubu/tensor/views/domain.hpp>
 #include <ubu/tensor/views/lattice.hpp>
-#include <ubu/tensor/views/layout/column_major.hpp>
-#include <ubu/tensor/views/layout/row_major.hpp>
+#include <ubu/tensor/views/layouts/column_major.hpp>
+#include <ubu/tensor/views/layouts/row_major.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 

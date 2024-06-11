@@ -8,7 +8,7 @@
 #include "views/domain.hpp"
 #include "views/enumerate.hpp"
 #include "views/lattice.hpp"
-#include "views/layout.hpp"
+#include "views/layouts.hpp"
 #include "views/mask.hpp"
 #include "views/nestle.hpp"
 #include "views/slice.hpp"

@@ -4,7 +4,7 @@
 #include <ubu/tensor/coordinates/point.hpp>
 #include <ubu/tensor/shapes/convert_shape.hpp>
 #include <ubu/tensor/shapes/shape_size.hpp>
-#include <ubu/tensor/views/layout/lifting_layout.hpp>
+#include <ubu/tensor/views/layouts/lifting_layout.hpp>
 
 namespace ns = ubu;
 

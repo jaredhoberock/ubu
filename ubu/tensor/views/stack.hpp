@@ -19,7 +19,7 @@
 #include "../traits/tensor_reference.hpp"
 #include "../vectors/span_like.hpp"
 #include "domain.hpp"
-#include "layout/layout.hpp"
+#include "layouts/layout.hpp"
 #include "slice/slice.hpp"
 #include "slice/slicer.hpp"
 #include "compose.hpp"

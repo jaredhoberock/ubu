@@ -4,7 +4,7 @@
 
 #include "../concepts/tensor_like.hpp"
 #include "composed_view.hpp"
-#include "layout/layout.hpp"
+#include "layouts/layout.hpp"
 #include <concepts>
 #include <type_traits>
 #include <utility>

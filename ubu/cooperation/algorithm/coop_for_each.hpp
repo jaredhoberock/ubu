@@ -8,7 +8,7 @@
 #include "../../tensor/concepts/tensor_like.hpp"
 #include "../../tensor/vectors/vector_like.hpp"
 #include "../../tensor/views/compose.hpp"
-#include "../../tensor/views/layout/row_major.hpp"
+#include "../../tensor/views/layouts/row_major.hpp"
 #include "../../tensor/views/nestle.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include "../cooperator/size.hpp"

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <ranges>
 #include <ubu/tensor/iterators.hpp>
-#include <ubu/tensor/views/layout/strided_layout.hpp>
-#include <ubu/tensor/views/layout/stride/compact_row_major_stride.hpp>
+#include <ubu/tensor/views/layouts/strided_layout.hpp>
+#include <ubu/tensor/views/layouts/stride/compact_row_major_stride.hpp>
 #include <utility>
 
 namespace ns = ubu;

@@ -6,7 +6,7 @@
 #include "../../../../tensor/coordinates/concepts/coordinate.hpp"
 #include "../../../../tensor/coordinates/zeros.hpp"
 #include "../../../../tensor/shapes.hpp"
-#include "../../../../tensor/views/layout/layout.hpp"
+#include "../../../../tensor/views/layouts/layout.hpp"
 #include "../bulk_execute.hpp"
 #include "../concepts/executor.hpp"
 #include "../kernel_layout.hpp"

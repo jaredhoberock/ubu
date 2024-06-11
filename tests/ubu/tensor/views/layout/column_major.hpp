@@ -1,8 +1,8 @@
 #include <cassert>
 #include <iostream>
 #include <ubu/tensor/coordinates/point.hpp>
-#include <ubu/tensor/views/layout/column_major.hpp>
-#include <ubu/tensor/views/layout/layout.hpp>
+#include <ubu/tensor/views/layouts/column_major.hpp>
+#include <ubu/tensor/views/layouts/layout.hpp>
 #include <utility>
 #include <vector>
 

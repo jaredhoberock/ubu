@@ -6,7 +6,7 @@
 #include "../../tensor/vectors/inplace_vector.hpp"
 #include "../../tensor/vectors/vector_like.hpp"
 #include "../../tensor/views/compose.hpp"
-#include "../../tensor/views/layout/row_major.hpp"
+#include "../../tensor/views/layouts/row_major.hpp"
 #include "../../tensor/views/slice/slice.hpp"
 #include <concepts>
 #include <utility>

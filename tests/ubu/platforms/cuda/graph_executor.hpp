@@ -8,8 +8,8 @@
 #include <ubu/places/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platforms/cuda/graph_executor.hpp>
 #include <ubu/tensor/coordinates/colexicographical_lift.hpp>
-#include <ubu/tensor/views/layout/stride/apply_stride.hpp>
-#include <ubu/tensor/views/layout/stride/compact_column_major_stride.hpp>
+#include <ubu/tensor/views/layouts/stride/apply_stride.hpp>
+#include <ubu/tensor/views/layouts/stride/compact_column_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>

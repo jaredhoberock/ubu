@@ -3,7 +3,7 @@
 #include <ubu/tensor/matrices/matrix_like.hpp>
 #include <ubu/tensor/views/composed_view.hpp>
 #include <ubu/tensor/views/domain.hpp>
-#include <ubu/tensor/views/layout.hpp>
+#include <ubu/tensor/views/layouts.hpp>
 #include <ubu/tensor/views/stack.hpp>
 
 namespace ns = ubu;

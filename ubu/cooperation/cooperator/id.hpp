@@ -5,7 +5,7 @@
 #include "../../miscellaneous/integral/integral_like.hpp"
 #include "../../tensor/coordinates/coord.hpp"
 #include "../../tensor/shapes/shape.hpp"
-#include "../../tensor/views/layout/column_major.hpp"
+#include "../../tensor/views/layouts/column_major.hpp"
 #include "concepts/semicooperator.hpp"
 #include <concepts>
 

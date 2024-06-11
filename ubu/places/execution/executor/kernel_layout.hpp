@@ -5,9 +5,9 @@
 #include "../../../tensor/coordinates/concepts/coordinate.hpp"
 #include "../../../tensor/shapes/convert_shape.hpp"
 #include "../../../tensor/views/compose.hpp"
-#include "../../../tensor/views/layout/identity_layout.hpp"
-#include "../../../tensor/views/layout/lifting_layout.hpp"
-#include "../../../tensor/views/layout/native_layout.hpp"
+#include "../../../tensor/views/layouts/identity_layout.hpp"
+#include "../../../tensor/views/layouts/lifting_layout.hpp"
+#include "../../../tensor/views/layouts/native_layout.hpp"
 #include "concepts/executor.hpp"
 #include "traits/executor_coordinate.hpp"
 
