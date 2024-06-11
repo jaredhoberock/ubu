@@ -10,9 +10,9 @@
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/layouts/row_major.hpp"
 #include "../../tensors/views/nestle.hpp"
-#include "../cooperator/concepts/cooperator.hpp"
-#include "../cooperator/size.hpp"
-#include "../cooperator/synchronize.hpp"
+#include "../cooperators/concepts/cooperator.hpp"
+#include "../cooperators/size.hpp"
+#include "../cooperators/synchronize.hpp"
 #include <concepts>
 #include <utility>
 

@@ -4,7 +4,7 @@
 
 #include "../../../../cooperation/uninitialized_coop_array.hpp"
 #include "../../../../cooperation/uninitialized_coop_optional_array.hpp"
-#include "../../../../cooperation/cooperator.hpp"
+#include "../../../../cooperation/cooperators.hpp"
 #include "../warp/coop_inclusive_scan.hpp"
 #include "../warp/shuffle_up.hpp"
 #include "block_like.hpp"

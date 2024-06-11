@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
-#include "../cooperator/concepts/cooperator.hpp"
-#include "../cooperator/broadcast.hpp"
-#include "../cooperator/last_id.hpp"
+#include "../cooperators/concepts/cooperator.hpp"
+#include "../cooperators/broadcast.hpp"
+#include "../cooperators/last_id.hpp"
 #include "coop_exclusive_scan.hpp"
 #include <concepts>
 #include <optional>

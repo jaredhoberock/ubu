@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../cooperation/cooperator/concepts/cooperator.hpp"
-#include "../../../cooperation/cooperator/traits/cooperator_thread_scope.hpp"
+#include "../../../cooperation/cooperators/concepts/cooperator.hpp"
+#include "../../../cooperation/cooperators/traits/cooperator_thread_scope.hpp"
 #include "detail/sync_grid_count_half.hpp"
 #include <nv/target>
 

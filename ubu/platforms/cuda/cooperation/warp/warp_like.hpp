@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/cooperator/concepts/cooperator.hpp"
-#include "../../../../cooperation/cooperator/traits/cooperator_thread_scope.hpp"
+#include "../../../../cooperation/cooperators/concepts/cooperator.hpp"
+#include "../../../../cooperation/cooperators/traits/cooperator_thread_scope.hpp"
 #include "../../../../miscellaneous/constant.hpp"
 #include "../../../../places/memory/buffer/empty_buffer.hpp"
 #include <string_view>

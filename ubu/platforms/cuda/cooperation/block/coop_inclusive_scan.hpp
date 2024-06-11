@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../cooperation/uninitialized_coop_optional_array.hpp"
-#include "../../../../cooperation/cooperator/synchronize.hpp"
+#include "../../../../cooperation/cooperators/synchronize.hpp"
 #include "../warp/coop_inclusive_scan.hpp"
 #include "block_like.hpp"
 #include <concepts>

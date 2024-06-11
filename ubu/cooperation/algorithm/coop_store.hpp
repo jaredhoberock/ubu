@@ -9,8 +9,8 @@
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/layouts/column_major.hpp"
 #include "../../tensors/views/slices/slice.hpp"
-#include "../cooperator/concepts/allocating_cooperator.hpp"
-#include "../cooperator/synchronize.hpp"
+#include "../cooperators/concepts/allocating_cooperator.hpp"
+#include "../cooperators/synchronize.hpp"
 #include "../uninitialized_coop_array.hpp"
 #include <concepts>
 #include <utility>
