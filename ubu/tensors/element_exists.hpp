@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../miscellaneous/integral/size.hpp"
+#include "../miscellaneous/integrals/size.hpp"
 #include <concepts>
 #include <ranges>
 #include <utility>

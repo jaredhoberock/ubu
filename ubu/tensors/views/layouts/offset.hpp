@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integral/smaller.hpp"
+#include "../../../miscellaneous/integrals/smaller.hpp"
 #include "../../coordinates/concepts/congruent.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/coordinate_sum.hpp"

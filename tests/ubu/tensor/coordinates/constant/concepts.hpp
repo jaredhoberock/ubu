@@ -1,6 +1,6 @@
 #include <ubu/miscellaneous/constant.hpp>
 #include <ubu/miscellaneous/constant_valued.hpp>
-#include <ubu/miscellaneous/integral/integral_like.hpp>
+#include <ubu/miscellaneous/integrals/integral_like.hpp>
 #include <ubu/tensors/coordinates/concepts/congruent.hpp>
 #include <ubu/tensors/coordinates/concepts/coordinate.hpp>
 #include <utility>

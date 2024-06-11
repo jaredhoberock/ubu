@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "../../places/memory/buffer/empty_buffer.hpp"
 #include "../../tensors/coordinates/colexicographical_lift.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"

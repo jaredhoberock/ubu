@@ -4,7 +4,7 @@
 
 #include "../../detail/reflection/is_host.hpp"
 #include "../../miscellaneous/constant.hpp"
-#include "../../miscellaneous/integral/bounded.hpp"
+#include "../../miscellaneous/integrals/bounded.hpp"
 #include "../element_exists.hpp"
 #include "../shapes/shape.hpp"
 #include "../traits/tensor_element.hpp"

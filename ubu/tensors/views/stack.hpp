@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/constant.hpp"
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cast.hpp"
 #include "../coordinates/detail/tuple_algorithm.hpp"

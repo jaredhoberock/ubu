@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/integral_like.hpp"
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "../../tensors/shapes/shape.hpp"
 #include "../../tensors/shapes/shape_size.hpp"
 #include "concepts/semicooperator.hpp"

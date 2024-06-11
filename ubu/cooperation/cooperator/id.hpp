@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/integral_like.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../../tensors/coordinates/coord.hpp"
 #include "../../tensors/shapes/shape.hpp"
 #include "../../tensors/views/layouts/column_major.hpp"

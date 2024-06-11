@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/integral/ceil_div.hpp"
+#include "../../../../miscellaneous/integrals/ceil_div.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "../strided_layout.hpp"

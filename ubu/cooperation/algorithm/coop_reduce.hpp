@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integral/ceil_div.hpp"
-#include "../../miscellaneous/integral/integral_like.hpp"
+#include "../../miscellaneous/integrals/ceil_div.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../cooperator/concepts/allocating_cooperator.hpp"
 #include "../cooperator/concepts/hierarchical_cooperator.hpp"
 #include "../cooperator/subgroup.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integral/integral_like.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../uninitialized_coop_array.hpp"
 #include "concepts/allocating_cooperator.hpp"
 #include "synchronize.hpp"

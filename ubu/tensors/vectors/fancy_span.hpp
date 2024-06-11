@@ -5,8 +5,8 @@
 #include "../../places/memory/pointer/pointer_like.hpp"
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
-#include "../../miscellaneous/integral/integral_like.hpp"
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "../traits/tensor_size.hpp"
 #include "contiguous_vector_like.hpp"
 #include <concepts>

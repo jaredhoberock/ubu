@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/ceil_div.hpp"
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/ceil_div.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "../../tensors/traits/tensor_reference.hpp"
 #include "../../tensors/concepts/tensor_like.hpp"
 #include "../../tensors/vectors/vector_like.hpp"

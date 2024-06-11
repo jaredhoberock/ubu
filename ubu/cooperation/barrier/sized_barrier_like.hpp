@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integral/size.hpp"
+#include "../../miscellaneous/integrals/size.hpp"
 #include "barrier_like.hpp"
 #include <ranges>
 
