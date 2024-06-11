@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../barrier/barrier_like.hpp"
+#include "../barriers/barrier_like.hpp"
 #include "../thread_scope.hpp"
 #include "workspace.hpp"
 #include <string_view>

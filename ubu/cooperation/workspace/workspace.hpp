@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../places/memory/buffer/get_buffer.hpp"
-#include "../barrier/get_barrier.hpp"
+#include "../barriers/get_barrier.hpp"
 #include <type_traits>
 #include <utility>
 

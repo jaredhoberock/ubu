@@ -1,6 +1,6 @@
 #include <cassert>
 #include <concepts>
-#include <ubu/cooperation/barrier.hpp>
+#include <ubu/cooperation/barriers.hpp>
 
 namespace ns = ubu;
 

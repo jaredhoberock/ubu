@@ -1,6 +1,6 @@
 #include <cassert>
 #include <concepts>
-#include <ubu/cooperation/barrier.hpp>
+#include <ubu/cooperation/barriers.hpp>
 #include <ubu/cooperation/cooperator/basic_cooperator.hpp>
 #include <ubu/cooperation/workspace/workspace.hpp>
 #include <ubu/places/memory/buffer/empty_buffer.hpp>

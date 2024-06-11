@@ -1,7 +1,7 @@
 #include <barrier>
 #include <cassert>
-#include <ubu/cooperation/barrier/barrier_like.hpp>
-#include <ubu/cooperation/barrier/get_barrier.hpp>
+#include <ubu/cooperation/barriers/barrier_like.hpp>
+#include <ubu/cooperation/barriers/get_barrier.hpp>
 
 namespace ns = ubu;
 
