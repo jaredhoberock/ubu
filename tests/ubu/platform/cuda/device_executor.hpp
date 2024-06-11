@@ -9,7 +9,7 @@
 #include <ubu/places/execution/executor/first_execute.hpp>
 #include <ubu/places/memory/buffer/reinterpret_buffer.hpp>
 #include <ubu/platform/cuda/device_executor.hpp>
-#include <ubu/tensor/coordinate/colexicographical_lift.hpp>
+#include <ubu/tensor/coordinates/colexicographical_lift.hpp>
 #include <ubu/tensor/views/layout/stride/apply_stride.hpp>
 #include <ubu/tensor/views/layout/stride/compact_column_major_stride.hpp>
 

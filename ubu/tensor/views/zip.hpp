@@ -4,7 +4,7 @@
 
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../coordinate/concepts/congruent.hpp"
+#include "../coordinates/concepts/congruent.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "all.hpp"
 #include <utility>

@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integral/integral_like.hpp"
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/colexicographical_lift.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/colexicographical_lift.hpp"
 #include "../../shape/shape_size.hpp"
 #include "../compose.hpp"
 #include <ranges>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../../tensor/coordinates/detail/tuple_algorithm.hpp"
 #include "../cooperator/concepts/cooperator.hpp"
 #include "../cooperator/broadcast.hpp"
 #include "../cooperator/last_id.hpp"

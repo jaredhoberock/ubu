@@ -3,9 +3,9 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integral/smaller.hpp"
-#include "../../coordinate/concepts/congruent.hpp"
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/coordinate_sum.hpp"
+#include "../../coordinates/concepts/congruent.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/coordinate_sum.hpp"
 #include "../../traits/tensor_element.hpp"
 #include "../../vectors/span_like.hpp"
 #include "../all.hpp"

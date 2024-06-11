@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/colexicographical_lift.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/colexicographical_lift.hpp"
 #include <ranges>
 
 namespace ubu

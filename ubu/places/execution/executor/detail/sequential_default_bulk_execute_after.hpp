@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../../../tensor/coordinates/concepts/coordinate.hpp"
 #include "../../../../tensor/views/lattice.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/executor.hpp"

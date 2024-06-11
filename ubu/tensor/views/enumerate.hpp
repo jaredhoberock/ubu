@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinate/element.hpp"
+#include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
 #include "../concepts/view.hpp"
 #include "../traits/tensor_reference.hpp"

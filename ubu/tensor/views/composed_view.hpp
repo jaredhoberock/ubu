@@ -5,7 +5,7 @@
 #include "../../miscellaneous/integral/size.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../coordinate/element.hpp"
+#include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
 #include "../traits/tensor_shape.hpp"

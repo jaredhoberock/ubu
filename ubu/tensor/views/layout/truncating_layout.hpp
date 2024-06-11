@@ -1,13 +1,13 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../coordinate/concepts/congruent.hpp"
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/concepts/subdimensional.hpp"
-#include "../../coordinate/coordinate_cast.hpp"
-#include "../../coordinate/traits/default_coordinate.hpp"
-#include "../../coordinate/one_extend_coordinate.hpp"
-#include "../../coordinate/truncate_coordinate.hpp"
+#include "../../coordinates/concepts/congruent.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/concepts/subdimensional.hpp"
+#include "../../coordinates/coordinate_cast.hpp"
+#include "../../coordinates/traits/default_coordinate.hpp"
+#include "../../coordinates/one_extend_coordinate.hpp"
+#include "../../coordinates/truncate_coordinate.hpp"
 #include "../../shape/shape_size.hpp"
 #include <ranges>
 

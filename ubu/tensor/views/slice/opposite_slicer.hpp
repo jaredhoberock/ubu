@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinates/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 

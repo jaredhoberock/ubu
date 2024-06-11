@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate/element.hpp"
-#include "../coordinate/traits/coordinate_element.hpp"
-#include "../coordinate/traits/rank.hpp"
+#include "../coordinates/element.hpp"
+#include "../coordinates/traits/coordinate_element.hpp"
+#include "../coordinates/traits/rank.hpp"
 #include "shape.hpp"
 
 namespace ubu

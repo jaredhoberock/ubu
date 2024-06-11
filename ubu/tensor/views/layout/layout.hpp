@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/concepts/congruent.hpp"
-#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinates/concepts/congruent.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
 #include "../../concepts/tensor_like.hpp"
 #include "../../concepts/tensor_like_of_rank.hpp"
 #include "../../traits/tensor_element.hpp"

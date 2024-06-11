@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "compose.hpp"
 #include "zip.hpp"
 

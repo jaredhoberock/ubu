@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinates.hpp"
+#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "as_tuple_of_constants.hpp"
 #include "coordinate_cat.hpp"
 #include "coordinate_max.hpp"

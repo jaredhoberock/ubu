@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../miscellaneous/constant_valued.hpp"
-#include "../../../coordinate/concepts/coordinate.hpp"
+#include "../../../coordinates/concepts/coordinate.hpp"
 #include <utility>
 
 namespace ubu

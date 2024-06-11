@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/coordinate_cast.hpp"
-#include "../coordinate/detail/as_integral_like.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
+#include "../coordinates/coordinate_cast.hpp"
+#include "../coordinates/detail/as_integral_like.hpp"
+#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "detail/approximate_factors.hpp"
 #include "shape_size.hpp"
 #include <array>

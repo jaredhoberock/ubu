@@ -1,6 +1,6 @@
 #include <algorithm>
-#include <ubu/tensor/coordinate/comparisons.hpp>
-#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/coordinates/comparisons.hpp>
+#include <ubu/tensor/coordinates/point.hpp>
 #include <ubu/tensor/views/lattice.hpp>
 
 #undef NDEBUG

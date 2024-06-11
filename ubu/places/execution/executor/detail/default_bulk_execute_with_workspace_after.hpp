@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../../../tensor/coordinates/concepts/coordinate.hpp"
 #include "../../../causality/happening.hpp"
 #include "../../../memory/allocator/concepts/asynchronous_allocator.hpp"
 #include "../../../memory/allocator/allocate_and_zero_after.hpp"

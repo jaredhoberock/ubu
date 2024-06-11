@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate/element.hpp"
+#include "../coordinates/element.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "tensor_coordinate.hpp"
 #include <utility>

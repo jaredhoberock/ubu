@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integral/size.hpp"
-#include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
 #include <type_traits>
 
 namespace ubu

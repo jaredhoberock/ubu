@@ -2,7 +2,7 @@
 #include <cassert>
 #include <numeric>
 #include <ranges>
-#include <ubu/tensor/coordinate/comparisons.hpp>
+#include <ubu/tensor/coordinates/comparisons.hpp>
 #include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/shape/shape_size.hpp>
 #include <ubu/tensor/views/composed_view.hpp>

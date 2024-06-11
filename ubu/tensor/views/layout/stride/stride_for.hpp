@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../coordinate/concepts/weakly_congruent.hpp"
+#include "../../../coordinates/concepts/weakly_congruent.hpp"
 
 
 namespace ubu

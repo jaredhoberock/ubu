@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate/concepts/semicoordinate.hpp"
-#include "../coordinate/traits/rank.hpp"
-#include "../coordinate/detail/tuple_algorithm.hpp"
+#include "../coordinates/concepts/semicoordinate.hpp"
+#include "../coordinates/traits/rank.hpp"
+#include "../coordinates/detail/tuple_algorithm.hpp"
 
 namespace ubu::detail
 {

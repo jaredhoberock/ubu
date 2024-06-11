@@ -4,9 +4,9 @@
 
 #include "../../detail/reflection/is_device.hpp"
 #include "../../detail/exception/throw_runtime_error.hpp"
-#include "../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../tensor/coordinate/coordinate_cast.hpp"
-#include "../../tensor/coordinate/point.hpp"
+#include "../../tensor/coordinates/concepts/coordinate.hpp"
+#include "../../tensor/coordinates/coordinate_cast.hpp"
+#include "../../tensor/coordinates/point.hpp"
 #include <iostream>
 #include <utility>
 

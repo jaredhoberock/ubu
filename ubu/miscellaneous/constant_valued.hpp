@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../tensor/coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <tuple>
 #include <type_traits>

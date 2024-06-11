@@ -3,9 +3,9 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../miscellaneous/integral/ceil_div.hpp"
-#include "../../../coordinate/concepts/coordinate.hpp"
-#include "../../../coordinate/detail/coordinate_inclusive_scan.hpp"
-#include "../../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../../coordinates/concepts/coordinate.hpp"
+#include "../../../coordinates/detail/coordinate_inclusive_scan.hpp"
+#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include <utility>
 
 

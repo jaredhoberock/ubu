@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../coordinate/traits/rank.hpp"
+#include "../coordinates/traits/rank.hpp"
 #include "tensor_shape.hpp"
 
 namespace ubu

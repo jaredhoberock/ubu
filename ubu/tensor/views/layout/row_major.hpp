@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/concepts/coordinate.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
 #include "strided_layout.hpp"
 #include "stride/compact_row_major_stride.hpp"
 

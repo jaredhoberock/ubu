@@ -3,8 +3,8 @@
 #include "../detail/prologue.hpp"
 
 #include "concepts.hpp"
-#include "coordinate/element.hpp"
-#include "coordinate/iterators/colexicographical_iterator.hpp"
+#include "coordinates/element.hpp"
+#include "coordinates/iterators/colexicographical_iterator.hpp"
 #include "shape/shape.hpp"
 #include "traits.hpp"
 #include "views/all.hpp"

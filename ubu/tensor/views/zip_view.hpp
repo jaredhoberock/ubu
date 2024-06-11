@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integral/size.hpp"
-#include "../coordinate/concepts/congruent.hpp"
-#include "../coordinate/concepts/coordinate.hpp"
+#include "../coordinates/concepts/congruent.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../element_exists.hpp"

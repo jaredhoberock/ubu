@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../tensor/coordinate/concepts/coordinate.hpp"
+#include "../../../tensor/coordinates/concepts/coordinate.hpp"
 #include "concepts/executor.hpp"
 #include "detail/default_execute_kernel.hpp"
 #include <concepts>

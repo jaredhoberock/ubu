@@ -1,4 +1,4 @@
-#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/coordinates/point.hpp>
 #include <ubu/tensor/views/lattice.hpp>
 
 #undef NDEBUG

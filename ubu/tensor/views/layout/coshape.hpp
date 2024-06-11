@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/concepts/congruent.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/concepts/congruent.hpp"
 #include "layout.hpp"
 #include <utility>
 

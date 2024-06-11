@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../tensor/coordinate/coord.hpp"
+#include "../../../tensor/coordinates/coord.hpp"
 #include "../../../tensor/shape/shape.hpp"
 
 namespace ubu

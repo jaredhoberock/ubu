@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/traits/default_coordinate.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
+#include "../coordinates/traits/default_coordinate.hpp"
 #include "../element_exists.hpp"
 #include "../shape/shape.hpp"
 #include <concepts>

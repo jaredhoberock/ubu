@@ -2,9 +2,9 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/comparisons.hpp"
-#include "../../../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../../../tensor/coordinate/zeros.hpp"
+#include "../../../../tensor/coordinates/comparisons.hpp"
+#include "../../../../tensor/coordinates/concepts/coordinate.hpp"
+#include "../../../../tensor/coordinates/zeros.hpp"
 #include "../../../../tensor/shape.hpp"
 #include "../../../../tensor/views/layout/layout.hpp"
 #include "../bulk_execute.hpp"

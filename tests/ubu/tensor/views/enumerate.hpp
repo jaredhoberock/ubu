@@ -3,7 +3,7 @@
 #include <iostream>
 #include <numeric>
 #include <ranges>
-#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/coordinates/point.hpp>
 #include <ubu/tensor/iterator.hpp>
 #include <ubu/tensor/views/enumerate.hpp>
 #include <ubu/tensor/views/lattice.hpp>

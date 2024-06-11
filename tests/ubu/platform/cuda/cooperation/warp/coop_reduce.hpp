@@ -6,7 +6,7 @@
 #include <ubu/platform/cuda/cooperation.hpp>
 #include <ubu/platform/cuda/device_executor.hpp>
 #include <ubu/platform/cuda/managed_allocator.hpp>
-#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/coordinates/point.hpp>
 #include <vector>
 
 namespace ns = ubu;

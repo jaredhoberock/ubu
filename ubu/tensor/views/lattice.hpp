@@ -2,13 +2,13 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinate/comparisons/is_below.hpp"
-#include "../coordinate/concepts/coordinate.hpp"
-#include "../coordinate/coordinate_sum.hpp"
-#include "../coordinate/iterators/colexicographical_iterator.hpp"
-#include "../coordinate/iterators/lexicographical_iterator.hpp"
-#include "../coordinate/traits/rank.hpp"
-#include "../coordinate/zeros.hpp"
+#include "../coordinates/comparisons/is_below.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
+#include "../coordinates/coordinate_sum.hpp"
+#include "../coordinates/iterators/colexicographical_iterator.hpp"
+#include "../coordinates/iterators/lexicographical_iterator.hpp"
+#include "../coordinates/traits/rank.hpp"
+#include "../coordinates/zeros.hpp"
 #include "../shape/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>

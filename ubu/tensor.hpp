@@ -29,7 +29,7 @@
 #include "detail/prologue.hpp"
 
 #include "tensor/concepts.hpp"
-#include "tensor/coordinate.hpp"
+#include "tensor/coordinates.hpp"
 #include "tensor/element_exists.hpp"
 #include "tensor/iterator.hpp"
 #include "tensor/matrix.hpp"

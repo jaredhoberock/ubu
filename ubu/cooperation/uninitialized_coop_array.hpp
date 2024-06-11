@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 #include "../miscellaneous/integral/integral_like.hpp"
-#include "../tensor/coordinate/traits/default_coordinate.hpp"
+#include "../tensor/coordinates/traits/default_coordinate.hpp"
 #include "../tensor/traits/tensor_element.hpp"
 #include "../tensor/traits/tensor_size.hpp"
 #include "../tensor/vectors/fancy_span.hpp"

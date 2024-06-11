@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integral/integral_like.hpp"
-#include "../../tensor/coordinate/coord.hpp"
+#include "../../tensor/coordinates/coord.hpp"
 #include "../../tensor/shape/shape.hpp"
 #include "../../tensor/views/layout/column_major.hpp"
 #include "concepts/semicooperator.hpp"

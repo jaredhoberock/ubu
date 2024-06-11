@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../tensor/coordinate/concepts/coordinate.hpp"
-#include "../../tensor/coordinate/detail/tuple_algorithm.hpp"
+#include "../../tensor/coordinates/concepts/coordinate.hpp"
+#include "../../tensor/coordinates/detail/tuple_algorithm.hpp"
 #include "concepts/cooperator.hpp"
 #include <utility>
 

@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 #include "../../concepts/sized_tensor_like.hpp"
 #include "../../concepts/view.hpp"
-#include "../../coordinate/coordinate_cast.hpp"
+#include "../../coordinates/coordinate_cast.hpp"
 #include "../../element_exists.hpp"
 #include "../../shape/shape.hpp"
 #include "../../shape/shape_size.hpp"

@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../coordinate/concepts/coordinate.hpp"
-#include "../../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../../coordinates/concepts/coordinate.hpp"
+#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "compatible_shape.hpp"
 #include "compose_strides.hpp"
 #include "divide_shape.hpp"

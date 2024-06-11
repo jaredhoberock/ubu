@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/traits/rank.hpp"
+#include "../../coordinates/traits/rank.hpp"
 #include "slicer.hpp"
 #include <tuple>
 #include <type_traits>

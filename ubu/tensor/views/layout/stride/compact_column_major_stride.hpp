@@ -4,12 +4,12 @@
 
 #include "../../../../miscellaneous/constant.hpp"
 #include "../../../../miscellaneous/integral/integral_like.hpp"
-#include "../../../coordinate/concepts/congruent.hpp"
-#include "../../../coordinate/concepts/coordinate.hpp"
-#include "../../../coordinate/concepts/equal_rank.hpp"
-#include "../../../coordinate/detail/as_integral_like.hpp"
-#include "../../../coordinate/detail/tuple_algorithm.hpp"
-#include "../../../coordinate/traits/rank.hpp"
+#include "../../../coordinates/concepts/congruent.hpp"
+#include "../../../coordinates/concepts/coordinate.hpp"
+#include "../../../coordinates/concepts/equal_rank.hpp"
+#include "../../../coordinates/detail/as_integral_like.hpp"
+#include "../../../coordinates/detail/tuple_algorithm.hpp"
+#include "../../../coordinates/traits/rank.hpp"
 #include "../../../shape/shape_size.hpp"
 #include <concepts>
 #include <tuple>

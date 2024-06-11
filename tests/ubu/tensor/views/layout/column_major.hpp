@@ -1,6 +1,6 @@
 #include <cassert>
 #include <iostream>
-#include <ubu/tensor/coordinate/point.hpp>
+#include <ubu/tensor/coordinates/point.hpp>
 #include <ubu/tensor/views/layout/column_major.hpp>
 #include <ubu/tensor/views/layout/layout.hpp>
 #include <utility>

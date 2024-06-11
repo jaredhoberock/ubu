@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinate/concepts/coordinate.hpp"
-#include "../../coordinate/detail/tuple_algorithm.hpp"
+#include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 #include "unslicer.hpp"

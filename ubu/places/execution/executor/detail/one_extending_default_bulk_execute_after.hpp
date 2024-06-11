@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensor/coordinate/concepts/strictly_subdimensional.hpp"
-#include "../../../../tensor/coordinate/traits/default_coordinate.hpp"
+#include "../../../../tensor/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensor/coordinates/traits/default_coordinate.hpp"
 #include "../../../../tensor/views/layout/truncating_layout.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/executor.hpp"
