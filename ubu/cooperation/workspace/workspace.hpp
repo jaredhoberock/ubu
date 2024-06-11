@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../memory/buffer/get_buffer.hpp"
+#include "../../places/memory/buffer/get_buffer.hpp"
 #include "../barrier/get_barrier.hpp"
 #include <type_traits>
 #include <utility>

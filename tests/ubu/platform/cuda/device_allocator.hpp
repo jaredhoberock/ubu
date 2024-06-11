@@ -1,5 +1,5 @@
-#include <ubu/causality/initial_happening.hpp>
-#include <ubu/memory/allocator/concepts/asynchronous_allocator.hpp>
+#include <ubu/places/causality/initial_happening.hpp>
+#include <ubu/places/memory/allocator/concepts/asynchronous_allocator.hpp>
 #include <ubu/platform/cuda/device_allocator.hpp>
 
 namespace ns = ubu;

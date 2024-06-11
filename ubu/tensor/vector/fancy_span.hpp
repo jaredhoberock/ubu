@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../memory/pointer/pointer_like.hpp"
+#include "../../places/memory/pointer/pointer_like.hpp"
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/integral/integral_like.hpp"

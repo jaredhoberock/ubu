@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../memory/allocator/allocate_and_zero_after.hpp"
-#include "../../memory/allocator/deallocate_after.hpp"
+#include "../../places/memory/allocator/allocate_and_zero_after.hpp"
+#include "../../places/memory/allocator/deallocate_after.hpp"
 #include "../../tensor/coordinate/concepts/congruent.hpp"
 #include "../../tensor/coordinate/one_extend_coordinate.hpp"
 #include "cooperation.hpp"

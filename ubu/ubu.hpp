@@ -28,11 +28,9 @@
 
 #include "detail/prologue.hpp"
 
-#include "causality.hpp"
 #include "cooperation.hpp"
-#include "execution.hpp"
-#include "memory.hpp"
 #include "miscellaneous.hpp"
+#include "places.hpp"
 #include "platform.hpp"
 #include "tensor.hpp"
 
