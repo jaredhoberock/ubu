@@ -8,10 +8,12 @@ namespace ubu
 {
 
 // smaller exists as an alternative to std::min without its failings
-template<integral_like A, integral_like B>
-constexpr integral_like auto smaller(A a, B b)
+// 1. it returns a copy of its parameter, not a reference
+// 2. the types of its parameters can differ
+// 3. it can be passed to algorithms
+constexpr inline auto smaller = [](integral_like auto a, integral_like auto b)
 {
-  if constexpr (constant_valued<A> and constant_valued<B>)
+  if constexpr (constant_valued<decltype(a)> and constant_valued<decltype(b)>)
   {
     if constexpr (b < a)
     {
@@ -28,7 +30,7 @@ constexpr integral_like auto smaller(A a, B b)
     // incurred by this use of the ternary operator
     return b < a ? b : a;
   }
-}
+};
 
 } // end ubu
 
