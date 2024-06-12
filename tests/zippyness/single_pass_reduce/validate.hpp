@@ -94,6 +94,19 @@ void validate_result(const T& expected, const T& result, const std::string& test
   }
 }
 
+template<std::invocable R, std::invocable F>
+void validate(R reference, F test, const std::string& test_name = "test")
+{
+  // compute the expected result from the reference
+  auto expected = reference();
+
+  // compute the result of the function
+  auto result = test();
+
+  // check the result
+  validate_result(expected, result, test_name);
+}
+
 std::vector<std::size_t> test_sizes(std::size_t max_size)
 {
   std::vector<std::size_t> result = {0, 1, 2};
