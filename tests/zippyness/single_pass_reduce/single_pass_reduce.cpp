@@ -208,7 +208,7 @@ void test_correctness(std::size_t max_size, bool verbose = false)
 }
 
 
-double test_performance(int size, int num_trials)
+double test_performance(std::size_t size, int num_trials)
 {
   using namespace ubu;
   using namespace std;
