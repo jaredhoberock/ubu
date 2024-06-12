@@ -9,7 +9,7 @@ INCLUDES := -I$(UBU_INC_PATH) -I$(CUDA_INC_PATH)
 CCFLAGS := -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 CUDACXXFLAGS := --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_80
 
-single_pass_reduce.out: single_pass_reduce.cpp atomic_accumulator.hpp measure_bandwidth_of_invocation.hpp validate_result.hpp
+single_pass_reduce.out: single_pass_reduce.cpp atomic_accumulator.hpp measure_bandwidth_of_invocation.hpp validate.hpp
 	$(CUDACXX) $(CUDACXXFLAGS) single_pass_reduce.cpp -L$(CUDA_LIB_PATH) -lfmt -o $@
 
 # this runs single_pass_reduce.out quickly and quietly

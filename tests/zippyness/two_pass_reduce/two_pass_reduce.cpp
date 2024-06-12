@@ -1,4 +1,4 @@
-// circle -std=c++20 -O3 -I../../../ -sm_60 --verbose reduce_after_at.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o reduce_after_at.out
+// circle -std=c++20 -O3 -I../../../ -sm_60 --verbose two_pass_reduce.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o two_pass_reduce.out
 
 #include <algorithm>
 #include <cassert>
@@ -109,7 +109,7 @@ constexpr ubu::matrix_like auto as_reduction_matrix(V vec)
 
 
 template<ubu::sized_vector_like I, std::random_access_iterator R, class F>
-ubu::cuda::event reduce_after_at(ubu::cuda::device_executor gpu, ubu::cuda::device_allocator<std::byte> alloc, const ubu::cuda::event& before, I input, R result, F op)
+ubu::cuda::event two_pass_reduce(ubu::cuda::device_executor gpu, ubu::cuda::device_allocator<std::byte> alloc, const ubu::cuda::event& before, I input, R result, F op)
 {
   using namespace ubu;
 
@@ -202,7 +202,7 @@ void test_correctness(int max_size)
 
   for(int size = 1000; size < max_size; size += size / 100)
   {
-    reduce_after_at(ex, alloc, before, std::span(input.data(), size), result.data(), std::plus{}).wait();
+    two_pass_reduce(ex, alloc, before, std::span(input.data(), size), result.data(), std::plus{}).wait();
 
     // host reduce using std::accumulate.
     int ref = std::accumulate(input.begin(), input.begin() + size, 0);
@@ -230,11 +230,11 @@ double test_performance(int size, int num_trials)
   ubu::cuda::event before = ubu::initial_happening(ex);
 
   // warmup
-  reduce_after_at(ex, alloc, before, std::span(input.data(), input.size()), result.data(), std::plus{});
+  two_pass_reduce(ex, alloc, before, std::span(input.data(), input.size()), result.data(), std::plus{});
 
   return measure_bandwidth_of_invocation_in_gigabytes_per_second(num_trials, sizeof(int) * input.size(), [&]
   {
-    reduce_after_at(ex, alloc, before, std::span(input.data(), input.size()), result.data(), std::plus{});
+    two_pass_reduce(ex, alloc, before, std::span(input.data(), input.size()), result.data(), std::plus{});
   });
 }
 
