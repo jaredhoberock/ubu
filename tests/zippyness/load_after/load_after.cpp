@@ -81,7 +81,7 @@ double test_performance(std::size_t size, std::size_t num_trials)
 }
 
 // these expected performance intervals are in units of percent of theoretical peak bandwidth
-performance_expectations_t single_pass_reduce_expectations = {
+performance_expectations_t load_after_expectations = {
   {"NVIDIA GeForce RTX 3070", {0.92, 0.97}},
   {"NVIDIA RTX A5000", {0.92, 0.96}}
 };
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  report_performance(bandwidth_to_performance(bandwidth), single_pass_reduce_expectations);
+  report_performance(bandwidth_to_performance(bandwidth), load_after_expectations);
 
   std::cout << "OK" << std::endl;
 
