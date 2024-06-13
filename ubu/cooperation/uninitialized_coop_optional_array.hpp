@@ -1,13 +1,13 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../miscellaneous/integral/ceil_div.hpp"
-#include "../miscellaneous/integral/integral_like.hpp"
-#include "../tensor/coordinate/traits/default_coordinate.hpp"
-#include "cooperator/concepts/allocating_cooperator.hpp"
-#include "cooperator/coop_alloca.hpp"
-#include "cooperator/coop_dealloca.hpp"
-#include "cooperator/traits/cooperator_size.hpp"
+#include "../miscellaneous/integrals/ceil_div.hpp"
+#include "../miscellaneous/integrals/integral_like.hpp"
+#include "../tensors/coordinates/traits/default_coordinate.hpp"
+#include "cooperators/concepts/allocating_cooperator.hpp"
+#include "cooperators/coop_alloca.hpp"
+#include "cooperators/coop_dealloca.hpp"
+#include "cooperators/traits/cooperator_size.hpp"
 #include <atomic>
 #include <concepts>
 #include <optional>

@@ -4,7 +4,7 @@
 
 #include "causality/actual_happening.hpp"
 #include "causality/after_all.hpp"
-#include "causality/future.hpp"
+#include "causality/futures.hpp"
 #include "causality/happening.hpp"
 #include "causality/has_happened.hpp"
 #include "causality/initial_happening.hpp"

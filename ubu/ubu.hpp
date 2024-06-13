@@ -31,8 +31,8 @@
 #include "cooperation.hpp"
 #include "miscellaneous.hpp"
 #include "places.hpp"
-#include "platform.hpp"
-#include "tensor.hpp"
+#include "platforms.hpp"
+#include "tensors.hpp"
 
 #include "detail/epilogue.hpp"
 

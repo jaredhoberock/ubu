@@ -1,7 +1,7 @@
 // circle -std=c++20 -O3 -I../../.. -sm_80 --verbose single_pass_reduce.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o single_pass_reduce.out
 #include "atomic_accumulator.hpp"
 #include "measure_bandwidth_of_invocation.hpp"
-#include "validate_result.hpp"
+#include "validate.hpp"
 #include <algorithm>
 #include <cassert>
 #include <concepts>
@@ -166,15 +166,26 @@ void test_single_pass_reduce(std::size_t n)
   cuda::device_allocator<std::byte> alloc;
   cuda::event before = initial_happening(ex);
 
-  // compute the result on the GPU
-  single_pass_reduce(ex, alloc, before, std::span(input), init, result.data(), op).wait();
+  // compare the result of single_pass_reduce to a reference
 
-  // compute the expected result on the CPU
-  auto h_input = to_host(input);
-  int expected = std::accumulate(h_input.begin(), h_input.end(), init, op);
+  validate(
+    // reference
+    [&]()
+    {
+      auto h_input = to_host(input);
+      return std::accumulate(h_input.begin(), h_input.end(), init, op);
+    },
 
-  // check the result
-  validate_result(expected, result[0], fmt::format("test_single_pass_reduce({})", n));
+    // test function
+    [&]()
+    {
+      single_pass_reduce(ex, alloc, before, std::span(input), init, result.data(), op).wait();
+      return result[0];
+    },
+
+    // test name
+    std::format("test_single_pass_reduce({})", n)
+  );
 }
 
 
