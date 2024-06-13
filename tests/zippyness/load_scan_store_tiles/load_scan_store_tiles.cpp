@@ -1,5 +1,5 @@
 // circle --verbose -O3 -std=c++20 -I. -sm_60 load_scan_store_tiles.cpp -lcudart -lfmt -o load_scan_store_tiles
-#include "validate_result.hpp"
+#include "validate.hpp"
 #include "measure_bandwidth_of_invocation.hpp"
 #include <algorithm>
 #include <fmt/core.h>
@@ -245,25 +245,16 @@ double test_performance(std::size_t size, std::size_t num_trials)
   });
 }
 
-double theoretical_peak_bandwidth_in_gigabytes_per_second()
-{
-  cudaDeviceProp prop;
-  cudaGetDeviceProperties(&prop, 0);
-
-  double memory_clock_mhz = static_cast<double>(prop.memoryClockRate) / 1000.0;
-  double memory_bus_width_bits = static_cast<double>(prop.memoryBusWidth);
-
-  return (memory_clock_mhz * memory_bus_width_bits * 2 / 8.0) / 1024.0;
-}
-
-// XXX the reason this kernel's performance is so low is because circle build ca. 04/2024 is not inlining load_scan_store_after's lambda
+// XXX the reason this kernel's performance is so low is because circle build 201 is not inlining load_scan_store_after's lambda
 //     with inlining, the performance should be ~92% peak bandwidth
-constexpr double performance_regression_threshold_as_percentage_of_peak_bandwidth = 0.50;
-constexpr double performance_progression_threshold_as_percentage_of_peak_bandwidth = 0.52;
+performance_expectations_t load_scan_store_tiles_expectations = {
+  {"NVIDIA GeForce RTX 3070", {0.50, 0.52}},
+  {"NVIDIA RTX A5000", {0.50, 0.52}}
+};
 
 int main(int argc, char** argv)
 {
-  std::size_t performance_size = ubu::cuda::device_allocator<int>().max_size() / 3;
+  std::size_t performance_size = choose_large_problem_size_using_heuristic<int>(2);
   std::size_t num_performance_trials = 1000;
   std::size_t correctness_size = performance_size;
 
@@ -289,27 +280,10 @@ int main(int argc, char** argv)
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  double peak_bandwidth = theoretical_peak_bandwidth_in_gigabytes_per_second();
-  std::cout << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
-
-  double pct_peak_bandwidth = bandwidth / peak_bandwidth;
-  std::cout << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
-
-  if(pct_peak_bandwidth < performance_regression_threshold_as_percentage_of_peak_bandwidth)
-  {
-    std::cerr << "Theoretical peak bandwidth: " << peak_bandwidth << " GB/s " << std::endl;
-    std::cerr << "Regression detected." << std::endl;
-    return -1;
-  }
-  else if(pct_peak_bandwidth > performance_progression_threshold_as_percentage_of_peak_bandwidth)
-  {
-    std::cerr << "Theoretical peak bandwidth: " << peak_bandwidth << " GB/s " << std::endl;
-    std::cerr << "Progression detected." << std::endl;
-    return -1;
-  }
+  report_performance(bandwidth_to_performance(bandwidth), load_scan_store_tiles_expectations);
 
   std::cout << "OK" << std::endl;
 
-  return 0;
+  return 0; 
 }
 
