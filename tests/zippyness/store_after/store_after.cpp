@@ -152,6 +152,7 @@ int main(int argc, char** argv)
 {
   std::size_t performance_size = choose_large_problem_size_using_heuristic<int>(1);
   std::size_t num_performance_trials = 1000;
+  std::size_t correctness_size = performance_size;
 
   if(argc == 2)
   {
@@ -162,10 +163,15 @@ int main(int argc, char** argv)
       return -1;
     }
 
+    correctness_size = 1 << 16;
     performance_size /= 10;
     num_performance_trials = 30;
   }
 
+  std::cout << "Testing correctness... " << std::flush;
+  test_correctness(correctness_size, correctness_size > 23456789);
+  std::cout << "Done." << std::endl;
+  
   std::cout << "Testing performance... " << std::flush;
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
