@@ -5,26 +5,36 @@
 #include <algorithm>
 #include <cassert>
 #include <concepts>
+#include <fmt/core.h>
+#include <map>
 #include <numeric>
 #include <random>
 #include <span>
+#include <string_view>
 #include <ubu/ubu.hpp>
 
-template<ubu::tensor_like T, std::invocable<ubu::tensor_element_t<T>,ubu::tensor_element_t<T>> F>
-constexpr std::optional<ubu::tensor_element_t<T>> reduce(T tensor, F binary_op)
+template<ubu::vector_like V, std::invocable<ubu::tensor_element_t<V>,ubu::tensor_element_t<V>> F>
+constexpr std::optional<ubu::tensor_element_t<V>> reduce(V vector, F binary_op)
 {
-  std::optional<ubu::tensor_element_t<T>> result;
+  std::optional<ubu::tensor_element_t<V>> result;
 
-  auto i = ubu::begin(tensor);
-  auto end = ubu::end(tensor);
-  
-  if(i != end)
+  bool found_first_element = false;
+
+  for(int i = 0; i < ubu::shape(vector); ++i)
   {
-    result = *i;
-
-    for(++i; i != end; ++i)
+    if(ubu::element_exists(vector, i))
     {
-      *result = binary_op(*result, *i);
+      const auto& element = ubu::element(vector,i);
+
+      if(found_first_element)
+      {
+        *result = binary_op(*result, element);
+      }
+      else
+      {
+        result = element;
+        found_first_element = true;
+      }
     }
   }
 
@@ -32,15 +42,15 @@ constexpr std::optional<ubu::tensor_element_t<T>> reduce(T tensor, F binary_op)
 }
 
 // postcondition: is_injective(result)
-constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements)
+constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements, int device = 0)
 {
   using namespace std;
   using namespace ubu;
   
   auto num_elements_per_thread = 16_c;
   auto block_size = 256_c;
+  int max_num_blocks = 6 * multiprocessor_count(device) * 5; // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0)
 
-  auto max_num_blocks = 1380_c; // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0);
   auto num_elements_per_tile = num_elements_per_thread * block_size;
   std::size_t num_tiles = ceil_div(num_elements, num_elements_per_tile);
   int num_blocks = std::min<std::size_t>(num_tiles, max_num_blocks);
@@ -60,6 +70,11 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
 
   auto num_small_blocks = num_blocks - num_big_blocks;
 
+  // XXX consider making these layouts 4D so we can isolate the constant-sized work in the leading dimension
+  //     then, the kernel would need each block to iterate over its tiles
+  //     alternatively, we could nestle the first two dimensions of the layout, giving each thread a matrix to iterate over
+  //     then the kernel body wouldn't need to change at all
+
   // create the layout for big blocks
   tuple big_block_shape(num_elements_per_thread * num_tiles_per_big_block, block_size, num_big_blocks);
   tuple big_block_stride(block_size, 1_c, num_elements_per_big_block);
@@ -78,10 +93,13 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
 
 template<ubu::sized_vector_like V>
   requires std::is_trivially_copyable_v<V>
-constexpr ubu::matrix_like auto as_reduction_matrix(V vec)
+constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
 {
+  // create a 3d layout
+  auto layout = even_share_layout(ubu::size(vec), gpu.device());
+
   // create a 3d view of the data
-  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, even_share_layout(std::ranges::size(vec)));
+  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);
 
   // nestle the 3d view into a 2d matrix of slices
   return ubu::nestle(view3d);
@@ -93,7 +111,7 @@ ubu::cuda::event inplace_reduce_after(ubu::cuda::device_executor gpu, ubu::cuda:
   using namespace ubu;
 
   // arrange the input into a 2D matrix of 1D tiles
-  matrix_like auto tiles = as_reduction_matrix(input);
+  matrix_like auto tiles = as_reduction_matrix(input, gpu);
 
   auto shape = ubu::shape(tiles);
   auto [block_size, num_blocks] = shape;
@@ -233,18 +251,26 @@ double test_performance(std::size_t size, int num_trials)
 }
 
 
-double theoretical_peak_bandwidth_in_gigabytes_per_second()
+// these expected performance intervals are in units of percent of theoretical peak bandwidth
+std::map<std::string_view, std::pair<double,double>> known_performance_expectations = {
+  {"NVIDIA GeForce RTX 3070", {0.92, 0.97}},
+  {"NVIDIA RTX A5000", {0.92, 0.96}}
+};
+
+
+std::pair<double,double> expected_performance(int device = 0)
 {
-  cudaDeviceProp prop;
-  cudaGetDeviceProperties(&prop, 0);
+  // if we don't recognize the GPU, we'll return the unit interval
+  std::pair result(0., 1.);
 
-  double memory_clock_mhz = static_cast<double>(prop.memoryClockRate) / 1000.0;
-  double memory_bus_width_bits = static_cast<double>(prop.memoryBusWidth);
+  if(auto name = device_name(device); known_performance_expectations.contains(name))
+  {
+    result = known_performance_expectations[name];
+  }
 
-  return (memory_clock_mhz * memory_bus_width_bits * 2 / 8.0) / 1024.0;
+  return result;
 }
 
-constexpr std::pair expected_performance(0.92, 0.97);
 
 void report_performance(std::ostream& os, double bandwidth)
 {
@@ -254,14 +280,14 @@ void report_performance(std::ostream& os, double bandwidth)
   os << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
   os << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
 
-  if(pct_peak_bandwidth < expected_performance.first)
+  if(std::pair expected = expected_performance(); pct_peak_bandwidth < expected.first)
   {
-    os << "Regression threshold: " << expected_performance.first << "%" << std::endl;
+    os << "Regression threshold: " << expected.first << "%" << std::endl;
     os << "Regression detected." << std::endl;
   }
-  else if(pct_peak_bandwidth > expected_performance.second)
+  else if(pct_peak_bandwidth > expected.second)
   {
-    os << "Progression threshold: " << expected_performance.second << "%" << std::endl;
+    os << "Progression threshold: " << expected.second << "%" << std::endl;
     os << "Progression detected." << std::endl;
   }
 }
@@ -269,7 +295,7 @@ void report_performance(std::ostream& os, double bandwidth)
 
 int main(int argc, char** argv)
 {
-  std::size_t performance_size = ubu::cuda::device_allocator<int>().max_size() / 2;
+  std::size_t performance_size = choose_large_problem_size_using_heuristic<int>(1);
   std::size_t num_performance_trials = 1000;
   std::size_t correctness_size = performance_size;
 

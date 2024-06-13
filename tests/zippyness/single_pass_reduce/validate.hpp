@@ -2,7 +2,9 @@
 
 #include <fmt/core.h>
 #include <fmt/ranges.h>
+#include <format>
 #include <stdexcept>
+#include <string_view>
 #include <ubu/ubu.hpp>
 #include <vector>
 
@@ -133,5 +135,50 @@ std::vector<std::size_t> test_sizes(std::size_t max_size)
   std::sort(result.begin(), result.end());
 
   return result;
+}
+
+std::string_view device_name(int device = 0)
+{
+  cudaDeviceProp prop;
+  if(cudaError_t error = cudaGetDeviceProperties(&prop, device))
+  {
+    throw std::runtime_error(std::format("device_name: CUDA error after cudaGetDeviceProperties: {}", cudaGetErrorString(error)));
+  }
+
+  return prop.name;
+}
+
+int multiprocessor_count(int device = 0)
+{
+  cudaDeviceProp deviceProp;
+  if(cudaError_t error = cudaGetDeviceProperties(&deviceProp, device))
+  {
+    throw std::runtime_error(std::format("multiprocessor_count: CUDA error after cudaGetDeviceProperties: {}", cudaGetErrorString(error)));
+  }
+
+  return deviceProp.multiProcessorCount;
+}
+
+template<class T>
+std::size_t choose_large_problem_size_using_heuristic(int number_of_arrays_used_by_algorithm, int device = 0)
+{
+  // we haven't got all day
+  std::size_t largest_size_we_are_willing_to_wait_for = 1ul << 32;
+
+  // we generally won't be able to allocate the entire GPU memory because the system is already using some of GPU memory for other stuff
+  std::size_t largest_array_size_we_can_accomodate = ubu::cuda::device_allocator<T>().max_size() / (number_of_arrays_used_by_algorithm + 1);
+
+  return std::min(largest_size_we_are_willing_to_wait_for, largest_array_size_we_can_accomodate);
+}
+
+double theoretical_peak_bandwidth_in_gigabytes_per_second(int device = 0)
+{
+  cudaDeviceProp prop;
+  cudaGetDeviceProperties(&prop, device);
+
+  double memory_clock_mhz = static_cast<double>(prop.memoryClockRate) / 1000.0;
+  double memory_bus_width_bits = static_cast<double>(prop.memoryBusWidth);
+
+  return (memory_clock_mhz * memory_bus_width_bits * 2 / 8.0) / 1024.0;
 }
 
