@@ -1,8 +1,8 @@
-// circle --verbose -O3 -std=c++20 -I. -sm_80 inclusive_scan_after.cpp -lcudart -lfmt -o inclusive_scan_after
+// circle --verbose -O3 -std=c++20 -I../../.. -sm_80 inclusive_scan_after.cpp -lcudart -lfmt -o inclusive_scan_after
 #include "lookback_array.hpp"
 #include "maybe_add.hpp"
 #include "measure_bandwidth_of_invocation.hpp"
-#include "validate_result.hpp"
+#include "validate.hpp"
 #include <atomic>
 #include <fmt/core.h>
 #include <numeric>
@@ -244,56 +244,19 @@ double test_performance(std::size_t size, std::size_t num_trials)
   });
 }
 
-double theoretical_peak_bandwidth_in_gigabytes_per_second()
-{
-  cudaDeviceProp prop;
-  cudaGetDeviceProperties(&prop, 0);
-
-  double memory_clock_mhz = static_cast<double>(prop.memoryClockRate) / 1000.0;
-  double memory_bus_width_bits = static_cast<double>(prop.memoryBusWidth);
-
-  return (memory_clock_mhz * memory_bus_width_bits * 2 / 8.0) / 1024.0;
-}
-
+// these expected performance intervals are in units of percent of theoretical peak bandwidth
 // XXX the reason this kernel's performance is so low is because circle build 201 is generating a stack frame for inclusive_scan_after's lambda
-//     without the stack frame, the performance should be ~91% peak bandwidth
-//constexpr double performance_regression_threshold_as_percentage_of_peak_bandwidth = 0.90;
-//constexpr double performance_progression_threshold_as_percentage_of_peak_bandwidth = 0.92;
-constexpr double performance_regression_threshold_as_percentage_of_peak_bandwidth = 0.19;
-constexpr double performance_progression_threshold_as_percentage_of_peak_bandwidth = 0.20;
-
-constexpr std::pair expected_performance(performance_regression_threshold_as_percentage_of_peak_bandwidth, performance_progression_threshold_as_percentage_of_peak_bandwidth);
-
-constexpr bool unexpected_performance(double bandwidth)
-{
-  double pct_peak_performance = bandwidth / theoretical_peak_bandwidth_in_gigabytes_per_second();
-
-  return pct_peak_performance < expected_performance.first or pct_peak_performance > expected_performance.second;
-}
-
-void report_performance(std::ostream& os, double bandwidth)
-{
-  double peak_bandwidth = theoretical_peak_bandwidth_in_gigabytes_per_second();
-  double pct_peak_bandwidth = bandwidth / peak_bandwidth;
-
-  os << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
-  os << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
-
-  if(pct_peak_bandwidth < expected_performance.first)
-  {
-    os << "Regression threshold: " << expected_performance.first << "%" << std::endl;
-    os << "Regression detected." << std::endl;
-  }
-  else if(pct_peak_bandwidth > expected_performance.second)
-  {
-    os << "Progression threshold: " << expected_performance.second << "%" << std::endl;
-    os << "Progression detected." << std::endl;
-  }
-}
+//     without the stack frame, the performance should be ~91% peak bandwidth on RTX 3070
+performance_expectations_t single_pass_reduce_expectations = {
+//  {"NVIDIA GeForce RTX 3070", {0.90, 0.92}},
+//  {"NVIDIA RTX A5000", {0.90, 0.92}}
+  {"NVIDIA GeForce RTX 3070", {0.19, 0.20}},
+  {"NVIDIA RTX A5000", {0.18, 0.19}}
+};
 
 int main(int argc, char** argv)
 {
-  std::size_t performance_size = ubu::cuda::device_allocator<int>().max_size() / 3;
+  std::size_t performance_size = choose_large_problem_size_using_heuristic<int>(2);
   std::size_t num_performance_trials = 1000;
   std::size_t correctness_size = performance_size;
 
@@ -319,17 +282,10 @@ int main(int argc, char** argv)
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  std::ostream& os = unexpected_performance(bandwidth) ? std::cerr : std::cout;
-
-  report_performance(os, bandwidth);
-
-  if(unexpected_performance(bandwidth))
-  {
-    return -1;
-  }
+  report_performance(bandwidth_to_performance(bandwidth), single_pass_reduce_expectations);
 
   std::cout << "OK" << std::endl;
 
-  return 0;
+  return 0; 
 }
 
