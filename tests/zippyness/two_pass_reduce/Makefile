@@ -10,7 +10,7 @@ CCFLAGS := -std=c++20 -Wall -Werror -ferror-limit=3 $(INCLUDES)
 CUDACXXFLAGS := --cuda-path=$(CUDA_PATH) $(CCFLAGS) -sm_60
 
 two_pass_reduce.out: two_pass_reduce.cpp measure_bandwidth_of_invocation.hpp
-	$(CUDACXX) $(CUDACXXFLAGS) two_pass_reduce.cpp -L$(CUDA_LIB_PATH) -lcudart -o $@
+	$(CUDACXX) $(CUDACXXFLAGS) two_pass_reduce.cpp -L$(CUDA_LIB_PATH) -lcudart -lfmt -o $@
 
 # this runs reduce_after_at.out sliently and quickly
 test: two_pass_reduce.out

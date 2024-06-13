@@ -5,12 +5,9 @@
 #include <algorithm>
 #include <cassert>
 #include <concepts>
-#include <fmt/core.h>
-#include <map>
 #include <numeric>
 #include <random>
 #include <span>
-#include <string_view>
 #include <ubu/ubu.hpp>
 
 template<ubu::vector_like V, std::invocable<ubu::tensor_element_t<V>,ubu::tensor_element_t<V>> F>
@@ -49,7 +46,11 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
   
   auto num_elements_per_thread = 16_c;
   auto block_size = 256_c;
-  int max_num_blocks = 6 * multiprocessor_count(device) * 5; // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0)
+
+  // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0)
+  int occupancy = 6; // XXX this value needs to be computed by the calculator, somehow
+  int subscription = 5; // XXX this value should depend on the device
+  int max_num_blocks = occupancy * multiprocessor_count(device) * subscription; 
 
   auto num_elements_per_tile = num_elements_per_thread * block_size;
   std::size_t num_tiles = ceil_div(num_elements, num_elements_per_tile);
@@ -252,45 +253,10 @@ double test_performance(std::size_t size, int num_trials)
 
 
 // these expected performance intervals are in units of percent of theoretical peak bandwidth
-std::map<std::string_view, std::pair<double,double>> known_performance_expectations = {
+performance_expectations_t single_pass_reduce_expectations = {
   {"NVIDIA GeForce RTX 3070", {0.92, 0.97}},
   {"NVIDIA RTX A5000", {0.92, 0.96}}
 };
-
-
-std::pair<double,double> expected_performance(int device = 0)
-{
-  // if we don't recognize the GPU, we'll return the unit interval
-  std::pair result(0., 1.);
-
-  if(auto name = device_name(device); known_performance_expectations.contains(name))
-  {
-    result = known_performance_expectations[name];
-  }
-
-  return result;
-}
-
-
-void report_performance(std::ostream& os, double bandwidth)
-{
-  double peak_bandwidth = theoretical_peak_bandwidth_in_gigabytes_per_second();
-  double pct_peak_bandwidth = bandwidth / peak_bandwidth;
-
-  os << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
-  os << "Percent peak bandwidth: " << pct_peak_bandwidth << "%" << std::endl;
-
-  if(std::pair expected = expected_performance(); pct_peak_bandwidth < expected.first)
-  {
-    os << "Regression threshold: " << expected.first << "%" << std::endl;
-    os << "Regression detected." << std::endl;
-  }
-  else if(pct_peak_bandwidth > expected.second)
-  {
-    os << "Progression threshold: " << expected.second << "%" << std::endl;
-    os << "Progression detected." << std::endl;
-  }
-}
 
 
 int main(int argc, char** argv)
@@ -321,7 +287,9 @@ int main(int argc, char** argv)
   double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  report_performance(std::cout, bandwidth);
+  report_performance(bandwidth_to_performance(bandwidth), single_pass_reduce_expectations);
+
+  std::cout << "OK" << std::endl;
 
   return 0; 
 }

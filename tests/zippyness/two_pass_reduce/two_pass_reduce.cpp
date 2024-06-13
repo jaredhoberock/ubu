@@ -1,5 +1,6 @@
 // circle -std=c++20 -O3 -I../../../ -sm_60 --verbose two_pass_reduce.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o two_pass_reduce.out
-
+#include "measure_bandwidth_of_invocation.hpp"
+#include "validate.hpp"
 #include <algorithm>
 #include <cassert>
 #include <concepts>
@@ -7,24 +8,29 @@
 #include <random>
 #include <span>
 #include <ubu/ubu.hpp>
-#include "measure_bandwidth_of_invocation.hpp"
 
-
-template<ubu::tensor_like T, std::invocable<ubu::tensor_element_t<T>,ubu::tensor_element_t<T>> F>
-constexpr std::optional<ubu::tensor_element_t<T>> reduce(T tensor, F binary_op)
+template<ubu::vector_like V, std::invocable<ubu::tensor_element_t<V>,ubu::tensor_element_t<V>> F>
+constexpr std::optional<ubu::tensor_element_t<V>> reduce(V vector, F binary_op)
 {
-  std::optional<ubu::tensor_element_t<T>> result;
+  std::optional<ubu::tensor_element_t<V>> result;
 
-  auto i = ubu::begin(tensor);
-  auto end = ubu::end(tensor);
-  
-  if(i != end)
+  bool found_first_element = false;
+
+  for(int i = 0; i < ubu::shape(vector); ++i)
   {
-    result = *i;
-
-    for(++i; i != end; ++i)
+    if(ubu::element_exists(vector, i))
     {
-      *result = binary_op(*result, *i);
+      const auto& element = ubu::element(vector,i);
+
+      if(found_first_element)
+      {
+        *result = binary_op(*result, element);
+      }
+      else
+      {
+        result = element;
+        found_first_element = true;
+      }
     }
   }
 
@@ -33,7 +39,7 @@ constexpr std::optional<ubu::tensor_element_t<T>> reduce(T tensor, F binary_op)
 
 
 // postcondition: is_injective(result)
-constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements)
+constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements, int device = 0)
 {
   using namespace std;
   using namespace ubu;
@@ -41,7 +47,11 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
   auto num_elements_per_thread = 16_c;
   auto block_size = 256_c;
 
-  auto max_num_blocks = 1380_c; // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0);
+  // XXX taken from CUB: reduce_config.sm_occupancy * sm_count * CUB_SUBSCRIPTION_FACTOR(0)
+  int occupancy = 6; // XXX this value needs to be computed by the calculator, somehow
+  int subscription = 5; // XXX this value should depend on the device
+  int max_num_blocks = occupancy * multiprocessor_count(device) * subscription; 
+
   auto num_elements_per_tile = num_elements_per_thread * block_size;
   std::size_t num_tiles = ceil_div(num_elements, num_elements_per_tile);
   int num_blocks = std::min<std::size_t>(num_tiles, max_num_blocks);
@@ -79,29 +89,13 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
 
 template<ubu::sized_vector_like V>
   requires std::is_trivially_copyable_v<V>
-constexpr ubu::matrix_like auto as_reduction_matrix(V vec)
+constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
 {
-  // create a 3d view of the data
-  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, even_share_layout(std::ranges::size(vec)));
+  // create a 3d layout
+  auto layout = even_share_layout(ubu::size(vec), gpu.device());
 
-  // XXX the pieces of state the old implementation uses in the loop are:
-  //
-  // block_offset // where each block begins loading
-  // block_end    // where each block ends loading
-  // block_size   // thread stride
-  // input        // pointer to input data
-  //
-  // these are computed from this state
-  //
-  // num_extra_tiles
-  // work_per_big_block
-  // work_per_small_block
-  // tile_size
-  // input
-  // n
-  //
-  // if we can consolidate the layout into that state, then we should be able to
-  // match the register count
+  // create a 3d view of the data
+  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);
 
   // nestle the 3d view into a 2d matrix of slices
   return ubu::nestle(view3d);
@@ -116,7 +110,7 @@ ubu::cuda::event two_pass_reduce(ubu::cuda::device_executor gpu, ubu::cuda::devi
   using T = tensor_element_t<I>;
 
   // slices is a matrix indexed by (threadIdx, blockIdx) of 1d slices
-  matrix_like auto slices = as_reduction_matrix(input);
+  matrix_like auto slices = as_reduction_matrix(input, gpu);
 
   // each thread of the kernel receives one slice
   auto shape = slices.shape();
@@ -150,7 +144,7 @@ ubu::cuda::event two_pass_reduce(ubu::cuda::device_executor gpu, ubu::cuda::devi
   });
 
   // second phase, reduce partial sums
-  matrix_like auto partial_sum_slices = as_reduction_matrix(partial_sums);
+  matrix_like auto partial_sum_slices = as_reduction_matrix(partial_sums, gpu);
 
   cuda::event result_ready = bulk_execute_with_workspace_after(gpu, alloc, partial_sums_ready, partial_sum_slices.shape(), workspace_shape, [=](ubu::int2 idx, workspace auto ws)
   {
@@ -179,46 +173,62 @@ template<class T>
 using device_vector = std::vector<T, ubu::cuda::managed_allocator<T>>;
 
 
-void test_correctness(int max_size)
+void test_two_pass_reduce(std::size_t n)
 {
-  device_vector<int> input(max_size, 1);
-
-  std::default_random_engine rng;
-  for(auto& x : input)
-  {
-    x = rng();
-  }
-
+  using namespace std;
   using namespace ubu;
 
-  device_vector<int> result(1,0);
+  auto op = plus{};
+  device_vector<int> input(n, 1);
+  device_vector<int> result(1, 0);
+
   cuda::device_executor ex;
   cuda::device_allocator<std::byte> alloc;
-
-  auto work_per_thread = 16_c;
-  auto block_size = 256_c;
-  
   cuda::event before = initial_happening(ex);
 
-  for(int size = 1000; size < max_size; size += size / 100)
-  {
-    two_pass_reduce(ex, alloc, before, std::span(input.data(), size), result.data(), std::plus{}).wait();
+  // compare the result of two_pass_reduce to a reference
 
-    // host reduce using std::accumulate.
-    int ref = std::accumulate(input.begin(), input.begin() + size, 0);
-
-    if(result[0] != ref)
+  validate(
+    // reference
+    [&]()
     {
-      printf("reduce:           %d\n", result[0]);
-      printf("std::accumulate:  %d\n", ref);
-      printf("Error at size: %d\n", size);
-      exit(1);
+      auto h_input = to_host(input);
+      return std::accumulate(h_input.begin(), h_input.end(), 0, op);
+    },
+
+    // test function
+    [&]()
+    {
+      two_pass_reduce(ex, alloc, before, std::span(input), result.data(), op).wait();
+      return result[0];
+    },
+
+    // test name
+    std::format("test_single_pass_reduce({})", n)
+  );
+}
+
+
+void test_correctness(std::size_t max_size, bool verbose = false)
+{
+  for(auto sz: test_sizes(max_size))
+  {
+    if(verbose)
+    {
+      std::cout << "test_two_pass_reduce(" << sz << ")..." << std::flush;
+    }
+
+    test_two_pass_reduce(sz);
+
+    if(verbose)
+    {
+      std::cout << "OK" << std::endl;
     }
   }
 }
 
 
-double test_performance(int size, int num_trials)
+double test_performance(std::size_t size, int num_trials)
 {
   using namespace ubu;
 
@@ -238,9 +248,19 @@ double test_performance(int size, int num_trials)
   });
 }
 
+// these expected performance intervals are in units of percent of theoretical peak bandwidth
+performance_expectations_t two_pass_reduce_expectations = {
+  {"NVIDIA GeForce RTX 3070", {0.92, 0.97}},
+  {"NVIDIA RTX A5000", {0.92, 0.96}}
+};
+
 
 int main(int argc, char** argv)
 {
+  std::size_t performance_size = choose_large_problem_size_using_heuristic<int>(1);
+  std::size_t num_performance_trials = 1000;
+  std::size_t correctness_size = performance_size;
+
   if(argc == 2)
   {
     std::string_view arg(argv[1]);
@@ -250,20 +270,22 @@ int main(int argc, char** argv)
       return -1;
     }
 
-    test_correctness(1 << 16);
-    std::cout << "OK" << std::endl;
-    return 0;
+    correctness_size = 1 << 16;
+    performance_size /= 10;
+    num_performance_trials = 30;
   }
 
   std::cout << "Testing correctness... " << std::flush;
-  test_correctness(23456789);
+  test_correctness(correctness_size, correctness_size > 23456789);
   std::cout << "Done." << std::endl;
-
+  
   std::cout << "Testing performance... " << std::flush;
-  double bandwidth = test_performance(1 << 30, 1000);
+  double bandwidth = test_performance(performance_size, num_performance_trials);
   std::cout << "Done." << std::endl;
 
-  std::cout << "Bandwidth: " << bandwidth << " GB/s" << std::endl;
+  report_performance(bandwidth_to_performance(bandwidth), two_pass_reduce_expectations);
+
+  std::cout << "OK" << std::endl;
 
   return 0; 
 }
