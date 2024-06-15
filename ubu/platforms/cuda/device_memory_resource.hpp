@@ -16,12 +16,17 @@ namespace ubu::cuda
 class device_memory_resource
 {
   public:
-    explicit device_memory_resource(int device, cudaStream_t stream)
+    device_memory_resource(int device, cudaStream_t stream, cudaMemPool_t pool)
       : device_{device},
-        stream_{stream}
+        stream_{stream},
+        pool_{pool}
     {}
 
-    inline device_memory_resource()
+    device_memory_resource(int device, cudaStream_t stream)
+      : device_memory_resource(device, stream, default_pool(device))
+    {}
+
+    device_memory_resource()
       : device_memory_resource{0,0}
     {}
 
@@ -29,22 +34,19 @@ class device_memory_resource
 
     inline void* allocate(std::size_t num_bytes) const
     {
-      return detail::temporarily_with_current_device(device(), [=]
-      {
-        void* result = nullptr;
-
-        detail::throw_on_error(cudaMalloc(&result, num_bytes), "cuda::device_memory_resource::allocate: after cudaMalloc");
-
-        return result;
-      });
+      // use the asynchronous method
+      cuda::event before(device(), stream());
+      auto [after,result] = allocate_after(before, num_bytes);
+      after.wait();
+      return result;
     }
 
-    inline void deallocate(void* ptr, std::size_t) const
+    inline void deallocate(void* ptr, std::size_t num_bytes) const
     {
-      detail::temporarily_with_current_device(device(), [=]
-      {
-        detail::throw_on_error(cudaFree(ptr), "cuda::device_memory_resource::deallocate: after cudaFree");
-      });
+      // use the asynchronous method
+      cuda::event before(device(), stream());
+      cuda::event after = deallocate_after(before, ptr, num_bytes);
+      after.wait();
     }
 
     inline std::pair<event,void*> allocate_after(const event& before, std::size_t num_bytes) const
@@ -56,8 +58,8 @@ class device_memory_resource
         );
 
         void* ptr{};
-        detail::throw_on_error(cudaMallocAsync(reinterpret_cast<void**>(&ptr), num_bytes, stream()),
-          "cuda::device_memory_resource::allocate_after: after cudaMallocAsync"
+        detail::throw_on_error(cudaMallocFromPoolAsync(reinterpret_cast<void**>(&ptr), num_bytes, pool(), stream()),
+          "cuda::device_memory_resource::allocate_after: after cudaMallocFromPoolAsync"
         );
 
         event after{device(), stream()};
@@ -102,10 +104,17 @@ class device_memory_resource
       return stream_;
     }
 
+    inline cudaMemPool_t pool() const
+    {
+      return pool_;
+    }
+
     // returns the maximum size, in bytes, of the largest
     // theoretical allocation allocate could accomodate
     inline std::size_t max_size() const
     {
+      // XXX we should probably report a value based on our memory pool,
+      //     rather than the total size of memory
       return detail::temporarily_with_current_device(device(), [=]
       {
         std::size_t free_bytes = 0;
@@ -117,7 +126,7 @@ class device_memory_resource
 
     inline bool is_equal(const device_memory_resource& other) const
     {
-      return device() == other.device() and stream() == other.stream();
+      return device() == other.device() and stream() == other.stream() and pool() == other.pool();
     }
 
     inline bool operator==(const device_memory_resource& other) const
@@ -131,8 +140,20 @@ class device_memory_resource
     }
 
   private:
+    // returns the default pool on the given device
+    inline static cudaMemPool_t default_pool(int device)
+    {
+      cudaMemPool_t result{};
+      detail::throw_on_error(cudaDeviceGetDefaultMemPool(&result, device),
+        "cuda::device_memory_resource::default_pool: after cudaGetDefaultMemPool"
+      );
+
+      return result;
+    }
+
     int device_;
     cudaStream_t stream_;
+    cudaMemPool_t pool_;
 };
 
 

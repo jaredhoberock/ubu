@@ -29,8 +29,12 @@ class device_allocator : private device_memory_resource
     using pointer = device_ptr<T>;
     using happening_type = event;
 
-    device_allocator(int device, cudaStream_t s)
-      : super_t{device, s}
+    device_allocator(int device, cudaStream_t stream, cudaMemPool_t pool)
+      : super_t{device, stream, pool}
+    {}
+
+    device_allocator(int device, cudaStream_t stream)
+      : super_t{device, stream}
     {}
 
     explicit device_allocator(int device)
@@ -88,6 +92,11 @@ class device_allocator : private device_memory_resource
     cudaStream_t stream() const
     {
       return super_t::stream();
+    }
+
+    cudaMemPool_t pool() const
+    {
+      return super_t::pool();
     }
 
     // returns the maximum size, in elements, of the largest
