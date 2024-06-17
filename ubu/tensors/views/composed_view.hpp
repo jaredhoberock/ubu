@@ -71,13 +71,13 @@ class composed_view : public std::ranges::view_base
     {
       if (not ubu::element_exists(b_, coord)) return false;
 
-      auto a_coord = element(b_,coord);
-
       // if A actually fulfills the requirements of tensor_like,
       // check the coordinate produced by b_ against a_
       // otherwise, we assume that b_ always perfectly covers a_
       if constexpr (tensor_like<A>)
       {
+        auto a_coord = element(b_,coord);
+
         if (not in_domain(a_, a_coord)) return false;
         if (not ubu::element_exists(a_, a_coord)) return false;
       }
