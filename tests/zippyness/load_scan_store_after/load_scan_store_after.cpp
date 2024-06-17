@@ -236,7 +236,7 @@ double test_performance(std::size_t size, std::size_t num_trials)
 //     with inlining, the performance should be ~93% peak bandwidth
 performance_expectations_t load_scan_store_after_expectations = {
   {"NVIDIA GeForce RTX 3070", {0.37, 0.39}},
-  {"NVIDIA RTX A5000", {0.35, 0.37}}
+  {"NVIDIA RTX A5000", {0.37, 0.39}}
 };
 
 int main(int argc, char** argv)
