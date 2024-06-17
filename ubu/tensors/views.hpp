@@ -6,6 +6,7 @@
 #include "views/compose.hpp"
 #include "views/composed_view.hpp"
 #include "views/domain.hpp"
+#include "views/elements.hpp"
 #include "views/enumerate.hpp"
 #include "views/lattice.hpp"
 #include "views/layouts.hpp"
