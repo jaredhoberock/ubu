@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../concepts/tensor_like.hpp"
+#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../traits/tensor_element.hpp"
-#include "all.hpp"
 #include "transform.hpp"
 #include <type_traits>
 #include <utility>
