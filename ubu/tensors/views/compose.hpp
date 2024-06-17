@@ -4,6 +4,7 @@
 
 #include "../concepts/composable.hpp"
 #include "../concepts/tensor_like.hpp"
+#include "all.hpp"
 #include "composed_view.hpp"
 #include "layouts/layout.hpp"
 #include <concepts>
@@ -23,7 +24,7 @@ constexpr auto make_composed_view(A a, B b);
 
 template<class R, class A, class B>
 concept composition_of_tensors =
-  tensor_like<R> and
+  view<R> and
   composable<A,B> and
   std::same_as<shape_t<R>, shape_t<B>>
 ;
@@ -44,7 +45,7 @@ struct dispatch_compose
 {
   template<class A, class B>
     requires has_compose_member_function<A&&,B&&>
-  constexpr tensor_like auto operator()(A&& a, B&& b) const
+  constexpr view auto operator()(A&& a, B&& b) const
   {
     return std::forward<A>(a).compose(std::forward<B>(b));
   }
@@ -52,18 +53,26 @@ struct dispatch_compose
   template<class A, class B>
     requires (not has_compose_member_function<A&&,B&&>
               and has_compose_free_function<A&&,B&&>)
-  constexpr tensor_like auto operator()(A&& a, B&& b) const
+  constexpr view auto operator()(A&& a, B&& b) const
   {
     return compose(std::forward<A>(a), std::forward<B>(b));
   }
 
-  template<class A, layout_for<A> B>
+  template<class A, tensor_like B>
     requires (not has_compose_member_function<A&&,B&&>
-              and not has_compose_free_function<A&&,B&&>)
-  constexpr tensor_like auto operator()(A&& a, B&& b) const
+              and not has_compose_free_function<A&&,B&&>
+              and composable<A,B>)
+  constexpr view auto operator()(A&& a, B&& b) const
   {
-    // XXX this should call all on both arguments
-    return detail::make_composed_view(std::forward<A>(a), std::forward<B>(b));
+    if constexpr(tensor_like<A>)
+    {
+      return detail::make_composed_view(all(std::forward<A>(a)), all(std::forward<B>(b)));
+    }
+    else
+    {
+      // when A is not tensor_like (it could be a pointer or invocable), we don't call all(a)
+      return detail::make_composed_view(std::forward<A>(a), all(std::forward<B>(b)));
+    }
   }
 };
 
