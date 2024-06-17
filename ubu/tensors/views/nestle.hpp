@@ -4,66 +4,69 @@
 
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../coordinates/concepts/congruent.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
-#include "../coordinates/traits/rank.hpp"
-#include "../detail/coordinate_cat.hpp"
-#include "../detail/coordinate_tail.hpp"
-#include "../shapes/shape.hpp"
-#include "../traits/tensor_shape.hpp"
-#include "../traits/tensor_rank.hpp"
 #include "all.hpp"
-#include "slices/underscore.hpp"
-#include <ranges>
+#include "nestled_view.hpp"
 #include <utility>
 
 namespace ubu
 {
-
-
-template<view T>
-  requires (tensor_rank_v<T> > 1)
-class nestled_view : public std::ranges::view_base
+namespace detail
 {
-  public:
-    constexpr nestled_view(T tensor)
-      : tensor_{tensor}
-    {}
 
-    nestled_view(const nestled_view&) = default;
 
-    using shape_type = decltype(detail::coordinate_tail(std::declval<tensor_shape_t<T>>()));
+template<class T>
+concept has_nestle_member_function = requires(T t)
+{
+  { std::forward<T>(t).nestle() } -> view;
 
-    constexpr shape_type shape() const
+  // XXX need to require that the result has rank<T> - 1
+  //     need to require that the tensor_element of the result has rank 1
+};
+
+template<class T>
+concept has_nestle_free_function = requires(T t)
+{
+  { nestle(std::forward<T>(t)) } -> view;
+
+  // XXX need to require that the result has rank<T> - 1
+  //     need to require that the tensor_element of the result has rank 1
+};
+
+template<class T>
+concept has_nestle_customization = (has_nestle_member_function<T> or has_nestle_free_function<T>);
+
+
+struct dispatch_nestle
+{
+  template<has_nestle_customization T>
+  constexpr view auto operator()(T&& t) const
+  {
+    if constexpr (has_nestle_member_function<T&&>)
     {
-      // return the tail elements of the tensor's shape
-      return detail::coordinate_tail(ubu::shape(tensor_));
+      return std::forward<T>(t).nestle();
     }
-
-    template<congruent<shape_type> C>
-    constexpr auto operator[](const C& coord) const
+    else
     {
-      return slice(tensor_, detail::coordinate_cat(ubu::_, coord));
+      return nestle(std::forward<T>(t));
     }
+  }
 
-    constexpr std::size_t size() const
-    {
-      return shape_size(shape());
-    }
-
-  private:
-    T tensor_;
+  template<tensor_like T>
+    requires (not has_nestle_customization<T&&>)
+  constexpr view auto operator()(T&& tensor) const
+  {
+    return nestled_view(all(std::forward<T>(tensor)));
+  }
 };
 
 
-// XXX in general we would like to be able to nestle up to rank-1 leading dims
-template<tensor_like T>
-  requires (tensor_rank_v<T> > 1)
-constexpr auto nestle(T&& tensor)
-{
-  return nestled_view(all(std::forward<T>(tensor)));
-}
+} // end detail
 
+inline constexpr detail::dispatch_nestle nestle;
+
+
+template<class T>
+using nestle_result_t = decltype(nestle(std::declval<T>()));
 
 } // end ubu
 
