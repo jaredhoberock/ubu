@@ -15,29 +15,28 @@ namespace ubu
 namespace detail
 {
 
-template<tuple_like T, std::size_t... Is>
-constexpr bool tuple_elements_are_references(std::index_sequence<Is...>)
+template<tensor_like T, std::size_t... Is>
+constexpr bool unzippable_tensor_like_impl(std::index_sequence<Is...>)
 {
-  return (... and std::is_reference_v<std::tuple_element_t<Is,T>>);
+  return (... and tensor_like_with_elements<T,Is>);
 }
-
-template<class T>
-concept tuple_like_of_references =
-  tuple_like<T> and
-  tuple_elements_are_references<T>(tuple_indices<T>)
-;
 
 } // end detail
 
-template<tensor_like T>
-  requires detail::tuple_like_of_references<tensor_reference_t<T>>
+template<class T>
+concept unzippable_tensor_like = 
+  tensor_like_of_tuple_like<T> and
+  detail::unzippable_tensor_like_impl<T>(detail::tuple_indices<tensor_reference_t<T>>)
+;
+
+template<unzippable_tensor_like T>
 constexpr detail::tuple_like auto unzip(T&& tensor_of_tuples)
 {
-  constexpr std::size_t N = std::tuple_size_v<tensor_reference_t<T>>;
+  constexpr std::size_t N = std::tuple_size_v<std::remove_cvref_t<tensor_element_t<T>>>;
 
   return [&]<std::size_t... Is>(std::index_sequence<Is...>)
   {
-    return std::forward_as_tuple(elements<Is>(tensor_of_tuples)...);
+    return std::tuple(elements<Is>(tensor_of_tuples)...);
   }(std::make_index_sequence<N>());
 }
 
