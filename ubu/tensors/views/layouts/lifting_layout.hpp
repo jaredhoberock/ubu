@@ -42,7 +42,7 @@ class lift
 // also specializes compose
 template<coordinate From, coordinate To>
   requires weakly_congruent<From,To>
-class lifting_layout : public lift<To>, std::ranges::view_base
+class lifting_layout : public lift<To>, public std::ranges::view_base
 {
   public:
     constexpr lifting_layout(const From& s, const To& c)
