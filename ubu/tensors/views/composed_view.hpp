@@ -3,8 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../concepts/composable.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"
+#include "../concepts/view.hpp"
 #include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
 #include "../shapes/shape.hpp"
@@ -30,8 +32,8 @@ constexpr auto invoke_compose(Args&&... args);
 } // end detail
 
 
-template<class A, layout_for<A> B>
-  requires std::is_object_v<A>
+template<class A, view B>
+  requires (std::is_object_v<A> and composable<A,B>)
 class composed_view : public std::ranges::view_base
 {
   public:
@@ -72,8 +74,8 @@ class composed_view : public std::ranges::view_base
       auto a_coord = element(b_,coord);
 
       // if A actually fulfills the requirements of tensor_like,
-      // check the coordinate produced by the layout against a_
-      // otherwise, we assume that the layout always perfectly covers a_
+      // check the coordinate produced by b_ against a_
+      // otherwise, we assume that b_ always perfectly covers a_
       if constexpr (tensor_like<A>)
       {
         if (not in_domain(a_, a_coord)) return false;
@@ -123,8 +125,8 @@ namespace detail
 
 // composed_view and compose have a cyclic dependency and can't use each other directly
 // define detail::make_composed_view as soon as composed_view's definition is available
-template<class A, layout_for<A> B>
-  requires std::is_object_v<A>
+template<class A, view B>
+  requires (std::is_object_v<A> and composable<A,B>)
 constexpr auto make_composed_view(A a, B b)
 {
   return composed_view<A,B>(a,b);
