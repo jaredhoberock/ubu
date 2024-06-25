@@ -124,6 +124,20 @@ class device_memory_resource
       });
     }
 
+    // enables the given peer device to read and write memory
+    // in this device_memory_resource's pool
+    inline void enable_access(int peer_device) const
+    {
+      cudaMemAccessDesc access;
+      access.location.type = cudaMemLocationTypeDevice;
+      access.location.id = peer_device;
+      access.flags = cudaMemAccessFlagsProtReadWrite;
+
+      detail::throw_on_error(cudaMemPoolSetAccess(pool(), &access, 1),
+        "cuda::device_memory_resource::enable_access: after cudaMemPoolSetAccess"
+      );
+    }
+
     inline bool is_equal(const device_memory_resource& other) const
     {
       return device() == other.device() and stream() == other.stream() and pool() == other.pool();
