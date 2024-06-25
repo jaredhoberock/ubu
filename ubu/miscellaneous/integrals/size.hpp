@@ -2,8 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../constant.hpp"
 #include "../detail/tag_invoke.hpp"
 #include "integral_like.hpp"
+#include <array>
 #include <concepts>
 #include <utility>
 
@@ -67,6 +69,22 @@ concept sized =
 ;
 
 } // end ubu
+
+
+// customize ubu::size for std::array
+namespace std
+{
+
+template<class T, std::size_t N>
+constexpr auto tag_invoke(decltype(ubu::size), const std::array<T,N>&)
+{
+  // note that we return a constant int, not a constant std::size_t
+  // this is simply for consistency with what the _c literal suffix returns
+  return ubu::constant<int(N)>{};
+}
+
+} // end std
+
 
 #include "../../detail/epilogue.hpp"
 
