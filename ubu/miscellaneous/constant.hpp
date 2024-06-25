@@ -244,14 +244,18 @@ constexpr std::integral auto narrow_nondecimal_integer() noexcept
 template<char... chars>
 constexpr auto parse_integer_literal() noexcept 
 {
-  constexpr char string[] = {chars...};
+  constexpr std::size_t length = sizeof...(chars);
 
-  if constexpr (sizeof...(chars) > 2 and string[0] == '0' and (string[1] == 'x' or string[1] == 'X'))
+  // these extra padding zeros ensure that this string has at least two elements,
+  // which avoids errors and warnings when we index string[0] and string[1] below
+  constexpr char string[] = {chars..., 0, 0};
+
+  if constexpr (length > 2 and string[0] == '0' and (string[1] == 'x' or string[1] == 'X'))
   {
     constexpr auto result = parse_hexadecimal_integer<chars...>();
     return narrow_nondecimal_integer<result>();
   }
-  else if constexpr (sizeof...(chars) > 1 and string[0] == '0')
+  else if constexpr (length > 1 and string[0] == '0')
   {
     constexpr auto result = parse_octal_integer<chars...>();
     return narrow_nondecimal_integer<result>();

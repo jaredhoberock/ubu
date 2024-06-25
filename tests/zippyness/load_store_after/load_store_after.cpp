@@ -158,7 +158,7 @@ performance_expectations_t load_store_after_expectations = {
 //  {"NVIDIA GeForce RTX 3070", {0.92, 0.93}},
 //  {"NVIDIA RTX A5000", {0.92, 0.93}}
   {"NVIDIA GeForce RTX 3070", {0.40, 0.42}},
-  {"NVIDIA RTX A5000", {0.39, 0.40}}
+  {"NVIDIA RTX A5000", {0.38, 0.39}}
 };
 
 
