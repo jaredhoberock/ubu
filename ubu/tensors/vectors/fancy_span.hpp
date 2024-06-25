@@ -5,6 +5,7 @@
 #include "../../places/memory/pointers/pointer_like.hpp"
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
+#include "../../miscellaneous/dynamic_valued.hpp"
 #include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../traits/tensor_size.hpp"
@@ -51,7 +52,7 @@ class fancy_span
     {}
 
     template<int = 0>
-      requires (extent == 0 or not constant_valued<size_type>)
+      requires (extent == 0 or dynamic_valued<size_type>)
     constexpr fancy_span() noexcept
       : fancy_span{P{nullptr},0}
     {}
@@ -73,9 +74,9 @@ class fancy_span
     {}
 
     template<pointer_like OtherP, integral_like OtherS>
-      requires ((extent == std::dynamic_extent or fancy_span<OtherP,OtherS>::extent == std::dynamic_extent or fancy_span<OtherP,OtherS>::extent == extent)
-               and std::convertible_to<OtherP,P>)
-    explicit(extent != std::dynamic_extent and fancy_span<OtherP,OtherS>::extent == std::dynamic_extent)
+      requires ((dynamic_valued<size_type> or dynamic_valued<OtherS> or bool(fancy_span<OtherP,OtherS>::extent == extent))
+                and std::convertible_to<OtherP,P>)
+    explicit(constant_valued<size_type> and dynamic_valued<OtherS>)
     constexpr fancy_span(const fancy_span<OtherP,OtherS>& other) noexcept
       : fancy_span(other.data(), other.size())
     {}
@@ -125,45 +126,49 @@ class fancy_span
       return data_;
     }
 
+    // size is not static when size_type is dynamic valued
     template<int = 0>
-      requires (not constant_valued<S>)
+      requires dynamic_valued<size_type>
     constexpr size_type size() const noexcept
     {
       return size_;
     }
 
+    // size is static when size_type is constant valued
     template<int = 0>
-      requires constant_valued<S>
+      requires constant_valued<size_type>
     constexpr static size_type size() noexcept
     {
       return S{};
     }
 
+    // size_bytes is not static when size_type is dynamic valued
     template<int = 0>
-      requires (not constant_valued<S>)
+      requires dynamic_valued<size_type>
     constexpr size_type size_bytes() const noexcept
     {
       return size() * sizeof(element_type);
     }
 
+    // size_bytes is static when size_type is constant valued
     template<int = 0>
-      requires constant_valued<S>
+      requires constant_valued<size_type>
     constexpr static auto size_bytes() noexcept
     {
       return size() * constant<sizeof(element_type)>();
     }
 
-    // empty is not static when S is not constant valued
+    // empty is not static when size_type is dynamic valued
     template<int = 0>
-      requires (not constant_valued<S>)
+      requires dynamic_valued<size_type>
     [[nodiscard]] constexpr bool empty() const noexcept
     {
       return size() == 0;
     }
 
-    // empty is static when S is constant valued
+    // empty is static when size_type is constant valued
     template<int = 0>
-      requires constant_valued<S>
+      requires constant_valued<size_type>
     [[nodiscard]] constexpr static bool empty() noexcept
     {
       return size() == 0;
@@ -200,17 +205,17 @@ class fancy_span
 
     // tensor-like extensions
 
-    // enable this function for static cases
+    // enable this function for cases where the size is dynamic, but it has a constant bound
     template<int = 0>
-      requires (extent != std::dynamic_extent)
+      requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
     static constexpr integral_like auto shape() noexcept
     {
       return extent;
     }
 
-    // enable this function for static cases
+    // enable this function for cases where the size is dynamic, but it has a constant bound
     template<integral_like I>
-      requires (extent != std::dynamic_extent)
+      requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
     constexpr bool element_exists(I idx) const noexcept
     {
       return idx < size();
