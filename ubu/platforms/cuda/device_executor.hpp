@@ -64,8 +64,12 @@ class device_executor
       : device_executor{device, stream, 0}
     {}
 
+    constexpr explicit device_executor(int device)
+      : device_executor{device, 0}
+    {}
+
     constexpr device_executor()
-      : device_executor{0, cudaStream_t{}}
+      : device_executor{0}
     {}
 
     device_executor(const device_executor&) = default;
