@@ -50,57 +50,49 @@ namespace detail
 template<class T, class A, class E, class B, class S>
 concept has_customization_0 = requires(A alloc, E exec, B before, S shape)
 {
-  { alloc.template allocate_and_zero_after<T>(exec, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.template allocate_and_zero_after<T>(exec, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B , class S>
 concept has_customization_1 = requires(A alloc, E exec, B before, S shape)
 {
-  { allocate_and_zero_after<T>(alloc, exec, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_and_zero_after<T>(alloc, exec, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_customization_2 = requires(A alloc, E exec, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { alloc.allocate_and_zero_after(exec, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.allocate_and_zero_after(exec, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_customization_3 = requires(A alloc, E exec, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { allocate_and_zero_after(alloc, exec, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_and_zero_after(alloc, exec, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_customization_4 = requires(A alloc, B before, S shape)
 {
-  { alloc.template allocate_and_zero_after<T>(before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.template allocate_and_zero_after<T>(before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B , class S>
 concept has_customization_5 = requires(A alloc, B before, S shape)
 {
-  { allocate_and_zero_after<T>(alloc, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_and_zero_after<T>(alloc, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_customization_6 = requires(A alloc, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { alloc.allocate_and_zero_after(before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.allocate_and_zero_after(before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_customization_7 = requires(A alloc, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { allocate_and_zero_after(alloc, before, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_and_zero_after(alloc, before, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 

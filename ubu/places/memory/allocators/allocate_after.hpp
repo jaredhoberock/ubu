@@ -17,32 +17,28 @@ namespace detail
 template<class T, class A, class B, class S>
 concept has_allocate_after_member_function_template = requires(A alloc, B before, S shape)
 {
-  { std::forward<A>(alloc).template allocate_after<T>(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_allocation_congruent_with<S>;
+  { std::forward<A>(alloc).template allocate_after<T>(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class B , class S>
 concept has_allocate_after_free_function_template = requires(A alloc, B before, S shape)
 {
-  { allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class B, class S>
 concept has_allocate_after_member_function = requires(A alloc, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { std::forward<A>(alloc).allocate_after(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_allocation_congruent_with<S>;
+  { std::forward<A>(alloc).allocate_after(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class B, class S>
 concept has_allocate_after_free_function = requires(A alloc, B before, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_allocation_congruent_with<S>;
+  { allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
 };
 
 

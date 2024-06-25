@@ -20,32 +20,28 @@ namespace detail
 template<class T, class A, class S>
 concept has_first_allocate_member_function_template = requires(A alloc, S shape)
 {
-  { alloc.template first_allocate<T>(shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.template first_allocate<T>(shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_free_function_template = requires(A alloc, S shape)
 {
-  { first_allocate<T>(alloc, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { first_allocate<T>(alloc, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_member_function = requires(A alloc, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { alloc.first_allocate(shape) } -> asynchronous_allocation_congruent_with<S>;
+  { alloc.first_allocate(shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_free_function = requires(A alloc, S shape)
 {
-  requires std::same_as<T, allocator_value_t<A>>;
-
-  { first_allocate(alloc, shape) } -> asynchronous_allocation_congruent_with<S>;
+  { first_allocate(alloc, shape) } -> asynchronous_tensor_like<T,S>;
 };
 
 
