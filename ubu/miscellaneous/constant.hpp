@@ -270,6 +270,9 @@ constexpr auto parse_integer_literal() noexcept
 } // end detail
 
 
+inline namespace literals
+{
+
 // user-defined literal operator allows constant written as literals. For example,
 //
 //   using namespace ubu;
@@ -282,6 +285,9 @@ constexpr constant<detail::parse_integer_literal<digits...>()> operator "" _c() 
 {
   return {};
 }
+
+} // end literals
+
 
 #endif // __cpp_user_defined_literals
 
@@ -312,8 +318,8 @@ class std::numeric_limits<ubu::constant<c>>
 
 #if __has_include(<fmt/format.h>)
 
+#include <fmt/compile.h>
 #include <fmt/format.h>
-#include <fmt/color.h>
 
 template<auto v>
 struct fmt::formatter<ubu::constant<v>>
@@ -325,9 +331,10 @@ struct fmt::formatter<ubu::constant<v>>
   }
 
   template<class FormatContext>
-  auto format(const ubu::constant<v>& c, FormatContext& ctx) const
+  constexpr auto format(const ubu::constant<v>& c, FormatContext& ctx) const
   {
-    return fmt::format_to(ctx.out(), fmt::emphasis::bold, "{}_c", c.value);
+    // using a compiled string allows formatting in device code
+    return fmt::format_to(ctx.out(), FMT_COMPILE("{}_c"), c.value);
   }
 };
 
@@ -347,7 +354,7 @@ struct std::formatter<ubu::constant<v>>
   }
 
   template<class FormatContext>
-  auto format(const ubu::constant<v>& c, FormatContext& ctx) const
+  constexpr auto format(const ubu::constant<v>& c, FormatContext& ctx) const
   {
     return std::format_to(ctx.out(), "{}_c", c.value);
   }
