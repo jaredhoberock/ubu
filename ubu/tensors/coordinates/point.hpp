@@ -759,18 +759,32 @@ struct tuple_element<I,ubu::point<T,N>>
 
 // enable formatted output via fmtlib for ubu::point
 
+#include <fmt/compile.h>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 
-// enable fmt detecting ubu::point as a tuple
 template<class T, size_t N>
-struct fmt::is_tuple_like<ubu::point<T,N>> : std::true_type {};
+struct fmt::formatter<ubu::point<T,N>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx) const
+  {
+    return ctx.begin();
+  }
 
-// disable fmt detecting ubu::point as a range
+  template<class FormatContext>
+  constexpr auto format(const ubu::point<T,N>& p, FormatContext& ctx) const
+  {
+    // format a point as if it was a tuple
+    // (libfmt would otherwise format a point like a range with square brackets)
+    // using a compiled string allows formatting in device code
+    return fmt::format_to(ctx.out(), FMT_COMPILE("{}"), p.as_tuple());
+  }
+};
+
+// disable fmt detecting ubu::point as a range (in favor of the formatter above)
 template<class T, size_t N>
 struct fmt::is_range<ubu::point<T,N>, char> : std::false_type {};
-
-// these two specializations should make ubu::point format with parenthesis, i.e. "(1, 2, 3)" instead of "[1, 2, 3]"
 
 #endif // __has_include
 
