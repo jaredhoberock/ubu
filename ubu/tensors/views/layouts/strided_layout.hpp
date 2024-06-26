@@ -184,7 +184,11 @@ strided_layout(S shape) -> strided_layout<S, compact_column_major_stride_t<S>>;
 
 #if __has_include(<fmt/format.h>)
 
+// enable formatted output via fmtlib for ubu::strided_layout
+
+#include <fmt/compile.h>
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
 template<ubu::coordinate S, ubu::stride_for<S> D>
 struct fmt::formatter<ubu::strided_layout<S,D>>
@@ -196,11 +200,16 @@ struct fmt::formatter<ubu::strided_layout<S,D>>
   }
 
   template<class FormatContext>
-  auto format(const ubu::strided_layout<S,D>& l, FormatContext& ctx)
+  constexpr auto format(const ubu::strided_layout<S,D>& l, FormatContext& ctx)
   {
-    return fmt::format_to(ctx.out(), "{}:{}", l.shape(), l.stride());
+    // using a compiled string allows formatting in device code
+    return fmt::format_to(ctx.out(), FMT_COMPILE("{}:{}"), l.shape(), l.stride());
   }
 };
+
+// disable fmt detecting ubu::strided_layout as a range (in favor of the formatter above)
+template<ubu::coordinate S, ubu::stride_for<S> D>
+struct fmt::is_range<ubu::strided_layout<S,D>, char> : std::false_type {};
 
 #endif // __has_include
 

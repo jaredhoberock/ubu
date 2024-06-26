@@ -757,6 +757,9 @@ struct tuple_element<I,ubu::point<T,N>>
 
 #if __has_include(<fmt/format.h>)
 
+// enable formatted output via fmtlib for ubu::point
+
+#include <fmt/compile.h>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 
@@ -770,11 +773,12 @@ struct fmt::formatter<ubu::point<T,N>>
   }
 
   template<class FormatContext>
-  auto format(const ubu::point<T,N>& p, FormatContext& ctx) const
+  constexpr auto format(const ubu::point<T,N>& p, FormatContext& ctx) const
   {
     // format a point as if it was a tuple
     // (libfmt would otherwise format a point like a range with square brackets)
-    return fmt::format_to(ctx.out(), "{}", p.as_tuple());
+    // using a compiled string allows formatting in device code
+    return fmt::format_to(ctx.out(), FMT_COMPILE("{}"), p.as_tuple());
   }
 };
 

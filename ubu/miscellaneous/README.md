@@ -9,7 +9,7 @@ Some examples:
 * `ceil_div`
 * `constant`
 * `integral_like`
-* `statically_valued`
+* `constant_valued`
 * `tuple_like`
 
-XXX TODO: Reorganize some of the above into this subdirectory
+XXX TODO: Reorganize the tuple stuff underneath this directory.
