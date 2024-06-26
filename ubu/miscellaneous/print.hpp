@@ -21,7 +21,7 @@ namespace ubu::detail
 
 
 // this function will be used if fmtlib fails an assert
-constexpr void fmt_assert_fail(const char* file, int line, const char* message, const char* function) noexcept
+inline void fmt_assert_fail(const char* file, int line, const char* message, const char* function) noexcept
 {
 #if defined(__circle_lang__) and defined(__CUDACC__) and __has_include(<nv/target>)
   NV_IF_ELSE_TARGET(NV_IS_DEVICE, (
@@ -111,8 +111,18 @@ constexpr void print(const S& fmt_str, Args&&... args)
   static_assert(fmt::detail::is_compiled_string<S>::value,
     "ubu::print requires a compiled format string (did you forget to append suffix _cf ?).");
 
-  // ubu::print simply calls print on the result of detail::format
-  printf(detail::format(fmt_str, args...).c_str());
+  // ubu::print simply calls printf on the result of detail::format
+  printf("%s", detail::format(fmt_str, args...).c_str());
+}
+
+template<class S, class... Args>
+constexpr void println(const S& fmt_str, Args&&... args)
+{
+  static_assert(fmt::detail::is_compiled_string<S>::value,
+    "ubu::print requires a compiled format string (did you forget to append suffix _cf ?).");
+
+  // ubu::println simply calls printf on the result of detail::format
+  printf("%s\n", detail::format(fmt_str, args...).c_str());
 }
 
 
