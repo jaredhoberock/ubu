@@ -13,7 +13,7 @@
 #include "offset.hpp"
 #include "strides/apply_stride.hpp"
 #include "strides/apply_stride_r.hpp"
-#include "strides/compact_column_major_stride.hpp"
+#include "strides/compact_left_major_stride.hpp"
 #include "strides/stride_for.hpp"
 #include <concepts>
 #include <ranges>
@@ -41,7 +41,7 @@ class strided_layout : public std::ranges::view_base
     {}
 
     constexpr strided_layout(S shape)
-      : strided_layout(shape, compact_column_major_stride(shape))
+      : strided_layout(shape, compact_left_major_stride(shape))
     {}
 
     strided_layout(const strided_layout&) = default;
@@ -175,9 +175,9 @@ class strided_layout : public std::ranges::view_base
 
 
 // When constructed from just a shape, we want the stride type to be the type
-// returned by compact_column_major_stride(shape)
+// returned by compact_left_major_stride(shape)
 template<coordinate S>
-strided_layout(S shape) -> strided_layout<S, compact_column_major_stride_t<S>>;
+strided_layout(S shape) -> strided_layout<S, compact_left_major_stride_t<S>>;
 
 
 } // end ubu

@@ -2,11 +2,11 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant.hpp"
+#include "../../tensors/matrices/row_major.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
-#include "../../tensors/views/layouts/row_major.hpp"
 #include "../../tensors/views/slices/slice.hpp"
 #include <concepts>
 #include <utility>

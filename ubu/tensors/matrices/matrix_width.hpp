@@ -9,10 +9,12 @@
 namespace ubu
 {
 
+template<matrix_like M>
+using matrix_width_t = shape_element_t<1,M>;
 
 template<matrix_like M>
-  requires constant_valued<shape_element_t<1,M>>
-constexpr inline auto width_v = shape_element_v<1,M>;
+  requires constant_valued<matrix_width_t<M>>
+constexpr inline auto matrix_width_v = shape_element_v<1,M>;
 
 } // end ubu
 

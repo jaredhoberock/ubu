@@ -1,4 +1,4 @@
-// circle -std=c++20 -O3 -I../../../ -sm_60 --verbose two_pass_reduce.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o two_pass_reduce.out
+// circle -std=c++20 -O3 -I../../../ -sm_80 --verbose two_pass_reduce.cpp -L/usr/local/cuda/lib64 -lcudart -lfmt -o two_pass_reduce.out
 #include "measure_bandwidth_of_invocation.hpp"
 #include "validate.hpp"
 #include <algorithm>

@@ -4,7 +4,7 @@
 
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../tensors/matrices/contiguous_column_major_matrix_like.hpp"
-#include "../../tensors/matrices/height.hpp"
+#include "../../tensors/matrices/matrix_height.hpp"
 #include "../../tensors/matrices/matrix_like.hpp"
 #include "../../tensors/shapes/shape_element.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
@@ -19,7 +19,7 @@ namespace ubu
 {
 
 template<cooperator C, class T, std::size_t N, matrix_like M>
-  requires (height_v<M> == N) and std::convertible_to<T,tensor_element_t<M>>
+  requires constant_valued<matrix_height_t<M>> and (matrix_height_v<M> == N) and std::convertible_to<T,tensor_element_t<M>>
 constexpr void coop_store_columns(C self, const inplace_vector<T,N>& this_column, M destination)
 {
   if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix_like<M>)

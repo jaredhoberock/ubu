@@ -5,7 +5,7 @@
 #include <ranges>
 #include <ubu/tensors/iterators.hpp>
 #include <ubu/tensors/views/layouts/strided_layout.hpp>
-#include <ubu/tensors/views/layouts/strides/compact_row_major_stride.hpp>
+#include <ubu/tensors/views/layouts/strides/compact_right_major_stride.hpp>
 #include <utility>
 
 namespace ns = ubu;
@@ -36,7 +36,7 @@ void test_slice()
 
   {
     ns::int2 shape(3,4);
-    strided_layout A(shape, compact_row_major_stride(shape));
+    strided_layout A(shape, compact_right_major_stride(shape));
 
     // A is
     // +---+---+----+----+

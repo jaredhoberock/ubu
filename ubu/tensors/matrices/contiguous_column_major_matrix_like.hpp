@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../vectors/span_like.hpp"
-#include "column_major_matrix_layout.hpp"
+#include "column_major_like.hpp"
 #include "matrix_like.hpp"
 
 namespace ubu
@@ -15,7 +15,7 @@ concept contiguous_column_major_matrix_like =
   {
     // these requirements essentially identify a specific kind of ubu::composed_view
     { m.span() } -> span_like;
-    { m.layout() } -> column_major_matrix_layout;
+    { m.layout() } -> column_major_like;
   }
 ;
 

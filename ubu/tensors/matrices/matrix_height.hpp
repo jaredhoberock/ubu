@@ -9,10 +9,12 @@
 namespace ubu
 {
 
+template<matrix_like M>
+using matrix_height_t = shape_element_t<0,M>;
 
 template<matrix_like M>
-  requires constant_valued<shape_element_t<0,M>>
-constexpr inline auto height_v = shape_element_v<0,M>;
+  requires constant_valued<matrix_height_t<M>>
+constexpr inline auto matrix_height_v = shape_element_v<0,M>;
 
 } // end ubu
 

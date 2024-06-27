@@ -1,4 +1,4 @@
-// circle --verbose -O3 -std=c++20 -I. -sm_60 load_scan_store_after.cpp -lcudart -lfmt -o load_scan_store_after
+// circle --verbose -O3 -std=c++20 -I. -sm_80 load_scan_store_after.cpp -lcudart -lfmt -o load_scan_store_after
 #include "measure_bandwidth_of_invocation.hpp"
 #include "validate.hpp"
 #include <algorithm>
@@ -80,7 +80,9 @@ ubu::cuda::event load_scan_store_after(ubu::cuda::device_executor gpu, ubu::cuda
   std::pair shape(block_size, num_blocks);
   std::pair workspace_shape(sizeof(T) * tile_size, 0);
 
-  // 40 registers / 404.951 GB/s ~ 93% peak bandwidth
+  // circle build 208 -sm_80: 39 registers
+  // 404.951 GB/s ~ 93% peak bandwidth on RTX 3070
+  // 685.210 GB/s ~ 91% peak bandwidth on RTX A5000
   return bulk_execute_with_workspace_after(gpu,
                                           alloc,
                                           before,
@@ -232,11 +234,9 @@ double test_performance(std::size_t size, std::size_t num_trials)
   });
 }
 
-// XXX the reason this kernel's performance is so low is because circle build 201 is not inlining load_scan_store_after's lambda
-//     with inlining, the performance should be ~93% peak bandwidth
 performance_expectations_t load_scan_store_after_expectations = {
-  {"NVIDIA GeForce RTX 3070", {0.37, 0.39}},
-  {"NVIDIA RTX A5000", {0.37, 0.39}}
+  {"NVIDIA GeForce RTX 3070", {0.92, 0.94}},
+  {"NVIDIA RTX A5000", {0.90, 0.92}}
 };
 
 int main(int argc, char** argv)
