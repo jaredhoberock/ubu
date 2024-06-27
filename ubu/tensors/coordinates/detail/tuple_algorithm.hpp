@@ -80,6 +80,12 @@ concept unit_like = tuple_like_of_size<T,0>;
 template<class T>
 concept pair_like = tuple_like_of_size<T,2>;
 
+template<pair_like P>
+using pair_first_t = std::tuple_element_t<0,P>;
+
+template<pair_like P>
+using pair_second_t = std::tuple_element_t<1,P>;
+
 
 template<tuple_like T>
 constexpr auto tuple_indices = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
