@@ -4,17 +4,17 @@
 
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "strided_layout.hpp"
-#include "strides/compact_column_major_stride.hpp"
+#include "strides/compact_left_major_stride.hpp"
 
 namespace ubu
 {
 
 
 template<coordinate S>
-struct column_major : public strided_layout<S,compact_column_major_stride_t<S>>
+struct column_major : public strided_layout<S,compact_left_major_stride_t<S>>
 {
   constexpr column_major(S shape)
-    : strided_layout<S,compact_column_major_stride_t<S>>{shape, compact_column_major_stride(shape)}
+    : strided_layout<S,compact_left_major_stride_t<S>>{shape, compact_left_major_stride(shape)}
   {}
 
   column_major(const column_major&) = default;

@@ -9,7 +9,7 @@
 #include <ubu/platforms/cuda/graph_executor.hpp>
 #include <ubu/tensors/coordinates/colexicographical_lift.hpp>
 #include <ubu/tensors/views/layouts/strides/apply_stride.hpp>
-#include <ubu/tensors/views/layouts/strides/compact_column_major_stride.hpp>
+#include <ubu/tensors/views/layouts/strides/compact_left_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -183,7 +183,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::graph_executor ex)
 
     auto e = bulk_execute_after(ex, before, shape, [=](ns::int2 coord)
     {
-      int i = apply_stride(coord, compact_column_major_stride(shape));
+      int i = apply_stride(coord, compact_left_major_stride(shape));
       auto c = colexicographical_lift(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
@@ -248,7 +248,7 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::graph_exec
       std::span<int> local_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
 
       // each thread records its local index in the local workspace
-      int local_idx = apply_stride(coord.thread, compact_column_major_stride(shape.thread));
+      int local_idx = apply_stride(coord.thread, compact_left_major_stride(shape.thread));
       local_indices[local_idx] = local_idx;
 
       // use the local barrier
@@ -313,7 +313,7 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::graph_
 
     auto e = bulk_execute_with_workspace_after(ex, alloc, before, shape, workspace_shape, [=](ns::int2 coord, cuda::graph_executor::workspace_type ws)
     {
-      int i = apply_stride(coord, compact_column_major_stride(shape));
+      int i = apply_stride(coord, compact_left_major_stride(shape));
       auto c = colexicographical_lift(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
@@ -331,7 +331,7 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::graph_
       std::span<int> local_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
 
       // each thread records its local index in the local workspace
-      int local_idx = apply_stride(coord[0], compact_column_major_stride(shape[0]));
+      int local_idx = apply_stride(coord[0], compact_left_major_stride(shape[0]));
       local_indices[local_idx] = local_idx;
 
       // use the local barrier
@@ -376,7 +376,7 @@ void test_execute_kernel_customization_point(ns::cuda::graph_executor ex, C shap
   {
     ns::execute_kernel(ex, shape, [=](C coord)
     {
-      int i = apply_stride(coord, compact_column_major_stride(shape));
+      int i = apply_stride(coord, compact_left_major_stride(shape));
       auto c = colexicographical_lift(i, array_shape);
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;

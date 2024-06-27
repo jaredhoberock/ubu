@@ -49,7 +49,7 @@ void test(S shape)
     for(auto c : domain(v))
     {
       auto result = v[c];
-      auto expected = tensor[ns::apply_stride(ns::compact_row_major_stride(shape), c)];
+      auto expected = tensor[ns::apply_stride(ns::compact_right_major_stride(shape), c)];
       assert(expected == result);
     }
   }

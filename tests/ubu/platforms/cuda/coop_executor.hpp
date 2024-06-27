@@ -11,7 +11,7 @@
 #include <ubu/platforms/cuda/coop_executor.hpp>
 #include <ubu/tensors/coordinates/colexicographical_lift.hpp>
 #include <ubu/tensors/views/layouts/strides/apply_stride.hpp>
-#include <ubu/tensors/views/layouts/strides/compact_column_major_stride.hpp>
+#include <ubu/tensors/views/layouts/strides/compact_left_major_stride.hpp>
 
 #undef NDEBUG
 #include <cassert>
@@ -211,7 +211,7 @@ void test_bulk_execute_after_customization_point(ns::cuda::coop_executor ex)
 
     cuda::event e = bulk_execute_after(ex, before, shape, [=](ns::int2 coord)
     {
-      int i = apply_stride(compact_column_major_stride(shape), coord);
+      int i = apply_stride(compact_left_major_stride(shape), coord);
       auto c = colexicographical_lift(i, array_shape);
 
       array[c[0]][c[1]] = i;
@@ -430,7 +430,7 @@ void test_execute_kernel_customization_point(ns::cuda::coop_executor ex, C shape
   {
     ns::execute_kernel(ex, shape, [=](C coord)
     {
-      int i = apply_stride(compact_column_major_stride(shape), coord);
+      int i = apply_stride(compact_left_major_stride(shape), coord);
       auto c = colexicographical_lift(i, array_shape);
 
       array[c[0]][c[1]] = i;
