@@ -4,7 +4,7 @@
 
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../tensors/matrices/contiguous_column_major_matrix_like.hpp"
-#include "../../tensors/matrices/height.hpp"
+#include "../../tensors/matrices/matrix_height.hpp"
 #include "../../tensors/matrices/matrix_like.hpp"
 #include "../../tensors/shapes/shape_element.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
@@ -19,15 +19,15 @@ namespace ubu
 {
 
 template<cooperator C, matrix_like M>
-  requires constant_valued<shape_element_t<0,M>>
-constexpr inplace_vector<tensor_element_t<M>, height_v<M>> coop_load_columns(C self, M source)
+  requires constant_valued<matrix_height_t<M>>
+constexpr inplace_vector<tensor_element_t<M>, matrix_height_v<M>> coop_load_columns(C self, M source)
 {
   if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix_like<M>)
   {
     // in this special case, we can use the entire group to optimize loads
     // the following assumes that M is a particular type of composed_view
     // s.t. source.tensor() is span_like
-    return coop_load<height_v<M>>(self, source.span());
+    return coop_load<matrix_height_v<M>>(self, source.span());
   }
   else
   {
