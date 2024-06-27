@@ -12,7 +12,7 @@ namespace ubu
 // XXX we probably also require that the layout be compact
 //     but that's not easily noticed at compile time
 template<class T>
-concept column_major_matrix_layout =
+concept column_major_like =
   layout<T>
   and matrix_like<T>
   and constant_strided<T>

@@ -4,12 +4,13 @@
 #include <ranges>
 #include <ubu/tensors/coordinates/comparisons.hpp>
 #include <ubu/tensors/iterators.hpp>
+#include <ubu/tensors/matrices/column_major.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
 #include <ubu/tensors/views/lattice.hpp>
-#include <ubu/tensors/views/layouts/column_major.hpp>
-#include <ubu/tensors/views/layouts/row_major.hpp>
+#include <ubu/tensors/views/layouts/compact_left_major.hpp>
+#include <ubu/tensors/views/layouts/compact_right_major.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 

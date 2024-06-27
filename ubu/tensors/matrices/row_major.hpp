@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../../coordinates/concepts/coordinate.hpp"
-#include "compact_right_major.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
+#include "../views/layouts/compact_right_major.hpp"
 
 namespace ubu
 {
@@ -22,5 +22,5 @@ struct row_major : public compact_right_major<S>
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

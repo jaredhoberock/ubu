@@ -1,5 +1,5 @@
 #include <ubu/tensors/coordinates/point.hpp>
-#include <ubu/tensors/views/layouts/column_major.hpp>
+#include <ubu/tensors/matrices/column_major.hpp>
 #include <ubu/tensors/views/layouts/layout.hpp>
 #include <vector>
 

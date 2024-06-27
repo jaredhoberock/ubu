@@ -1,6 +1,6 @@
 #include <ubu/tensors/coordinates/point.hpp>
+#include <ubu/tensors/matrices/row_major.hpp>
 #include <ubu/tensors/views/layouts/layout.hpp>
-#include <ubu/tensors/views/layouts/row_major.hpp>
 #include <vector>
 
 namespace ns = ubu;
