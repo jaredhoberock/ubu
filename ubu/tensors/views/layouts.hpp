@@ -3,6 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "layouts/column_major.hpp"
+#include "layouts/compact_left_major.hpp"
+#include "layouts/compact_right_major.hpp"
 #include "layouts/coshape.hpp"
 #include "layouts/identity_layout.hpp"
 #include "layouts/is_injective.hpp"

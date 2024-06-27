@@ -21,10 +21,10 @@ void test(S shape)
   using namespace ns;
 
   {
-    // column major view of a lattice
+    // left-major view of a lattice
 
     lattice tensor(shape);
-    column_major layout(shape);
+    compact_left_major layout(shape);
 
     composed_view v(tensor, layout);
 
@@ -39,10 +39,10 @@ void test(S shape)
   }
 
   {
-    // row major view of a lattice
+    // right-major view of a lattice
 
     lattice tensor(shape);
-    row_major layout(shape);
+    compact_right_major layout(shape);
 
     composed_view v(tensor, layout);
 

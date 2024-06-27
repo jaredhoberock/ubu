@@ -3,18 +3,17 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../coordinates/concepts/coordinate.hpp"
-#include "strided_layout.hpp"
-#include "strides/compact_right_major_stride.hpp"
+#include "compact_right_major.hpp"
 
 namespace ubu
 {
 
 
-template<coordinate S>
-struct row_major : public strided_layout<S,compact_right_major_stride_t<S>>
+template<coordinate_of_rank<2> S>
+struct row_major : public compact_right_major<S>
 {
   constexpr row_major(S shape)
-    : strided_layout<S,compact_right_major_stride_t<S>>{shape, compact_right_major_stride(shape)}
+    : compact_right_major<S>(shape)
   {}
 
   row_major(const row_major&) = default;

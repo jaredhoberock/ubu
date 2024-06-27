@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../shapes/shape.hpp"
-#include "column_major.hpp"
+#include "compact_left_major.hpp"
 #include "layout.hpp"
 #include <utility>
 
@@ -54,14 +54,14 @@ struct dispatch_native_layout
     return native_layout(std::forward<T>(arg), std::forward<S>(shape));
   }
 
-  // this default dispatch path produces a column-major layout
+  // this default dispatch path produces a compact left-major layout
   template<class T, coordinate S>
     requires (not has_native_layout_member_function<T&&, const S&>
               and not has_native_layout_free_function<T&&, const S&>)
   constexpr layout auto operator()(T&&, const S& shape) const
   {
-    // produce a column-major ordering by default
-    return column_major(shape);
+    // produce a left-major ordering by default
+    return compact_left_major(shape);
   }
 };
 
