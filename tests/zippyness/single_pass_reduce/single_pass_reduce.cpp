@@ -124,8 +124,9 @@ ubu::cuda::event inplace_reduce_after(ubu::cuda::device_executor gpu, ubu::cuda:
 
   std::pair workspace_shape(block_workspace_size, grid_workspace_size);
 
-  // sm_80: 22 registers / 421.702 GB/s ~ 96% peak bandwidth on RTX 3070
-  // circle build 201, llvm 18
+  // circle build 208 -sm_80: 26 registers
+  // 421.702 GB/s ~ 96% peak bandwidth on RTX 3070
+  // 712.904 GB/s ~ 95% peak bandwidth on RTX A5000
   return bulk_execute_with_workspace_after(gpu, alloc,
                                            before,
                                            shape, workspace_shape,

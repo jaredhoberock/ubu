@@ -61,8 +61,8 @@ ubu::cuda::event load_store_after(ubu::cuda::device_executor gpu, ubu::cuda::dev
   std::pair kernel_shape(block_size, num_blocks);
   std::pair workspace_shape(constant<sizeof(T)>() * tile_size, 0_c);
 
-  // 48 registers / 177.616 GB/s ~ 40% peak bandwidth
-  // XXX this kernel is slow because circle does not inline this lambda
+  // circle build 203 -sm_80: 40 registers
+  // 685.436 GB/s ~91% peak bandwidth on RTX A5000
   return bulk_execute_with_workspace_after(gpu,
                                            alloc,
                                            before,
@@ -152,13 +152,9 @@ double test_performance(std::size_t size, std::size_t num_trials)
 }
 
 // these expected performance intervals are in units of percent of theoretical peak bandwidth
-// XXX the reason this kernel's performance is so low is because circle build 201 is generating a stack frame for inclusive_scan_after's lambda
-//     without the stack frame, the performance should be ~91% peak bandwidth on RTX 3070
 performance_expectations_t load_store_after_expectations = {
-//  {"NVIDIA GeForce RTX 3070", {0.92, 0.93}},
-//  {"NVIDIA RTX A5000", {0.92, 0.93}}
-  {"NVIDIA GeForce RTX 3070", {0.40, 0.42}},
-  {"NVIDIA RTX A5000", {0.38, 0.39}}
+  {"NVIDIA GeForce RTX 3070", {0.91, 0.93}},
+  {"NVIDIA RTX A5000", {0.90, 0.92}}
 };
 
 
