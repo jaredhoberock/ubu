@@ -20,26 +20,26 @@ namespace ubu::cuda
 {
 
 
-class device_memory_loader
+class device_loader
 {
   public:
     using happening_type = event;
     using address_type = void*;
 
-    constexpr device_memory_loader(int device, cudaStream_t stream)
+    constexpr device_loader(int device, cudaStream_t stream)
       : device_{device},
         stream_{stream}
     {}
 
-    constexpr device_memory_loader(int device)
-      : device_memory_loader{device, cudaStream_t{}}
+    constexpr device_loader(int device)
+      : device_loader{device, cudaStream_t{}}
     {}
 
-    constexpr device_memory_loader()
-      : device_memory_loader{0, cudaStream_t{}}
+    constexpr device_loader()
+      : device_loader{0, cudaStream_t{}}
     {}
 
-    device_memory_loader(const device_memory_loader&) = default;
+    device_loader(const device_loader&) = default;
 
     event download_after(const event& before, address_type from, std::size_t num_bytes, void* to) const
     {
@@ -47,13 +47,13 @@ class device_memory_loader
       if UBU_TARGET(ubu::detail::is_host())
       {
         detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
-          "device_memory_loader::download_after: after streamWaitEvent"
+          "device_loader::download_after: after streamWaitEvent"
         );
 
         detail::temporarily_with_current_device(device(), [&]
         {
           detail::throw_on_error(cudaMemcpyAsync(to, from, num_bytes, cudaMemcpyDeviceToHost, stream()),
-            "device_memory_loader::download_after: after cudaMemcpy"
+            "device_loader::download_after: after cudaMemcpy"
           );
         });
 
@@ -75,11 +75,11 @@ class device_memory_loader
       return detail::temporarily_with_current_device(device(), [&]
       {
         detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
-          "device_memory_loader::download_after: after cudaStreamWaitEvent"
+          "device_loader::download_after: after cudaStreamWaitEvent"
         );
 
         detail::throw_on_error(cudaMemcpyAsync(to, from, num_bytes, cudaMemcpyDeviceToHost, stream()),
-          "device_memory_loader::download: after cudaMemcpyAsync"
+          "device_loader::download: after cudaMemcpyAsync"
         );
 
         return event(device(), stream());
@@ -114,11 +114,11 @@ class device_memory_loader
         return detail::temporarily_with_current_device(device(), [&]
         {
           detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
-            "device_memory_loader::upload_after: after cudaStreamWaitEvent"
+            "device_loader::upload_after: after cudaStreamWaitEvent"
           );
 
           detail::throw_on_error(cudaMemcpyAsync(to, from, num_bytes, cudaMemcpyHostToDevice, stream()),
-            "device_memory_loader::upload_after: after cudaMemcpyAsync"
+            "device_loader::upload_after: after cudaMemcpyAsync"
           );
 
           return event(device(), stream());
@@ -140,11 +140,11 @@ class device_memory_loader
       return detail::temporarily_with_current_device(device(), [&]
       {
         detail::throw_on_error(cudaStreamWaitEvent(stream(), before.native_handle()),
-          "device_memory_loader::upload_after: after cudaStreamWaitEvent"
+          "device_loader::upload_after: after cudaStreamWaitEvent"
         );
 
         detail::throw_on_error(cudaMemcpyAsync(to, from, num_bytes, cudaMemcpyHostToDevice, stream()),
-          "device_memory_loader::upload after cudaMemcpyAsync"
+          "device_loader::upload after cudaMemcpyAsync"
         );
 
         return event(device(), stream());
@@ -180,7 +180,7 @@ class device_memory_loader
       return stream_;
     }
 
-    auto operator<=>(const device_memory_loader&) const = default;
+    auto operator<=>(const device_loader&) const = default;
 
   private:
     int device_;
@@ -189,7 +189,7 @@ class device_memory_loader
 
 
 template<plain_old_data_or_void T>
-using device_ptr = remote_ptr<T, device_memory_loader>;
+using device_ptr = remote_ptr<T, device_loader>;
 
 
 } // end ubu::cuda

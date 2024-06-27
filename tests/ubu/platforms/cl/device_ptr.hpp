@@ -9,7 +9,7 @@
 #include <CL/cl.h>
 
 // XXX these tests are disabled at the moment because
-// cl::device_memory_loader is missing upload_after & download_after
+// cl::device_loader is missing upload_after & download_after
 
 //namespace ns = ubu;
 //

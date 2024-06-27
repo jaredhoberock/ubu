@@ -40,19 +40,19 @@ struct address
 };
 
 
-class device_memory_loader
+class device_loader
 {
   public:
     using address_type = cl::address;
 
-    constexpr device_memory_loader(cl_command_queue queue)
+    constexpr device_loader(cl_command_queue queue)
       : queue_{queue}
     {}
 
-    device_memory_loader(const device_memory_loader&) = default;
+    device_loader(const device_loader&) = default;
 
-    constexpr device_memory_loader()
-      : device_memory_loader{cl_command_queue{}}
+    constexpr device_loader()
+      : device_loader{cl_command_queue{}}
     {}
 
     void upload(const void* from, std::size_t num_bytes, address to) const
@@ -67,7 +67,7 @@ class device_memory_loader
                              0,                // number of events to wait on
                              nullptr,          // pointer to array of events to wait on
                              nullptr),         // ignored return event
-        "cl::device_memory_copier::copy_n: CL error after clEnqueueWriteBuffer"
+        "cl::device_loader::copy_n: CL error after clEnqueueWriteBuffer"
       );
     }
 
@@ -83,11 +83,11 @@ class device_memory_loader
                             0,                  // number of events to wait on
                             nullptr,            // pointer to array of events to wait on
                             nullptr),           // ignored return event
-        "cl::device_memory_copier::copy_n: CL error after clEnqueueReadBuffer"
+        "cl::device_loader::copy_n: CL error after clEnqueueReadBuffer"
       );
     }
 
-    constexpr bool operator==(const device_memory_loader& other) const
+    constexpr bool operator==(const device_loader& other) const
     {
       return queue_ == other.queue_;
     }
@@ -98,7 +98,7 @@ class device_memory_loader
 
 
 template<plain_old_data_or_void T>
-using device_ptr = remote_ptr<T, device_memory_loader>;
+using device_ptr = remote_ptr<T, device_loader>;
 
 
 } // end ubu::cl
