@@ -6,8 +6,8 @@
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/dynamic_valued.hpp"
-#include "../../miscellaneous/integrals/detail/as_integral.hpp"
 #include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/integrals/to_integral.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../traits/tensor_size.hpp"
 #include "contiguous_vector_like.hpp"
@@ -208,7 +208,7 @@ class fancy_span
     // enable shape() and return a constant
     template<int = 0>
       requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
-    static constexpr constant<detail::as_integral(extent)> shape() noexcept
+    static constexpr constant<to_integral(extent)> shape() noexcept
     {
       return {};
     }

@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../detail/as_integral_like.hpp"
+#include "../detail/to_integral_like.hpp"
 #include "../element.hpp"
 #include "../traits/rank.hpp"
 #include <concepts>
@@ -21,7 +21,7 @@ template<class T>
 concept scalar_coordinate =
   requires(T coord)
   {
-    detail::as_integral_like(coord);
+    detail::to_integral_like(coord);
   }
 ;
 

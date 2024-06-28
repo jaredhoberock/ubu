@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../detail/tuple_algorithm.hpp"
 #include <array>
 #include <concepts>
 #include <tuple>

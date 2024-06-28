@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include <type_traits>

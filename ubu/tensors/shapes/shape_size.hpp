@@ -4,6 +4,7 @@
 
 #include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
+#include "../coordinates/detail/to_integral_like.hpp"
 #include "../coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 
@@ -16,7 +17,7 @@ namespace ubu
 template<scalar_coordinate C>
 constexpr integral_like auto shape_size(const C& shape)
 {
-  return detail::as_integral_like(shape);
+  return detail::to_integral_like(shape);
 }
 
 

@@ -20,7 +20,7 @@ concept single_integral_like =
 
 template<class C>
   requires (integral_like<std::remove_cvref_t<C>> or single_integral_like<C>)
-constexpr decltype(auto) as_integral_like(C&& coord)
+constexpr decltype(auto) to_integral_like(C&& coord)
 {
   if constexpr(tuple_like<C>)
   {
@@ -33,7 +33,7 @@ constexpr decltype(auto) as_integral_like(C&& coord)
 }
 
 template<class C>
-using as_integral_like_t = std::remove_cvref_t<decltype(as_integral_like(std::declval<C>()))>;
+using to_integral_like_t = std::remove_cvref_t<decltype(to_integral_like(std::declval<C>()))>;
 
 } // end ubu::detail
 

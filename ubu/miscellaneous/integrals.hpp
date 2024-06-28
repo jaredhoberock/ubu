@@ -9,6 +9,7 @@
 #include "integrals/larger.hpp"
 #include "integrals/size.hpp"
 #include "integrals/smaller.hpp"
+#include "integrals/to_integral.hpp"
 
 #include "../detail/epilogue.hpp"
 
