@@ -6,7 +6,7 @@
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../detail/to_integral_like.hpp"
-#include "../zeros.hpp"
+#include "../traits/zeros.hpp"
 
 
 namespace ubu
@@ -65,7 +65,7 @@ constexpr void colexicographical_increment(C& coord, const O& origin, const E& e
 template<coordinate C, congruent<C> S>
 constexpr void colexicographical_increment(C& coord, const S& shape)
 {
-  return colexicographical_increment(coord, zeros<C>, shape);
+  return colexicographical_increment(coord, zeros_v<C>, shape);
 }
 
 

@@ -82,11 +82,11 @@ class strided_layout : public std::ranges::view_base
       if(size() != 0)
       {
         R last_position = operator[](size() - 1);
-        return coordinate_sum(last_position, ones<decltype(last_position)>);
+        return coordinate_sum(last_position, ones_v<decltype(last_position)>);
       }
       else
       {
-        return zeros<R>;
+        return zeros_v<R>;
       }
     }
 
