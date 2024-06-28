@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
-#include "../coordinates/detail/as_integral_like.hpp"
+#include "../coordinates/detail/to_integral_like.hpp"
 #include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../coordinates/traits/rank.hpp"
 
@@ -19,7 +19,7 @@ constexpr congruent<A> auto subtract_element(const A& a, const B& b)
 {
   if constexpr (scalar_coordinate<A>)
   {
-    return as_integral_like(a) - as_integral_like(b);
+    return to_integral_like(a) - to_integral_like(b);
   }
   else
   {

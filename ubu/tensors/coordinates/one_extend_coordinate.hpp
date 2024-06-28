@@ -7,8 +7,7 @@
 #include "concepts/subdimensional.hpp"
 #include "concepts/weakly_congruent.hpp"
 #include "detail/tuple_algorithm.hpp"
-#include "ones.hpp"
-#include "zeros.hpp"
+#include "traits/ones.hpp"
 
 namespace ubu
 {
@@ -33,11 +32,11 @@ constexpr congruent<R> auto one_extend_coordinate(const C& coord)
     // recursive case 1: R is a tuple and C is integral
     static_assert(detail::tuple_like<R>);
 
-    // create a replacement for the leftmost element of ones<R> by recursing on that element
+    // create a replacement for the leftmost element of ones_v<R> by recursing on that element
     auto replacement = one_extend_coordinate<std::tuple_element_t<0,R>>(coord);
 
-    // take ones<R> and replace element 0 with our replacement
-    return detail::tuple_replace_element<0>(ones<R>, replacement);
+    // take ones_v<R> and replace element 0 with our replacement
+    return detail::tuple_replace_element<0>(ones_v<R>, replacement);
   }
   else
   {
@@ -45,8 +44,8 @@ constexpr congruent<R> auto one_extend_coordinate(const C& coord)
     static_assert(detail::tuple_like<R>);
     static_assert(detail::tuple_like<C>);
 
-    // map one_extend_coordinate over the elements of ones<R>
-    return detail::tuple_static_enumerate_similar_to<C>(ones<R>, [&]<std::size_t index>(auto one_i)
+    // map one_extend_coordinate over the elements of ones_v<R>
+    return detail::tuple_static_enumerate_similar_to<C>(ones_v<R>, [&]<std::size_t index>(auto one_i)
     {
       if constexpr (index < rank_v<C>)
       {

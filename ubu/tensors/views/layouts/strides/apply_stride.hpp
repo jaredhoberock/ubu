@@ -4,7 +4,7 @@
 
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/coordinate_sum.hpp"
-#include "../../../coordinates/detail/as_integral_like.hpp"
+#include "../../../coordinates/detail/to_integral_like.hpp"
 #include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <utility>
@@ -19,7 +19,7 @@ namespace detail
 template<scalar_coordinate D, scalar_coordinate C>
 constexpr integral_like auto apply_stride_impl(const D& stride, const C& coord)
 {
-  return as_integral_like(stride) * as_integral_like(coord);
+  return to_integral_like(stride) * to_integral_like(coord);
 }
 
 

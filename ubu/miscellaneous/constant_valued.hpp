@@ -96,12 +96,6 @@ concept constant_valued =
   }
 ;
 
-template<constant_valued T>
-inline constexpr auto constant_value_v = get_constant_value<T>();
-
-template<constant_valued T>
-using constant_value_t = decltype(constant_value_v<T>);
-
 } // end ubu
 
 #include "../detail/epilogue.hpp"

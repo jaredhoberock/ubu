@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include <type_traits>
@@ -101,12 +102,9 @@ concept shaped =
 ;
 
 
-// note that the type of shape_v<T> is different from shape_t<T>
-// because, for example, this defintion "unwraps" a constant<13> to 13
-// XXX is this a good choice?
 template<shaped T>
   requires constant_valued<shape_t<T>>
-constexpr inline auto shape_v = constant_value_v<shape_t<T>>;
+constexpr inline shape_t<T> shape_v;
 
 
 template<class T>

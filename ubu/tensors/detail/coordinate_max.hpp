@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
-#include "../coordinates/detail/as_integral_like.hpp"
+#include "../coordinates/detail/to_integral_like.hpp"
 #include "../coordinates/detail/tuple_algorithm.hpp"
 
 namespace ubu::detail
@@ -14,7 +14,7 @@ constexpr congruent<C1> auto coordinate_max(const C1& coord1, const C2& coord2)
 {
   if constexpr (scalar_coordinate<C1>)
   {
-    return as_integral_like(coord1) < as_integral_like(coord2) ? as_integral_like(coord2) : as_integral_like(coord1);
+    return to_integral_like(coord1) < to_integral_like(coord2) ? to_integral_like(coord2) : to_integral_like(coord1);
   }
   else
   {

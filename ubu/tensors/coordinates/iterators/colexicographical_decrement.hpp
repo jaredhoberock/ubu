@@ -5,8 +5,8 @@
 #include "../comparisons/is_below.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/as_integral_like.hpp"
-#include "../zeros.hpp"
+#include "../detail/to_integral_like.hpp"
+#include "../traits/zeros.hpp"
 
 
 namespace ubu
@@ -16,7 +16,7 @@ namespace ubu
 template<scalar_coordinate C, congruent<C> O, congruent<C> E>
 constexpr void colexicographical_decrement(C& coord, const O&, const E&)
 {
-  --detail::as_integral_like(coord);
+  --detail::to_integral_like(coord);
 }
 
 
@@ -66,7 +66,7 @@ constexpr void colexicographical_decrement(C& coord, const O& origin, const E& e
 template<coordinate C, congruent<C> S>
 constexpr void colexicographical_decrement(C& coord, const S& shape)
 {
-  return colexicographical_decrement(coord, zeros<C>, shape);
+  return colexicographical_decrement(coord, zeros_v<C>, shape);
 }
 
 

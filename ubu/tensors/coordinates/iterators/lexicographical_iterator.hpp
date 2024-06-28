@@ -6,8 +6,8 @@
 #include "../concepts/congruent.hpp"
 #include "../coordinate_difference.hpp"
 #include "../coordinate_sum.hpp"
-#include "../ones.hpp"
-#include "../zeros.hpp"
+#include "../traits/ones.hpp"
+#include "../traits/zeros.hpp"
 #include "lexicographical_advance.hpp"
 #include "lexicographical_decrement.hpp"
 #include "lexicographical_distance.hpp"
@@ -38,9 +38,9 @@ class lexicographical_iterator
     {}
 
     // this ctor overload assumes that the user is asking for an iterator pointing
-    // to the first coordinate of a tensor whose origin is at zeros<O> of the given shape
+    // to the first coordinate of a tensor whose origin is at zeros_v<O> of the given shape
     constexpr lexicographical_iterator(const S& shape)
-      : lexicographical_iterator(zeros<O>, shape)
+      : lexicographical_iterator(zeros_v<O>, shape)
     {}
 
     lexicographical_iterator(const lexicographical_iterator&) = default;
@@ -153,10 +153,10 @@ class lexicographical_iterator
     }
 
     // this end overload assumes that the user is asking for an iterator pointing
-    // to the end of a tensor of the given shape whose origin is at zeros<O>
+    // to the end of a tensor of the given shape whose origin is at zeros_v<O>
     constexpr static lexicographical_iterator end(const S& shape)
     {
-      return end(zeros<O>, shape);
+      return end(zeros_v<O>, shape);
     }
 
     constexpr static C end_value(const O& origin, const S& shape)
@@ -166,15 +166,15 @@ class lexicographical_iterator
       return result;
     }
 
-    // this overload of end_value assumes the origin is at zeros<O>
+    // this overload of end_value assumes the origin is at zeros_v<O>
     constexpr static C end_value(const S& shape)
     {
-      return end_value(zeros<O>, shape);
+      return end_value(zeros_v<O>, shape);
     }
 
     constexpr static C last_value(const O& origin, const S& shape)
     {
-      return coordinate_sum(origin, coordinate_difference(shape, ones<C>));
+      return coordinate_sum(origin, coordinate_difference(shape, ones_v<C>));
     }
 
   private:

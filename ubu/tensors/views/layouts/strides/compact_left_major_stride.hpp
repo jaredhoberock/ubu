@@ -7,7 +7,7 @@
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/equal_rank.hpp"
-#include "../../../coordinates/detail/as_integral_like.hpp"
+#include "../../../coordinates/detail/to_integral_like.hpp"
 #include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "../../../coordinates/traits/rank.hpp"
 #include "../../../shapes/shape_size.hpp"
@@ -25,7 +25,7 @@ namespace detail
 template<scalar_coordinate D, scalar_coordinate S>
 constexpr integral_like auto compact_left_major_stride_impl(const D& current_stride, const S&)
 {
-  return as_integral_like(current_stride);
+  return to_integral_like(current_stride);
 }
 
 template<nonscalar_coordinate D, nonscalar_coordinate S>

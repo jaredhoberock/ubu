@@ -12,11 +12,9 @@
 #include "coordinates/element.hpp"
 #include "coordinates/iterators.hpp"
 #include "coordinates/one_extend_coordinate.hpp"
-#include "coordinates/ones.hpp"
 #include "coordinates/point.hpp"
 #include "coordinates/traits.hpp"
 #include "coordinates/truncate_coordinate.hpp"
-#include "coordinates/zeros.hpp"
 
 #include "../detail/epilogue.hpp"
 

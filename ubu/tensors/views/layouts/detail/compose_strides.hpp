@@ -5,7 +5,7 @@
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/equal_rank.hpp"
-#include "../../../coordinates/detail/as_integral_like.hpp"
+#include "../../../coordinates/detail/to_integral_like.hpp"
 #include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 
@@ -17,7 +17,7 @@ namespace ubu::detail
 template<scalar_coordinate A, scalar_coordinate B>
 constexpr integral_like auto compose_strides(const A& a, const B& b)
 {
-  return as_integral_like(a) * as_integral_like(b);
+  return to_integral_like(a) * to_integral_like(b);
 }
 
 
