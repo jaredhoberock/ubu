@@ -66,14 +66,10 @@ concept strided =
 ;
 
 
-// note that the type of stride_v<T> is different from stride_t<T>
-// because, for example, this definition "unwraps" a constant<13> to 13
-// this choice is consistent with the behavior of shape_v<T>
-// if we regret this choice for shape_v<T>, then we should update
-// the behavior of stride_v<T> accordingly
 template<strided T>
   requires constant_valued<stride_t<T>>
-constexpr inline auto stride_v = constant_value_v<stride_t<T>>;
+constexpr inline stride_t<T> stride_v;
+
 
 template<class T>
 concept constant_strided =
