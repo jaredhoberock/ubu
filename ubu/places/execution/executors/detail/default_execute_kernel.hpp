@@ -4,7 +4,6 @@
 
 #include "../../../../tensors/coordinates/comparisons.hpp"
 #include "../../../../tensors/coordinates/concepts/coordinate.hpp"
-#include "../../../../tensors/coordinates/zeros.hpp"
 #include "../../../../tensors/shapes.hpp"
 #include "../../../../tensors/views/layouts/layout.hpp"
 #include "../bulk_execute.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "detail/as_integral.hpp"
+#include "to_integral.hpp"
 #include <concepts>
 #include <utility>
 
@@ -31,11 +31,11 @@ concept boolean_testable =
 template<class T>
 concept integral_like = requires(T i)
 {
-  detail::as_integral(i);
+  to_integral(i);
 
   // unary operators
-  detail::as_integral(+i);
-  detail::as_integral(-i);
+  to_integral(+i);
+  to_integral(-i);
   { !i } -> detail::boolean_testable;
 
   // binary operators
@@ -47,16 +47,16 @@ concept integral_like = requires(T i)
   { i >= i } -> detail::boolean_testable;
 
   // arithmetic operators
-  detail::as_integral(i  + i);
-  detail::as_integral(i  - i);
-  detail::as_integral(i  * i);
-  detail::as_integral(i  / i);
-  detail::as_integral(i  % i);
-  detail::as_integral(i  & i);
-  detail::as_integral(i  | i);
-  detail::as_integral(i  ^ i);
-  detail::as_integral(i << i);
-  detail::as_integral(i >> i);
+  to_integral(i  + i);
+  to_integral(i  - i);
+  to_integral(i  * i);
+  to_integral(i  / i);
+  to_integral(i  % i);
+  to_integral(i  & i);
+  to_integral(i  | i);
+  to_integral(i  ^ i);
+  to_integral(i << i);
+  to_integral(i >> i);
 };
 
 

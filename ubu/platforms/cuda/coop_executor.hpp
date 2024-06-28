@@ -8,6 +8,7 @@
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../tensors/coordinates/coordinate_cast.hpp"
 #include "../../tensors/coordinates/point.hpp"
+#include "../../tensors/coordinates/traits/ones.hpp"
 #include "cooperation.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cooperative_kernel.hpp"
@@ -88,7 +89,7 @@ class coop_executor
       requires std::is_trivially_copy_constructible_v<F>
     event execute_after(const event& before, F f) const
     {
-      return bulk_execute_after(before, ones<shape_type>, [f](shape_type)
+      return bulk_execute_after(before, ones_v<shape_type>, [f](shape_type)
       {
         // ignore the incoming parameter and just invoke the function
         std::invoke(f);

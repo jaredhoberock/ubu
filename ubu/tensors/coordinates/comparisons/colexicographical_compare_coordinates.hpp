@@ -4,7 +4,7 @@
 
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/as_integral_like.hpp"
+#include "../detail/to_integral_like.hpp"
 #include "../detail/tuple_algorithm.hpp"
 
 namespace ubu
@@ -13,7 +13,7 @@ namespace ubu
 template<scalar_coordinate C1, scalar_coordinate C2>
 constexpr bool colexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
 {
-  return detail::as_integral_like(lhs) < detail::as_integral_like(rhs);
+  return detail::to_integral_like(lhs) < detail::to_integral_like(rhs);
 }
 
 template<nonscalar_coordinate C1, congruent<C1> C2>

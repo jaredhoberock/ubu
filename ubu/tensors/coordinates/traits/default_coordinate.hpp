@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../miscellaneous/integrals/detail/as_integral.hpp"
+#include "../../../miscellaneous/integrals/to_integral.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include <concepts>
@@ -16,7 +16,7 @@ constexpr congruent<C> auto convert_non_integral_elements(const C& coord)
 {
   if constexpr (integral_like<C>)
   {
-    return as_integral(coord);
+    return to_integral(coord);
   }
   else
   {

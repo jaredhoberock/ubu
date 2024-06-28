@@ -7,6 +7,7 @@
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/dynamic_valued.hpp"
 #include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/integrals/to_integral.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../traits/tensor_size.hpp"
 #include "contiguous_vector_like.hpp"
@@ -39,9 +40,7 @@ class fancy_span
     using iterator = pointer;
     using reverse_iterator = std::reverse_iterator<iterator>;
 
-    // note that the type of extent may differ from S
-    // for example, when S is bounded<b>, extent is constant<b>
-    static constexpr integral_like auto extent = std::numeric_limits<S>::max();
+    static constexpr S extent = std::numeric_limits<S>::max();
 
     template<pointer_like OtherP>
       requires std::convertible_to<OtherP, P>
@@ -205,12 +204,13 @@ class fancy_span
 
     // tensor-like extensions
 
-    // enable this function for cases where the size is dynamic, but it has a constant bound
+    // if size is dynamic but it has a constant bound,
+    // enable shape() and return a constant
     template<int = 0>
       requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
-    static constexpr integral_like auto shape() noexcept
+    static constexpr constant<to_integral(extent)> shape() noexcept
     {
-      return extent;
+      return {};
     }
 
     // enable this function for cases where the size is dynamic, but it has a constant bound

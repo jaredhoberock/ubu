@@ -4,7 +4,7 @@
 
 #include "../../../detail/for_each_arg.hpp"
 #include "../../../tensors/coordinates/concepts/coordinate.hpp"
-#include "../../../tensors/coordinates/zeros.hpp"
+#include "../../../tensors/coordinates/traits/zeros.hpp"
 #include "../../../tensors/vectors/fancy_span.hpp"
 #include "../../execution/executors/bulk_execute_after.hpp"
 #include "../../execution/executors/concepts/executor.hpp"
@@ -141,7 +141,7 @@ class intrusive_future
       try
       {
         // we don't need a workspace
-        auto workspace_shape = zeros<executor_workspace_shape_t<Ex>>;
+        auto workspace_shape = zeros_v<executor_workspace_shape_t<Ex>>;
 
         auto after_f = old_bulk_execute_after(ex, std::move(ready), grid_shape, workspace_shape, [f = function, ptr = ptr](const S& coord, auto)
         {

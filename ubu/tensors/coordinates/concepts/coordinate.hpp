@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../detail/as_integral_like.hpp"
+#include "../detail/to_integral_like.hpp"
 #include "../element.hpp"
 #include "../traits/rank.hpp"
 #include <concepts>
@@ -15,13 +15,13 @@ namespace ubu
 {
 
 
-// XXX we might need to also insist that zeros<T> exist and its result be integral_like
-//     the type of zeros<T> is allowed to differ from T, but it must be comparable to T
+// XXX we might need to also insist that zeros_v<T> exist and its result be integral_like
+//     the type of zeros_v<T> is allowed to differ from T, but it must be comparable to T
 template<class T>
 concept scalar_coordinate =
   requires(T coord)
   {
-    detail::as_integral_like(coord);
+    detail::to_integral_like(coord);
   }
 ;
 

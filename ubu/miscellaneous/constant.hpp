@@ -3,7 +3,6 @@
 #include "../detail/prologue.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"
 #include "../tensors/coordinates/detail/tuple_algorithm.hpp"
-#include "../tensors/coordinates/zeros.hpp"
 #include <concepts>
 #include <cstdint>
 #include <limits>
@@ -94,21 +93,6 @@ struct constant
 
   // operators for dynamic values are handled via conversion to value_type
 };
-
-
-// specialize zeros<constant<v>>
-// XXX we need a better way do make zeros work without this file depending on stuff underneath tensor/coordinates/
-template<auto v>
-  requires coordinate<decltype(v)>
-constexpr auto zeros<constant<v>> = zeros<decltype(v)>;
-
-template<auto v>
-  requires coordinate<decltype(v)>
-constexpr auto zeros<constant<v>&> = zeros<decltype(v)>;
-
-template<auto v>
-  requires coordinate<decltype(v)>
-constexpr auto zeros<const constant<v>&> = zeros<decltype(v)>;
 
 
 #if defined(__cpp_user_defined_literals)

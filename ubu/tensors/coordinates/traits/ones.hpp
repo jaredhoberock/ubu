@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integrals/integral_like.hpp"
-#include "concepts/coordinate.hpp"
-#include "detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../concepts/congruent.hpp"
+#include "../concepts/coordinate.hpp"
+#include "../detail/tuple_algorithm.hpp"
 #include "zeros.hpp"
 #include <concepts>
 
@@ -35,11 +36,12 @@ constexpr auto successor_of_each_mode(const T& t)
 } // end detail
 
 
+// note that the type of ones_v may differ from T because of fancy coordinates like constant
 template<coordinate T>
-constexpr auto ones = detail::successor_of_each_mode(zeros<T>);
+constexpr congruent<T> auto ones_v = detail::successor_of_each_mode(zeros_v<T>);
 
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../../../detail/epilogue.hpp"
 

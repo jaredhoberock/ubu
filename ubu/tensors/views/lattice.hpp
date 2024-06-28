@@ -8,7 +8,7 @@
 #include "../coordinates/iterators/colexicographical_iterator.hpp"
 #include "../coordinates/iterators/lexicographical_iterator.hpp"
 #include "../coordinates/traits/rank.hpp"
-#include "../coordinates/zeros.hpp"
+#include "../coordinates/traits/zeros.hpp"
 #include "../shapes/shape_size.hpp"
 #include <concepts>
 #include <initializer_list>
@@ -40,9 +40,9 @@ class lattice : public std::ranges::view_base
     {}
 
     // shape constructor
-    // creates a new lattice with the origin at zeros<C> of the given shape
+    // creates a new lattice with the origin at zeros_v<C> of the given shape
     constexpr explicit lattice(const S& shape)
-      : lattice{zeros<C>, shape}
+      : lattice{zeros_v<C>, shape}
     {}
 
     // returns the number of dimensions spanned by this lattice
