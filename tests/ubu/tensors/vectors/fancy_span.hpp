@@ -56,7 +56,7 @@ void test_fancy_span()
   {
     fancy_span<int*,bounded<10>> s(vec.data(), 5);
 
-    static_assert(std::same_as<const constant<10>, decltype(s.extent)>);
+    static_assert(std::same_as<const bounded<10>, decltype(s.extent)>);
     static_assert(s.extent == 10);
     static_assert(s.extent == bounded<10>(10));
     static_assert(s.extent == bounded<10>::bound);
@@ -65,15 +65,21 @@ void test_fancy_span()
     auto size = s.size();
     assert(size == bounded<10>(5));
     static_assert(std::same_as<bounded<10>, decltype(size)>);
+
+    auto shape = s.shape();
+    static_assert(std::same_as<constant<10>, decltype(shape)>);
   }
 
   {
     bounded sz(5, 10_c);
     fancy_span s(vec.data(), sz);
-    static_assert(std::same_as<const constant<10>, decltype(s.extent)>);
+    static_assert(std::same_as<const bounded<10>, decltype(s.extent)>);
 
     auto size = s.size();
     static_assert(std::same_as<bounded<10>, decltype(size)>);
+
+    auto shape = s.shape();
+    static_assert(std::same_as<constant<10>, decltype(shape)>);
   }
 
   {
