@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "concepts/bounded_coordinate.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
 #include "concepts/equal_rank.hpp"
