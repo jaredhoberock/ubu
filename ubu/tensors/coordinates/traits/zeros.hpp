@@ -7,7 +7,7 @@
 #include "../detail/tuple_algorithm.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include <utility>
+#include <limits>
 #include <type_traits>
 
 
@@ -37,7 +37,7 @@ constexpr integral_like auto integral_like_to_zero()
   }
 
   // failing that, check if 0 is in the representable range of T
-  else if constexpr(std::in_range<T>(0))
+  else if constexpr(std::numeric_limits<T>::min() <= 0 and 0 <= std::numeric_limits<T>::max())
   {
     return T{0};
   }
