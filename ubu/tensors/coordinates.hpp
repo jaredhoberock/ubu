@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "coordinates/bound_coordinate.hpp"
 #include "coordinates/colexicographical_lift.hpp"
 #include "coordinates/comparisons.hpp"
 #include "coordinates/concepts.hpp"
