@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include <concepts>
 #include <type_traits>
+#include <utility>
 
 namespace ubu
 {
@@ -45,6 +46,10 @@ constexpr std::integral auto to_integral(const T& i)
     return static_cast<value_type>(i);
   }
 }
+
+
+template<class T>
+using to_integral_t = decltype(to_integral(std::declval<T>()));
 
 
 } // end ubu

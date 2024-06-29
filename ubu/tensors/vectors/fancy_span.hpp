@@ -6,6 +6,7 @@
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/dynamic_valued.hpp"
+#include "../../miscellaneous/integrals/bounded_integral_like.hpp"
 #include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../../miscellaneous/integrals/to_integral.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
@@ -16,7 +17,6 @@
 #include <iterator>
 #include <memory>
 #include <ranges>
-#include <span>
 #include <type_traits>
 
 
@@ -207,15 +207,15 @@ class fancy_span
     // if size is dynamic but it has a constant bound,
     // enable shape() and return a constant
     template<int = 0>
-      requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
+      requires (dynamic_valued<size_type> and bounded_integral_like<size_type>)
     static constexpr constant<to_integral(extent)> shape() noexcept
     {
       return {};
     }
 
-    // enable this function for cases where the size is dynamic, but it has a constant bound
+    // enable this function when shape() is enabled
     template<integral_like I>
-      requires (dynamic_valued<size_type> and extent != std::dynamic_extent)
+      requires (dynamic_valued<size_type> and bounded_integral_like<size_type>)
     constexpr bool element_exists(I idx) const noexcept
     {
       return idx < size();
