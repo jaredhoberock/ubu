@@ -4,6 +4,7 @@
 
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../coordinates/concepts/bounded_coordinate.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include <type_traits>
 
@@ -114,6 +115,13 @@ concept constant_shaped =
     // shape_v must exist
     shape_v<T>;
   }
+;
+
+
+template<class T>
+concept shaped_and_bounded =
+  shaped<T>
+  and bounded_coordinate<shape_t<T>>
 ;
 
 
