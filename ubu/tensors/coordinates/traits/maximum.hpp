@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/tuple_algorithm.hpp"
 #include <limits>
 
 namespace ubu
@@ -22,7 +22,7 @@ constexpr C maximum_of_each_mode(C coord)
   }
   else
   {
-    return detail::tuple_zip_with(coord, [](auto element)
+    return tuples::zip_with(coord, [](auto element)
     {
       return maximum_of_each_mode(element);
     });
