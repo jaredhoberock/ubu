@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
+#include "../miscellaneous/tuples.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"
-#include "../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <cstdint>
 #include <limits>
@@ -24,7 +24,7 @@ struct constant
   }
 
   // element(tuple, constant) indexes a tuple-like
-  template<detail::tuple_like T>
+  template<tuples::tuple_like T>
     requires (std::integral<decltype(v)>
               and v < std::tuple_size_v<std::remove_cvref_t<T>>)
   friend constexpr decltype(auto) element(T&& tuple, constant)
@@ -34,7 +34,7 @@ struct constant
 
   // element(array, constant) indexes an array-like (that is not also a tuple-like)
   template<class A>
-    requires (not detail::tuple_like<A>
+    requires (not tuples::tuple_like<A>
               and requires(A&& array) { std::forward<A>(array)[v]; })
   friend constexpr decltype(auto) element(A&& array, constant)
   {
