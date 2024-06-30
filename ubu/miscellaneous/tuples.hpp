@@ -89,9 +89,13 @@ concept unit_like = tuple_like_of_size<T,0>;
 template<class T>
 concept pair_like = tuple_like_of_size<T,2>;
 
+// XXX rename this first_t
+//     constrain to tuple_like_of_size_at_least<1>
 template<pair_like P>
 using pair_first_t = std::tuple_element_t<0,P>;
 
+// XXX rename this second_t
+//     constrain to tuple_like_of_size_at_least<2>
 template<pair_like P>
 using pair_second_t = std::tuple_element_t<1,P>;
 
@@ -605,7 +609,7 @@ using get_and_invoke_result_t = decltype(get_and_invoke<I>(std::declval<F>(), st
 
 
 template<class F, class T, class... Ts>
-concept tuple_zipper =
+concept zipper =
   tuple_like<T>
   and (... and tuple_like<Ts>)
   and same_tuple_size<T,Ts...>
@@ -618,11 +622,11 @@ namespace detail
 
 
 template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, std::size_t... I>
-  requires (tuple_zipper<F,T,Ts...>
+  requires (zipper<F,T,Ts...>
             and sizeof...(I) == std::tuple_size_v<std::remove_cvref_t<T>>)
-constexpr auto tuple_zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts&&... ts)
+constexpr auto zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts&&... ts)
 {
-  return make_tuple_like<R>(get_and_invoke<I>(std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...)...);
+  return make_tuple_like<R>(detail::get_and_invoke<I>(std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...)...);
 }
 
 
@@ -631,15 +635,15 @@ constexpr auto tuple_zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts
 
 // this function zips the tuples by applying function f, and then passes the results of f as arguments to make_tuple_like<R>(...) and returns the resulting tuple_like
 template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, std::size_t... I>
-  requires tuple_zipper<F,T,Ts...>
-constexpr auto tuple_zip_with_r(F&& f, T&& t, Ts&&... ts)
+  requires zipper<F,T,Ts...>
+constexpr auto zip_with_r(F&& f, T&& t, Ts&&... ts)
 {
-  return detail::tuple_zip_with_r_impl<R>(indices_v<T>, std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...);
+  return detail::zip_with_r_impl<R>(indices_v<T>, std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...);
 }
 
 
 template<class R, class F, class T, class... Ts>
-concept tuple_zipper_r = tuple_zipper<F,T,Ts...> and detail::invocable_r_elementwise<R,F,T,Ts...>;
+concept zipper_r = zipper<F,T,Ts...> and detail::invocable_r_elementwise<R,F,T,Ts...>;
 
 
 namespace detail
@@ -747,67 +751,63 @@ constexpr tuple_like auto tuple_reverse(const T& t)
 }
 
 
-// tuple_zip_with zips the tuples by applying function f, and then returns the results of f as a smart_tuple
+// zip_with zips the tuples by applying function f, and then returns the results of f as a smart_tuple
 
-// 1-argument tuple_zip_with
-template<tuple_like T, class F>
-  requires tuple_zipper<F,T>
-constexpr tuple_like auto tuple_zip_with(T&& t, F&& f)
+// 1-argument zip_with
+template<tuple_like T, zipper<T> F>
+constexpr tuple_like auto zip_with(T&& t, F&& f)
 {
-  return tuple_zip_with_r<detail::tuple_similar_to<T&&>::template tuple>(std::forward<F>(f), std::forward<T>(t));
+  return zip_with_r<detail::tuple_similar_to<T&&>::template tuple>(std::forward<F>(f), std::forward<T>(t));
 }
 
-// 2-argument tuple_zip_with
-template<tuple_like T1, tuple_like T2, class F>
-  requires tuple_zipper<F,T1,T2>
-constexpr tuple_like auto tuple_zip_with(T1&& t1, T2&& t2, F&& f)
+// 2-argument zip_with
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> F>
+constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, F&& f)
 {
-  return tuple_zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2));
+  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2));
 }
 
-// 3-argument tuple_zip_with
-template<tuple_like T1, tuple_like T2, tuple_like T3, class F>
-  requires tuple_zipper<F,T1,T2,T3>
-constexpr tuple_like auto tuple_zip_with(T1&& t1, T2&& t2, T3&& t3, F&& f)
+// 3-argument zip_with
+template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> F>
+constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, T3&& t3, F&& f)
 {
-  return tuple_zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));
+  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));
 }
 
-// 4-argument tuple_zip_with
-template<tuple_like T1, tuple_like T2, tuple_like T3, tuple_like T4, class F>
-  requires tuple_zipper<F,T1,T2,T3,T4>
-constexpr tuple_like auto tuple_zip_with(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F&& f)
+// 4-argument zip_with
+template<tuple_like T1, tuple_like T2, tuple_like T3, tuple_like T4, zipper<T1,T2,T3,T4> F>
+constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F&& f)
 {
-  return tuple_zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<T4>(t4));
+  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<T4>(t4));
 }
 
 
 template<class F, tuple_like T, tuple_like... Ts>
   requires (same_tuple_size<T,Ts...> and detail::invocable_elementwise<F&&,T&&,Ts&&...>)
-using tuple_zip_with_result_t = decltype(tuple_zip_with(std::declval<T>(), std::declval<Ts>()..., std::declval<F>()));
+using zip_with_result_t = decltype(zip_with(std::declval<T>(), std::declval<Ts>()..., std::declval<F>()));
 
 
 template<tuple_like T, tuple_like... Ts>
-constexpr tuple_like auto tuple_zip(const T& t, const Ts&... ts)
+constexpr tuple_like auto zip(const T& t, const Ts&... ts)
 {
-  return tuple_zip_with(t, ts..., [](const auto&... elements)
+  return zip_with(t, ts..., [](const auto&... elements)
   {
     return make_tuple_similar_to<T>(elements...);
   });
 }
 
 
-template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> Op1, tuple_folder<tuple_zip_with_result_t<Op1,T1,T2>> Op2>
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op1, tuple_folder<zip_with_result_t<Op1,T1,T2>> Op2>
 constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
-  return tuple_fold(tuple_zip_with(t1, t2, star), plus);
+  return tuple_fold(zip_with(t1, t2, star), plus);
 }
 
 
-template<tuple_like T1, tuple_like T2, tuple_like T3, tuple_zipper<T1,T2,T3> Op1, tuple_folder<tuple_zip_with_result_t<Op1,T1,T2,T3>> Op2>
+template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> Op1, tuple_folder<zip_with_result_t<Op1,T1,T2,T3>> Op2>
 constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, Op1 star, Op2 plus)
 {
-  return tuple_fold(tuple_zip_with(t1, t2, t3, star), plus);
+  return tuple_fold(zip_with(t1, t2, t3, star), plus);
 }
 
 
@@ -825,8 +825,8 @@ constexpr auto tuple_product(const T& t)
 }
 
 
-template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> Op>
-  requires tuple_zipper_r<bool,Op,T1,T2>
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op>
+  requires zipper_r<bool,Op,T1,T2>
 constexpr bool tuple_equal(const T1& t1, const T2& t2, Op eq)
 {
   return tuple_inner_product(t1, t2, eq, std::logical_and{});
@@ -844,7 +844,7 @@ constexpr decltype(auto) tuple_equal(const T1& t1, const T2& t2)
 
 
 template<tuple_like T, class P>
-  requires tuple_zipper_r<bool,P,T>
+  requires zipper_r<bool,P,T>
 constexpr bool tuple_all(const T& t, const P& pred)
 {
   auto folder = [&](bool partial_result, const auto& element)
@@ -864,7 +864,7 @@ template<class... Args>
 void discard_args(Args&&...) {}
 
 
-template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> F, std::size_t... I>
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> F, std::size_t... I>
   requires (sizeof...(I) == std::tuple_size_v<T1>)
 constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::index_sequence<I...>)
 {
@@ -875,7 +875,7 @@ constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::in
 } // end detail
 
 
-template<tuple_like T1, tuple_like T2, tuple_zipper<T1,T2> F>
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> F>
 constexpr void tuple_inplace_transform(F&& f, T1& t1, const T2& t2)
 {
   return detail::tuple_inplace_transform_impl(std::forward<F>(f), t1, t2, indices_v<T1>);
@@ -1005,7 +1005,7 @@ concept unzippable_tuple_like =
 // tuple_unzip takes a M-size tuple of N-size tuples (i.e., a matrix) and returns an N-size tuple of M-size tuples
 // in other words, it returns the transpose of the matrix
 //
-// this probably has an elegant solution with tuple_zip_with or tuple_fold, but I don't know what it is
+// this probably has an elegant solution with zip_with or tuple_fold, but I don't know what it is
 template<tuple_like T>
   requires unzippable_tuple_like<T>
 tuple_like auto tuple_unzip(T&& t)
@@ -1328,7 +1328,7 @@ constexpr tuple_like auto as_flat_tuple(const T& arg)
   }
   else
   {
-    auto tuple_of_tuples = tuple_zip_with(arg, [](const auto& element)
+    auto tuple_of_tuples = zip_with(arg, [](const auto& element)
     {
       return as_flat_tuple(element);
     });
@@ -1393,7 +1393,7 @@ template<tuple_like T>
 constexpr pair_like auto unzip_innermost_pairs(const T& tuple)
 {
   // this will return a pair of tuples
-  return tuple_unzip(tuple_zip_with(tuple, [](auto t_i)
+  return tuple_unzip(zip_with(tuple, [](auto t_i)
   {
     return unzip_innermost_pairs(t_i);
   }));

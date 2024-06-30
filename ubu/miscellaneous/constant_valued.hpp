@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
-#include "../tensors/coordinates/detail/tuple_algorithm.hpp"
+#include "../miscellaneous/tuples.hpp"
 #include <concepts>
 #include <tuple>
 #include <type_traits>
@@ -14,7 +14,7 @@ namespace detail
 
 template<class T>
 concept scalar_constant =
-  not tuple_like<T>
+  not tuples::tuple_like<T>
   and requires()
   {
     // T::value must exist
@@ -31,7 +31,7 @@ concept scalar_constant =
 template<class T>
 struct is_nonscalar_constant : std::false_type {};
 
-template<tuple_like T, std::size_t... I>
+template<tuples::tuple_like T, std::size_t... I>
 constexpr bool tuple_elements_are_constants(std::index_sequence<I...>)
 {
   // this checks whether each element of T is either scalar_constant or is_nonscalar_constant
@@ -39,17 +39,17 @@ constexpr bool tuple_elements_are_constants(std::index_sequence<I...>)
   return (... and (scalar_constant<std::tuple_element_t<I,std::remove_cvref_t<T>>> or is_nonscalar_constant<std::tuple_element_t<I,std::remove_cvref_t<T>>>::value));
 }
 
-template<tuple_like T>
+template<tuples::tuple_like T>
 struct is_nonscalar_constant<T>
 {
-  constexpr static bool value = tuple_elements_are_constants<T>(tuple_indices<T>);
+  constexpr static bool value = tuple_elements_are_constants<T>(tuples::indices_v<T>);
 };
 
 
 // because nonscalar_constant is recursive, it is partially implemented with a type trait
 template<class T>
 concept nonscalar_constant =
-  tuple_like<T>
+  tuples::tuple_like<T>
   and is_nonscalar_constant<T>::value;
 ;
 
@@ -71,7 +71,7 @@ struct dispatch_get_constant_value
   {
     // recurse across the elements of the tuple U
     // XXX this assumes U is default constructible
-    return tuple_zip_with(U(), [](const auto& element)
+    return tuples::zip_with(U(), [](const auto& element)
     {
       dispatch_get_constant_value<decltype(element)> this_cpo;
       return this_cpo();
