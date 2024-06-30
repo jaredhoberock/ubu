@@ -77,17 +77,25 @@ static_assert(not tuple_like<int>);
 static_assert(not tuple_like<float>);
 
 
+template<tuple_like T>
+constexpr auto size_v = std::tuple_size_v<std::remove_cvref_t<T>>;
+
+
 template<class T, std::size_t N>
 concept tuple_like_of_size =
   tuple_like<T>
-  and (N == std::tuple_size_v<std::remove_cvref_t<T>>)
+  and (N == size_v<T>)
 ;
 
 template<class T, std::size_t N>
 concept tuple_like_of_size_at_least =
   tuple_like<T>
-  and (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
+  and (N <= size_v<T>)
 ;
+
+
+template<std::size_t I, tuple_like_of_size_at_least<I+1> T>
+using element_t = std::tuple_element_t<I, std::remove_cvref_t<T>>;
 
 
 template<class T>
@@ -100,15 +108,15 @@ template<class T>
 concept pair_like = tuple_like_of_size<T,2>;
 
 
-template<tuple_like_of_size_at_least<1> P>
-using first_t = std::tuple_element_t<0, std::remove_cvref_t<P>>;
+template<tuple_like_of_size_at_least<1> T>
+using first_t = element_t<0,T>;
 
-template<tuple_like_of_size_at_least<2> P>
-using second_t = std::tuple_element_t<1, std::remove_cvref_t<P>>;
+template<tuple_like_of_size_at_least<2> T>
+using second_t = element_t<1,T>;
 
 
 template<tuple_like T>
-constexpr auto indices_v = std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<T>>>{};
+constexpr auto indices_v = std::make_index_sequence<size_v<T>>{};
 
 
 namespace detail
@@ -148,17 +156,17 @@ constexpr auto reversed_indices_v = detail::reversed_tuple_indices_impl(indices_
 
 
 template<class T1, class... Ts>
-concept same_tuple_size = 
+concept same_size = 
   tuple_like<T1>
   and (... and tuple_like<Ts>)
-  and (... and (std::tuple_size_v<std::remove_cvref_t<T1>> == std::tuple_size_v<std::remove_cvref_t<Ts>>))
+  and (... and (size_v<T1> == size_v<Ts>))
 ;
 
-static_assert(same_tuple_size<std::tuple<int>, std::tuple<int>>);
-static_assert(same_tuple_size<std::tuple<int>, std::tuple<float>, std::array<double,1>>);
-static_assert(same_tuple_size<std::pair<int,float>, std::array<double,2>, std::tuple<float,int>>);
-static_assert(!same_tuple_size<std::pair<int,int>, std::tuple<float>, std::array<double,1>>);
-static_assert(!same_tuple_size<std::tuple<float>, std::array<double,1>, std::tuple<>>);
+static_assert(same_size<std::tuple<int>, std::tuple<int>>);
+static_assert(same_size<std::tuple<int>, std::tuple<float>, std::array<double,1>>);
+static_assert(same_size<std::pair<int,float>, std::array<double,2>, std::tuple<float,int>>);
+static_assert(!same_size<std::pair<int,int>, std::tuple<float>, std::array<double,1>>);
+static_assert(!same_size<std::tuple<float>, std::array<double,1>, std::tuple<>>);
 
 
 namespace detail
@@ -173,10 +181,10 @@ concept all_convertible_to =
 
 
 template<tuple_like T, class U, std::size_t... I>
-  requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
+  requires (size_v<T> > 0)
 constexpr bool all_elements_convertible_to_impl(std::index_sequence<0,I...>)
 {
-  return all_convertible_to<U, std::tuple_element_t<0,T>, std::tuple_element_t<I,T>...>;
+  return all_convertible_to<U, element_t<0,T>, element_t<I,T>...>;
 }
 
 
@@ -186,7 +194,7 @@ constexpr bool all_elements_convertible_to_impl(std::index_sequence<0,I...>)
 template<class FromTuple, class To>
 concept all_elements_convertible_to =
   tuple_like<FromTuple>
-  and (std::tuple_size_v<std::remove_cvref_t<FromTuple>> > 0)
+  and (size_v<FromTuple> > 0)
   and detail::all_elements_convertible_to_impl<FromTuple,To>(indices_v<FromTuple>)
 ;
 
@@ -194,7 +202,7 @@ concept all_elements_convertible_to =
 template<std::size_t I, class T>
 concept is_index_for =
   tuple_like<T>
-  and (I < std::tuple_size_v<std::remove_cvref_t<T>>)
+  and (I < size_v<T>)
 ;
 
 
@@ -331,14 +339,14 @@ struct rebind_tuple_like;
 template<tuple_like T, class... Types, std::size_t... I>
 constexpr bool are_tuple_elements_same_as(std::index_sequence<I...>)
 {
-  return (... and std::same_as<std::tuple_element_t<I, std::remove_cvref_t<T>>, Types>);
+  return (... and std::same_as<element_t<I,T>, Types>);
 }
 
 
 template<class T, class... Types>
 concept tuple_elements_same_as =
   tuple_like<T>
-  and (std::tuple_size_v<std::remove_cvref_t<T>> == sizeof...(Types))
+  and (size_v<T> == sizeof...(Types))
   and are_tuple_elements_same_as<T,Types...>(indices_v<T>)
 ;
 
@@ -376,7 +384,7 @@ struct rebind_tuple_like<T,NewTypes...>
   // since all the types in NewTypes... are the same, the value type of the new array_like is the first type in this list
   // however, it's possible that the list NewTypes... is empty
   // in this case, just use the old value_type as the value type of the new array
-  using new_value_type = std::tuple_element_t<0, std::tuple<NewTypes..., typename old_array_type::value_type>>;
+  using new_value_type = element_t<0, std::tuple<NewTypes..., typename old_array_type::value_type>>;
 
   using type = typename rebind_std_array_like<old_array_type, new_value_type, sizeof...(NewTypes)>::type;
 };
@@ -552,7 +560,7 @@ constexpr bool is_invocable_elementwise()
 
 
 template<class F, tuple_like Tuple1, tuple_like... Tuples>
-  requires same_tuple_size<Tuple1,Tuples...>
+  requires same_size<Tuple1,Tuples...>
 constexpr bool is_invocable_elementwise()
 {
   return is_invocable_elementwise_impl<F,Tuple1,Tuples...>(indices_v<Tuple1>);
@@ -589,7 +597,7 @@ constexpr bool is_invocable_r_elementwise()
 
 
 template<class R, class F, tuple_like Tuple1, tuple_like... Tuples>
-  requires same_tuple_size<Tuple1,Tuples...>
+  requires same_size<Tuple1,Tuples...>
 constexpr bool is_invocable_r_elementwise()
 {
   return is_invocable_r_elementwise_impl<R,F,Tuple1,Tuples...>(indices_v<Tuple1>);
@@ -619,7 +627,7 @@ template<class F, class T, class... Ts>
 concept zipper =
   tuple_like<T>
   and (... and tuple_like<Ts>)
-  and same_tuple_size<T,Ts...>
+  and same_size<T,Ts...>
   and detail::invocable_elementwise<F,T,Ts...>
 ;
 
@@ -630,7 +638,7 @@ namespace detail
 
 template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, std::size_t... I>
   requires (zipper<F,T,Ts...>
-            and sizeof...(I) == std::tuple_size_v<std::remove_cvref_t<T>>)
+            and sizeof...(I) == size_v<T>)
 constexpr auto zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts&&... ts)
 {
   return tuples::make_tuple_like<R>(detail::get_and_invoke<I>(std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...)...);
@@ -740,7 +748,7 @@ namespace detail
 
 
 template<tuple_like T, std::size_t... I>
-  requires (std::tuple_size_v<T> == sizeof...(I))
+  requires (size_v<T> == sizeof...(I))
 constexpr tuple_like auto reverse_impl(std::index_sequence<I...>, const T& t)
 {
   return tuples::make_tuple_similar_to<T>(get<I>(t)...);
@@ -790,7 +798,7 @@ constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F&& f)
 
 
 template<class F, tuple_like T, tuple_like... Ts>
-  requires (same_tuple_size<T,Ts...> and detail::invocable_elementwise<F&&,T&&,Ts&&...>)
+  requires (same_size<T,Ts...> and detail::invocable_elementwise<F&&,T&&,Ts&&...>)
 using zip_with_result_t = decltype(zip_with(std::declval<T>(), std::declval<Ts>()..., std::declval<F>()));
 
 
@@ -872,7 +880,7 @@ void discard_args(Args&&...) {}
 
 
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> F, std::size_t... I>
-  requires (sizeof...(I) == std::tuple_size_v<T1>)
+  requires (sizeof...(I) == size_v<T1>)
 constexpr void inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::index_sequence<I...>)
 {
   detail::discard_args(get<I>(t1) = std::forward<F>(f)(get<I>(t1), get<I>(t2))...);
@@ -894,15 +902,15 @@ namespace detail
 
 
 template<tuple_like T1, tuple_like T2, class C>
-  requires same_tuple_size<T1,T2>
-constexpr bool lexicographical_compare_impl(std::integral_constant<std::size_t, std::tuple_size_v<T1>>, const T1&, const T2&, const C&)
+  requires same_size<T1,T2>
+constexpr bool lexicographical_compare_impl(std::integral_constant<std::size_t, size_v<T1>>, const T1&, const T2&, const C&)
 {
   return false;
 }
 
 
 template<std::size_t cursor, tuple_like T1, tuple_like T2, class C>
-  requires (same_tuple_size<T1,T2> and cursor != std::tuple_size_v<T1>)
+  requires (same_size<T1,T2> and cursor != size_v<T1>)
 constexpr bool lexicographical_compare_impl(std::integral_constant<std::size_t, cursor>, const T1& t1, const T2& t2, const C& compare)
 {
   if(compare(get<cursor>(t1), get<cursor>(t2))) return true;
@@ -917,7 +925,7 @@ constexpr bool lexicographical_compare_impl(std::integral_constant<std::size_t, 
 
 
 template<tuple_like T1, tuple_like T2, class C>
-  requires same_tuple_size<T1,T2>
+  requires same_size<T1,T2>
 constexpr bool lexicographical_compare(const T1& t1, const T2& t2, const C& compare)
 {
   return detail::lexicographical_compare_impl(std::integral_constant<std::size_t,0>{}, t1, t2, compare);
@@ -925,7 +933,7 @@ constexpr bool lexicographical_compare(const T1& t1, const T2& t2, const C& comp
 
 
 template<tuple_like T1, tuple_like T2>
-  requires same_tuple_size<T1,T2>
+  requires same_size<T1,T2>
 constexpr bool lexicographical_compare(const T1& t1, const T2& t2)
 {
   return tuples::lexicographical_compare(t1, t2, std::less{});
@@ -933,7 +941,7 @@ constexpr bool lexicographical_compare(const T1& t1, const T2& t2)
 
 
 template<tuple_like T1, tuple_like T2, class C>
-  requires same_tuple_size<T1,T2>
+  requires same_size<T1,T2>
 constexpr bool colexicographical_compare(const T1& t1, const T2& t2, const C& compare)
 {
   return tuples::lexicographical_compare(tuples::reverse(t1), tuples::reverse(t2), compare);
@@ -941,7 +949,7 @@ constexpr bool colexicographical_compare(const T1& t1, const T2& t2, const C& co
 
 
 template<tuple_like T1, tuple_like T2>
-  requires same_tuple_size<T1,T2>
+  requires same_size<T1,T2>
 constexpr bool colexicographical_compare(const T1& t1, const T2& t2)
 {
   return tuples::colexicographical_compare(t1, t2, std::less{});
@@ -953,13 +961,13 @@ namespace detail
 
 
 template<tuple_like T, std::size_t Zero, std::size_t... I>
-constexpr bool tuple_elements_have_same_tuple_size(std::index_sequence<Zero,I...>)
+constexpr bool tuple_elements_have_same_size(std::index_sequence<Zero,I...>)
 {
   using tuple_type = std::remove_cvref_t<T>;
 
-  return same_tuple_size<
-    std::tuple_element_t<0, tuple_type>,
-    std::tuple_element_t<I, tuple_type>...
+  return same_size<
+    element_t<0, tuple_type>,
+    element_t<I, tuple_type>...
   >;
 }
 
@@ -989,7 +997,7 @@ tuple_like auto unzip_row(T&& t)
 template<std::size_t... Row, tuple_like T>
 tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
 {
-  using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
+  using inner_tuple_type = element_t<0,T>;
   
   return tuples::make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
   (
@@ -1005,7 +1013,7 @@ tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
 template<class T>
 concept unzippable_tuple_like =
   tuple_like<T>
-  and detail::tuple_elements_have_same_tuple_size<T>(indices_v<T>);
+  and detail::tuple_elements_have_same_size<T>(indices_v<T>);
 ;
 
 
@@ -1017,7 +1025,7 @@ template<tuple_like T>
   requires unzippable_tuple_like<T>
 tuple_like auto unzip(T&& t)
 {
-  using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
+  using inner_tuple_type = element_t<0,T>;
 
   return detail::unzip_impl(indices_v<inner_tuple_type>, std::forward<T>(t));
 }
@@ -1035,7 +1043,7 @@ tuple_like auto unzip(T&& t)
 //pair<tuple<a,b,c>, tuple<d,e,f>> unzip(tuple<pair<a,d>, pair<b,e>, pair<c,f>> t)
 //{
 //  using outer_tuple_type = decltype(t);
-//  using inner_tuple_type = std::tuple_element_t<0,outer_tuple_type>;
+//  using inner_tuple_type = element_t<0,outer_tuple_type>;
 //
 //  // the idea is that t is a matrix and unzip is a transpose
 //
@@ -1053,7 +1061,7 @@ tuple_like auto unzip(T&& t)
 template<tuple_like T>
 constexpr decltype(auto) last(T&& t)
 {
-  constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
+  constexpr int N = size_v<T>;
   return get<N-1>(std::forward<T>(t));
 }
 
@@ -1065,7 +1073,7 @@ namespace detail
 template<std::size_t... I, tuple_like T>
 constexpr tuple_like auto drop_impl(std::index_sequence<I...>, T&& t)
 {
-  constexpr std::size_t num_dropped = std::tuple_size_v<std::remove_cvref_t<T>> - sizeof...(I);
+  constexpr std::size_t num_dropped = size_v<T> - sizeof...(I);
 
   return tuples::make_tuple_similar_to<T>(get<I+num_dropped>(std::forward<T>(t))...);
 }
@@ -1075,17 +1083,17 @@ constexpr tuple_like auto drop_impl(std::index_sequence<I...>, T&& t)
 
 
 template<std::size_t N, tuple_like T>
-  requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
+  requires (N <= size_v<T>)
 constexpr tuple_like auto drop(T&& t)
 {
-  constexpr std::size_t num_kept = std::tuple_size_v<std::remove_cvref_t<T>> - N;
+  constexpr std::size_t num_kept = size_v<T> - N;
   auto indices = std::make_index_sequence<num_kept>();
   return detail::drop_impl(indices, std::forward<T>(t));
 }
 
 
 template<tuple_like T>
-  requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
+  requires (size_v<T> > 0)
 constexpr tuple_like auto drop_first(T&& t)
 {
   return drop<1>(std::forward<T>(t));
@@ -1097,7 +1105,7 @@ namespace detail
 
 
 template<std::size_t... I, tuple_like T>
-  requires (sizeof...(I) <= std::tuple_size_v<std::remove_cvref_t<T>>)
+  requires (sizeof...(I) <= size_v<T>)
 constexpr tuple_like auto take_impl(std::index_sequence<I...>, T&& t)
 {
   return tuples::make_tuple_similar_to<T>(get<I>(t)...);
@@ -1108,7 +1116,7 @@ constexpr tuple_like auto take_impl(std::index_sequence<I...>, T&& t)
 
 
 template<std::size_t N, tuple_like T>
-  requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
+  requires (N <= size_v<T>)
 constexpr tuple_like auto take(T&& t)
 {
   auto indices = std::make_index_sequence<N>();
@@ -1119,7 +1127,7 @@ constexpr tuple_like auto take(T&& t)
 template<tuple_like T>
 constexpr tuple_like auto drop_last(T&& t)
 {
-  constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
+  constexpr int N = size_v<T>;
   return take<N-1>(std::forward<T>(t));
 }
 
@@ -1296,7 +1304,7 @@ constexpr void output_args(std::ostream& os, const char* delimiter, const Arg& a
 }
 
 template<tuple_like T, std::size_t... Indices>
-  requires (sizeof...(Indices) == std::tuple_size_v<T>)
+  requires (sizeof...(Indices) == size_v<T>)
 constexpr std::ostream& output_impl(std::ostream& os, const char* delimiter, const T& t, std::index_sequence<Indices...>)
 {
   detail::output_args(os, delimiter, get<Indices>(t)...);
@@ -1372,13 +1380,13 @@ constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const 
 template<class T>
 concept tuple_of_pair_like =
   unzippable_tuple_like<T>
-  and pair_like<std::tuple_element_t<0,T>>
+  and pair_like<element_t<0,T>>
 ;
 
 template<class T>
 concept pair_of_not_tuple_like =
   pair_like<T>
-  and (not tuple_like<std::tuple_element_t<0,T>>)
+  and (not tuple_like<element_t<0,T>>)
 ;
 
 template<pair_of_not_tuple_like T>
