@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../tensors/coordinates/detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../../causality/happening.hpp"
 #include "../../execution/executors/concepts/executor.hpp"
 #include "../../execution/executors/execute_after.hpp"
@@ -22,7 +22,7 @@ namespace detail
 
 template<class T>
 concept asynchronous_allocation = 
-  pair_like<T>
+  tuples::pair_like<T>
   and happening<std::tuple_element_t<0,T>>
   and pointer_like<std::tuple_element_t<1,T>>
 ;
