@@ -1433,7 +1433,7 @@ namespace detail
 
 
 template<tuple_like R, tuple_like T, class F, std::size_t... I>
-constexpr tuple_like auto tuple_static_enumerate_similar_to_impl(const T& tuple, F&& f, std::index_sequence<I...>)
+constexpr tuple_like auto static_enumerate_similar_to_impl(const T& tuple, F&& f, std::index_sequence<I...>)
 {
   return tuples::make_tuple_similar_to<R>(f.template operator()<I>(get<I>(tuple))...); 
 }
@@ -1443,23 +1443,23 @@ constexpr tuple_like auto tuple_static_enumerate_similar_to_impl(const T& tuple,
 
 
 template<tuple_like R, tuple_like T, class F>
-constexpr tuple_like auto tuple_static_enumerate_similar_to(const T& tuple, F&& f)
+constexpr tuple_like auto static_enumerate_similar_to(const T& tuple, F&& f)
 {
-  return detail::tuple_static_enumerate_similar_to_impl<R>(tuple, std::forward<F>(f), indices_v<T>);
+  return detail::static_enumerate_similar_to_impl<R>(tuple, std::forward<F>(f), indices_v<T>);
 }
 
 template<tuple_like T, class F>
-constexpr tuple_like auto tuple_static_enumerate(const T& tuple, F&& f)
+constexpr tuple_like auto static_enumerate(const T& tuple, F&& f)
 {
-  return tuple_static_enumerate_similar_to<T>(tuple, std::forward<F>(f));
+  return tuples::static_enumerate_similar_to<T>(tuple, std::forward<F>(f));
 }
 
 
 template<std::size_t I, tuple_like T, class U>
   requires is_index_for<I,T>
-constexpr tuple_like auto tuple_replace_element(const T& tuple, const U& replacement)
+constexpr tuple_like auto replace_element(const T& tuple, const U& replacement)
 {
-  return tuple_static_enumerate(tuple, [&]<std::size_t index>(const auto& t_i)
+  return tuples::static_enumerate(tuple, [&]<std::size_t index>(const auto& t_i)
   {
     if constexpr (index == I)
     {
