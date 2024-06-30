@@ -929,17 +929,17 @@ constexpr bool lexicographical_compare(const T1& t1, const T2& t2)
 
 template<tuple_like T1, tuple_like T2, class C>
   requires same_tuple_size<T1,T2>
-constexpr bool tuple_colexicographical_compare(const T1& t1, const T2& t2, const C& compare)
+constexpr bool colexicographical_compare(const T1& t1, const T2& t2, const C& compare)
 {
-  return tuple_lexicographical_compare(tuples::reverse(t1), tuples::reverse(t2), compare);
+  return tuples::lexicographical_compare(tuples::reverse(t1), tuples::reverse(t2), compare);
 }
 
 
 template<tuple_like T1, tuple_like T2>
   requires same_tuple_size<T1,T2>
-constexpr bool tuple_colexicographical_compare(const T1& t1, const T2& t2)
+constexpr bool colexicographical_compare(const T1& t1, const T2& t2)
 {
-  return tuple_colexicographical_compare(t1, t2, std::less{});
+  return tuples::colexicographical_compare(t1, t2, std::less{});
 }
 
 
