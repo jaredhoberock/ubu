@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../traits/tensor_element.hpp"
 #include "transform.hpp"
 #include <tuple>
@@ -16,7 +16,7 @@ namespace ubu
 template<class T>
 concept tensor_like_of_tuple_like =
   tensor_like<T> and
-  detail::tuple_like<tensor_reference_t<T>>
+  tuples::tuple_like<tensor_reference_t<T>>
 ;
 
 template<class T, std::size_t I>
