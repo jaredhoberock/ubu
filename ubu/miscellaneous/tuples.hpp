@@ -499,7 +499,7 @@ namespace detail
 
 
 template<std::size_t... Is, class I, tuple_like T, class F>
-constexpr auto fold_left(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
+constexpr auto fold_left_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
 {
   return detail::fold_args_left(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
 }
@@ -512,7 +512,7 @@ constexpr auto fold_left(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
 template<class I, tuple_like T, class F>
 constexpr auto fold_left(I&& init, T&& t, F&& f)
 {
-  return fold_left_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return detail::fold_left_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -707,7 +707,7 @@ namespace detail
 
 
 template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_append_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
+constexpr tuple_like auto append_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
   return tuples::make_tuple_similar_to<Example>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
 }
@@ -715,18 +715,18 @@ constexpr tuple_like auto tuple_append_similar_to_impl(std::index_sequence<I...>
 
 } // end detail
 
-// tuple_append_similar_to
+// append_similar_to
 template<tuple_like Example, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_append_similar_to(T&& t, Arg&& arg)
+constexpr tuple_like auto append_similar_to(T&& t, Arg&& arg)
 {
-  return tuple_append_similar_to_impl<Example>(indices_v<T>, std::forward<T>(t), std::forward<Arg>(arg));
+  return detail::append_similar_to_impl<Example>(indices_v<T>, std::forward<T>(t), std::forward<Arg>(arg));
 }
 
-// tuple_append
+// append
 template<tuple_like T, class Arg>
 constexpr tuple_like auto append(const T& t, Arg&& arg)
 {
-  return tuple_append_similar_to<T>(t, std::forward<Arg>(arg));
+  return tuples::append_similar_to<T>(t, std::forward<Arg>(arg));
 }
 
 
@@ -968,27 +968,27 @@ decltype(auto) get2d(T&& t)
 
 
 template<std::size_t Row, std::size_t... Col, tuple_like T>
-tuple_like auto tuple_unzip_row_impl(std::index_sequence<Col...>, T&& t)
+tuple_like auto unzip_row_impl(std::index_sequence<Col...>, T&& t)
 {
   return tuples::make_tuple_like<tuple_similar_to<T>::template tuple>(get2d<Row,Col>(std::forward<T>(t))...);
 }
 
 
 template<std::size_t Row, tuple_like T>
-tuple_like auto tuple_unzip_row(T&& t)
+tuple_like auto unzip_row(T&& t)
 {
-  return tuple_unzip_row_impl<Row>(indices_v<T>, std::forward<T>(t));
+  return detail::unzip_row_impl<Row>(indices_v<T>, std::forward<T>(t));
 }
 
 
 template<std::size_t... Row, tuple_like T>
-tuple_like auto tuple_unzip_impl(std::index_sequence<Row...>, T&& t)
+tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
 {
   using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
   
   return tuples::make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
   (
-    tuple_unzip_row<Row>(std::forward<T>(t))...
+    detail::unzip_row<Row>(std::forward<T>(t))...
   );
 }
 
@@ -1004,21 +1004,21 @@ concept unzippable_tuple_like =
 ;
 
 
-// tuple_unzip takes a M-size tuple of N-size tuples (i.e., a matrix) and returns an N-size tuple of M-size tuples
+// unzip takes a M-size tuple of N-size tuples (i.e., a matrix) and returns an N-size tuple of M-size tuples
 // in other words, it returns the transpose of the matrix
 //
 // this probably has an elegant solution with zip_with or fold_left, but I don't know what it is
 template<tuple_like T>
   requires unzippable_tuple_like<T>
-tuple_like auto tuple_unzip(T&& t)
+tuple_like auto unzip(T&& t)
 {
   using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
 
-  return detail::tuple_unzip_impl(indices_v<inner_tuple_type>, std::forward<T>(t));
+  return detail::unzip_impl(indices_v<inner_tuple_type>, std::forward<T>(t));
 }
 
 
-// the following concrete example demonstrates how tuple_unzip works with a tuple of pairs
+// the following concrete example demonstrates how unzip works with a tuple of pairs
 
 //struct a{};
 //struct b{};
@@ -1027,7 +1027,7 @@ tuple_like auto tuple_unzip(T&& t)
 //struct e{};
 //struct f{};
 
-//pair<tuple<a,b,c>, tuple<d,e,f>> tuple_unzip(tuple<pair<a,d>, pair<b,e>, pair<c,f>> t)
+//pair<tuple<a,b,c>, tuple<d,e,f>> unzip(tuple<pair<a,d>, pair<b,e>, pair<c,f>> t)
 //{
 //  using outer_tuple_type = decltype(t);
 //  using inner_tuple_type = std::tuple_element_t<0,outer_tuple_type>;
@@ -1343,11 +1343,11 @@ constexpr tuple_like auto as_flat_tuple(const T& arg)
 // this function computes an inclusive scan on an input tuple
 // the result of this function is a pair of values (result_tuple, carry_out):
 //   1. a tuple with the same size as the input, and
-//   2. a carry out value
+//   2. a carry out value (i.e., the result of fold_left)
 // the user's combination function f has control over the value of the carry after each combination
 // f(input[i], carry_in) must return the pair (result[i], carry_out)
 template<tuple_like T, class C, class F>
-constexpr auto tuple_inclusive_scan_with_carry(const T& input, const C& carry_in, const F& f)
+constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const F& f)
 {
   using namespace std;
 
@@ -1360,7 +1360,7 @@ constexpr auto tuple_inclusive_scan_with_carry(const T& input, const C& carry_in
     auto [result_i, carry_out] = f(input_i, prev_carry);
 
     // return the result of this iteration and the carry for the next iteration
-    return pair(tuple_append_similar_to<T>(prev_result, result_i), carry_out);
+    return pair(tuples::append_similar_to<T>(prev_result, result_i), carry_out);
   });
 }
 
@@ -1387,7 +1387,7 @@ template<tuple_of_pair_like T>
 constexpr pair_like auto unzip_innermost_pairs(const T& tuple_of_pairs)
 {
   // this will return a pair of tuples
-  return tuple_unzip(tuple_of_pairs);
+  return tuples::unzip(tuple_of_pairs);
 }
 
 template<tuple_like T>
@@ -1395,9 +1395,9 @@ template<tuple_like T>
 constexpr pair_like auto unzip_innermost_pairs(const T& tuple)
 {
   // this will return a pair of tuples
-  return tuple_unzip(zip_with(tuple, [](auto t_i)
+  return tuples::unzip(tuples::zip_with(tuple, [](auto t_i)
   {
-    return unzip_innermost_pairs(t_i);
+    return tuples::unzip_innermost_pairs(t_i);
   }));
 }
 

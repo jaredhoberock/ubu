@@ -2,10 +2,10 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/tuples.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "to_integral_like.hpp"
-#include "tuple_algorithm.hpp"
 #include <utility>
 
 namespace ubu::detail
@@ -38,7 +38,7 @@ constexpr pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& ca
 template<nonscalar_coordinate C1, scalar_coordinate C2, class F>
 constexpr pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
-  return tuple_inclusive_scan_with_carry(coord, carry_in, [&](auto coord_i, auto carry_i)
+  return tuples::inclusive_scan_and_fold(coord, carry_in, [&](auto coord_i, auto carry_i)
   {
     return coordinate_inclusive_scan(coord_i, carry_i, combine);
   });
@@ -49,7 +49,7 @@ template<nonscalar_coordinate C1, nonscalar_coordinate C2, class F>
   requires weakly_congruent<C2,C1>
 constexpr pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
-  return tuple_unzip(tuple_zip_with(coord, carry_in), [&](const auto& coord_i, const auto& carry_i)
+  return tuples::unzip(tuples::zip_with(coord, carry_in), [&](const auto& coord_i, const auto& carry_i)
   {
     return coordinate_inclusive_scan(coord_i, carry_i, combine);
   });
