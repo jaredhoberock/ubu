@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/coordinate_cast.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "detail/approximate_factors.hpp"
 #include "shape_size.hpp"
 #include <array>
@@ -45,7 +45,7 @@ constexpr T convert_shape(const S& shape)
   std::array<detail::to_integral_like_t<S>, N> factors = detail::approximate_factors<N>(detail::to_integral_like(shape));
 
   // recurse with each factor
-  return detail::tuple_zip_with(T{}, factors, [](auto t, const auto& f)
+  return tuples::zip_with(T{}, factors, [](auto t, const auto& f)
   {
     return convert_shape<decltype(t)>(f);
   });
@@ -57,7 +57,7 @@ template<nonscalar_coordinate T, nonscalar_coordinate S>
   requires (not congruent<T,S> and weakly_congruent<S,T>)
 constexpr T convert_shape(const S& shape)
 {
-  return detail::tuple_zip_with(T{}, shape, [](auto t, const auto& s)
+  return tuples::zip_with(T{}, shape, [](auto t, const auto& s)
   {
     return convert_shape<decltype(t)>(s);
   });

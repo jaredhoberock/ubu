@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 
 
@@ -25,7 +25,7 @@ constexpr integral_like auto shape_size(const C& shape)
 template<nonscalar_coordinate C>
 constexpr integral_like auto shape_size(const C& shape)
 {
-  return detail::tuple_fold(1, shape, [](const auto& partial_product, const auto& s)
+  return tuples::fold_left(1, shape, [](const auto& partial_product, const auto& s)
   {
     return partial_product * shape_size(s);
   });
