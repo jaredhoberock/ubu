@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
-#include "../detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include <concepts>
 #include <tuple>
 #include <type_traits>
@@ -14,15 +14,15 @@ namespace ubu::detail
 
 template<class T>
 concept single_integral_like = 
-  tuple_like_of_size<T,1>
-  and integral_like<std::remove_cvref_t<std::tuple_element_t<0,std::remove_cvref_t<T>>>>
+  tuples::single_like<T>
+  and integral_like<tuples::first_t<T>>
 ;
 
 template<class C>
   requires (integral_like<std::remove_cvref_t<C>> or single_integral_like<C>)
 constexpr decltype(auto) to_integral_like(C&& coord)
 {
-  if constexpr(tuple_like<C>)
+  if constexpr(tuples::tuple_like<C>)
   {
     return get<0>(std::forward<C>(coord));
   }

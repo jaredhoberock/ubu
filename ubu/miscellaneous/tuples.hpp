@@ -80,26 +80,31 @@ static_assert(not tuple_like<float>);
 template<class T, std::size_t N>
 concept tuple_like_of_size =
   tuple_like<T>
-  and (std::tuple_size_v<std::remove_cvref_t<T>> == N)
+  and (N == std::tuple_size_v<std::remove_cvref_t<T>>)
+;
+
+template<class T, std::size_t N>
+concept tuple_like_of_size_at_least =
+  tuple_like<T>
+  and (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
 ;
 
 
 template<class T>
 concept unit_like = tuple_like_of_size<T,0>;
 
+template<class T>
+concept single_like = tuple_like_of_size<T,1>;
 
 template<class T>
 concept pair_like = tuple_like_of_size<T,2>;
 
-// XXX rename this first_t
-//     constrain to tuple_like_of_size_at_least<1>
-template<pair_like P>
-using pair_first_t = std::tuple_element_t<0,P>;
 
-// XXX rename this second_t
-//     constrain to tuple_like_of_size_at_least<2>
-template<pair_like P>
-using pair_second_t = std::tuple_element_t<1,P>;
+template<tuple_like_of_size_at_least<1> P>
+using first_t = std::tuple_element_t<0, std::remove_cvref_t<P>>;
+
+template<tuple_like_of_size_at_least<2> P>
+using second_t = std::tuple_element_t<1, std::remove_cvref_t<P>>;
 
 
 template<tuple_like T>
