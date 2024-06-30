@@ -1207,9 +1207,16 @@ namespace detail
 
 
 template<tuple_like R, std::size_t... I, std::size_t... J, tuple_like T1, tuple_like T2>
-constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, std::index_sequence<J...>, T1&& t1, T2&& t2)
+constexpr tuple_like auto concatenate_similar_to_impl(std::index_sequence<I...>, std::index_sequence<J...>, T1&& t1, T2&& t2)
 {
   return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T1>(t1))..., get<J>(std::forward<T2>(t2))...);
+}
+
+
+template<tuple_like R, tuple_like T, std::size_t... I>
+constexpr tuple_like auto concatenate_similar_to_impl(std::index_sequence<I...>, T&& t)
+{
+  return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
 }
 
 
@@ -1217,37 +1224,30 @@ constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, s
 
 
 template<tuple_like R>
-constexpr tuple_like auto tuple_cat_similar_to()
+constexpr tuple_like auto concatenate_similar_to()
 {
   return tuples::make_tuple_similar_to<R>();
 }
 
 
-template<tuple_like R, tuple_like T, std::size_t... I>
-constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, T&& t)
-{
-  return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
-}
-
-
 template<tuple_like R, tuple_like T>
-constexpr tuple_like auto tuple_cat_similar_to(T&& t)
+constexpr tuple_like auto concatenate_similar_to(T&& t)
 {
-  return detail::tuple_cat_similar_to_impl<T>(indices_v<T>, std::forward<T>(t));
+  return detail::concatenate_similar_to_impl<T>(indices_v<T>, std::forward<T>(t));
 }
 
 
 template<tuple_like R, tuple_like T1, tuple_like T2>
-constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2)
+constexpr tuple_like auto concatenate_similar_to(T1&& t1, T2&& t2)
 {
-  return detail::tuple_cat_similar_to_impl<R>(indices_v<T1>, indices_v<T2>, std::forward<T1>(t1), std::forward<T2>(t2));
+  return detail::concatenate_similar_to_impl<R>(indices_v<T1>, indices_v<T2>, std::forward<T1>(t1), std::forward<T2>(t2));
 }
 
 
 template<tuple_like R, tuple_like T1, tuple_like T2, tuple_like... Ts>
-constexpr tuple_like auto tuple_cat_similar_to(T1&& t1, T2&& t2, Ts&&... ts)
+constexpr tuple_like auto concatenate_similar_to(T1&& t1, T2&& t2, Ts&&... ts)
 {
-  return tuple_cat_similar_to<R>(tuple_cat_similar_to<R>(std::forward<T1>(t1), std::forward<T2>(t2)), std::forward<Ts>(ts)...);
+  return tuples::concatenate_similar_to<R>(tuples::concatenate_similar_to<R>(std::forward<T1>(t1), std::forward<T2>(t2)), std::forward<Ts>(ts)...);
 }
 
 
@@ -1256,9 +1256,9 @@ namespace detail
 
 
 template<tuple_like T, std::size_t... I>
-constexpr tuple_like auto tuple_cat_all_impl(std::index_sequence<I...>, T&& tuple_of_tuples)
+constexpr tuple_like auto concatenate_all_impl(std::index_sequence<I...>, T&& tuple_of_tuples)
 {
-  return tuple_cat_similar_to<T>(get<I>(std::forward<T>(tuple_of_tuples))...);
+  return tuples::concatenate_similar_to<T>(get<I>(std::forward<T>(tuple_of_tuples))...);
 }
 
 
@@ -1266,22 +1266,22 @@ constexpr tuple_like auto tuple_cat_all_impl(std::index_sequence<I...>, T&& tupl
 
 
 template<tuple_like T>
-constexpr tuple_like auto tuple_cat_all(T&& tuple_of_tuples)
+constexpr tuple_like auto concatenate_all(T&& tuple_of_tuples)
 {
-  return tuple_cat_all_impl(indices_v<T>, std::forward<T>(tuple_of_tuples));
+  return detail::concatenate_all_impl(indices_v<T>, std::forward<T>(tuple_of_tuples));
 }
 
 
-constexpr std::tuple<> tuple_cat()
+constexpr std::tuple<> concatenate()
 {
   return std::tuple();
 }
 
 
 template<tuple_like T, tuple_like... Ts>
-constexpr tuple_like auto tuple_cat(const T& tuple, const Ts&... tuples)
+constexpr tuple_like auto concatenate(const T& tuple, const Ts&... tuples)
 {
-  return tuple_cat_similar_to<T>(tuple, tuples...);
+  return tuples::concatenate_similar_to<T>(tuple, tuples...);
 }
 
 
@@ -1333,6 +1333,7 @@ constexpr std::ostream& output(std::ostream& os, const T& t)
 }
 
 
+// XXX probably should rename to flatten
 template<class T>
 constexpr tuple_like auto as_flat_tuple(const T& arg)
 {
@@ -1347,7 +1348,7 @@ constexpr tuple_like auto as_flat_tuple(const T& arg)
       return as_flat_tuple(element);
     });
 
-    return tuple_cat_all(tuple_of_tuples);
+    return tuples::concatenate_all(tuple_of_tuples);
   }
 }
 

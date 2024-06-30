@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
-#include "../../coordinates/detail/tuple_algorithm.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 #include <tuple>
@@ -37,12 +37,12 @@ template<slicer C, nonscalar_slicer_for<C> K>
   requires slicer_with_underscore<K>
 constexpr auto slice_coordinate_impl(const C& coord, const K& katana);
 
-template<detail::tuple_like R, class MaybeUnderscore, class Arg>
+template<tuples::tuple_like R, class MaybeUnderscore, class Arg>
 constexpr auto wrap_if_underscore_or_int(const Arg& arg)
 {
   if constexpr(is_underscore_v<MaybeUnderscore> or integral_like<Arg>)
   {
-    return make_tuple_similar_to<R>(arg);
+    return tuples::make_tuple_similar_to<R>(arg);
   }
   else
   {
@@ -57,12 +57,12 @@ constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const 
   // we also want to preserve the tuple structure of any tuples that were selected by underscore at element I
   //
   // so, if element I of katana is an underscore, we wrap that result in an extra tuple layer to preserve the tuple in the concatenation
-  // we also need to wrap slice_coordinate's result if it returns a raw integer for tuple_cat to work
+  // we also need to wrap slice_coordinate's result if it returns a raw integer for tuples::concatenate to work
 
   // finally, because it's really inconvenient for this function to return a (single_thing), we unwrap any singles we find
 
-  auto result_tuple = tuple_cat_similar_to<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
-  return detail::tuple_unwrap_single(result_tuple);
+  auto result_tuple = tuples::concatenate_similar_to<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
+  return tuples::unwrap_single(result_tuple);
 }
 
 
@@ -71,7 +71,7 @@ template<slicer C, nonscalar_slicer_for<C> K>
   requires slicer_with_underscore<K>
 constexpr auto slice_coordinate_impl(const C& coord, const K& katana)
 {
-  return recursive_slice_coordinate_impl(detail::tuple_indices<K>, coord, katana);
+  return recursive_slice_coordinate_impl(tuples::indices_v<K>, coord, katana);
 }
 
 
