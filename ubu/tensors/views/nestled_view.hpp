@@ -5,7 +5,6 @@
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/congruent.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../coordinates/traits/rank.hpp"
 #include "../detail/coordinate_cat.hpp"
 #include "../detail/coordinate_tail.hpp"
