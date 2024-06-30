@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "colexicographical_lift.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "detail/tuple_algorithm.hpp"
 
 
 namespace ubu
@@ -23,7 +23,7 @@ template<nonscalar_coordinate C>
 constexpr nonscalar_coordinate auto deep_reverse(const C& coord)
 {
   // recursively reverse coord
-  return detail::tuple_zip_with(detail::tuple_reverse(coord), [](const auto& e)
+  return tuples::zip_with(tuples::reverse(coord), [](const auto& e)
   {
     return deep_reverse(e);
   });

@@ -734,7 +734,7 @@ namespace detail
 
 template<tuple_like T, std::size_t... I>
   requires (std::tuple_size_v<T> == sizeof...(I))
-constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T& t)
+constexpr tuple_like auto reverse_impl(std::index_sequence<I...>, const T& t)
 {
   return tuples::make_tuple_similar_to<T>(get<I>(t)...);
 }
@@ -743,11 +743,11 @@ constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T&
 } // end detail
 
 
-// tuple_reverse
+// reverse
 template<tuple_like T>
-constexpr tuple_like auto tuple_reverse(const T& t)
+constexpr tuple_like auto reverse(const T& t)
 {
-  return tuple_reverse_impl(reversed_indices_v<T>, t);
+  return detail::reverse_impl(reversed_indices_v<T>, t);
 }
 
 
@@ -929,7 +929,7 @@ template<tuple_like T1, tuple_like T2, class C>
   requires same_tuple_size<T1,T2>
 constexpr bool tuple_colexicographical_compare(const T1& t1, const T2& t2, const C& compare)
 {
-  return tuple_lexicographical_compare(tuple_reverse(t1), tuple_reverse(t2), compare);
+  return tuple_lexicographical_compare(tuples::reverse(t1), tuples::reverse(t2), compare);
 }
 
 
