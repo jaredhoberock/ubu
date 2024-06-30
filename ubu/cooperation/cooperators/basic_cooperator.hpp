@@ -3,10 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../../places/memory/buffers/empty_buffer.hpp"
 #include "../../tensors/coordinates/colexicographical_lift.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
-#include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "../../tensors/coordinates/traits/rank.hpp"
 #include "../../tensors/shapes/shape_size.hpp"
 #include "../barriers/arrive_and_wait.hpp"
@@ -88,11 +88,11 @@ struct basic_cooperator
     requires (rank_v<S> > 1 and hierarchical_workspace<W>)
   constexpr auto subgroup_and_coord() const
   {
-    using namespace detail;
+    using namespace tuples;
 
-    auto child_shape = tuple_drop_last_and_unwrap_single(shape);
-    auto child_coord = tuple_drop_last_and_unwrap_single(coord);
-    auto child_group_coord = tuple_last(coord);
+    auto child_shape = drop_last_and_unwrap_single(shape);
+    auto child_coord = drop_last_and_unwrap_single(coord);
+    auto child_group_coord = last(coord);
     auto local_workspace = get_local_workspace(workspace_);
 
     return std::pair(make_basic_cooperator(child_coord, child_shape, local_workspace), child_group_coord);

@@ -1044,7 +1044,7 @@ tuple_like auto tuple_unzip(T&& t)
 
 
 template<tuple_like T>
-constexpr decltype(auto) tuple_last(T&& t)
+constexpr decltype(auto) last(T&& t)
 {
   constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
   return get<N-1>(std::forward<T>(t));
@@ -1056,7 +1056,7 @@ namespace detail
 
 
 template<std::size_t... I, tuple_like T>
-constexpr tuple_like auto tuple_drop_impl(std::index_sequence<I...>, T&& t)
+constexpr tuple_like auto drop_impl(std::index_sequence<I...>, T&& t)
 {
   constexpr std::size_t num_dropped = std::tuple_size_v<std::remove_cvref_t<T>> - sizeof...(I);
 
@@ -1069,19 +1069,19 @@ constexpr tuple_like auto tuple_drop_impl(std::index_sequence<I...>, T&& t)
 
 template<std::size_t N, tuple_like T>
   requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
-constexpr tuple_like auto tuple_drop(T&& t)
+constexpr tuple_like auto drop(T&& t)
 {
   constexpr std::size_t num_kept = std::tuple_size_v<std::remove_cvref_t<T>> - N;
   auto indices = std::make_index_sequence<num_kept>();
-  return detail::tuple_drop_impl(indices, std::forward<T>(t));
+  return detail::drop_impl(indices, std::forward<T>(t));
 }
 
 
 template<tuple_like T>
   requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
-constexpr tuple_like auto tuple_drop_first(T&& t)
+constexpr tuple_like auto drop_first(T&& t)
 {
-  return tuple_drop<1>(std::forward<T>(t));
+  return drop<1>(std::forward<T>(t));
 }
 
 
@@ -1091,7 +1091,7 @@ namespace detail
 
 template<std::size_t... I, tuple_like T>
   requires (sizeof...(I) <= std::tuple_size_v<std::remove_cvref_t<T>>)
-constexpr tuple_like auto tuple_take_impl(std::index_sequence<I...>, T&& t)
+constexpr tuple_like auto take_impl(std::index_sequence<I...>, T&& t)
 {
   return make_tuple_similar_to<T>(get<I>(t)...);
 }
@@ -1102,18 +1102,18 @@ constexpr tuple_like auto tuple_take_impl(std::index_sequence<I...>, T&& t)
 
 template<std::size_t N, tuple_like T>
   requires (N <= std::tuple_size_v<std::remove_cvref_t<T>>)
-constexpr tuple_like auto tuple_take(T&& t)
+constexpr tuple_like auto take(T&& t)
 {
   auto indices = std::make_index_sequence<N>();
-  return detail::tuple_take_impl(indices, std::forward<T>(t));
+  return detail::take_impl(indices, std::forward<T>(t));
 }
 
 
 template<tuple_like T>
-constexpr tuple_like auto tuple_drop_last(T&& t)
+constexpr tuple_like auto drop_last(T&& t)
 {
   constexpr int N = std::tuple_size_v<std::remove_cvref_t<T>>;
-  return tuple_take<N-1>(std::forward<T>(t));
+  return take<N-1>(std::forward<T>(t));
 }
 
 
@@ -1168,9 +1168,9 @@ constexpr T&& tuple_unwrap_single(T&& t)
 
 
 template<tuple_like T>
-constexpr auto tuple_drop_last_and_unwrap_single(T&& t)
+constexpr auto drop_last_and_unwrap_single(T&& t)
 {
-  return tuple_unwrap_single(tuple_drop_last(std::forward<T>(t)));
+  return tuple_unwrap_single(drop_last(std::forward<T>(t)));
 }
 
 template<bool do_wrap, class T>
