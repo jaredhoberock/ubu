@@ -718,7 +718,7 @@ constexpr tuple_like auto tuple_append_similar_to(T&& t, Arg&& arg)
 
 // tuple_append
 template<tuple_like T, class Arg>
-constexpr tuple_like auto tuple_append(const T& t, Arg&& arg)
+constexpr tuple_like auto append(const T& t, Arg&& arg)
 {
   return tuple_append_similar_to<T>(t, std::forward<Arg>(arg));
 }
