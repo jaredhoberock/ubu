@@ -3,10 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
 #include "concepts/superdimensional.hpp"
-#include "detail/tuple_algorithm.hpp"
 #include "traits/zeros.hpp"
 
 namespace ubu
@@ -29,7 +29,7 @@ constexpr congruent<R> auto truncate_coordinate(const C& coord)
   }
   else
   {
-    return detail::tuple_static_enumerate_similar_to<C>(zeros_v<R>, [&]<std::size_t index>(auto zero)
+    return tuples::static_enumerate_similar_to<C>(zeros_v<R>, [&]<std::size_t index>(auto zero)
     {
       return truncate_coordinate<decltype(zero)>(get<index>(coord));
     });
