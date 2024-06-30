@@ -4,7 +4,7 @@
 
 #include "../../../miscellaneous/constant.hpp"
 #include "../../../miscellaneous/constant_valued.hpp"
-#include "../detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include <limits>
@@ -64,7 +64,7 @@ constexpr congruent<C> auto zeros()
     // XXX this assumes that T is default-constructible
     T dummy_tuple{};
 
-    return tuple_zip_with(dummy_tuple, [](auto e)
+    return tuples::zip_with(dummy_tuple, [](auto e)
     {
       return zeros<decltype(e)>();
     });

@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
-#include "../detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include <array>
 #include <concepts>
 #include <tuple>
@@ -204,17 +204,17 @@ concept detected = requires
 } // end rank_impl
 
 
-template<tuple_like T, std::size_t... I>
+template<tuples::tuple_like T, std::size_t... I>
 constexpr bool is_tuple_like_of_types_each_with_static_rank_impl(std::index_sequence<I...>)
 {
   // check that each element type may be used with the rank CPO
   return (... and rank_impl::detected<rank_result_t, std::tuple_element_t<I,T>>);
 }
 
-template<tuple_like T>
+template<tuples::tuple_like T>
 struct is_tuple_like_of_types_each_with_static_rank<T>
 {
-  static constexpr bool value = is_tuple_like_of_types_each_with_static_rank_impl<T>(tuple_indices<T>);
+  static constexpr bool value = is_tuple_like_of_types_each_with_static_rank_impl<T>(tuples::indices_v<T>);
 };
 
 
