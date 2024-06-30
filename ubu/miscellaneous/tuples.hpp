@@ -626,7 +626,7 @@ template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, st
             and sizeof...(I) == std::tuple_size_v<std::remove_cvref_t<T>>)
 constexpr auto zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts&&... ts)
 {
-  return make_tuple_like<R>(detail::get_and_invoke<I>(std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...)...);
+  return tuples::make_tuple_like<R>(detail::get_and_invoke<I>(std::forward<F>(f), std::forward<T>(t), std::forward<Ts>(ts)...)...);
 }
 
 
@@ -666,7 +666,7 @@ struct tuple_similar_to
 template<tuple_like Example, class... Args>
 constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
 {
-  return make_tuple_like<detail::tuple_similar_to<Example>::template tuple>(std::forward<Args>(args)...);
+  return tuples::make_tuple_like<detail::tuple_similar_to<Example>::template tuple>(std::forward<Args>(args)...);
 }
 
 
@@ -677,7 +677,7 @@ namespace detail
 template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
 constexpr tuple_like auto tuple_prepend_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
-  return make_tuple_similar_to<Example>(std::forward<Arg>(arg), get<I>(std::forward<T>(t))...);
+  return tuples::make_tuple_similar_to<Example>(std::forward<Arg>(arg), get<I>(std::forward<T>(t))...);
 }
 
 
@@ -696,7 +696,7 @@ constexpr tuple_like auto tuple_prepend_similar_to(T&& t, Arg&& arg)
 template<tuple_like T, class Arg>
 constexpr tuple_like auto tuple_prepend(const T& t, Arg&& arg)
 {
-  return tuple_prepend_similar_to<T>(t, std::forward<Arg>(arg));
+  return tuples::tuple_prepend_similar_to<T>(t, std::forward<Arg>(arg));
 }
 
 
@@ -707,7 +707,7 @@ namespace detail
 template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
 constexpr tuple_like auto tuple_append_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
-  return make_tuple_similar_to<Example>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
+  return tuples::make_tuple_similar_to<Example>(get<I>(std::forward<T>(t))..., std::forward<Arg>(arg));
 }
 
 
@@ -736,7 +736,7 @@ template<tuple_like T, std::size_t... I>
   requires (std::tuple_size_v<T> == sizeof...(I))
 constexpr tuple_like auto tuple_reverse_impl(std::index_sequence<I...>, const T& t)
 {
-  return make_tuple_similar_to<T>(get<I>(t)...);
+  return tuples::make_tuple_similar_to<T>(get<I>(t)...);
 }
 
 
@@ -792,7 +792,7 @@ constexpr tuple_like auto zip(const T& t, const Ts&... ts)
 {
   return zip_with(t, ts..., [](const auto&... elements)
   {
-    return make_tuple_similar_to<T>(elements...);
+    return tuples::make_tuple_similar_to<T>(elements...);
   });
 }
 
@@ -968,7 +968,7 @@ decltype(auto) get2d(T&& t)
 template<std::size_t Row, std::size_t... Col, tuple_like T>
 tuple_like auto tuple_unzip_row_impl(std::index_sequence<Col...>, T&& t)
 {
-  return make_tuple_like<tuple_similar_to<T>::template tuple>(get2d<Row,Col>(std::forward<T>(t))...);
+  return tuples::make_tuple_like<tuple_similar_to<T>::template tuple>(get2d<Row,Col>(std::forward<T>(t))...);
 }
 
 
@@ -984,7 +984,7 @@ tuple_like auto tuple_unzip_impl(std::index_sequence<Row...>, T&& t)
 {
   using inner_tuple_type = std::tuple_element_t<0,std::remove_cvref_t<T>>;
   
-  return make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
+  return tuples::make_tuple_like<tuple_similar_to<inner_tuple_type>::template tuple>
   (
     tuple_unzip_row<Row>(std::forward<T>(t))...
   );
@@ -1060,7 +1060,7 @@ constexpr tuple_like auto drop_impl(std::index_sequence<I...>, T&& t)
 {
   constexpr std::size_t num_dropped = std::tuple_size_v<std::remove_cvref_t<T>> - sizeof...(I);
 
-  return make_tuple_similar_to<T>(get<I+num_dropped>(std::forward<T>(t))...);
+  return tuples::make_tuple_similar_to<T>(get<I+num_dropped>(std::forward<T>(t))...);
 }
 
 
@@ -1093,7 +1093,7 @@ template<std::size_t... I, tuple_like T>
   requires (sizeof...(I) <= std::tuple_size_v<std::remove_cvref_t<T>>)
 constexpr tuple_like auto take_impl(std::index_sequence<I...>, T&& t)
 {
-  return make_tuple_similar_to<T>(get<I>(t)...);
+  return tuples::make_tuple_similar_to<T>(get<I>(t)...);
 }
 
 
@@ -1124,7 +1124,7 @@ namespace detail
 template<tuple_like R, std::size_t... I, tuple_like T>
 constexpr tuple_like auto ensure_tuple_similar_to_impl(std::index_sequence<I...>, T&& t)
 {
-  return make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
+  return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
 }
 
 
@@ -1141,7 +1141,7 @@ template<tuple_like R, class T>
   requires (not tuple_like<T>)
 constexpr tuple_like auto ensure_tuple_similar_to(T&& arg)
 {
-  return make_tuple_similar_to<R>(std::forward<T>(arg));
+  return tuples::make_tuple_similar_to<R>(std::forward<T>(arg));
 }
 
 
@@ -1195,7 +1195,7 @@ namespace detail
 template<tuple_like R, std::size_t... I, std::size_t... J, tuple_like T1, tuple_like T2>
 constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, std::index_sequence<J...>, T1&& t1, T2&& t2)
 {
-  return make_tuple_similar_to<R>(get<I>(std::forward<T1>(t1))..., get<J>(std::forward<T2>(t2))...);
+  return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T1>(t1))..., get<J>(std::forward<T2>(t2))...);
 }
 
 
@@ -1205,14 +1205,14 @@ constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, s
 template<tuple_like R>
 constexpr tuple_like auto tuple_cat_similar_to()
 {
-  return make_tuple_similar_to<R>();
+  return tuples::make_tuple_similar_to<R>();
 }
 
 
 template<tuple_like R, tuple_like T, std::size_t... I>
 constexpr tuple_like auto tuple_cat_similar_to_impl(std::index_sequence<I...>, T&& t)
 {
-  return make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
+  return tuples::make_tuple_similar_to<R>(get<I>(std::forward<T>(t))...);
 }
 
 
@@ -1428,7 +1428,7 @@ namespace detail
 template<tuple_like R, tuple_like T, class F, std::size_t... I>
 constexpr tuple_like auto tuple_static_enumerate_similar_to_impl(const T& tuple, F&& f, std::index_sequence<I...>)
 {
-  return make_tuple_similar_to<R>(f.template operator()<I>(get<I>(tuple))...); 
+  return tuples::make_tuple_similar_to<R>(f.template operator()<I>(get<I>(tuple))...); 
 }
 
 
