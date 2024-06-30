@@ -408,16 +408,16 @@ using smart_tuple = typename rebind_tuple_like<Example,Types...>::type;
 
 
 template<class F, class I>
-constexpr I fold_args(F, I init)
+constexpr I fold_args_left(F, I init)
 {
   return init;
 }
 
 
 template<class F, class I, class Arg, class... Args>
-constexpr auto fold_args(F f, I init, Arg arg, Args... args)
+constexpr auto fold_args_left(F f, I init, Arg arg, Args... args)
 {
-  return fold_args(f, f(fold_args(f, init), arg), args...);
+  return detail::fold_args_left(f, f(detail::fold_args_left(f, init), arg), args...);
 }
 
 
@@ -425,7 +425,7 @@ template<class F, class Arg, class... Args>
 concept foldable_with =
   requires(F f, Arg arg1, Args... args)
   {
-    fold_args(f, arg1, args...);
+    detail::fold_args_left(f, arg1, args...);
   }
 ;
 
@@ -440,25 +440,25 @@ constexpr I fold_args_right(F, I init)
 template<class F, class I, class Arg, class... Args>
 constexpr auto fold_args_right(F f, I init, Arg arg, Args... args)
 {
-  return fold_args_right(f, f(fold_args_right(f, init, args...), arg));
+  return detail::fold_args_right(f, f(detail::fold_args_right(f, init, args...), arg));
 }
 
 
 template<std::size_t... I, tuple_like T, class F>
-constexpr decltype(auto) tuple_fold_impl(std::index_sequence<I...>, T&& t, F&& f)
+constexpr decltype(auto) fold_left_impl(std::index_sequence<I...>, T&& t, F&& f)
 {
-  return fold_args(std::forward<F>(f), get<I>(std::forward<T>(t))...);
+  return detail::fold_args_left(std::forward<F>(f), get<I>(std::forward<T>(t))...);
 }
 
 
 } // end detail
 
 
-// tuple_fold with no init parameter
+// fold_left with no init parameter
 template<tuple_like T, class F>
-constexpr auto tuple_fold(T&& t, F&& f)
+constexpr auto fold_left(T&& t, F&& f)
 {
-  return detail::tuple_fold_impl(indices_v<T>, std::forward<T>(t), std::forward<F>(f));
+  return detail::fold_left_impl(indices_v<T>, std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -469,7 +469,7 @@ namespace detail
 template<std::size_t... I, class Init, tuple_like T, class F>
 constexpr decltype(auto) tuple_fold_right_impl(std::index_sequence<I...>, Init&& init, T&& t, F&& f)
 {
-  return fold_args_right(std::forward<F>(f), std::forward<Init>(init), get<I>(std::forward<T>(t))...);
+  return detail::fold_args_right(std::forward<F>(f), std::forward<Init>(init), get<I>(std::forward<T>(t))...);
 }
 
 
@@ -485,11 +485,11 @@ constexpr auto tuple_fold_right(I&& init, T&& t, F&& f)
 
 
 template<class F, class T>
-concept tuple_folder =
+concept left_folder =
   tuple_like<T>
   and requires(T t, F f)
   {
-    tuple_fold(t,f);
+    fold_left(t,f);
   }
 ;
 
@@ -499,20 +499,20 @@ namespace detail
 
 
 template<std::size_t... Is, class I, tuple_like T, class F>
-constexpr auto tuple_fold_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
+constexpr auto fold_left(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
 {
-  return fold_args(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
+  return detail::fold_args_left(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
 }
 
 
 } // end detail
 
 
-// tuple_fold with init parameter
+// fold_left with init parameter
 template<class I, tuple_like T, class F>
-constexpr auto tuple_fold(I&& init, T&& t, F&& f)
+constexpr auto fold_left(I&& init, T&& t, F&& f)
 {
-  return tuple_fold_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return fold_left_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -799,31 +799,31 @@ constexpr tuple_like auto zip(const T& t, const Ts&... ts)
 }
 
 
-template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op1, tuple_folder<zip_with_result_t<Op1,T1,T2>> Op2>
+template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op1, left_folder<zip_with_result_t<Op1,T1,T2>> Op2>
 constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
-  return tuple_fold(zip_with(t1, t2, star), plus);
+  return tuples::fold_left(tuples::zip_with(t1, t2, star), plus);
 }
 
 
-template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> Op1, tuple_folder<zip_with_result_t<Op1,T1,T2,T3>> Op2>
+template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> Op1, left_folder<zip_with_result_t<Op1,T1,T2,T3>> Op2>
 constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, Op1 star, Op2 plus)
 {
-  return tuple_fold(zip_with(t1, t2, t3, star), plus);
+  return tuples::fold_left(tuples::zip_with(t1, t2, t3, star), plus);
 }
 
 
 template<tuple_like T>
 constexpr auto tuple_sum(const T& t)
 {
-  return tuple_fold(t, std::plus{});
+  return tuples::fold_left(t, std::plus{});
 }
 
 
 template<tuple_like T>
 constexpr auto tuple_product(const T& t)
 {
-  return tuple_fold(t, std::multiplies{});
+  return tuples::fold_left(t, std::multiplies{});
 }
 
 
@@ -847,14 +847,14 @@ constexpr decltype(auto) tuple_equal(const T1& t1, const T2& t2)
 
 template<tuple_like T, class P>
   requires zipper_r<bool,P,T>
-constexpr bool tuple_all(const T& t, const P& pred)
+constexpr bool all_of(const T& t, const P& pred)
 {
   auto folder = [&](bool partial_result, const auto& element)
   {
     return partial_result and pred(element);
   };
 
-  return tuple_fold(t, folder);
+  return tuples::fold_left(t, folder);
 }
 
 
@@ -1007,7 +1007,7 @@ concept unzippable_tuple_like =
 // tuple_unzip takes a M-size tuple of N-size tuples (i.e., a matrix) and returns an N-size tuple of M-size tuples
 // in other words, it returns the transpose of the matrix
 //
-// this probably has an elegant solution with zip_with or tuple_fold, but I don't know what it is
+// this probably has an elegant solution with zip_with or fold_left, but I don't know what it is
 template<tuple_like T>
   requires unzippable_tuple_like<T>
 tuple_like auto tuple_unzip(T&& t)
@@ -1351,7 +1351,7 @@ constexpr auto tuple_inclusive_scan_with_carry(const T& input, const C& carry_in
 {
   using namespace std;
 
-  return tuple_fold(pair(tuple(), carry_in), input, [&f](const auto& prev_state, const auto& input_i)
+  return tuples::fold_left(pair(tuple(), carry_in), input, [&f](const auto& prev_state, const auto& input_i)
   {
     // unpack the result of the previous fold iteration
     auto [prev_result, prev_carry] = prev_state;
