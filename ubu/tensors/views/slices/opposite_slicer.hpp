@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinates/detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 
@@ -31,7 +31,7 @@ constexpr slicer auto opposite_slicer(const C& coord, const K& katana)
     // terminal case 2: katana is a coordinate, return an underscore
     return _;
   }
-  else if constexpr (detail::unit_like<K>)
+  else if constexpr (tuples::unit_like<K>)
   {
     // terminal case 3: katana is a unit, return a unit
     return katana;
@@ -39,9 +39,9 @@ constexpr slicer auto opposite_slicer(const C& coord, const K& katana)
   else
   {
     // recursive case: both katana and coord are same-size tuples
-    static_assert(detail::same_tuple_size<C,K>);
+    static_assert(tuples::same_size<C,K>);
 
-    return detail::tuple_zip_with(katana, coord, [](const auto& k, const auto& c)
+    return tuples::zip_with(katana, coord, [](const auto& k, const auto& c)
     {
       return opposite_slicer(c, k);
     });
