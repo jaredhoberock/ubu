@@ -2,6 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
+// aside from prologue.hpp, epilogue.hpp, and standard headers, this header shall remain standalone
+
 #include <array>
 #include <concepts>
 #include <functional>

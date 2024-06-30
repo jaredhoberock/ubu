@@ -2,10 +2,10 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
 #include "detail/to_integral_like.hpp"
-#include "detail/tuple_algorithm.hpp"
 #include <type_traits>
 
 
@@ -26,7 +26,7 @@ constexpr T coordinate_cast(const C& coord)
 {
   T zero{};
 
-  return detail::tuple_zip_with(zero, coord, [](auto z, const auto& c)
+  return tuples::zip_with(zero, coord, [](auto z, const auto& c)
   {
     return coordinate_cast<decltype(z)>(c);
   });
