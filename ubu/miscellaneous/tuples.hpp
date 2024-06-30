@@ -690,7 +690,7 @@ namespace detail
 
 
 template<tuple_like Example, std::size_t... I, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_prepend_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
+constexpr tuple_like auto prepend_similar_to_impl(std::index_sequence<I...>, T&& t, Arg&& arg)
 {
   return tuples::make_tuple_similar_to<Example>(std::forward<Arg>(arg), get<I>(std::forward<T>(t))...);
 }
@@ -699,19 +699,19 @@ constexpr tuple_like auto tuple_prepend_similar_to_impl(std::index_sequence<I...
 } // end detail
 
 
-// tuple_prepend_similar_to
+// prepend_similar_to
 template<tuple_like Example, tuple_like T, class Arg>
-constexpr tuple_like auto tuple_prepend_similar_to(T&& t, Arg&& arg)
+constexpr tuple_like auto prepend_similar_to(T&& t, Arg&& arg)
 {
-  return detail::tuple_prepend_similar_to_impl<Example>(indices_v<T>, std::forward<T>(t), std::forward<Arg>(arg));
+  return detail::prepend_similar_to_impl<Example>(indices_v<T>, std::forward<T>(t), std::forward<Arg>(arg));
 }
 
 
-// tuple_prepend
+// prepend
 template<tuple_like T, class Arg>
-constexpr tuple_like auto tuple_prepend(const T& t, Arg&& arg)
+constexpr tuple_like auto prepend(const T& t, Arg&& arg)
 {
-  return tuples::tuple_prepend_similar_to<T>(t, std::forward<Arg>(arg));
+  return tuples::prepend_similar_to<T>(t, std::forward<Arg>(arg));
 }
 
 
