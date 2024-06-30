@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "comparisons/lexicographical_compare_coordinates.hpp"
-#include "detail/tuple_algorithm.hpp"
 #include "traits/rank.hpp"
 #include <array>
 #include <concepts>
@@ -307,7 +307,7 @@ struct has_homogeneous_tuple_elements<TupleLike, std::index_sequence<Zero,I...>>
 // XXX might also want to insist that the tuple elements have math operations
 template<class T>
 concept point_like =
-  detail::tuple_like<T> and
+  tuples::tuple_like<T> and
   detail::has_homogeneous_tuple_elements<T, std::make_index_sequence<rank_v<T>>>::value
 ;
 
@@ -356,8 +356,8 @@ class point : public detail::point_base<T,N>
     {}
 
     // tuple-like converting constructor
-    template<detail::tuple_like_of_size<N> Tuple>
-      requires detail::tuple_elements_convertible_to<Tuple,T>
+    template<tuples::tuple_like_of_size<N> Tuple>
+      requires tuples::all_elements_convertible_to<Tuple,T>
     constexpr point(const Tuple& other)
       : point{from_tuple_t{}, other, std::make_index_sequence<N>{}}
     {}
@@ -641,8 +641,8 @@ class point : public detail::point_base<T,N>
     struct from_tuple_t {};
 
     // tuple-like unpacking constructor
-    template<detail::tuple_like_of_size<N> Tuple, std::size_t... Indices>
-      requires detail::tuple_elements_convertible_to<Tuple,T>
+    template<tuples::tuple_like_of_size<N> Tuple, std::size_t... Indices>
+      requires tuples::all_elements_convertible_to<Tuple,T>
     constexpr point(from_tuple_t, const Tuple& other, std::index_sequence<Indices...>)
       : point{get<Indices>(other)...}
     {}

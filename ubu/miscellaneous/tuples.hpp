@@ -167,22 +167,22 @@ concept all_convertible_to =
 ;
 
 
-} // end detail
-
-
 template<tuple_like T, class U, std::size_t... I>
   requires (std::tuple_size_v<std::remove_cvref_t<T>> > 0)
-constexpr bool tuple_elements_convertible_to_impl(std::index_sequence<0,I...>)
+constexpr bool all_elements_convertible_to_impl(std::index_sequence<0,I...>)
 {
-  return detail::all_convertible_to<U, std::tuple_element_t<0,T>, std::tuple_element_t<I,T>...>;
+  return all_convertible_to<U, std::tuple_element_t<0,T>, std::tuple_element_t<I,T>...>;
 }
 
 
+} // end detail
+
+
 template<class FromTuple, class To>
-concept tuple_elements_convertible_to =
+concept all_elements_convertible_to =
   tuple_like<FromTuple>
   and (std::tuple_size_v<std::remove_cvref_t<FromTuple>> > 0)
-  and tuple_elements_convertible_to_impl<FromTuple,To>(indices_v<FromTuple>)
+  and detail::all_elements_convertible_to_impl<FromTuple,To>(indices_v<FromTuple>)
 ;
 
 
