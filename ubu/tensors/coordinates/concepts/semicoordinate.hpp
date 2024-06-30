@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../traits/rank.hpp"
 
 namespace ubu
@@ -19,7 +19,7 @@ constexpr bool is_semicoordinate()
     // if T doesn't have a static rank, then T is not a semicoordinate
     return false;
   }
-  else if constexpr(tuple_like<T>)
+  else if constexpr(tuples::tuple_like<T>)
   {
     // all tuple_like have a static rank
 
@@ -29,7 +29,7 @@ constexpr bool is_semicoordinate()
       return (... and is_semicoordinate<std::tuple_element_t<I,std::remove_cvref_t<T>>>());
     };
 
-    return all_elements_are_semicoordinates(tuple_indices<T>);
+    return all_elements_are_semicoordinates(tuples::indices_v<T>);
   }
   else
   {

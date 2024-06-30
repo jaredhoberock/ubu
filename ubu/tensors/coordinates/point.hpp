@@ -467,7 +467,7 @@ class point : public detail::point_base<T,N>
     template<point_like_of_rank<N> Other>
     constexpr bool operator==(const Other& rhs) const
     {
-      return detail::tuple_equal(*this, rhs);
+      return tuples::equal(*this, rhs);
     }
 
     template<point_like_of_rank<N> Other>
@@ -514,28 +514,28 @@ class point : public detail::point_base<T,N>
     template<point_like_of_rank<N> Other>
     constexpr point& operator+=(const Other& rhs)
     {
-      detail::tuple_inplace_transform(std::plus{}, *this, rhs);
+      tuples::inplace_transform(std::plus{}, *this, rhs);
       return *this;
     }
 
     template<point_like_of_rank<N> Other>
     constexpr point& operator-=(const Other& rhs)
     {
-      detail::tuple_inplace_transform(std::minus{}, *this, rhs);
+      tuples::inplace_transform(std::minus{}, *this, rhs);
       return *this;
     }
     
     template<point_like_of_rank<N> Other>
     constexpr point& operator*=(const Other& rhs)
     {
-      detail::tuple_inplace_transform(std::multiplies{}, *this, rhs);
+      tuples::inplace_transform(std::multiplies{}, *this, rhs);
       return *this;
     }
 
     template<point_like_of_rank<N> Other>
     constexpr point& operator/=(const Other& rhs)
     {
-      detail::tuple_inplace_transform(std::divides{}, *this, rhs);
+      tuples::inplace_transform(std::divides{}, *this, rhs);
       return *this;
     }
 
@@ -543,7 +543,7 @@ class point : public detail::point_base<T,N>
       requires (std::integral<T> and std::integral<point_element_t<Other>>)
     constexpr point& operator%=(const Other& rhs)
     {
-      detail::tuple_inplace_transform(std::modulus{}, *this, rhs);
+      tuples::inplace_transform(std::modulus{}, *this, rhs);
       return *this;
     }
 
@@ -613,19 +613,19 @@ class point : public detail::point_base<T,N>
 
     constexpr T product() const
     {
-      return detail::tuple_product(*this);
+      return tuples::product(*this);
     }
 
     constexpr T sum() const
     {
-      return detail::tuple_sum(*this);
+      return tuples::sum(*this);
     }
 
 
     // conversion to std::tuple
     constexpr auto as_tuple() const
     {
-      return detail::unpack_and_invoke(*this, [](const auto... elements)
+      return tuples::unpack_and_invoke(*this, [](const auto... elements)
       {
         return std::tuple(elements...);
       });
@@ -634,7 +634,7 @@ class point : public detail::point_base<T,N>
 
     friend std::ostream& operator<<(std::ostream& os, const point& self)
     {
-      return detail::tuple_output(os, self);
+      return tuples::output(os, self);
     }
 
   private:

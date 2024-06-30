@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../detail/tuple_algorithm.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "equal_rank.hpp"
 #include "semicoordinate.hpp"
 #include <tuple>
@@ -42,7 +42,7 @@ constexpr bool is_weakly_congruent()
       return (... and is_weakly_congruent<std::tuple_element_t<I,U1>, std::tuple_element_t<I,U2>>());
     };
 
-    return all_weakly_congruent(tuple_indices<T1>);
+    return all_weakly_congruent(tuples::indices_v<T1>);
   }
 }
 

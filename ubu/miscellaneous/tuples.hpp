@@ -805,7 +805,7 @@ constexpr tuple_like auto zip(const T& t, const Ts&... ts)
 
 
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op1, left_folder<zip_with_result_t<Op1,T1,T2>> Op2>
-constexpr auto tuple_inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
+constexpr auto inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
 {
   return tuples::fold_left(tuples::zip_with(t1, t2, star), plus);
 }
@@ -819,14 +819,14 @@ constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, 
 
 
 template<tuple_like T>
-constexpr auto tuple_sum(const T& t)
+constexpr auto sum(const T& t)
 {
   return tuples::fold_left(t, std::plus{});
 }
 
 
 template<tuple_like T>
-constexpr auto tuple_product(const T& t)
+constexpr auto product(const T& t)
 {
   return tuples::fold_left(t, std::multiplies{});
 }
@@ -834,16 +834,16 @@ constexpr auto tuple_product(const T& t)
 
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op>
   requires zipper_r<bool,Op,T1,T2>
-constexpr bool tuple_equal(const T1& t1, const T2& t2, Op eq)
+constexpr bool equal(const T1& t1, const T2& t2, Op eq)
 {
-  return tuple_inner_product(t1, t2, eq, std::logical_and{});
+  return tuples::inner_product(t1, t2, eq, std::logical_and{});
 }
 
 
 template<tuple_like T1, tuple_like T2>
-constexpr decltype(auto) tuple_equal(const T1& t1, const T2& t2)
+constexpr decltype(auto) equal(const T1& t1, const T2& t2)
 {
-  return tuple_equal(t1, t2, [](const auto& lhs, const auto& rhs)
+  return tuples::equal(t1, t2, [](const auto& lhs, const auto& rhs)
   {
     return lhs == rhs;
   });
@@ -873,7 +873,7 @@ void discard_args(Args&&...) {}
 
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> F, std::size_t... I>
   requires (sizeof...(I) == std::tuple_size_v<T1>)
-constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::index_sequence<I...>)
+constexpr void inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::index_sequence<I...>)
 {
   detail::discard_args(get<I>(t1) = std::forward<F>(f)(get<I>(t1), get<I>(t2))...);
 }
@@ -883,9 +883,9 @@ constexpr void tuple_inplace_transform_impl(F&& f, T1& t1, const T2& t2, std::in
 
 
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> F>
-constexpr void tuple_inplace_transform(F&& f, T1& t1, const T2& t2)
+constexpr void inplace_transform(F&& f, T1& t1, const T2& t2)
 {
-  return detail::tuple_inplace_transform_impl(std::forward<F>(f), t1, t2, indices_v<T1>);
+  return detail::inplace_transform_impl(std::forward<F>(f), t1, t2, indices_v<T1>);
 }
 
 
@@ -1160,36 +1160,35 @@ constexpr tuple_like auto ensure_tuple(T&& t)
 
 
 template<tuple_like T>
-  requires (std::tuple_size_v<std::remove_cvref_t<T>> == 1)
-constexpr decltype(auto) tuple_unwrap_single(T&& t)
+constexpr decltype(auto) unwrap_single(T&& t)
 {
-  return get<0>(std::forward<T>(t));
-}
-
-template<tuple_like T>
-  requires (std::tuple_size_v<std::remove_cvref_t<T>> != 1)
-constexpr T&& tuple_unwrap_single(T&& t)
-{
-  return std::forward<T>(t);
+  if constexpr (single_like<T>)
+  {
+    return get<0>(std::forward<T>(t));
+  }
+  else
+  {
+    return std::forward<T>(t);
+  }
 }
 
 
 template<tuple_like T>
 constexpr auto drop_last_and_unwrap_single(T&& t)
 {
-  return tuple_unwrap_single(drop_last(std::forward<T>(t)));
+  return tuples::unwrap_single(drop_last(std::forward<T>(t)));
 }
 
 template<bool do_wrap, class T>
   requires (do_wrap == true)
-constexpr tuple_like auto tuple_wrap_if(T&& arg)
+constexpr tuple_like auto wrap_if(T&& arg)
 {
   return std::make_tuple(std::forward<T>(arg));
 }
 
 template<bool do_wrap, class T>
   requires (do_wrap == false)
-constexpr auto tuple_wrap_if(T&& arg)
+constexpr auto wrap_if(T&& arg)
 {
   return std::forward<T>(arg);
 }
@@ -1293,14 +1292,14 @@ constexpr void output_args(std::ostream& os, const char* delimiter, const Arg& a
 {
   os << arg1 << delimiter;
 
-  output_args(os, delimiter, args...);
+  detail::output_args(os, delimiter, args...);
 }
 
 template<tuple_like T, std::size_t... Indices>
   requires (sizeof...(Indices) == std::tuple_size_v<T>)
-constexpr std::ostream& tuple_output_impl(std::ostream& os, const char* delimiter, const T& t, std::index_sequence<Indices...>)
+constexpr std::ostream& output_impl(std::ostream& os, const char* delimiter, const T& t, std::index_sequence<Indices...>)
 {
-  output_args(os, delimiter, get<Indices>(t)...);
+  detail::output_args(os, delimiter, get<Indices>(t)...);
   return os;
 }
 
@@ -1309,10 +1308,10 @@ constexpr std::ostream& tuple_output_impl(std::ostream& os, const char* delimite
 
 
 template<tuple_like T>
-constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, const char* end_tuple, const char* delimiter, const T& t)
+constexpr std::ostream& output(std::ostream& os, const char* begin_tuple, const char* end_tuple, const char* delimiter, const T& t)
 {
   os << begin_tuple;
-  detail::tuple_output_impl(os, delimiter, t, indices_v<T>);
+  detail::output_impl(os, delimiter, t, indices_v<T>);
   os << end_tuple;
 
   return os;
@@ -1320,9 +1319,9 @@ constexpr std::ostream& tuple_output(std::ostream& os, const char* begin_tuple, 
 
 
 template<tuple_like T>
-constexpr std::ostream& tuple_output(std::ostream& os, const T& t)
+constexpr std::ostream& output(std::ostream& os, const T& t)
 {
-  return tuple_output(os, "(", ")", ", ", t);
+  return tuples::output(os, "(", ")", ", ", t);
 }
 
 
