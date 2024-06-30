@@ -4,9 +4,9 @@
 
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cast.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../coordinates/element.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/same_tensor_rank.hpp"
@@ -160,7 +160,7 @@ class stacked_view : public std::ranges::view_base
         // the final mode of the shape is 2
         // so the final mode of coord selects the stratum, either a or b
         auto stratum = element(coord, axis);
-        auto local_coord = detail::tuple_drop_last_and_unwrap_single(coord);
+        auto local_coord = tuples::drop_last_and_unwrap_single(coord);
         return std::pair(stratum, local_coord);
       }
     }
