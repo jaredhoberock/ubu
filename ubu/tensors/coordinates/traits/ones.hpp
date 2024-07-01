@@ -3,9 +3,9 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
-#include "../detail/tuple_algorithm.hpp"
 #include "zeros.hpp"
 #include <concepts>
 
@@ -23,10 +23,10 @@ constexpr auto successor_of_each_mode(const T& i)
 }
 
 
-template<tuple_like T>
+template<tuples::tuple_like T>
 constexpr auto successor_of_each_mode(const T& t)
 {
-  return detail::tuple_zip_with(t, [](auto element)
+  return tuples::zip_with(t, [](auto element)
   {
     return successor_of_each_mode(element);
   });

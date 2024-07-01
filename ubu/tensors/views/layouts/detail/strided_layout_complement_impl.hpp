@@ -3,8 +3,8 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../miscellaneous/integrals/ceil_div.hpp"
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "../strided_layout.hpp"
 #include "../strides/stride_for.hpp"
 #include <algorithm>
@@ -20,48 +20,27 @@ namespace ubu::detail
 template<class T, class Tuple, std::size_t... I>
 constexpr bool constructible_from_all_elements_of_impl(std::index_sequence<I...>)
 {
-  return (... and std::constructible_from<T,std::tuple_element_t<I,Tuple>>);
+  return (... and std::constructible_from<T,tuples::element_t<I,Tuple>>);
 }
 
 
 template<class T, class Tuple>
-concept constructible_from_all_elements_of = constructible_from_all_elements_of_impl<T,Tuple>(tuple_indices<Tuple>);
+concept constructible_from_all_elements_of = constructible_from_all_elements_of_impl<T,Tuple>(tuples::indices_v<Tuple>);
 
 
-template<tuple_like T, std::size_t... I>
-  requires constructible_from_all_elements_of<std::tuple_element_t<0,T>, T>
-constexpr std::array<std::tuple_element_t<0,T>, std::tuple_size_v<T>> tuple_as_array_impl(std::index_sequence<I...>, const T& t)
+template<tuples::tuple_like T, std::size_t... I>
+  requires constructible_from_all_elements_of<tuples::element_t<0,T>, T>
+constexpr std::array<tuples::element_t<0,T>, tuples::size_v<T>> tuple_as_array_impl(std::index_sequence<I...>, const T& t)
 {
   return {{get<I>(t)...}};
 }
 
 
-template<tuple_like T>
-  requires constructible_from_all_elements_of<std::tuple_element_t<0,T>, T>
-constexpr std::array<std::tuple_element_t<0,T>, std::tuple_size_v<T>> tuple_as_array(const T& t)
+template<tuples::tuple_like T>
+  requires constructible_from_all_elements_of<tuples::element_t<0,T>, T>
+constexpr std::array<tuples::element_t<0,T>, tuples::size_v<T>> tuple_as_array(const T& t)
 {
-  return tuple_as_array_impl(tuple_indices<T>, t);
-}
-
-
-template<class T>
-constexpr auto unwrap_single(const T& arg)
-{
-  if constexpr (tuple_like<T>)
-  {
-    if constexpr (std::tuple_size_v<T> == 1)
-    {
-      return get<0>(arg);
-    }
-    else
-    {
-      return arg;
-    }
-  }
-  else
-  {
-    return arg;
-  }
+  return tuple_as_array_impl(tuples::indices_v<T>, t);
 }
 
 
@@ -72,11 +51,11 @@ constexpr auto strided_layout_complement_impl(const S& shape, const D& stride, C
   using namespace std;
 
   // strides_and_shapes : [(d0,s0), (d1,s1), (d2,s2), ...]
-  auto strides_and_shapes = tuple_as_array(tuple_zip(as_flat_tuple(stride), as_flat_tuple(shape)));
+  auto strides_and_shapes = tuple_as_array(tuples::zip(tuples::flatten(stride), tuples::flatten(shape)));
 
   std::sort(strides_and_shapes.begin(), strides_and_shapes.end());
 
-  auto [current_idx, partial_result] = tuple_fold(pair(1, pair(tuple(), tuple())), strides_and_shapes, [](auto state, auto stride_and_shape)
+  auto [current_idx, partial_result] = tuples::fold_left(pair(1, pair(tuple(), tuple())), strides_and_shapes, [](auto state, auto stride_and_shape)
   {
     int current_idx = state.first;
     auto partial_result = state.second;
@@ -91,15 +70,15 @@ constexpr auto strided_layout_complement_impl(const S& shape, const D& stride, C
     auto partial_shape = partial_result.first;
     auto partial_stride = partial_result.second;
 
-    return pair(current_idx, pair(tuple_append(partial_shape, result_shape), tuple_append(partial_stride, result_stride)));
+    return pair(current_idx, pair(tuples::append(partial_shape, result_shape), tuples::append(partial_stride, result_stride)));
   });
 
   auto [partial_shape, partial_stride] = partial_result;
 
-  auto result_shape = tuple_append(partial_shape, ceil_div(cosize_hi, current_idx));
-  auto result_stride = tuple_append(partial_stride, current_idx);
+  auto result_shape = tuples::append(partial_shape, ceil_div(cosize_hi, current_idx));
+  auto result_stride = tuples::append(partial_stride, current_idx);
 
-  return pair(unwrap_single(result_shape), unwrap_single(result_stride));
+  return pair(tuples::unwrap_single(result_shape), tuples::unwrap_single(result_stride));
 }
 
 

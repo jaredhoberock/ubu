@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../miscellaneous/tuples.hpp"
 #include "../traits/rank.hpp"
 #include "equal_rank.hpp"
 #include "semicoordinate.hpp"
@@ -38,7 +39,7 @@ constexpr bool are_congruent()
         return (... and are_congruent<std::tuple_element_t<I,U1>, std::tuple_element_t<I,U2>>());
       };
 
-      return elements_are_congruent(tuple_indices<T1>);
+      return elements_are_congruent(tuples::indices_v<T1>);
     }
   }
   else

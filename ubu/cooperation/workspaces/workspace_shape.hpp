@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../../places/memory/buffers/get_buffer.hpp"
-#include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "hierarchical_workspace.hpp"
 #include "workspace.hpp"
@@ -23,7 +23,7 @@ inline constexpr auto workspace_shape(W ws)
 template<hierarchical_workspace W>
 inline constexpr auto workspace_shape(W ws)
 {
-  return detail::tuple_append(detail::ensure_tuple_similar_to<size2>(workspace_shape(get_local_workspace(ws))), size(get_buffer(ws)));
+  return tuples::append(tuples::ensure_tuple_like<size2>(workspace_shape(get_local_workspace(ws))), size(get_buffer(ws)));
 }
 
 template<workspace W>

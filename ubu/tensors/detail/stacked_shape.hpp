@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "as_tuple_of_constants.hpp"
 #include "coordinate_cat.hpp"
 #include "coordinate_max.hpp"
@@ -26,9 +26,9 @@ constexpr coordinate auto stacked_shape(const A& shape_a, const B& shape_b)
   else
   {
     // auto axes = tuple(constant<I>()...);
-    constexpr auto axes = as_tuple_of_constants(tuple_indices<A>);
+    constexpr auto axes = as_tuple_of_constants(tuples::indices_v<A>);
 
-    return tuple_zip_with(shape_a, shape_b, axes, [](const auto& a, const auto& b, auto current_axis)
+    return tuples::zip_with(shape_a, shape_b, axes, [](const auto& a, const auto& b, auto current_axis)
     {
       if constexpr (current_axis == axis)
       {

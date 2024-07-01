@@ -4,9 +4,9 @@
 
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cast.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../coordinates/element.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/same_tensor_rank.hpp"
@@ -129,7 +129,7 @@ class stacked_view : public std::ranges::view_base
 
     // returns the pair (stratum, local_coord)
     template<congruent<shape_type> C>
-    constexpr detail::pair_like auto to_stratum_and_local_coord(const C& coord) const
+    constexpr tuples::pair_like auto to_stratum_and_local_coord(const C& coord) const
     {
       using namespace ubu;
 
@@ -160,7 +160,7 @@ class stacked_view : public std::ranges::view_base
         // the final mode of the shape is 2
         // so the final mode of coord selects the stratum, either a or b
         auto stratum = element(coord, axis);
-        auto local_coord = detail::tuple_drop_last_and_unwrap_single(coord);
+        auto local_coord = tuples::drop_last_and_unwrap_single(coord);
         return std::pair(stratum, local_coord);
       }
     }
@@ -169,7 +169,7 @@ class stacked_view : public std::ranges::view_base
     // XXX this only makes sense if the axis'th element of K contains no underscore
     template<slicer_for<shape_type> K, class A_ = A, class B_ = B>
       requires coordinate<std::tuple_element_t<axis_,K>>
-    constexpr detail::pair_like auto to_stratum_and_local_slicer(const K& katana) const
+    constexpr tuples::pair_like auto to_stratum_and_local_slicer(const K& katana) const
     {
       // there is no underscore in the axis'th mode of K,
       // which means that our slice is contained within either A or B

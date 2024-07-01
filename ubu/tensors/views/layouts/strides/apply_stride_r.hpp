@@ -3,12 +3,12 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/weakly_congruent.hpp"
 #include "../../../coordinates/coordinate_sum.hpp"
 #include "../../../coordinates/detail/to_integral_like.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "apply_stride.hpp"
 
 
@@ -33,7 +33,7 @@ constexpr auto apply_stride_r_impl(const D& stride, const C& coord);
 template<nonscalar_coordinate R, nonscalar_coordinate D, scalar_coordinate C>
 constexpr R apply_stride_r_impl(const D& stride, const C& coord)
 {
-  return detail::tuple_zip_with(stride, R{}, [&](const auto& s, auto r)
+  return tuples::zip_with(stride, R{}, [&](const auto& s, auto r)
   {
     return apply_stride_r_impl<decltype(r)>(s, coord);
   });
@@ -54,7 +54,7 @@ constexpr auto apply_stride_r_impl(const D& stride, const C& coord)
     return coordinate_sum(c1,c2);
   };
 
-  return detail::tuple_inner_product(stride, coord, star, plus);
+  return tuples::inner_product(stride, coord, star, plus);
 }
 
 

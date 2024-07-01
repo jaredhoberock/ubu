@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../miscellaneous/tuples.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
-#include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
 #include "concepts/cooperator.hpp"
 #include <utility>
 
@@ -15,7 +15,7 @@ namespace detail
 template<class T>
 concept has_subgroup_and_coord_member_function = requires(T arg)
 {
-  { arg.subgroup_and_coord() } -> detail::pair_like;
+  { arg.subgroup_and_coord() } -> tuples::pair_like;
   { get<0>(arg.subgroup_and_coord()) } -> cooperator;
   { get<1>(arg.subgroup_and_coord()) } -> coordinate;
 };
@@ -23,7 +23,7 @@ concept has_subgroup_and_coord_member_function = requires(T arg)
 template<class T>
 concept has_subgroup_and_coord_free_function = requires(T arg)
 {
-  { subgroup_and_coord(arg) } -> detail::pair_like;
+  { subgroup_and_coord(arg) } -> tuples::pair_like;
   { get<0>(subgroup_and_coord(arg)) } -> cooperator;
   { get<1>(subgroup_and_coord(arg)) } -> coordinate;
 };

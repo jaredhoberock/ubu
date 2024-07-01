@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "compatible_shape.hpp"
 #include "compose_strides.hpp"
 #include "divide_shape.hpp"
@@ -35,12 +35,12 @@ template<coordinate LShape, equal_rank<LShape> LStride,
 constexpr auto strided_layout_compose_impl(const LShape& lhs_shape, const LStride& lhs_stride,
                                            const RShape& rhs_shape, const RStride& rhs_stride)
 {
-  auto tuple_of_pairs = tuple_zip_with(rhs_shape, rhs_stride, [&](const auto& s, const auto& d)
+  auto tuple_of_pairs = tuples::zip_with(rhs_shape, rhs_stride, [&](const auto& s, const auto& d)
   {
     return strided_layout_compose_impl(lhs_shape, lhs_stride, s, d);
   });
 
-  return tuple_unzip(tuple_of_pairs);
+  return tuples::unzip(tuple_of_pairs);
 }
 
 

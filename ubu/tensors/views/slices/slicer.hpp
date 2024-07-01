@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
-#include "../../coordinates/detail/tuple_algorithm.hpp"
 #include "underscore.hpp"
 #include <tuple>
 #include <type_traits>
@@ -26,20 +26,20 @@ template<class T>
 struct is_nonscalar_slicer;
 
 // check T for elements 0...N-1, and check that each one is itself a slicer
-template<tuple_like T, std::size_t... I>
+template<tuples::tuple_like T, std::size_t... I>
 constexpr bool has_tuple_elements_that_are_slicers(std::index_sequence<I...>)
 {
-  return (... and (scalar_slicer<std::tuple_element_t<I,T>> or is_nonscalar_slicer<std::tuple_element_t<I,T>>::value));
+  return (... and (scalar_slicer<tuples::element_t<I,T>> or is_nonscalar_slicer<tuples::element_t<I,T>>::value));
 }
 
 template<class T>
 struct is_nonscalar_slicer
 {
   template<class U = T>
-    requires tuple_like<U>
+    requires tuples::tuple_like<U>
   static constexpr bool test(int)
   {
-    return has_tuple_elements_that_are_slicers<std::remove_cvref_t<U>>(tuple_indices<U>);
+    return has_tuple_elements_that_are_slicers<U>(tuples::indices_v<U>);
   }
 
   static constexpr bool test(...)
@@ -73,14 +73,14 @@ constexpr std::size_t underscore_count_v_impl()
   {
     return 1;
   }
-  else if constexpr(integral_like<S> or unit_like<S>)
+  else if constexpr(integral_like<S> or tuples::unit_like<S>)
   {
     return 0;
   }
-  else if constexpr(tuple_like<S>)
+  else if constexpr(tuples::tuple_like<S>)
   {
     using tuple_head_t = std::tuple_element_t<0,S>;
-    using tuple_tail_t = decltype(tuple_drop_first(std::declval<S>()));
+    using tuple_tail_t = decltype(tuples::drop_first(std::declval<S>()));
 
     // recurse down the head and tail and sum the results
     return underscore_count_v_impl<tuple_head_t>() + underscore_count_v_impl<tuple_tail_t>();
@@ -124,7 +124,7 @@ constexpr bool is_slicer_for()
     // terminal case 1: S is scalar
     return true;
   }
-  else if constexpr(not same_tuple_size<S,C>)
+  else if constexpr(not tuples::same_size<S,C>)
   {
     // terminal case 2: S has the wrong rank
     return false;
@@ -134,13 +134,10 @@ constexpr bool is_slicer_for()
     // recursive case: both S and C are tuple-like
     auto elements_are_slicers = []<std::size_t...I>(std::index_sequence<I...>)
     {
-      using S_ = std::remove_cvref_t<S>;
-      using C_ = std::remove_cvref_t<C>;
-
-      return (... and is_slicer_for<std::tuple_element_t<I,S_>, std::tuple_element_t<I,C_>>());
+      return (... and is_slicer_for<tuples::element_t<I,S>, tuples::element_t<I,C>>());
     };
 
-    return elements_are_slicers(tuple_indices<S>);
+    return elements_are_slicers(tuples::indices_v<S>);
   }
 }
 

@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../miscellaneous/integrals/bounded_integral_like.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../detail/to_integral_like.hpp"
-#include "../detail/tuple_algorithm.hpp"
 
 namespace ubu
 {
@@ -25,7 +25,7 @@ constexpr bool elements_are_bounded()
     // XXX this assumes that T is default-constructible
     T dummy_tuple{};
 
-    return tuple_all(dummy_tuple, [](auto e)
+    return tuples::all_of(dummy_tuple, [](auto e)
     {
       return elements_are_bounded<decltype(e)>();
     });

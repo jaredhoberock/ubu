@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../tensors/coordinates/detail/tuple_algorithm.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../cooperators/concepts/cooperator.hpp"
 #include "../cooperators/broadcast.hpp"
 #include "../cooperators/last_id.hpp"
@@ -18,25 +18,25 @@ namespace detail
 template<class S, class I, class T, class F>
 concept has_coop_exclusive_scan_and_fold_with_init_member_function = requires(S self, I init, T value, F op)
 {
-  { self.coop_exclusive_scan_and_fold(init, value, op) } -> pair_like;
+  { self.coop_exclusive_scan_and_fold(init, value, op) } -> tuples::pair_like;
 };
 
 template<class S, class I, class T, class F>
 concept has_coop_exclusive_scan_and_fold_with_init_free_function = requires(S self, I init, T value, F op)
 {
-  { coop_exclusive_scan_and_fold(self, init, value, op) } -> pair_like;
+  { coop_exclusive_scan_and_fold(self, init, value, op) } -> tuples::pair_like;
 };
 
 template<class S, class T, class F>
 concept has_coop_exclusive_scan_and_fold_without_init_member_function = requires(S self, T value, F op)
 {
-  { self.coop_exclusive_scan_and_fold(value, op) } -> pair_like;
+  { self.coop_exclusive_scan_and_fold(value, op) } -> tuples::pair_like;
 };
 
 template<class S, class T, class F>
 concept has_coop_exclusive_scan_and_fold_without_init_free_function = requires(S self, T value, F op)
 {
-  { coop_exclusive_scan_and_fold(self, value, op) } -> pair_like;
+  { coop_exclusive_scan_and_fold(self, value, op) } -> tuples::pair_like;
 };
 
 struct dispatch_coop_exclusive_scan_and_fold
@@ -44,7 +44,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   // these are with-init paths
   template<class S, class I, class T, class F>
     requires has_coop_exclusive_scan_and_fold_with_init_member_function<S&&,I&&,T&&,F&&>
-  constexpr pair_like auto operator()(S&& self, I&& init, T&& value, F&& op) const
+  constexpr tuples::pair_like auto operator()(S&& self, I&& init, T&& value, F&& op) const
   {
     return std::forward<S>(self).coop_exclusive_scan_and_fold(std::forward<I>(init), std::forward<T>(value), std::forward<F>(op));
   }
@@ -52,7 +52,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   template<class S, class I, class T, class F>
     requires (not has_coop_exclusive_scan_and_fold_with_init_member_function<S&&,I&&,T&&,F&&> and
                   has_coop_exclusive_scan_and_fold_with_init_free_function<S&&,I&&,T&&,F&&>)
-  constexpr pair_like auto operator()(S&& self, I&& init, T&& value, F&& op) const
+  constexpr tuples::pair_like auto operator()(S&& self, I&& init, T&& value, F&& op) const
   {
     return coop_exclusive_scan_and_fold(std::forward<S>(self), std::forward<I>(value), std::forward<T>(value), std::forward<F>(op));
   }
@@ -60,7 +60,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   template<cooperator S, class T, std::invocable<T,T> F>
     requires (not has_coop_exclusive_scan_and_fold_with_init_member_function<S&&,std::optional<T>,std::optional<T>,F> and
               not has_coop_exclusive_scan_and_fold_with_init_free_function<S&&,std::optional<T>,std::optional<T>,F>)
-  constexpr pair_like auto operator()(S&& self, std::optional<T> init, std::optional<T> value, F op) const
+  constexpr tuples::pair_like auto operator()(S&& self, std::optional<T> init, std::optional<T> value, F op) const
   {
     // the default implementation is simply coop_exclusive_scan + broadcast
 
@@ -85,7 +85,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   // these are without-init paths
   template<class S, class T, class F>
     requires has_coop_exclusive_scan_and_fold_without_init_member_function<S&&,T&&,F&&>
-  constexpr pair_like auto operator()(S&& self, T&& value, F&& op) const
+  constexpr tuples::pair_like auto operator()(S&& self, T&& value, F&& op) const
   {
     return std::forward<S>(self).coop_exclusive_scan_and_fold(std::forward<T>(value), std::forward<F>(op));
   }
@@ -93,7 +93,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   template<class S, class T, class F>
     requires (not has_coop_exclusive_scan_and_fold_without_init_member_function<S&&,T&&,F&&> and
                   has_coop_exclusive_scan_and_fold_without_init_free_function<S&&,T&&,F&&>)
-  constexpr pair_like auto operator()(S&& self, T&& value, F&& op) const
+  constexpr tuples::pair_like auto operator()(S&& self, T&& value, F&& op) const
   {
     return coop_exclusive_scan_and_fold(std::forward<S>(self), std::forward<T>(value), std::forward<F>(op));
   }
@@ -101,7 +101,7 @@ struct dispatch_coop_exclusive_scan_and_fold
   template<cooperator S, class T, std::invocable<T,T> F>
     requires (not has_coop_exclusive_scan_and_fold_without_init_member_function<S&&,std::optional<T>,F> and
               not has_coop_exclusive_scan_and_fold_without_init_free_function<S&&,std::optional<T>,F>)
-  constexpr pair_like auto operator()(S&& self, std::optional<T> value, F op) const
+  constexpr tuples::pair_like auto operator()(S&& self, std::optional<T> value, F op) const
   {
     // the default implementation is simply coop_exclusive_scan + broadcast
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "compose.hpp"
 #include "zip.hpp"
 
@@ -61,7 +61,7 @@ struct dispatch_transform
   {
     auto g = [f](auto tuple)
     {
-      return detail::unpack_and_invoke(tuple, f);
+      return tuples::unpack_and_invoke(tuple, f);
     };
 
     auto zipped = zip(std::forward<T1>(t1), std::forward<T2>(t2));
@@ -75,7 +75,7 @@ struct dispatch_transform
   {
     auto g = [f](auto tuple)
     {
-      return detail::unpack_and_invoke(tuple, f);
+      return tuples::unpack_and_invoke(tuple, f);
     };
 
     auto zipped = zip(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));
@@ -89,7 +89,7 @@ struct dispatch_transform
   {
     auto g = [f](auto tuple)
     {
-      return detail::unpack_and_invoke(tuple, f);
+      return tuples::unpack_and_invoke(tuple, f);
     };
 
     auto zipped = zip(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<T4>(t4));

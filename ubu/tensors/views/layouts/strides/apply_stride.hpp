@@ -2,10 +2,10 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/coordinate_sum.hpp"
 #include "../../../coordinates/detail/to_integral_like.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include <concepts>
 #include <utility>
 
@@ -31,7 +31,7 @@ constexpr coordinate auto apply_stride_impl(const D& stride, const C& coord);
 template<nonscalar_coordinate D, scalar_coordinate C>
 constexpr congruent<D> auto apply_stride_impl(const D& stride, const C& coord)
 {
-  return detail::tuple_zip_with(stride, [&](const auto& s)
+  return tuples::zip_with(stride, [&](const auto& s)
   {
     return apply_stride_impl(s, coord);
   });
@@ -52,7 +52,7 @@ constexpr coordinate auto apply_stride_impl(const D& stride, const C& coord)
     return coordinate_sum(c1,c2);
   };
 
-  return detail::tuple_inner_product(stride, coord, star, plus);
+  return tuples::inner_product(stride, coord, star, plus);
 }
 
 

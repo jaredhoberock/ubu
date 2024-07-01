@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
 #include "../../miscellaneous/integrals/bounded.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
-#include "detail/tuple_algorithm.hpp"
 
 #include <limits>
 
@@ -48,7 +48,7 @@ constexpr congruent<C> auto bound_coordinate(const C& coord, const U& upper_boun
   else
   {
     // coord and upper_bound are tuples, recurse
-    return detail::tuple_zip_with(coord, upper_bound, [](auto c, auto ub)
+    return tuples::zip_with(coord, upper_bound, [](auto c, auto ub)
     {
       return bound_coordinate(c,ub);
     });
