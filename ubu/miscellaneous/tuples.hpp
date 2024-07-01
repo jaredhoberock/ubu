@@ -12,7 +12,6 @@
 #include <utility>
 
 
-// XXX TODO: eliminate tuple_ prefix on all the stuff inside namespace tuples
 // XXX TODO: in general, a lot of the functions inside namespace detail:: exist solely to get an index_sequence<I...>
 //           such functions could be eliminated in favor of using std::apply tricks inside the function of interest
 
