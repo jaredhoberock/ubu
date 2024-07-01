@@ -24,7 +24,7 @@ concept asynchronous_allocation =
 template<class Pair, class Element, class Shape>
 concept asynchronous_tensor_like =
   asynchronous_allocation<Pair>
-  and tensor_like_of<tuples::first_t<Pair>, Element>
+  and tensor_like_of<tuples::second_t<Pair>, Element>
   and congruent<tensor_shape_t<tuples::second_t<Pair>>, Shape>
 ;
 
