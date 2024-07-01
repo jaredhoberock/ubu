@@ -9,8 +9,8 @@
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
 #include <ubu/tensors/views/lattice.hpp>
-#include <ubu/tensors/views/layouts/compact_left_major.hpp>
-#include <ubu/tensors/views/layouts/compact_right_major.hpp>
+#include <ubu/tensors/views/layouts/compact_left_major_layout.hpp>
+#include <ubu/tensors/views/layouts/compact_right_major_layout.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -25,7 +25,7 @@ void test(S shape)
     // left-major view of a lattice
 
     lattice tensor(shape);
-    compact_left_major layout(shape);
+    compact_left_major_layout layout(shape);
 
     composed_view v(tensor, layout);
 
@@ -43,7 +43,7 @@ void test(S shape)
     // right-major view of a lattice
 
     lattice tensor(shape);
-    compact_right_major layout(shape);
+    compact_right_major_layout layout(shape);
 
     composed_view v(tensor, layout);
 

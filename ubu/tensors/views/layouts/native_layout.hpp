@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../shapes/shape.hpp"
-#include "compact_left_major.hpp"
+#include "compact_left_major_layout.hpp"
 #include "concepts/layout_like.hpp"
 #include <utility>
 
@@ -61,7 +61,7 @@ struct dispatch_native_layout
   constexpr layout_like auto operator()(T&&, const S& shape) const
   {
     // produce a left-major ordering by default
-    return compact_left_major(shape);
+    return compact_left_major_layout(shape);
   }
 };
 
