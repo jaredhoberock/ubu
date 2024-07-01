@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 #include "../../../miscellaneous/integrals/to_integral.hpp"
+#include "../../../miscellaneous/tuples.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include <concepts>
@@ -20,7 +21,7 @@ constexpr congruent<C> auto convert_non_integral_elements(const C& coord)
   }
   else
   {
-    return tuple_zip_with(coord, [](const auto& c_i)
+    return tuples::zip_with(coord, [](const auto& c_i)
     {
       return convert_non_integral_elements(c_i);
     });

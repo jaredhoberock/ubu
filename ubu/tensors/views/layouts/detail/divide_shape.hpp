@@ -3,9 +3,9 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../miscellaneous/integrals/ceil_div.hpp"
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/detail/coordinate_inclusive_scan.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include <utility>
 
 
@@ -17,7 +17,7 @@ namespace ubu::detail
 // 2. divisor is a tuple of integers, where each element contains the divisor used to produce
 //    the corresponding element of quotient
 template<coordinate N, scalar_coordinate D>
-constexpr pair_like auto divide_shape(const N& numerator, const D& denominator)
+constexpr tuples::pair_like auto divide_shape(const N& numerator, const D& denominator)
 {
   // combine's primary result is the quotient of n and d, along with the divisor used in the quotient
   // the carry is the reciprocal of this quotient
@@ -44,7 +44,7 @@ constexpr pair_like auto divide_shape(const N& numerator, const D& denominator)
   auto almost_result = coordinate_inclusive_scan_with_final(numerator, denominator, combine, final_combine);
 
   // unzip the innermost pairs to yield (quotient, divisor)
-  return unzip_innermost_pairs(almost_result);
+  return tuples::unzip_innermost_pairs(almost_result);
 }
 
 
