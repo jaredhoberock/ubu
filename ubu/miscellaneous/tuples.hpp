@@ -1333,9 +1333,8 @@ constexpr std::ostream& output(std::ostream& os, const T& t)
 }
 
 
-// XXX probably should rename to flatten
 template<class T>
-constexpr tuple_like auto as_flat_tuple(const T& arg)
+constexpr tuple_like auto flatten(const T& arg)
 {
   if constexpr (not tuple_like<T>)
   {
@@ -1343,9 +1342,9 @@ constexpr tuple_like auto as_flat_tuple(const T& arg)
   }
   else
   {
-    auto tuple_of_tuples = zip_with(arg, [](const auto& element)
+    auto tuple_of_tuples = tuples::zip_with(arg, [](const auto& element)
     {
-      return as_flat_tuple(element);
+      return tuples::flatten(element);
     });
 
     return tuples::concatenate_all(tuple_of_tuples);
