@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/semicoordinate.hpp"
 #include "../coordinates/traits/rank.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 
 namespace ubu::detail
 {
@@ -13,7 +13,7 @@ template<semicoordinate C>
 constexpr semicoordinate auto coordinate_tail(const C& coord)
 {
   // unwrap any singles so that we return raw integers
-  return detail::tuple_unwrap_single(detail::tuple_drop_first(coord));
+  return tuples::drop_first_and_unwrap_single(coord);
 }
 
 } // end ubu::detail

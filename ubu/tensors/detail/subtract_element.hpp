@@ -1,11 +1,12 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 #include "../coordinates/traits/rank.hpp"
+#include "as_tuple_of_constants.hpp"
 
 namespace ubu::detail
 {
@@ -24,9 +25,9 @@ constexpr congruent<A> auto subtract_element(const A& a, const B& b)
   else
   {
     // auto indices = tuple(constant<I>()...);
-    constexpr auto indices = as_tuple_of_constants(tuple_indices<A>);
+    constexpr auto indices = as_tuple_of_constants(tuples::indices_v<A>);
 
-    return tuple_zip_with(a, indices, [&](const auto& a_i, auto index)
+    return tuples::zip_with(a, indices, [&](const auto& a_i, auto index)
     {
       if constexpr (index == i)
       {

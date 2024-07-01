@@ -129,7 +129,7 @@ class stacked_view : public std::ranges::view_base
 
     // returns the pair (stratum, local_coord)
     template<congruent<shape_type> C>
-    constexpr detail::pair_like auto to_stratum_and_local_coord(const C& coord) const
+    constexpr tuples::pair_like auto to_stratum_and_local_coord(const C& coord) const
     {
       using namespace ubu;
 
@@ -169,7 +169,7 @@ class stacked_view : public std::ranges::view_base
     // XXX this only makes sense if the axis'th element of K contains no underscore
     template<slicer_for<shape_type> K, class A_ = A, class B_ = B>
       requires coordinate<std::tuple_element_t<axis_,K>>
-    constexpr detail::pair_like auto to_stratum_and_local_slicer(const K& katana) const
+    constexpr tuples::pair_like auto to_stratum_and_local_slicer(const K& katana) const
     {
       // there is no underscore in the axis'th mode of K,
       // which means that our slice is contained within either A or B

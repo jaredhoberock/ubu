@@ -1097,7 +1097,7 @@ template<tuple_like T>
   requires (size_v<T> > 0)
 constexpr tuple_like auto drop_first(T&& t)
 {
-  return drop<1>(std::forward<T>(t));
+  return tuples::drop<1>(std::forward<T>(t));
 }
 
 
@@ -1129,7 +1129,7 @@ template<tuple_like T>
 constexpr tuple_like auto drop_last(T&& t)
 {
   constexpr int N = size_v<T>;
-  return take<N-1>(std::forward<T>(t));
+  return tuples::take<N-1>(std::forward<T>(t));
 }
 
 
@@ -1190,10 +1190,18 @@ constexpr decltype(auto) unwrap_single(T&& t)
 
 
 template<tuple_like T>
+constexpr auto drop_first_and_unwrap_single(T&& t)
+{
+  return tuples::unwrap_single(tuples::drop_first(std::forward<T>(t)));
+}
+
+
+template<tuple_like T>
 constexpr auto drop_last_and_unwrap_single(T&& t)
 {
-  return tuples::unwrap_single(drop_last(std::forward<T>(t)));
+  return tuples::unwrap_single(tuples::drop_last(std::forward<T>(t)));
 }
+
 
 template<bool do_wrap, class T>
   requires (do_wrap == true)
