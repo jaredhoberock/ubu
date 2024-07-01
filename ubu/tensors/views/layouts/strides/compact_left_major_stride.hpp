@@ -44,7 +44,7 @@ constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stri
   auto [_,result] = tuples::fold_left(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
   {
     auto [current_stride, prev_result] = prev;
-    auto result = tuples::append_similar_to<S>(prev_result, compact_left_major_stride_impl(current_stride, s));
+    auto result = tuples::append_like<S>(prev_result, compact_left_major_stride_impl(current_stride, s));
 
     return std::pair{current_stride * shape_size(s), result};
   });

@@ -45,7 +45,7 @@ constexpr congruent<R> auto one_extend_coordinate(const C& coord)
     static_assert(tuples::tuple_like<C>);
 
     // map one_extend_coordinate over the elements of ones_v<R>
-    return tuples::static_enumerate_similar_to<C>(ones_v<R>, [&]<std::size_t index>(auto one_i)
+    return tuples::static_enumerate_like<C>(ones_v<R>, [&]<std::size_t index>(auto one_i)
     {
       if constexpr (index < rank_v<C>)
       {

@@ -26,7 +26,7 @@ constexpr coordinate auto stacked_shape(const A& shape_a, const B& shape_b)
   else
   {
     // auto axes = tuple(constant<I>()...);
-    constexpr auto axes = as_tuple_of_constants(tuple_indices<A>);
+    constexpr auto axes = as_tuple_of_constants(tuples::indices_v<A>);
 
     return tuples::zip_with(shape_a, shape_b, axes, [](const auto& a, const auto& b, auto current_axis)
     {

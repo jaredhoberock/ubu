@@ -102,7 +102,7 @@ constexpr tuples::tuple_like_of_size<rank_v<C1>> auto coordinate_inclusive_scan_
   auto result_last = coordinate_inclusive_scan_with_final(coord_last, carry_out, combine, final_combine);
 
   // return the tuple result_front o result_last
-  return tuples::append_similar_to<C1>(tuples::wrap_if<rank_v<C1> == 2>(result_front), result_last);
+  return tuples::append_like<C1>(tuples::wrap_if<rank_v<C1> == 2>(result_front), result_last);
 }
 
 template<nonscalar_coordinate C1, nonscalar_coordinate C2, class F1, class F2>

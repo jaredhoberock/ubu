@@ -42,7 +42,7 @@ constexpr auto wrap_if_underscore_or_int(const Arg& arg)
 {
   if constexpr(is_underscore_v<MaybeUnderscore> or integral_like<Arg>)
   {
-    return tuples::make_tuple_similar_to<R>(arg);
+    return tuples::make_like<R>(arg);
   }
   else
   {
@@ -61,7 +61,7 @@ constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const 
 
   // finally, because it's really inconvenient for this function to return a (single_thing), we unwrap any singles we find
 
-  auto result_tuple = tuples::concatenate_similar_to<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
+  auto result_tuple = tuples::concatenate_like<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
   return tuples::unwrap_single(result_tuple);
 }
 

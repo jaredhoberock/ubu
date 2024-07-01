@@ -29,7 +29,7 @@ constexpr congruent<R> auto truncate_coordinate(const C& coord)
   }
   else
   {
-    return tuples::static_enumerate_similar_to<C>(zeros_v<R>, [&]<std::size_t index>(auto zero)
+    return tuples::static_enumerate_like<C>(zeros_v<R>, [&]<std::size_t index>(auto zero)
     {
       return truncate_coordinate<decltype(zero)>(get<index>(coord));
     });

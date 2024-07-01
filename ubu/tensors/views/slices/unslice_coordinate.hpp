@@ -67,7 +67,7 @@ constexpr slicer auto unslice_coordinate_impl(const K& katana, const Cs&... cs)
     });
 
     // reconstruct the substituted tuple
-    return t::prepend_similar_to<K>(result_tail, result_head);
+    return t::prepend_like<K>(result_tail, result_head);
   }
 }
 

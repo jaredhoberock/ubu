@@ -109,8 +109,8 @@ class strided_layout : public std::ranges::view_base
       using shape_tuple = std::conditional_t<tuples::tuple_like<S>, S, ubu::int1>;
       using stride_tuple = std::conditional_t<tuples::tuple_like<D>, D, ubu::int1>;
 
-      return make_strided_layout(tuples::make_tuple_similar_to<shape_tuple>(shape(), layouts.shape()...),
-                                 tuples::make_tuple_similar_to<stride_tuple>(stride(), layouts.stride()...));
+      return make_strided_layout(tuples::make_like<shape_tuple>(shape(), layouts.shape()...),
+                                 tuples::make_like<stride_tuple>(stride(), layouts.stride()...));
     }
 
     // XXX the return type of this should be constrained to layout
