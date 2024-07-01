@@ -11,13 +11,13 @@ namespace ubu
 
 
 template<coordinate S>
-struct compact_left_major : public strided_layout<S,compact_left_major_stride_t<S>>
+struct compact_left_major_layout : public strided_layout<S,compact_left_major_stride_t<S>>
 {
-  constexpr compact_left_major(S shape)
+  constexpr compact_left_major_layout(S shape)
     : strided_layout<S,compact_left_major_stride_t<S>>{shape, compact_left_major_stride(shape)}
   {}
 
-  compact_left_major(const compact_left_major&) = default;
+  compact_left_major_layout(const compact_left_major_layout&) = default;
 };
 
 

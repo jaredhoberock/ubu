@@ -5,6 +5,7 @@
 #include "../../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../../tensors/shapes/convert_shape.hpp"
 #include "../../../tensors/views/compose.hpp"
+#include "../../../tensors/views/layouts/concepts/layout_like.hpp"
 #include "../../../tensors/views/layouts/identity_layout.hpp"
 #include "../../../tensors/views/layouts/lifting_layout.hpp"
 #include "../../../tensors/views/layouts/native_layout.hpp"
@@ -19,7 +20,7 @@ namespace detail
 {
 
 template<executor E, std::invocable<executor_coordinate_t<E>> F>
-constexpr layout auto default_kernel_layout(const E&, const executor_coordinate_t<E>& shape, F&&)
+constexpr layout_like auto default_kernel_layout(const E&, const executor_coordinate_t<E>& shape, F&&)
 {
   // when the type of shape requested by the user is the same type as the coordinates produced
   // by the executor, we just return an identity_layout
@@ -31,7 +32,7 @@ constexpr layout auto default_kernel_layout(const E&, const executor_coordinate_
 // XXX it's probably possible to constrain the result layout a bit more
 template<executor E, coordinate S, std::invocable<S> F>
   requires (not std::same_as<S,executor_coordinate_t<E>>)
-constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&&)
+constexpr layout_like auto default_kernel_layout(const E& ex, const S& shape, F&&)
 {
   // convert the user's requested shape into the native shape of the executor
   using native_coord_t = executor_coordinate_t<E>;
@@ -39,7 +40,7 @@ constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&&)
 
   // create a layout that maps a native coordinate to an integer
   // XXX we need to require that the result of native_layout has a .coshape() that is integral
-  layout auto native_coord_to_index = native_layout(ex, native_shape);
+  layout_like auto native_coord_to_index = native_layout(ex, native_shape);
 
   // create a layout that maps an integer to a coordinate in shape
   lifting_layout index_to_user_coord(native_coord_to_index.coshape(), shape);
@@ -52,13 +53,13 @@ constexpr layout auto default_kernel_layout(const E& ex, const S& shape, F&&)
 template<class E, class S, class F>
 concept has_kernel_layout_member_function = requires(E ex, S shape, F f)
 {
-  { ex.kernel_layout(shape, f) } -> layout;
+  { ex.kernel_layout(shape, f) } -> layout_like;
 };
 
 template<class E, class S, class F>
 concept has_kernel_layout_free_function = requires(E ex, S shape, F f)
 {
-  { kernel_layout(ex, shape, f) } -> layout;
+  { kernel_layout(ex, shape, f) } -> layout_like;
 };
 
 
@@ -70,7 +71,7 @@ struct dispatch_kernel_layout
   // this dispatch path calls the member function
   template<class E, class S, class F>
     requires has_kernel_layout_member_function<E&&,S&&,F&&>
-  constexpr layout auto operator()(E&& ex, S&& shape, F&& f) const
+  constexpr layout_like auto operator()(E&& ex, S&& shape, F&& f) const
   {
     return std::forward<E>(ex).kernel_layout(std::forward<S>(shape), std::forward<F>(f));
   }
@@ -79,7 +80,7 @@ struct dispatch_kernel_layout
   template<class E, class S, class F>
     requires (not has_kernel_layout_member_function<E&&,S&&,F&&>
               and has_kernel_layout_free_function<E&&,S&&,F&&>)
-  constexpr layout auto operator()(E&& ex, S&& shape, F&& f) const
+  constexpr layout_like auto operator()(E&& ex, S&& shape, F&& f) const
   {
     return kernel_layout(std::forward<E>(ex), std::forward<S>(shape), std::forward<F>(f));
   }
@@ -88,7 +89,7 @@ struct dispatch_kernel_layout
   template<executor E, coordinate S, std::invocable<S> F>
     requires (not has_kernel_layout_member_function<const E&,const S&,F&&>
               and not has_kernel_layout_free_function<const E&,const S&,F&&>)
-  constexpr layout auto operator()(const E& ex, const S& shape, F&& f) const
+  constexpr layout_like auto operator()(const E& ex, const S& shape, F&& f) const
   {
     return default_kernel_layout(ex, shape, std::forward<F>(f));
   }

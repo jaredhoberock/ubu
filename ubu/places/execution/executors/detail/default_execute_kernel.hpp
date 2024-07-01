@@ -5,7 +5,7 @@
 #include "../../../../tensors/coordinates/comparisons.hpp"
 #include "../../../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../../../tensors/shapes.hpp"
-#include "../../../../tensors/views/layouts/layout.hpp"
+#include "../../../../tensors/views/layouts/concepts/layout_like.hpp"
 #include "../bulk_execute.hpp"
 #include "../concepts/executor.hpp"
 #include "../kernel_layout.hpp"
@@ -34,7 +34,7 @@ void default_execute_kernel(E ex, const S& user_shape, F&& f)
 {
   // to_user_coord is a layout which maps a coordinate originating from
   // the executor to a coordinate within the user's requested shape
-  layout auto to_user_coord = kernel_layout(ex, user_shape, std::forward<F>(f));
+  layout_like auto to_user_coord = kernel_layout(ex, user_shape, std::forward<F>(f));
 
   bulk_execute(ex, shape(to_user_coord), [=](const executor_coordinate_t<E>& ex_coord)
   {

@@ -109,8 +109,8 @@ class composed_view : public std::ranges::view_base
     }
 
     // returns .b() if it is a layout
-    template<ubu::layout L = B>
-    constexpr ubu::layout auto layout() const
+    template<layout_like L = B>
+    constexpr layout_like auto layout() const
     {
       return b();
     }

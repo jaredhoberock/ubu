@@ -4,13 +4,13 @@
 #include <ranges>
 #include <ubu/tensors/coordinates/comparisons.hpp>
 #include <ubu/tensors/iterators.hpp>
-#include <ubu/tensors/matrices/column_major.hpp>
+#include <ubu/tensors/matrices/column_major_layout.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
 #include <ubu/tensors/views/lattice.hpp>
-#include <ubu/tensors/views/layouts/compact_left_major.hpp>
-#include <ubu/tensors/views/layouts/compact_right_major.hpp>
+#include <ubu/tensors/views/layouts/compact_left_major_layout.hpp>
+#include <ubu/tensors/views/layouts/compact_right_major_layout.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -25,7 +25,7 @@ void test(S shape)
     // left-major view of a lattice
 
     lattice tensor(shape);
-    compact_left_major layout(shape);
+    compact_left_major_layout layout(shape);
 
     composed_view v(tensor, layout);
 
@@ -43,7 +43,7 @@ void test(S shape)
     // right-major view of a lattice
 
     lattice tensor(shape);
-    compact_right_major layout(shape);
+    compact_right_major_layout layout(shape);
 
     composed_view v(tensor, layout);
 
@@ -67,7 +67,7 @@ void test_slice()
 
   {
     // test slice of a composed_view<T*,...>
-    composed_view A(tensor.data(), column_major(shape));
+    composed_view A(tensor.data(), column_major_layout(shape));
 
     // A is
     // +---+---+---+
@@ -89,7 +89,7 @@ void test_slice()
 
   {
     // test slice of a composed_view<std::span<T>, ...>
-    composed_view A(span(tensor.data(), tensor.size()), column_major(shape));
+    composed_view A(span(tensor.data(), tensor.size()), column_major_layout(shape));
 
     // A is
     // +---+---+---+

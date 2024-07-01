@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant.hpp"
-#include "../../tensors/matrices/row_major.hpp"
+#include "../../tensors/matrices/row_major_layout.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
@@ -24,7 +24,7 @@ constexpr inplace_vector<tensor_element_t<S>,N> coop_load_cyclic(C self, S sourc
 {
   // create a matrix view of the destination
   // each thread's stores will begin at id(self) and stride through source with a stride of size(self)
-  auto matrix = compose(source, row_major(std::pair(constant<N>(), size(self))));
+  auto matrix = compose(source, row_major_layout(std::pair(constant<N>(), size(self))));
 
   // get this thread's slice of the view
   auto thread_slice = slice(matrix, std::pair(_, id(self)));

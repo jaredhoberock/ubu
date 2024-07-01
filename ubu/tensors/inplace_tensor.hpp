@@ -15,8 +15,8 @@
 #include "traits/tensor_shape.hpp"
 #include "vectors/inplace_vector.hpp"
 #include "views/compose.hpp"
-#include "views/layouts/compact_left_major.hpp"
-#include "views/layouts/layout.hpp"
+#include "views/layouts/compact_left_major_layout.hpp"
+#include "views/layouts/concepts/layout_like.hpp"
 #include "views/layouts/lifting_layout.hpp"
 #include <type_traits>
 #include <utility>
@@ -93,7 +93,7 @@ class inplace_tensor
       return shape_;
     }
 
-    constexpr ubu::integral_like auto size() const
+    constexpr integral_like auto size() const
     {
       return layout().size();
     }
@@ -107,13 +107,13 @@ class inplace_tensor
     }
 
     // returns the layout : shape -> size
-    constexpr compact_left_major<S> layout() const
+    constexpr compact_left_major_layout<S> layout() const
     {
       return {shape()};
     }
 
     // returns the layout : size -> shape
-    constexpr ubu::layout auto inverse_layout() const
+    constexpr layout_like auto inverse_layout() const
     {
       return lifting_layout(size(), shape());
     }

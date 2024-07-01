@@ -8,7 +8,7 @@ template<class T>
 using device_vector = std::vector<T, ubu::cuda::managed_allocator<T>>;
 
 template<int max_num_elements_per_thread>
-void do_coop_load_columns(int block_size, ubu::span_like auto input, ubu::span_like auto result, ubu::layout auto matrix_layout)
+void do_coop_load_columns(int block_size, ubu::span_like auto input, ubu::span_like auto result, ubu::layout_like auto matrix_layout)
 {
   using namespace ubu;
 
@@ -57,7 +57,7 @@ void test_coop_load_columns(int num_warps_per_block, int num_elements_per_block)
   {
     // test with a column-major view of the input,
     // which is the case that is accelerated
-    do_coop_load_columns<max_num_elements_per_thread>(block_size, std::span(input), std::span(result), column_major(matrix_shape));
+    do_coop_load_columns<max_num_elements_per_thread>(block_size, std::span(input), std::span(result), column_major_layout(matrix_shape));
 
     // check the result
     std::vector<int> expected(input.begin(), input.end());
@@ -74,7 +74,7 @@ void test_coop_load_columns(int num_warps_per_block, int num_elements_per_block)
   {
     // test with a row-major view of the input,
     // which is not a case that is accelerated
-    do_coop_load_columns<max_num_elements_per_thread>(block_size, std::span(input), std::span(result), row_major(matrix_shape));
+    do_coop_load_columns<max_num_elements_per_thread>(block_size, std::span(input), std::span(result), row_major_layout(matrix_shape));
 
     // check the result
     std::vector<int> expected(input.begin(), input.end());
