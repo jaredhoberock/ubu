@@ -480,7 +480,7 @@ namespace detail
 
 
 template<std::size_t... I, class Init, tuple_like T, class F>
-constexpr decltype(auto) tuple_fold_right_impl(std::index_sequence<I...>, Init&& init, T&& t, F&& f)
+constexpr decltype(auto) fold_right_impl(std::index_sequence<I...>, Init&& init, T&& t, F&& f)
 {
   return detail::fold_args_right(std::forward<F>(f), std::forward<Init>(init), get<I>(std::forward<T>(t))...);
 }
@@ -489,11 +489,11 @@ constexpr decltype(auto) tuple_fold_right_impl(std::index_sequence<I...>, Init&&
 } // end detail
 
 
-// tuple_fold_right with no init parameter
+// fold_right with no init parameter
 template<class I, tuple_like T, class F>
-constexpr auto tuple_fold_right(I&& init, T&& t, F&& f)
+constexpr auto fold_right(I&& init, T&& t, F&& f)
 {
-  return tuple_fold_right_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return detail::fold_right_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 

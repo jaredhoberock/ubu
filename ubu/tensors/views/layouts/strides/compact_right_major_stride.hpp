@@ -4,15 +4,14 @@
 
 #include "../../../../miscellaneous/constant.hpp"
 #include "../../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../../miscellaneous/tuples.hpp"
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/equal_rank.hpp"
 #include "../../../coordinates/detail/to_integral_like.hpp"
-#include "../../../coordinates/detail/tuple_algorithm.hpp"
 #include "../../../coordinates/traits/rank.hpp"
 #include "../../../shapes/shape_size.hpp"
 #include <concepts>
-#include <tuple>
 #include <utility>
 
 
@@ -32,7 +31,7 @@ template<nonscalar_coordinate D, nonscalar_coordinate S>
   requires equal_rank<D,S>
 constexpr congruent<S> auto compact_right_major_stride_impl(const D& current_stride, const S& shape)
 {
-  return tuple_zip_with(current_stride, shape, [](const auto& cs, const auto& s)
+  return tuples::zip_with(current_stride, shape, [](const auto& cs, const auto& s)
   {
     return compact_right_major_stride_impl(cs, s);
   });
@@ -41,10 +40,10 @@ constexpr congruent<S> auto compact_right_major_stride_impl(const D& current_str
 template<scalar_coordinate D, nonscalar_coordinate S>
 constexpr congruent<S> auto compact_right_major_stride_impl(const D& current_stride, const S& shape)
 {
-  auto [_,result] = tuple_fold_right(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
+  auto [_,result] = tuples::fold_right(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
   {
     auto [current_stride, prev_result] = prev;
-    auto result = tuple_prepend_similar_to<S>(prev_result, compact_right_major_stride_impl(current_stride, s));
+    auto result = tuples::prepend_similar_to<S>(prev_result, compact_right_major_stride_impl(current_stride, s));
 
     return std::pair{current_stride * shape_size(s), result};
   });
