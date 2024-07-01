@@ -17,9 +17,9 @@ struct bounded
 {
   using value_type = decltype(b);
 
-  constexpr static value_type bound = b;
-
   value_type value{};
+
+  constexpr static constant<b> bound;
 
   constexpr bounded(value_type value) noexcept
     : value{value}
@@ -115,7 +115,7 @@ struct bounded
   {
     if constexpr(other_bound <= bound)
     {
-      return bounded<bound>(value - rhs.value);
+      return bounded<b>(value - rhs.value);
     }
     else
     {
@@ -125,7 +125,7 @@ struct bounded
 
   template<std::integral auto other_bound>
     requires (other_bound >= 0)
-  constexpr bounded<bound * other_bound> operator*(bounded<other_bound> rhs) const noexcept
+  constexpr bounded<b * other_bound> operator*(bounded<other_bound> rhs) const noexcept
   {
     return {value * rhs.value};
   }
@@ -139,14 +139,14 @@ struct bounded
 
   // binary operators against a constant
   template<std::integral auto c>
-    requires (bound + c >= 0)
-  constexpr bounded<bound + c> operator+(constant<c>) const noexcept
+    requires (b + c >= 0)
+  constexpr bounded<b + c> operator+(constant<c>) const noexcept
   {
     return {value + c};
   }
 
   template<std::integral auto c>
-    requires (bound + c >= 0)
+    requires (b + c >= 0)
   friend constexpr bounded<c + bound> operator+(constant<c>, bounded rhs) noexcept
   {
     return {c + rhs.value};
@@ -157,7 +157,7 @@ struct bounded
   {
     if constexpr (0 <= c and c <= bound)
     {
-      return bounded<bound - c>(value - c);
+      return bounded<b - c>(value - c);
     }
     else
     {
@@ -166,15 +166,15 @@ struct bounded
   }
 
   template<std::integral auto c>
-    requires (bound * c >= 0)
-  constexpr bounded<bound * c> operator*(constant<c>) const noexcept
+    requires (b * c >= 0)
+  constexpr bounded<b * c> operator*(constant<c>) const noexcept
   {
     return {value * c};
   }
 
   template<std::integral auto c>
-    requires (bound * c >= 0)
-  friend constexpr bounded<c * bound> operator*(constant<c>, bounded rhs) noexcept
+    requires (b * c >= 0)
+  friend constexpr bounded<c * b> operator*(constant<c>, bounded rhs) noexcept
   {
     return {c * rhs.value};
   }
@@ -187,7 +187,7 @@ struct bounded
   }
 
   template<std::integral auto c>
-  friend constexpr bounded<bound - 1> operator%(constant<c>, bounded rhs) noexcept
+  friend constexpr bounded<b - 1> operator%(constant<c>, bounded rhs) noexcept
   {
     return {c % rhs.value};
   }
@@ -248,6 +248,53 @@ class std::numeric_limits<ubu::bounded<b>> : std::numeric_limits<decltype(b)>
       return limits::denorm_min();
     }
 };
+
+#if __has_include(<fmt/format.h>)
+
+#include <fmt/compile.h>
+#include <fmt/format.h>
+
+template<std::integral auto b>
+struct fmt::formatter<ubu::bounded<b>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx) const
+  {
+    return ctx.begin();
+  }
+
+  template<class FormatContext>
+  constexpr auto format(const ubu::bounded<b>& val, FormatContext& ctx) const
+  {
+    // using a compiled string allows formatting in device code
+    return fmt::format_to(ctx.out(), FMT_COMPILE("bounded({}, {})"), val.value, val.bound);
+  }
+};
+
+#endif // __has_include
+
+#if __has_include(<format>)
+#include <format>
+#if defined(__cpp_lib_format)
+
+template<std::integral auto b>
+struct std::formatter<ubu::bounded<b>>
+{
+  template<class ParseContext>
+  constexpr auto parse(ParseContext& ctx) const
+  {
+    return ctx.begin();
+  }
+
+  template<class FormatContext>
+  constexpr auto format(const ubu::bounded<b>& val, FormatContext& ctx) const
+  {
+    return std::format_to(ctx.out(), "bounded({}, {})", val.value, val.bound);
+  }
+};
+
+#endif // defined(__cpp_lib_format)
+#endif // __has_include(<format>)
 
 #include "../../detail/epilogue.hpp"
 
