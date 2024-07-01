@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../tensors/coordinates/detail/tuple_algorithm.hpp" // for instantiatable
+#include "../../../miscellaneous/detail/instantiatable.hpp"
 
 #include <memory>
 #include <utility>
