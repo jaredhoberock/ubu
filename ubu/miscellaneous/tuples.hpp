@@ -665,9 +665,8 @@ namespace detail
 {
 
 
-// XXX surely we can think of a better name than this
 template<tuple_like T>
-struct tuple_similar_to
+struct tuple_template_like
 {
   template<class... Types>
   using tuple = smart_tuple<T,Types...>;
@@ -682,7 +681,7 @@ struct tuple_similar_to
 template<tuple_like Example, class... Args>
 constexpr tuple_like auto make_like(Args&&... args)
 {
-  return tuples::make<detail::tuple_similar_to<Example>::template tuple>(std::forward<Args>(args)...);
+  return tuples::make<detail::tuple_template_like<Example>::template tuple>(std::forward<Args>(args)...);
 }
 
 
@@ -773,28 +772,28 @@ constexpr tuple_like auto reverse(const T& t)
 template<tuple_like T, zipper<T> F>
 constexpr tuple_like auto zip_with(T&& t, F&& f)
 {
-  return zip_with_r<detail::tuple_similar_to<T&&>::template tuple>(std::forward<F>(f), std::forward<T>(t));
+  return zip_with_r<detail::tuple_template_like<T&&>::template tuple>(std::forward<F>(f), std::forward<T>(t));
 }
 
 // 2-argument zip_with
 template<tuple_like T1, tuple_like T2, zipper<T1,T2> F>
 constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, F&& f)
 {
-  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2));
+  return zip_with_r<detail::tuple_template_like<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2));
 }
 
 // 3-argument zip_with
 template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> F>
 constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, T3&& t3, F&& f)
 {
-  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));
+  return zip_with_r<detail::tuple_template_like<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));
 }
 
 // 4-argument zip_with
 template<tuple_like T1, tuple_like T2, tuple_like T3, tuple_like T4, zipper<T1,T2,T3,T4> F>
 constexpr tuple_like auto zip_with(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F&& f)
 {
-  return zip_with_r<detail::tuple_similar_to<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<T4>(t4));
+  return zip_with_r<detail::tuple_template_like<T1&&>::template tuple>(std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<T4>(t4));
 }
 
 
@@ -984,7 +983,7 @@ decltype(auto) get2d(T&& t)
 template<std::size_t Row, std::size_t... Col, tuple_like T>
 tuple_like auto unzip_row_impl(std::index_sequence<Col...>, T&& t)
 {
-  return tuples::make<tuple_similar_to<T>::template tuple>(detail::get2d<Row,Col>(std::forward<T>(t))...);
+  return tuples::make<tuple_template_like<T>::template tuple>(detail::get2d<Row,Col>(std::forward<T>(t))...);
 }
 
 
@@ -1000,7 +999,7 @@ tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
 {
   using inner_tuple_type = element_t<0,T>;
   
-  return tuples::make<tuple_similar_to<inner_tuple_type>::template tuple>
+  return tuples::make<tuple_template_like<inner_tuple_type>::template tuple>
   (
     detail::unzip_row<Row>(std::forward<T>(t))...
   );
@@ -1053,8 +1052,8 @@ tuple_like auto unzip(T&& t)
 //
 //  return make_like<inner_tuple_type>
 //  (
-//    make<tuple_similar_to<outer_tuple_type>::template tuple>(get<0>(get<0>(t)), get<0>(get<1>(t)), get<0>(get<2>(t))),
-//    make<tuple_similar_to<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
+//    make<tuple_template_like<outer_tuple_type>::template tuple>(get<0>(get<0>(t)), get<0>(get<1>(t)), get<0>(get<2>(t))),
+//    make<tuple_template_like<outer_tuple_type>::template tuple>(get<1>(get<0>(t)), get<1>(get<1>(t)), get<1>(get<2>(t)))
 //  );
 //}
 
