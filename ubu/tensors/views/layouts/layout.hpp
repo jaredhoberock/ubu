@@ -2,29 +2,54 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../coordinates/concepts/congruent.hpp"
-#include "../../coordinates/concepts/coordinate.hpp"
-#include "../../concepts/tensor_like.hpp"
-#include "../../concepts/tensor_like_of_rank.hpp"
-#include "../../traits/tensor_element.hpp"
+#include "concepts/layout_like.hpp"
+#include <utility>
 
 namespace ubu
 {
+namespace detail
+{
 
 template<class T>
-concept layout =
-  tensor_like<T>
-  and coordinate<tensor_element_t<T>>
-;
+concept has_layout_member_function = requires(T arg)
+{
+  { arg.layout() } -> layout_like;
+};
 
-template<class L, class T>
-concept layout_for =
-  layout<L>
-  and coordinate_for<tensor_element_t<L>, T>
-;
+template<class T>
+concept has_layout_free_function = requires(T arg)
+{
+  { layout(arg) } -> layout_like;
+};
 
-template<class L, std::size_t R>
-concept layout_of_rank = (layout<L> and tensor_rank_v<L> == R);
+
+struct dispatch_layout
+{
+  template<class T>
+    requires has_layout_member_function<T&&>
+  constexpr layout_like auto operator()(T&& arg) const
+  {
+    return std::forward<T>(arg).layout();
+  }
+
+  template<class T>
+    requires (not has_layout_member_function<T&&>
+              and has_layout_free_function<T&&>)
+  constexpr layout_like auto operator()(T&& arg) const
+  {
+    return layout(std::forward<T>(arg));
+  }
+};
+
+} // end detail
+
+
+inline constexpr detail::dispatch_layout layout;
+
+
+template<class T>
+using layout_t = decltype(layout(std::declval<T>()));
+
 
 } // end ubu
 

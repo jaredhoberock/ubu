@@ -11,8 +11,8 @@
 #include "../all.hpp"
 #include "../compose.hpp"
 #include "../composed_view.hpp"
+#include "concepts/layout_like.hpp"
 #include "coshape.hpp"
-#include "layout.hpp"
 
 
 namespace ubu
@@ -35,7 +35,7 @@ struct add_offset
 } // end detail
 
 
-template<layout L, coordinate O>
+template<layout_like L, coordinate O>
   requires view<L>
 struct offset_layout : composed_view<detail::add_offset<O>, L>
 {
@@ -59,7 +59,7 @@ struct offset_layout : composed_view<detail::add_offset<O>, L>
     auto offset = self.a().offset;
     auto new_origin = smaller(offset, s.size());
 
-    if constexpr(coshaped_layout<L>)
+    if constexpr(coshaped_layout_like<L>)
     {
       // if the layout has a coshape, we can use it to bound the size of the new span
       auto new_size = smaller(self.b().coshape(), s.size() - new_origin);
@@ -74,7 +74,7 @@ struct offset_layout : composed_view<detail::add_offset<O>, L>
 };
 
 
-template<layout L, congruent<tensor_element_t<L>> O>
+template<layout_like L, congruent<tensor_element_t<L>> O>
 constexpr view auto offset(L&& layout, O offset)
 {
   return offset_layout(all(std::forward<L>(layout)), offset);

@@ -8,9 +8,9 @@
 #include "../slices/dice_coordinate.hpp"
 #include "../slices/slice_coordinate.hpp"
 #include "../slices/slicer.hpp"
+#include "concepts/layout_like.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
-#include "layout.hpp"
 #include "offset.hpp"
 #include "strides/apply_stride.hpp"
 #include "strides/apply_stride_r.hpp"
@@ -130,7 +130,7 @@ class strided_layout : public std::ranges::view_base
     }
 
     template<slicer_for<S> K>
-    constexpr layout auto slice(const K& katana) const
+    constexpr layout_like auto slice(const K& katana) const
     {
       auto needs_offset = cute_slice(katana);
       auto diced_layout = cute_dice(katana);

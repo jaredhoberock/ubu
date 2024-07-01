@@ -4,6 +4,7 @@
 
 #include "layouts/compact_left_major.hpp"
 #include "layouts/compact_right_major.hpp"
+#include "layouts/concepts.hpp"
 #include "layouts/coshape.hpp"
 #include "layouts/identity_layout.hpp"
 #include "layouts/is_injective.hpp"

@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/concepts/congruent.hpp"
-#include "layout.hpp"
+#include "concepts/layout_like.hpp"
 #include <utility>
 
 namespace ubu
@@ -59,8 +59,8 @@ concept coshaped =
 ;
 
 template<class T>
-concept coshaped_layout =
-  layout<T>
+concept coshaped_layout_like =
+  layout_like<T>
   and coshaped<T>
   and congruent<coshape_t<T>, tensor_element_t<T>>
 ;
