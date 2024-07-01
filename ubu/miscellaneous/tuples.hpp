@@ -983,7 +983,7 @@ decltype(auto) get2d(T&& t)
 template<std::size_t Row, std::size_t... Col, tuple_like T>
 tuple_like auto unzip_row_impl(std::index_sequence<Col...>, T&& t)
 {
-  return tuples::make_tuple_like<tuple_similar_to<T>::template tuple>(get2d<Row,Col>(std::forward<T>(t))...);
+  return tuples::make_tuple_like<tuple_similar_to<T>::template tuple>(detail::get2d<Row,Col>(std::forward<T>(t))...);
 }
 
 
