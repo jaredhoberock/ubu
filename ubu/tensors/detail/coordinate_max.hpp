@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
+#include "../../miscellaneous/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"
-#include "../coordinates/detail/tuple_algorithm.hpp"
 
 namespace ubu::detail
 {
@@ -18,7 +18,7 @@ constexpr congruent<C1> auto coordinate_max(const C1& coord1, const C2& coord2)
   }
   else
   {
-    return tuple_zip_with(coord1, coord2, [](const auto& c1, const auto& c2)
+    return tuples::zip_with(coord1, coord2, [](const auto& c1, const auto& c2)
     {
       return coordinate_max(c1, c2);
     });

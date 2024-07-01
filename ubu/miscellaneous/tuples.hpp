@@ -227,6 +227,7 @@ struct is_std_array<std::array<T,N>> : std::true_type {};
 } // end detail
 
 
+// XXX TODO rename this to "make"
 template<template<class...> class Tuple, class... Args>
 constexpr Tuple<Args...> make_tuple_like(const Args&... args)
 {
@@ -678,6 +679,7 @@ struct tuple_similar_to
 
 // this makes a new tuple_like
 // it attempts to make the type of the result similar to a preferred Example tuple_like
+// XXX TODO rename this make_similar_to
 template<tuple_like Example, class... Args>
 constexpr tuple_like auto make_tuple_similar_to(Args&&... args)
 {
