@@ -4,7 +4,7 @@
 #include <ranges>
 #include <ubu/tensors/coordinates/comparisons.hpp>
 #include <ubu/tensors/iterators.hpp>
-#include <ubu/tensors/matrices/column_major.hpp>
+#include <ubu/tensors/matrices/column_major_layout.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
@@ -67,7 +67,7 @@ void test_slice()
 
   {
     // test slice of a composed_view<T*,...>
-    composed_view A(tensor.data(), column_major(shape));
+    composed_view A(tensor.data(), column_major_layout(shape));
 
     // A is
     // +---+---+---+
@@ -89,7 +89,7 @@ void test_slice()
 
   {
     // test slice of a composed_view<std::span<T>, ...>
-    composed_view A(span(tensor.data(), tensor.size()), column_major(shape));
+    composed_view A(span(tensor.data(), tensor.size()), column_major_layout(shape));
 
     // A is
     // +---+---+---+

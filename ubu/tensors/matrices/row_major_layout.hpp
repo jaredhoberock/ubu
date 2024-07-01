@@ -10,13 +10,13 @@ namespace ubu
 
 
 template<coordinate_of_rank<2> S>
-struct row_major : public compact_right_major_layout<S>
+struct row_major_layout : public compact_right_major_layout<S>
 {
-  constexpr row_major(S shape)
+  constexpr row_major_layout(S shape)
     : compact_right_major_layout<S>(shape)
   {}
 
-  row_major(const row_major&) = default;
+  row_major_layout(const row_major_layout&) = default;
 };
 
 

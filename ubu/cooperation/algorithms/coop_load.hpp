@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/constant.hpp"
-#include "../../tensors/matrices/column_major.hpp"
+#include "../../tensors/matrices/column_major_layout.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/vectors/span_like.hpp"
@@ -46,7 +46,7 @@ constexpr inplace_vector<tensor_element_t<S>,N> coop_load(C self, S source)
   synchronize(self);
 
   // create a 2d view of the stage
-  auto stage2d = compose(stage.all(), column_major(std::pair(constant<N>(), size(self))));
+  auto stage2d = compose(stage.all(), column_major_layout(std::pair(constant<N>(), size(self))));
 
   // get a view of my slice of the stage
   auto my_slice = slice(stage2d, std::pair(_, id(self)));

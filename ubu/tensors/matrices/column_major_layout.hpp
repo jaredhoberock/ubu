@@ -10,13 +10,13 @@ namespace ubu
 
 
 template<coordinate_of_rank<2> S>
-struct column_major : public compact_left_major_layout<S>
+struct column_major_layout : public compact_left_major_layout<S>
 {
-  constexpr column_major(S shape)
+  constexpr column_major_layout(S shape)
     : compact_left_major_layout<S>(shape)
   {}
 
-  column_major(const column_major&) = default;
+  column_major_layout(const column_major_layout&) = default;
 };
 
 

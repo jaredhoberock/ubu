@@ -6,7 +6,7 @@
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../../tensors/traits/tensor_reference.hpp"
 #include "../../tensors/concepts/tensor_like.hpp"
-#include "../../tensors/matrices/row_major.hpp"
+#include "../../tensors/matrices/row_major_layout.hpp"
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/nestle.hpp"
@@ -44,7 +44,7 @@ constexpr void coop_for_each(C self, T tensor, F f)
     // fold the vector into a matrix and recurse to the else branch
     std::pair shape(ceil_div(size(tensor), size(self)), size(self));
 
-    coop_for_each(self, compose(tensor, row_major(shape)), f);
+    coop_for_each(self, compose(tensor, row_major_layout(shape)), f);
   }
   else
   {
