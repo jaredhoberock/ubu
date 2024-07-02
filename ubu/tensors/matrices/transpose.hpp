@@ -9,6 +9,7 @@
 #include "../shapes/shape_size.hpp"
 #include "../views/compose.hpp"
 #include <ranges>
+#include <utility>
 
 namespace ubu
 {
