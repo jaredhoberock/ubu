@@ -9,6 +9,7 @@
 #include "matrices/matrix_like.hpp"
 #include "matrices/matrix_width.hpp"
 #include "matrices/row_major_layout.hpp"
+#include "matrices/transpose.hpp"
 
 #include "../detail/epilogue.hpp"
 
