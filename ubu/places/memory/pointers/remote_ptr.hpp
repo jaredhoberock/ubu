@@ -176,7 +176,7 @@ class remote_ptr : private L
     {}
 
     // returns the underlying address
-    const address_type& to_address() const noexcept
+    constexpr const address_type& to_address() const noexcept
     {
       return address_;
     }
@@ -188,6 +188,13 @@ class remote_ptr : private L
     constexpr T* to_raw_pointer() const noexcept
     {
       return reinterpret_cast<T*>(to_address());
+    }
+
+    // reinterprets this remote_ptr
+    template<class U>
+    constexpr remote_ptr<U,L> reinterpret_pointer() noexcept
+    {
+      return {to_address(), loader()};
     }
 
     // returns the loader
