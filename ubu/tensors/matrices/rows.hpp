@@ -4,6 +4,7 @@
 #include "../vectors/vector_like.hpp"
 #include "../views/nestle.hpp"
 #include "matrix_like.hpp"
+#include "transpose.hpp"
 #include <utility>
 
 namespace ubu

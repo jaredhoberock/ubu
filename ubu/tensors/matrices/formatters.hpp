@@ -5,6 +5,7 @@
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/traits/zeros.hpp"
 #include "../element_exists.hpp"
+#include "../iterators.hpp"
 #include "../shapes/shape.hpp"
 #include "matrix_like.hpp"
 #include "rows.hpp"

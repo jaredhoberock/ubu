@@ -12,6 +12,7 @@
 #include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_rank.hpp"
 #include "all.hpp"
+#include "slices/slice.hpp"
 #include "slices/underscore.hpp"
 #include <ranges>
 #include <utility>
