@@ -1,28 +1,31 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
+#include "../../../miscellaneous/constant.hpp"
+#include "../../../miscellaneous/integrals/integral_like.hpp"
 #include "../../../miscellaneous/integrals/size.hpp"
+#include "../../../tensors/vectors/fancy_span.hpp"
+#include "../../../tensors/vectors/span_like.hpp"
 #include "../data.hpp"
 #include "buffer_like.hpp"
 #include <cstddef>
-#include <span>
 
 namespace ubu
 {
 
-// XXX reinterpret_buffer should probably return fancy_span
-
-template<class T, buffer_like B>
-constexpr std::span<T> reinterpret_buffer(B buffer, std::size_t num_objects)
+template<class T, buffer_like B, integral_like N>
+constexpr fancy_span<T*,N> reinterpret_buffer(B buffer, N num_objects)
 {
   // XXX data returns pointer_like, so we probably need something more like to_raw_pointer
   return {reinterpret_cast<T*>(data(buffer)), num_objects};
 }
 
 template<class T, buffer_like B>
-constexpr std::span<T> reinterpret_buffer(B buffer)
+constexpr span_like auto reinterpret_buffer(B buffer)
 {
-  return reinterpret_buffer<T>(buffer, size(buffer) / sizeof(T));
+  auto num_objects = size(buffer) / constant<sizeof(T)>();
+
+  return reinterpret_buffer<T>(buffer, num_objects);
 }
 
 } // end ubu
