@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integrals/size.hpp"
+#include "../../places/memory/data.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../vectors/contiguous_vector_like.hpp"
@@ -63,7 +64,7 @@ struct dispatch_all
               and not view<std::remove_cvref_t<V&&>>)
   constexpr view auto operator()(V&& vec) const
   {
-    return fancy_span(std::data(std::forward<V>(vec)), size(std::forward<V>(vec)));
+    return fancy_span(data(std::forward<V>(vec)), size(std::forward<V>(vec)));
   }
 
   // XXX consider eliminating this function since a span_like is already a view
@@ -73,8 +74,7 @@ struct dispatch_all
               and not view<std::remove_cvref_t<S>>)
   constexpr span_like auto operator()(S s) const
   {
-    // XXX I think this should be std::data instead of std::ranges::data
-    return fancy_span(std::ranges::data(s), size(s));
+    return fancy_span(data(s), size(s));
   }
 
   // XXX we could have another default path here for std::ranges::random_access_range

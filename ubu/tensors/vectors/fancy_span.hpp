@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../places/memory/data.hpp"
 #include "../../places/memory/pointers/pointer_like.hpp"
 #include "../../miscellaneous/constant.hpp"
 #include "../../miscellaneous/constant_valued.hpp"
@@ -64,11 +65,11 @@ class fancy_span
     {}
 
     template<contiguous_vector_like V>
-      requires (    std::convertible_to<decltype(std::data(std::declval<V&&>())), P>
+      requires (    std::convertible_to<ubu::data_t<V&&>, P>
                 and std::convertible_to<tensor_size_t<V&&>, S>)
     explicit(constant_valued<size_type>)
     constexpr fancy_span(V&& vec)
-      : fancy_span(std::data(std::forward<V&&>(vec)),
+      : fancy_span(ubu::data(std::forward<V&&>(vec)),
                    ubu::size(std::forward<V&&>(vec)))
     {}
 
@@ -230,7 +231,7 @@ template<pointer_like P, integral_like S>
 fancy_span(P, S) -> fancy_span<P,S>;
 
 template<contiguous_vector_like V>
-fancy_span(V&&) -> fancy_span<decltype(std::data(std::declval<V&&>())), tensor_size_t<V&&>>;
+fancy_span(V&&) -> fancy_span<ubu::data_t<V&&>, tensor_size_t<V&&>>;
 
 } // end ubu
 
