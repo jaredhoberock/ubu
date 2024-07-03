@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
+#include "concepts/elemental_invocable.hpp"
 #include "concepts/tensor_like.hpp"
 #include "coordinates/element.hpp"
 #include "element_exists.hpp"
@@ -25,7 +26,8 @@ constexpr bool empty(T&& tensor)
 // XXX TODO: to generalize this to tensor_like, we need to use bulk_execute + inline_executor
 //           to generate coordinates in an efficient (i.e., loop-unrollable) way
 // XXX TODO: receive an optional init parameter
-template<vector_like V, std::invocable<tensor_element_t<V>,tensor_element_t<V>> F>
+// XXX TODO: require that elemental_invoke_result_t is convertible to tensor_element_t<V>
+template<vector_like V, elemental_invocable<V,V> F>
 constexpr std::optional<tensor_element_t<V>> reduce(V&& vector, F binary_op)
 {
   std::optional<tensor_element_t<V>> result;
