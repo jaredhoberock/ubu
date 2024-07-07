@@ -100,6 +100,11 @@ class coop_executor
       requires std::is_trivially_copy_constructible_v<F>
     event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
     {
+//      if(shape_size(shape) > workspace_type::max_size)
+//      {
+//        throw std::runtime_error("coop_executor::bulk_execute_with_workspace_after: requested shape exceeds capacity of coop_grid_workspace");
+//      }
+
       // decompose workspace shape
       auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
 

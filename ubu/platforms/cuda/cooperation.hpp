@@ -50,6 +50,9 @@ struct coop_grid_workspace : grid_workspace
   struct barrier_type
   {
     constexpr static const std::string_view thread_scope = "device";
+
+    // this limit is imposed by detail::sync_grid_count_half
+    constexpr static auto max = std::numeric_limits<std::uint16_t>::max();
   
     inline void arrive_and_wait() const
     {
@@ -58,6 +61,8 @@ struct coop_grid_workspace : grid_workspace
 #endif
     }
   };
+
+  constexpr static auto max_size = barrier_type::max;
   
   barrier_type barrier;
 };
