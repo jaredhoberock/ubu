@@ -7,6 +7,7 @@
 #include "../../places/memory/buffers/empty_buffer.hpp"
 #include "../../places/memory/data.hpp"
 #include "../../tensors/coordinates/colexicographical_lift.hpp"
+#include "../../tensors/coordinates/concepts/congruent.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../tensors/coordinates/traits/rank.hpp"
 #include "../../tensors/shapes/shape_size.hpp"
@@ -28,7 +29,7 @@ namespace ubu
 {
 
 
-template<workspace W, coordinate S = int, coordinate C = S>
+template<workspace W, coordinate S = int, congruent<S> C = S>
 struct basic_cooperator
 {
   const C coord;
