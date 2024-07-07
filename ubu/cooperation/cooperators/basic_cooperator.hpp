@@ -17,7 +17,6 @@
 #include "../workspaces/workspace.hpp"
 #include "../workspaces/workspace_thread_scope.hpp"
 #include "concepts/cooperator.hpp"
-#include "concepts/hierarchical_cooperator.hpp"
 #include "subgroup.hpp"
 #include "id.hpp"
 #include "size.hpp"
@@ -35,15 +34,6 @@ struct basic_cooperator
   const C coord;
   const S shape;
   static constexpr std::string_view thread_scope = workspace_thread_scope_v<W>;
-
-  // this ctor creates a child cooperator (e.g. a warp) from its parent hierarchical_cooperator
-  // XXX we should enable the construction of any grandchild of arbitrary depth
-  // XXX actually we shouldn't even have this ctor
-  template<hierarchical_cooperator P>
-    requires std::same_as<basic_cooperator, child_cooperator_t<P>>
-  constexpr explicit basic_cooperator(const P& parent)
-    : basic_cooperator(subgroup(parent))
-  {}
 
   constexpr basic_cooperator(const C& c, const S& s, const W& w = W{})
     : coord{c}, shape{s}, workspace_{w}, stack_counter_{0}

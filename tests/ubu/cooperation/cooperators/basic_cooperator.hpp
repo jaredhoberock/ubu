@@ -65,9 +65,6 @@ void test_basic_cooperator()
 
     // subgroup(self) should return warp
     [[maybe_unused]] warp w1 = ns::subgroup(self);
-
-    // a warp should be directly constructible from a block
-    [[maybe_unused]] auto w2 = warp(self);
   }
 
   {
@@ -81,9 +78,6 @@ void test_basic_cooperator()
 
     // descend(self) should return warp
     [[maybe_unused]] warp w1 = ns::subgroup(self);
-
-    // a warp should be directly constructible from a block
-    [[maybe_unused]] auto w2 = warp(self);
   }
 }
 
