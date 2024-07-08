@@ -60,8 +60,6 @@ template<ubu::sized_vector_like I, std::random_access_iterator R, class F>
 ubu::cuda::event single_phase_coop_reduce(ubu::cuda::coop_executor gpu, ubu::cuda::device_allocator<std::byte> alloc, const ubu::cuda::event& before, I input, R result, F op)
 {
   using namespace ubu;
-  using namespace std;
-  using T = tensor_element_t<I>;
 
   // arrange the input into a 2D matrix of 1D tiles
   matrix_like auto tiles = as_reduction_matrix(input, gpu);
@@ -70,12 +68,13 @@ ubu::cuda::event single_phase_coop_reduce(ubu::cuda::coop_executor gpu, ubu::cud
   auto [num_threads, num_blocks] = grid_shape;
 
   // each block needs num_warps Ts in its workspace
+  using T = tensor_element_t<I>;
   int block_workspace_shape = sizeof(T) * (num_threads / cuda::warp_size);
 
   // the grid needs num_blocks Ts in its workspace
   int grid_workspace_shape = sizeof(T) * num_blocks;
 
-  pair workspace_shape(block_workspace_shape, grid_workspace_shape);
+  std::pair workspace_shape(block_workspace_shape, grid_workspace_shape);
 
   // circle build 208 -sm_80: 25 registers
   // 712.125 GB/s ~ 95% peak bandwidth on RTX A5000 for large sizes
@@ -85,20 +84,18 @@ ubu::cuda::event single_phase_coop_reduce(ubu::cuda::coop_executor gpu, ubu::cud
                                            [=](ubu::int2 coord, auto workspace)
   {
     // sequentially reduce this thread's tile
-    optional thread_sum = reduce(tiles[coord], op);
+    std::optional thread_sum = reduce(tiles[coord], op);
 
     // create a representation for the grid of threads
     basic_cooperator grid(coord, grid_shape, workspace);
 
     // cooperatively reduce the entire grid's results
-    if(optional grid_sum = coop_reduce(grid, thread_sum, op))
+    if(std::optional grid_sum = coop_reduce(grid, thread_sum, op))
     {
       // a single thread stores the sum
       *result = *grid_sum;
     }
   });
-
-  return ubu::initial_happening(gpu);
 }
 
 
