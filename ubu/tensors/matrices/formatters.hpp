@@ -21,28 +21,75 @@ namespace detail
 // XXX to make matrix formatting work on the GPU, we would need to use "compiled" format strings in the following
 
 
-// Function to get the maximum width of elements in each column of the matrix
-template<matrix_like M>
-std::vector<int> compute_column_widths(M&& matrix)
+template<matrix_like M, congruent<shape_t<M>> S>
+std::vector<int> compute_column_widths(const M& matrix, S max_shape)
 {
   if(ubu::empty(matrix)) return {};
 
   auto [num_rows, num_cols] = shape(matrix);
-  
-  std::vector<int> max_widths(num_cols, 0);
+  auto [max_rows, max_cols] = max_shape;
 
-  for(auto row : rows(matrix))
+  bool do_column_elision = max_cols != 0 and max_cols < num_cols;
+  bool do_row_elision    = max_rows != 0 and max_rows < num_rows;
+
+  // when eliding elements, the output gets an additional row or column representing elision
+  int num_output_rows = do_row_elision    ? max_rows + 1 : num_rows;
+  int num_output_cols = do_column_elision ? max_cols + 1 : num_cols;
+
+  // -2 because elision occurs on the second to last element
+  int elided_row_idx = num_output_rows - 2;
+  int elided_col_idx = num_output_cols - 2;
+
+  std::vector<int> max_widths(num_output_cols);
+
+  // iterate over elements of the output matrix
+  for(int output_row_idx = 0; output_row_idx < num_output_rows; ++output_row_idx)
   {
-    for(auto col : domain(row))
+    for(int output_col_idx = 0; output_col_idx < num_output_cols; ++output_col_idx)
     {
-      std::size_t length = element_exists(row, col) ?
-        std::formatted_size("{}", row[col]) :
-        std::formatted_size("X")
-      ;
+      std::size_t length = 0;
 
-      if(length > max_widths[col])
+      // map our output column index to a column in the input matrix
+      int input_col_idx = output_col_idx;
+      if(do_column_elision and output_col_idx == elided_col_idx + 1)
       {
-        max_widths[col] = length;
+        input_col_idx = num_cols - 1;
+      }
+
+      if(do_row_elision and output_row_idx == elided_row_idx)
+      {
+        // XXX because vertical ellipsis is a 3-byte character, this will return 3 
+        //length = std::formatted_size("{}", "⋮");
+        length = 1;
+      }
+      else if(do_column_elision and output_col_idx == elided_col_idx)
+      {
+        length = std::formatted_size("{}", "...");
+      }
+      else
+      {
+        // map our output coordinate to a coordinate in the input matrix
+        int input_row_idx = output_row_idx;
+        if(do_row_elision and input_row_idx == elided_row_idx + 1)
+        {
+          input_row_idx = num_rows - 1;
+        }
+
+        int2 input_coord(input_row_idx, input_col_idx);
+
+        if(ubu::element_exists(matrix, input_coord))
+        {
+          length = std::formatted_size("{}", matrix[input_coord]);
+        }
+        else
+        {
+          length = std::formatted_size("X");
+        }
+      }
+
+      if(length > max_widths[output_col_idx])
+      {
+        max_widths[output_col_idx] = length;
       }
     }
   }
@@ -58,13 +105,84 @@ constexpr OutputIt format_matrix_to(OutputIt out, const M& matrix, S max_shape =
 {
   if(ubu::empty(matrix)) return out;
 
-  std::vector<int> column_widths = detail::compute_column_widths(matrix);
+  std::vector<int> column_widths = detail::compute_column_widths(matrix, max_shape);
   
   auto [num_rows, num_cols] = shape(matrix);
   auto [max_rows, max_cols] = max_shape;
 
-  bool do_column_elision = max_cols == 0 or max_cols < num_cols;
-  bool do_row_elision    = max_rows == 0 or max_rows < num_rows;
+  bool do_column_elision = max_cols != 0 and max_cols < num_cols;
+  bool do_row_elision    = max_rows != 0 and max_rows < num_rows;
+
+  // when eliding elements, the output gets an additional row or column representing elision
+  int num_output_rows = do_row_elision    ? max_rows + 1 : num_rows;
+  int num_output_cols = do_column_elision ? max_cols + 1 : num_cols;
+
+  // -2 because elision occurs on the second to last element
+  int elided_row_idx = num_output_rows - 2;
+  int elided_col_idx = num_output_cols - 2;
+
+  // Function to format a single element of the output
+  auto format_output_element_to = [&](auto out, int output_row_idx, int output_col_idx)
+  {
+    int column_width = column_widths[output_col_idx];
+
+    if(do_row_elision and output_row_idx == elided_row_idx)
+    {
+      if(do_column_elision and output_col_idx == elided_col_idx)
+      {
+        // on the row and column representing elided row & column in the input,
+        // the single element is represented by a diagonal ellipsis
+
+        // XXX for some reason, std::format_to thinks the diagnoal ellipsis consumes
+        //     zero width, but padding out the column_width by 2 corrects the problem?
+        out = std::format_to(out, " {:^{}} |", "⋱", column_width + 2);
+      }
+      else
+      {
+        // on the row representing elided rows in the input,
+        // each element is represented by a vertical ellipsis
+
+        // XXX for some reason, std::format_to thinks the vertical ellipsis consumes
+        //     zero width, but padding out the column_width by 2 corrects the problem?
+        out = std::format_to(out, " {:^{}} |", "⋮", column_width + 2);
+      }
+    }
+    else if(do_column_elision and output_col_idx == elided_col_idx)
+    {
+      // in a column representing elided columns in the input,
+      // each element is represented by a horizontal ellipsis
+      out = std::format_to(out, " {:>{}} |", "...", column_width);
+    }
+    else
+    {
+      // map our output coordinate to a coordinate in the input matrix
+      int input_row_idx = output_row_idx;
+      if(do_row_elision and input_row_idx == elided_row_idx + 1)
+      {
+        input_row_idx = num_rows - 1;
+      }
+
+      // map our output column index to a column in the input matrix
+      int input_col_idx = output_col_idx;
+      if(do_column_elision and output_col_idx == elided_col_idx + 1)
+      {
+        input_col_idx = num_cols - 1;
+      }
+
+      int2 input_coord(input_row_idx, input_col_idx);
+
+      if(ubu::element_exists(matrix, input_coord))
+      {
+        out = std::format_to(out, " {:>{}} |", matrix[input_coord], column_width);
+      }
+      else
+      {
+        out = std::format_to(out, " {:>{}} |", "X", column_width);
+      }
+    }
+
+    return out;
+  };
   
   // Function to format a border separating rows
   auto format_border_to = [&](auto out)
@@ -72,80 +190,28 @@ constexpr OutputIt format_matrix_to(OutputIt out, const M& matrix, S max_shape =
     // the beginning of the border
     out = std::format_to(out, "+");
   
-    for(size_t col = 0; col < num_cols; ++col)
+    for(size_t output_col_idx = 0; output_col_idx < num_output_cols; ++output_col_idx)
     {
-      if(do_column_elision and col == max_cols - 2)
-      {
-        // 5 is the length of " ... ", which represents elided columns
-        out = std::format_to(out, "{:-<{}}+", "", 5);
-
-        // skip to the final column
-        col = num_cols - 2;
-      }
-      else
-      {
-        out = std::format_to(out, "{:-<{}}+", "", column_widths[col] + 2);
-      }
+      out = std::format_to(out, "{:-<{}}+", "", column_widths[output_col_idx] + 2);
     }
   
     // the border includes a newline
     return std::format_to(out, "\n");
   };
 
-  // format top border, measure its width
-  auto format_border_result = format_border_to(std::counted_iterator(out, 0));
+  // format top border
+  out = format_border_to(out);
 
-  // get the new value of output iterator
-  out = format_border_result.base();
-
-  // measure the border width, subtracting one for the newline
-  // std::counted_iterator decrements its count each time it's written (wtf)
-  // so to get the number of items written, we have to subtract from zero
-  std::size_t border_width = (0 - format_border_result.count()) - 1;
-
-  // format each row of the matrix
-  for(size_t row_idx = 0; row_idx < num_rows; ++row_idx)
+  // format each row of the output
+  for(size_t row_idx = 0; row_idx < num_output_rows; ++row_idx)
   {
-    if(do_row_elision and row_idx == max_rows - 1)
-    {
-      // format the representation of elided rows: | ... |
-      // the ellipsis is centered between two pipes
-      out = std::format_to(out, "|{:^{}}|\n", "...", border_width - 2);
-
-      // skip to the last row
-      row_idx = num_rows - 1;
-
-      // top border for the last row
-      out = format_border_to(out);
-    }
-    
     // format left border
     out = std::format_to(out, "|");
-
-    auto row = rows(matrix)[row_idx];
     
-    // format each element of the row
-    for(size_t col = 0; col < num_cols; ++col)
+    // format each column of the output
+    for(size_t col_idx = 0; col_idx < num_output_cols; ++col_idx)
     {
-      if(do_column_elision and col == max_cols - 2)
-      {
-        // represent elided columns
-        out = std::format_to(out, " ... |");
-
-        // skip to the final column
-        col = num_cols - 2;
-      }
-      else
-      {
-        if(ubu::element_exists(row, col))
-        {
-          out = std::format_to(out, " {:>{}} |", row[col], column_widths[col]);
-        }
-        else
-        {
-          out = std::format_to(out, " {:>{}} |", "X", column_widths[col]);
-        }
-      }
+      out = format_output_element_to(out, row_idx, col_idx);
     }
 
     out = std::format_to(out, "\n");
