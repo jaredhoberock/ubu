@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/tuples.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "../../coordinates.hpp"
 #include "../../shapes/shape_size.hpp"
 #include "../slices/dice_coordinate.hpp"

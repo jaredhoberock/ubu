@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../utilities/integrals/integral_like.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../coordinate_cast.hpp"

@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integrals/integral_like.hpp"
-#include "../../../miscellaneous/tuples.hpp"
+#include "../../../utilities/integrals/integral_like.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"

@@ -1,4 +1,4 @@
-#include <ubu/miscellaneous/tuples.hpp>
+#include <ubu/utilities/tuples.hpp>
 #include <ubu/platforms/cuda/thread_id.hpp>
 #include <ubu/tensors/coordinates/concepts/congruent.hpp>
 #include <ubu/tensors/coordinates/concepts/coordinate.hpp>

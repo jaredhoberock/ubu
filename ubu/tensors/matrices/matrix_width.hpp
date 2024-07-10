@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/constant_valued.hpp"
+#include "../../utilities/constant_valued.hpp"
 #include "../shapes/shape.hpp"
 #include "../shapes/shape_element.hpp"
 #include "matrix_like.hpp"

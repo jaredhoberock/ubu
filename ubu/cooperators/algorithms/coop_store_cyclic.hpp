@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/constant.hpp"
+#include "../../utilities/constant.hpp"
 #include "../../tensors/matrices/row_major_layout.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"

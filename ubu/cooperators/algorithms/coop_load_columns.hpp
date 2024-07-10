@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/constant_valued.hpp"
+#include "../../utilities/constant_valued.hpp"
 #include "../../tensors/matrices/contiguous_column_major_matrix_like.hpp"
 #include "../../tensors/matrices/matrix_height.hpp"
 #include "../../tensors/matrices/matrix_like.hpp"

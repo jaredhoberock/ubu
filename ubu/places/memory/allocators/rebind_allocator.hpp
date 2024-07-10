@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../miscellaneous/detail/instantiatable.hpp"
+#include "../../../utilities/detail/instantiatable.hpp"
 
 #include <memory>
 #include <utility>

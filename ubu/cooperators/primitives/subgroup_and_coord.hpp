@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../concepts/cooperator.hpp"
 #include <utility>

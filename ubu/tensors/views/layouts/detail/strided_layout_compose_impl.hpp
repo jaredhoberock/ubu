@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/tuples.hpp"
+#include "../../../../utilities/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "compatible_shape.hpp"
 #include "compose_strides.hpp"

@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../miscellaneous/integrals/size.hpp"
-#include "../miscellaneous/tuples.hpp"
+#include "../utilities/integrals/size.hpp"
+#include "../utilities/tuples.hpp"
 #include "../places/memory/buffers/empty_buffer.hpp"
 #include "../places/memory/data.hpp"
 #include "../tensors/coordinates/colexicographical_lift.hpp"

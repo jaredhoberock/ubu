@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/tuples.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "equal_rank.hpp"
 #include "semicoordinate.hpp"
 #include <tuple>

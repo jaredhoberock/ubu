@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integrals/ceil_div.hpp"
-#include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../utilities/integrals/ceil_div.hpp"
+#include "../../utilities/integrals/integral_like.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "../concepts/allocating_cooperator.hpp"
 #include "../primitives/coop_alloca.hpp"

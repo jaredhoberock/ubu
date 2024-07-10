@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integrals/size.hpp"
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/integrals/size.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../../places/memory/buffers/get_buffer.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "hierarchical_workspace.hpp"

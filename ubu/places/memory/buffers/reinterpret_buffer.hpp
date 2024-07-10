@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../../miscellaneous/constant.hpp"
-#include "../../../miscellaneous/integrals/integral_like.hpp"
-#include "../../../miscellaneous/integrals/size.hpp"
+#include "../../../utilities/constant.hpp"
+#include "../../../utilities/integrals/integral_like.hpp"
+#include "../../../utilities/integrals/size.hpp"
 #include "../../../tensors/vectors/fancy_span.hpp"
 #include "../../../tensors/vectors/span_like.hpp"
 #include "../data.hpp"

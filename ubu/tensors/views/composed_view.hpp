@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/integrals/size.hpp"
+#include "../../utilities/integrals/size.hpp"
 #include "../concepts/composable.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"

@@ -1,7 +1,7 @@
 #include <cassert>
 #include <format>
 #include <string>
-#include <ubu/miscellaneous/integrals.hpp>
+#include <ubu/utilities/integrals.hpp>
 #include <ubu/tensors/matrices/column_major_layout.hpp>
 #include <ubu/tensors/matrices/formatters.hpp>
 #include <ubu/tensors/matrices/row_major_layout.hpp>

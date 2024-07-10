@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/coordinate_cast.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"

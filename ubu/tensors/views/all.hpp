@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integrals/size.hpp"
 #include "../../places/memory/data.hpp"
+#include "../../utilities/integrals/size.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../vectors/contiguous_vector_like.hpp"

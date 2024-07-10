@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../coordinates.hpp"
 #include "as_tuple_of_constants.hpp"
 #include "coordinate_cat.hpp"

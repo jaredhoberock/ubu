@@ -2,7 +2,7 @@
 #include <cassert>
 #include <tuple>
 #include <utility>
-#include <ubu/miscellaneous/constant.hpp>
+#include <ubu/utilities/constant.hpp>
 #include <ubu/tensors/coordinates/comparisons.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
 #include <ubu/tensors/views/lattice.hpp>

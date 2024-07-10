@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/constant.hpp"
-#include "../../miscellaneous/integrals/size.hpp"
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/constant.hpp"
+#include "../../utilities/integrals/size.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cast.hpp"
 #include "../coordinates/element.hpp"

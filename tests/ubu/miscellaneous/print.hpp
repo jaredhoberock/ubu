@@ -1,4 +1,4 @@
-#include <ubu/miscellaneous/print.hpp>
+#include <ubu/utilities/print.hpp>
 #include <ubu/ubu.hpp>
 
 #include <stdexcept>

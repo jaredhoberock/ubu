@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/constant_valued.hpp"
+#include "../../../../utilities/constant_valued.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include <utility>
 

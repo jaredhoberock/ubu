@@ -1,5 +1,5 @@
-#include <ubu/miscellaneous/constant.hpp>
-#include <ubu/miscellaneous/integrals/bounded.hpp>
+#include <ubu/utilities/constant.hpp>
+#include <ubu/utilities/integrals/bounded.hpp>
 #include <functional>
 #include <iostream>
 

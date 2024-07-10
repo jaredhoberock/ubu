@@ -1,6 +1,6 @@
 #include <array>
 #include <concepts>
-#include <ubu/miscellaneous/constant.hpp>
+#include <ubu/utilities/constant.hpp>
 #include <ubu/tensors/coordinates/element.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/integrals/integral_like.hpp"
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/integrals/integral_like.hpp"
+#include "../../utilities/tuples.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
 #include "concepts/subdimensional.hpp"

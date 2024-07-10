@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/detail/to_integral_like.hpp"

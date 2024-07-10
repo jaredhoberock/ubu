@@ -4,7 +4,7 @@
 
 #include "../../../../cooperators/concepts/cooperator.hpp"
 #include "../../../../cooperators/traits/cooperator_thread_scope.hpp"
-#include "../../../../miscellaneous/constant.hpp"
+#include "../../../../utilities/constant.hpp"
 #include "../../../../places/memory/buffers/empty_buffer.hpp"
 #include <string_view>
 

@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "colexicographical_lift.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
