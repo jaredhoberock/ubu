@@ -23,7 +23,11 @@ inline constexpr auto workspace_shape(W ws)
 template<hierarchical_workspace W>
 inline constexpr auto workspace_shape(W ws)
 {
-  return tuples::append(tuples::ensure_tuple_like<size2>(workspace_shape(get_local_workspace(ws))), size(get_buffer(ws)));
+  // get the shape of the local workspace
+  tuples::tuple_like auto local_shape = tuples::ensure_tuple_like<size1>(workspace_shape(get_local_workspace(ws)));
+
+  // append
+  return tuples::append_like<size1>(local_shape, size(get_buffer(ws)));
 }
 
 template<workspace W>

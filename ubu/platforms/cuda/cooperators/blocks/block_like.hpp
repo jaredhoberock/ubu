@@ -4,6 +4,7 @@
 
 #include "../../../../cooperators/concepts/cooperator.hpp"
 #include "../../../../cooperators/traits/cooperator_thread_scope.hpp"
+#include "../../../../places/memory/buffers/basic_buffer.hpp"
 #include <cstddef>
 #include <span>
 #include <string_view>
@@ -15,8 +16,7 @@ namespace ubu::cuda
 
 struct block_workspace
 {
-  // XXX we should use small_span or similar with int size
-  std::span<std::byte> buffer;
+  basic_buffer<int> buffer;
 
   struct barrier_type
   {

@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
+#include "../../places/memory/buffers/basic_buffer.hpp"
 #include "cooperators/blocks.hpp"
 #include "cooperators/grids.hpp"
 #include "cooperators/warps.hpp"
@@ -20,8 +21,7 @@ struct grid_workspace
 {
   constexpr static const std::string_view thread_scope = "device";
 
-  // XXX we should use small_span or similar with int size
-  std::span<std::byte> buffer;
+  basic_buffer<int> buffer;
   block_workspace local_workspace;
 
   constexpr explicit grid_workspace(std::span<std::byte> outer_buffer = {})
