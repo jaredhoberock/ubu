@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../utilities/integrals/integral_like.hpp"
 #include "../../views/layouts/strides/apply_stride.hpp"
 #include "../../views/layouts/strides/compact_left_major_stride.hpp"
 #include "../concepts/coordinate.hpp"

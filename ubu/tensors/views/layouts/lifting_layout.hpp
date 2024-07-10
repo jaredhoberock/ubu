@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integrals/integral_like.hpp"
+#include "../../../utilities/integrals/integral_like.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/colexicographical_lift.hpp"
 #include "../../shapes/shape_size.hpp"

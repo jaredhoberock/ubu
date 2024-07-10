@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/integrals/ceil_div.hpp"
-#include "../../../../miscellaneous/tuples.hpp"
+#include "../../../../utilities/integrals/ceil_div.hpp"
+#include "../../../../utilities/tuples.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../strided_layout.hpp"
 #include "../strides/stride_for.hpp"

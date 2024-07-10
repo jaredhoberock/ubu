@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../traits/tensor_element.hpp"
 #include "transform.hpp"

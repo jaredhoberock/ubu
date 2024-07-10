@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/tuples.hpp"
+#include "../../utilities/tuples.hpp"
 #include "comparisons/lexicographical_compare_coordinates.hpp"
 #include "traits/rank.hpp"
 #include <array>

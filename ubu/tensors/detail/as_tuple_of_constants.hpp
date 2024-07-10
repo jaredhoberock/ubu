@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../miscellaneous/constant.hpp"
+#include "../../utilities/constant.hpp"
 #include <tuple>
 #include <utility>
 

@@ -2,9 +2,9 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/constant.hpp"
-#include "../../../miscellaneous/constant_valued.hpp"
-#include "../../../miscellaneous/tuples.hpp"
+#include "../../../utilities/constant.hpp"
+#include "../../../utilities/constant_valued.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include <limits>

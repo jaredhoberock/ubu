@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../places/memory/data.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/bound_coordinate.hpp"
@@ -128,7 +129,7 @@ struct dispatch_trim
         // when tensor is span_like, we can simplify the result by returning a fancy_span
         
         // XXX it might be better instead to call a CPO first(span, bounded_shape) or take(span, bounded_shape)
-        return fancy_span(std::data(std::forward<T>(tensor)), bounded_shape);
+        return fancy_span(data(std::forward<T>(tensor)), bounded_shape);
       }
 
       return trimmed_view(all(std::forward<T>(tensor)), bounded_shape);

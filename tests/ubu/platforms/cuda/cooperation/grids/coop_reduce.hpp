@@ -1,9 +1,9 @@
 #include <cassert>
 #include <optional>
 #include <span>
-#include <ubu/cooperation/algorithms/coop_reduce.hpp>
-#include <ubu/cooperation/cooperators/basic_cooperator.hpp>
-#include <ubu/cooperation/cooperators/is_leader.hpp>
+#include <ubu/cooperators/algorithms/coop_reduce.hpp>
+#include <ubu/cooperators/basic_cooperator.hpp>
+#include <ubu/cooperators/primitives/is_leader.hpp>
 #include <ubu/places/execution/executors/bulk_execute_with_workspace.hpp>
 #include <ubu/platforms/cuda/device_allocator.hpp>
 #include <ubu/platforms/cuda/coop_executor.hpp>
@@ -71,11 +71,11 @@ void test_cooperative_grid_like_coop_reduce()
   int max_num_blocks_per_grid = 16; // this number was arbitrarily chosen
   int max_num_warps_per_block = 32;
 
-  for(int num_blocks = 1; num_blocks < max_num_blocks_per_grid; ++num_blocks)
+  for(int num_blocks = 1; num_blocks <= max_num_blocks_per_grid; ++num_blocks)
   {
-    for(int num_warps = 1; num_warps < max_num_warps_per_block; ++num_warps)
+    for(int num_warps = 1; num_warps <= max_num_warps_per_block; ++num_warps)
     {
-      test(num_warps, num_warps);
+      test(num_warps, num_blocks);
     }
   }
 }

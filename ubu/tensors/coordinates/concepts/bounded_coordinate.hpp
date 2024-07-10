@@ -2,8 +2,8 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../miscellaneous/integrals/bounded_integral_like.hpp"
-#include "../../../miscellaneous/tuples.hpp"
+#include "../../../utilities/integrals/bounded_integral_like.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "../detail/to_integral_like.hpp"
 
 namespace ubu

@@ -28,11 +28,11 @@
 
 #include "detail/prologue.hpp"
 
-#include "cooperation.hpp"
-#include "miscellaneous.hpp"
+#include "cooperators.hpp"
 #include "places.hpp"
 #include "platforms.hpp"
 #include "tensors.hpp"
+#include "utilities.hpp"
 
 #include "detail/epilogue.hpp"
 

@@ -10,34 +10,6 @@
 #include <span>
 #include <ubu/ubu.hpp>
 
-template<ubu::vector_like V, std::invocable<ubu::tensor_element_t<V>,ubu::tensor_element_t<V>> F>
-constexpr std::optional<ubu::tensor_element_t<V>> reduce(V vector, F binary_op)
-{
-  std::optional<ubu::tensor_element_t<V>> result;
-
-  bool found_first_element = false;
-
-  for(int i = 0; i < ubu::shape(vector); ++i)
-  {
-    if(ubu::element_exists(vector, i))
-    {
-      const auto& element = ubu::element(vector,i);
-
-      if(found_first_element)
-      {
-        *result = binary_op(*result, element);
-      }
-      else
-      {
-        result = element;
-        found_first_element = true;
-      }
-    }
-  }
-
-  return result;
-}
-
 // postcondition: is_injective(result)
 constexpr ubu::layout_like_of_rank<3> auto even_share_layout(std::size_t num_elements, int device = 0)
 {

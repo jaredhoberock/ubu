@@ -1,4 +1,4 @@
-#include <ubu/miscellaneous/constant.hpp>
+#include <ubu/utilities/constant.hpp>
 #include <ubu/tensors/coordinates/traits/rank.hpp>
 #include <utility>
 

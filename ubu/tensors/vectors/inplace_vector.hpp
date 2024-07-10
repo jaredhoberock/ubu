@@ -3,8 +3,8 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection/is_host.hpp"
-#include "../../miscellaneous/constant.hpp"
-#include "../../miscellaneous/integrals/bounded.hpp"
+#include "../../utilities/constant.hpp"
+#include "../../utilities/integrals/bounded.hpp"
 #include "../element_exists.hpp"
 #include "../shapes/shape.hpp"
 #include "../traits/tensor_element.hpp"

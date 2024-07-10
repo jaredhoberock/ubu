@@ -2,8 +2,8 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../miscellaneous/constant_valued.hpp"
-#include "../../miscellaneous/integrals/size.hpp"
+#include "../../utilities/constant_valued.hpp"
+#include "../../utilities/integrals/size.hpp"
 #include "../coordinates/concepts/bounded_coordinate.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include <type_traits>

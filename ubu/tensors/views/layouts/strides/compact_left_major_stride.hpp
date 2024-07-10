@@ -2,9 +2,9 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/constant.hpp"
-#include "../../../../miscellaneous/integrals/integral_like.hpp"
-#include "../../../../miscellaneous/tuples.hpp"
+#include "../../../../utilities/constant.hpp"
+#include "../../../../utilities/integrals/integral_like.hpp"
+#include "../../../../utilities/tuples.hpp"
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/equal_rank.hpp"

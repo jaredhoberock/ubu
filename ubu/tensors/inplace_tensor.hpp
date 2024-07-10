@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../miscellaneous/constant.hpp"
-#include "../miscellaneous/integrals/integral_like.hpp"
+#include "../utilities/constant.hpp"
+#include "../utilities/integrals/integral_like.hpp"
 #include "concepts/tensor_like.hpp"
 #include "concepts/view.hpp"
 #include "coordinates/concepts/bounded_coordinate.hpp"

@@ -3,6 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
+#include "../../cooperators/workspaces/workspace_shape.hpp"
 #include "../../places/memory/allocators/allocate_and_zero_after.hpp"
 #include "../../places/memory/allocators/deallocate_after.hpp"
 #include "../../tensors/coordinates/concepts/congruent.hpp"
@@ -10,7 +11,7 @@
 #include "../../tensors/coordinates/one_extend_coordinate.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
-#include "cooperation.hpp"
+#include "cooperators.hpp"
 #include "detail/launch_as_kernel.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
@@ -52,7 +53,7 @@ class device_executor
     using shape_type = thread_id;
     using happening_type = cuda::event;
     using workspace_type = grid_workspace;
-    using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
+    using workspace_shape_type = workspace_shape_t<workspace_type>;
 
     constexpr device_executor(int device, cudaStream_t stream, std::size_t dynamic_smem_size)
       : device_{device},

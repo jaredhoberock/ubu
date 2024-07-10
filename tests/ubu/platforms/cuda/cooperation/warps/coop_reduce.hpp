@@ -1,9 +1,9 @@
 #include <cassert>
 #include <optional>
 #include <span>
-#include <ubu/cooperation/cooperators/basic_cooperator.hpp>
+#include <ubu/cooperators/basic_cooperator.hpp>
 #include <ubu/places/execution/executors/bulk_execute.hpp>
-#include <ubu/platforms/cuda/cooperation.hpp>
+#include <ubu/platforms/cuda/cooperators.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
 #include <ubu/platforms/cuda/managed_allocator.hpp>
 #include <ubu/tensors/coordinates/point.hpp>

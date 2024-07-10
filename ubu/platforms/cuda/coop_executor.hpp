@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../cooperators/workspaces/workspace_shape.hpp"
 #include "../../places/memory/allocators/allocate_and_zero_after.hpp"
 #include "../../places/memory/allocators/deallocate_after.hpp"
 #include "../../tensors/coordinates/concepts/congruent.hpp"
@@ -9,7 +10,7 @@
 #include "../../tensors/coordinates/coordinate_cast.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/ones.hpp"
-#include "cooperation.hpp"
+#include "cooperators.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cooperative_kernel.hpp"
 #include "device_allocator.hpp"
@@ -51,7 +52,7 @@ class coop_executor
 {
   public:
     using workspace_type = coop_grid_workspace;
-    using workspace_shape_type = int2; // XXX ideally, this would simply be grabbed from workspace_type
+    using workspace_shape_type = workspace_shape_t<workspace_type>;
     using shape_type = workspace_shape_type;
     using happening_type = cuda::event;
 
@@ -100,6 +101,11 @@ class coop_executor
       requires std::is_trivially_copy_constructible_v<F>
     event bulk_execute_with_workspace_after(const event& before, S shape, W workspace_shape, F f) const
     {
+//      if(shape_size(shape) > workspace_type::max_size)
+//      {
+//        throw std::runtime_error("coop_executor::bulk_execute_with_workspace_after: requested shape exceeds capacity of coop_grid_workspace");
+//      }
+
       // decompose workspace shape
       auto [inner_buffer_size, outer_buffer_size] = workspace_shape;
 

@@ -2,7 +2,7 @@
 #include <concepts>
 #include <string>
 #include <tuple>
-#include <ubu/miscellaneous/constant.hpp>
+#include <ubu/utilities/constant.hpp>
 #include <ubu/tensors/concepts/tensor_like.hpp>
 #include <ubu/tensors/concepts/tensor_like_of.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
