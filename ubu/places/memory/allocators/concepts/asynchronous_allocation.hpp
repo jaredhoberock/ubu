@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../miscellaneous/tuples.hpp"
+#include "../../../../utilities/tuples.hpp"
 #include "../../../../tensors/concepts/tensor_like.hpp"
 #include "../../../../tensors/concepts/tensor_like_of.hpp"
 #include "../../../../tensors/coordinates/concepts/congruent.hpp"
