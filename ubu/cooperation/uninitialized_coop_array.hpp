@@ -8,11 +8,11 @@
 #include "../tensors/vectors/fancy_span.hpp"
 #include "../tensors/vectors/sized_vector_like.hpp"
 #include "algorithms/coop_copy.hpp"
-#include "cooperators/concepts/allocating_cooperator.hpp"
-#include "cooperators/coop_alloca.hpp"
-#include "cooperators/coop_dealloca.hpp"
-#include "cooperators/synchronize_and_count.hpp"
-#include "cooperators/traits/cooperator_size.hpp"
+#include "primitives/concepts/allocating_cooperator.hpp"
+#include "primitives/coop_alloca.hpp"
+#include "primitives/coop_dealloca.hpp"
+#include "primitives/synchronize_and_count.hpp"
+#include "primitives/traits/cooperator_size.hpp"
 #include <concepts>
 #include <optional>
 #include <memory>

@@ -5,7 +5,7 @@
 #include "../../tensors/traits/tensor_reference.hpp"
 #include "../../tensors/concepts/tensor_like.hpp"
 #include "../../tensors/views/zip.hpp"
-#include "../cooperators/concepts/cooperator.hpp"
+#include "../primitives/concepts/cooperator.hpp"
 #include <concepts>
 
 namespace ubu

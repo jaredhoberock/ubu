@@ -9,8 +9,8 @@
 #include "../../tensors/vectors/span_like.hpp"
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/slices/slice.hpp"
-#include "../cooperators/concepts/allocating_cooperator.hpp"
-#include "../cooperators/synchronize.hpp"
+#include "../primitives/concepts/allocating_cooperator.hpp"
+#include "../primitives/synchronize.hpp"
 #include "../uninitialized_coop_array.hpp"
 #include <concepts>
 #include <utility>

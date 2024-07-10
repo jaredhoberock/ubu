@@ -1,9 +1,9 @@
 #include <cassert>
 #include <optional>
 #include <span>
-#include <ubu/cooperation/cooperators/basic_cooperator.hpp>
-#include <ubu/cooperation/cooperators/is_leader.hpp>
-#include <ubu/cooperation/cooperators/synchronize_and_count.hpp>
+#include <ubu/cooperation/primitives/basic_cooperator.hpp>
+#include <ubu/cooperation/primitives/is_leader.hpp>
+#include <ubu/cooperation/primitives/synchronize_and_count.hpp>
 #include <ubu/places/execution/executors/bulk_execute_with_workspace.hpp>
 #include <ubu/platforms/cuda/device_allocator.hpp>
 #include <ubu/platforms/cuda/coop_executor.hpp>

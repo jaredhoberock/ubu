@@ -2,9 +2,9 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/tuples.hpp"
-#include "../cooperators/concepts/cooperator.hpp"
-#include "../cooperators/broadcast.hpp"
-#include "../cooperators/last_id.hpp"
+#include "../primitives/concepts/cooperator.hpp"
+#include "../primitives/broadcast.hpp"
+#include "../primitives/last_id.hpp"
 #include "coop_exclusive_scan.hpp"
 #include <concepts>
 #include <optional>

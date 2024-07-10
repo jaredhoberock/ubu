@@ -10,8 +10,8 @@
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/views/slices/slice.hpp"
-#include "../cooperators/concepts/allocating_cooperator.hpp"
-#include "../cooperators/concepts/cooperator.hpp"
+#include "../primitives/concepts/allocating_cooperator.hpp"
+#include "../primitives/concepts/cooperator.hpp"
 #include "coop_load.hpp"
 #include <utility>
 

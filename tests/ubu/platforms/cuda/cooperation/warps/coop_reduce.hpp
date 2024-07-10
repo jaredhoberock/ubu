@@ -1,7 +1,7 @@
 #include <cassert>
 #include <optional>
 #include <span>
-#include <ubu/cooperation/cooperators/basic_cooperator.hpp>
+#include <ubu/cooperation/primitives/basic_cooperator.hpp>
 #include <ubu/places/execution/executors/bulk_execute.hpp>
 #include <ubu/platforms/cuda/cooperation.hpp>
 #include <ubu/platforms/cuda/device_executor.hpp>
