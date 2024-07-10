@@ -1,5 +1,5 @@
 #include <span>
-#include <ubu/cooperation/workspaces/workspace.hpp>
+#include <ubu/cooperators/workspaces/workspace.hpp>
 
 namespace ns = ubu;
 

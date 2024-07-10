@@ -1,8 +1,8 @@
 #include <cassert>
 #include <concepts>
-#include <ubu/cooperation/barriers.hpp>
-#include <ubu/cooperation/primitives/basic_cooperator.hpp>
-#include <ubu/cooperation/workspaces/workspace.hpp>
+#include <ubu/cooperators/barriers.hpp>
+#include <ubu/cooperators/basic_cooperator.hpp>
+#include <ubu/cooperators/workspaces/workspace.hpp>
 #include <ubu/places/memory/buffers/empty_buffer.hpp>
 
 namespace ns = ubu;

@@ -6,7 +6,7 @@
 #include "../../places/memory/allocators/deallocate_after.hpp"
 #include "../../tensors/coordinates/concepts/congruent.hpp"
 #include "../../tensors/coordinates/one_extend_coordinate.hpp"
-#include "cooperation.hpp"
+#include "cooperators.hpp"
 #include "detail/graph_utility_functions.hpp"
 #include "device_executor.hpp"
 #include "graph_allocator.hpp"

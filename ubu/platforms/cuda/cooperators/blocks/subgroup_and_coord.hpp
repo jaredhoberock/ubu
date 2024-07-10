@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/primitives/basic_cooperator.hpp"
+#include "../../../../cooperators/basic_cooperator.hpp"
 #include "../../../../tensors/coordinates/traits/rank.hpp"
 #include "../../../../tensors/shapes/shape.hpp"
 #include "../warps/warp_like.hpp"

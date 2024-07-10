@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/concepts/cooperator.hpp"
-#include "../../../../cooperation/traits/cooperator_thread_scope.hpp"
+#include "../../../../cooperators/concepts/cooperator.hpp"
+#include "../../../../cooperators/traits/cooperator_thread_scope.hpp"
 #include <cstddef>
 #include <span>
 #include <string_view>

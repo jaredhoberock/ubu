@@ -1,4 +1,4 @@
-#include <ubu/platforms/cuda/cooperation/warps.hpp>
+#include <ubu/platforms/cuda/cooperators/warps.hpp>
 
 void test_warp_size()
 {

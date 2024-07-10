@@ -2,7 +2,6 @@
 
 #include "../detail/prologue.hpp"
 
-#include "primitives/basic_cooperator.hpp"
 #include "primitives/broadcast.hpp"
 #include "primitives/coop_alloca.hpp"
 #include "primitives/coop_dealloca.hpp"

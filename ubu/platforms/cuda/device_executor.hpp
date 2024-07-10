@@ -10,7 +10,7 @@
 #include "../../tensors/coordinates/one_extend_coordinate.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
-#include "cooperation.hpp"
+#include "cooperators.hpp"
 #include "detail/launch_as_kernel.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"

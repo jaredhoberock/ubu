@@ -9,7 +9,7 @@
 #include "../../tensors/coordinates/coordinate_cast.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/ones.hpp"
-#include "cooperation.hpp"
+#include "cooperators.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
 #include "detail/launch_as_cooperative_kernel.hpp"
 #include "device_allocator.hpp"

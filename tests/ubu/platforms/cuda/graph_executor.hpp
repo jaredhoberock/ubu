@@ -1,5 +1,5 @@
 #include <array>
-#include <ubu/cooperation/workspaces/get_local_workspace.hpp>
+#include <ubu/cooperators/workspaces/get_local_workspace.hpp>
 #include <ubu/places/causality.hpp>
 #include <ubu/places/execution/executors/bulk_execute_after.hpp>
 #include <ubu/places/execution/executors/concepts/executor.hpp>

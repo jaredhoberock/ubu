@@ -3,10 +3,10 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
-#include "cooperation/blocks.hpp"
-#include "cooperation/grids.hpp"
-#include "cooperation/warps.hpp"
-#include "cooperation/detail/sync_grid.hpp"
+#include "cooperators/blocks.hpp"
+#include "cooperators/grids.hpp"
+#include "cooperators/warps.hpp"
+#include "cooperators/detail/sync_grid.hpp"
 #include <cstddef>
 #include <span>
 #include <string_view>

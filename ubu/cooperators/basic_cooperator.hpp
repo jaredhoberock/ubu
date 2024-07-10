@@ -1,26 +1,26 @@
 #pragma once
 
-#include "../../detail/prologue.hpp"
+#include "../detail/prologue.hpp"
 
-#include "../../miscellaneous/integrals/size.hpp"
-#include "../../miscellaneous/tuples.hpp"
-#include "../../places/memory/buffers/empty_buffer.hpp"
-#include "../../places/memory/data.hpp"
-#include "../../tensors/coordinates/colexicographical_lift.hpp"
-#include "../../tensors/coordinates/concepts/congruent.hpp"
-#include "../../tensors/coordinates/concepts/coordinate.hpp"
-#include "../../tensors/coordinates/traits/rank.hpp"
-#include "../../tensors/shapes/shape_size.hpp"
-#include "../barriers/arrive_and_wait.hpp"
-#include "../barriers/sized_barrier_like.hpp"
-#include "../concepts/cooperator.hpp"
-#include "../workspaces/get_local_workspace.hpp"
-#include "../workspaces/hierarchical_workspace.hpp"
-#include "../workspaces/workspace.hpp"
-#include "../workspaces/workspace_thread_scope.hpp"
-#include "subgroup.hpp"
-#include "id.hpp"
-#include "size.hpp"
+#include "../miscellaneous/integrals/size.hpp"
+#include "../miscellaneous/tuples.hpp"
+#include "../places/memory/buffers/empty_buffer.hpp"
+#include "../places/memory/data.hpp"
+#include "../tensors/coordinates/colexicographical_lift.hpp"
+#include "../tensors/coordinates/concepts/congruent.hpp"
+#include "../tensors/coordinates/concepts/coordinate.hpp"
+#include "../tensors/coordinates/traits/rank.hpp"
+#include "../tensors/shapes/shape_size.hpp"
+#include "barriers/arrive_and_wait.hpp"
+#include "barriers/sized_barrier_like.hpp"
+#include "concepts/cooperator.hpp"
+#include "primitives/subgroup.hpp"
+#include "primitives/id.hpp"
+#include "primitives/size.hpp"
+#include "workspaces/get_local_workspace.hpp"
+#include "workspaces/hierarchical_workspace.hpp"
+#include "workspaces/workspace.hpp"
+#include "workspaces/workspace_thread_scope.hpp"
 #include <concepts>
 #include <type_traits>
 #include <utility>
@@ -142,5 +142,5 @@ struct basic_cooperator
 
 } // end ubu
 
-#include "../../detail/epilogue.hpp"
+#include "../detail/epilogue.hpp"
 
