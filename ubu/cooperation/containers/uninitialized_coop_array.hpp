@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../detail/prologue.hpp"
-#include "../miscellaneous/integrals/integral_like.hpp"
-#include "../tensors/coordinates/traits/default_coordinate.hpp"
-#include "../tensors/traits/tensor_element.hpp"
-#include "../tensors/traits/tensor_size.hpp"
-#include "../tensors/vectors/fancy_span.hpp"
-#include "../tensors/vectors/sized_vector_like.hpp"
-#include "algorithms/coop_copy.hpp"
-#include "concepts/allocating_cooperator.hpp"
-#include "primitives/coop_alloca.hpp"
-#include "primitives/coop_dealloca.hpp"
-#include "primitives/synchronize_and_count.hpp"
-#include "traits/cooperator_size.hpp"
+#include "../../detail/prologue.hpp"
+#include "../../miscellaneous/integrals/integral_like.hpp"
+#include "../../tensors/coordinates/traits/default_coordinate.hpp"
+#include "../../tensors/traits/tensor_element.hpp"
+#include "../../tensors/traits/tensor_size.hpp"
+#include "../../tensors/vectors/fancy_span.hpp"
+#include "../../tensors/vectors/sized_vector_like.hpp"
+#include "../algorithms/coop_copy.hpp"
+#include "../concepts/allocating_cooperator.hpp"
+#include "../primitives/coop_alloca.hpp"
+#include "../primitives/coop_dealloca.hpp"
+#include "../primitives/synchronize_and_count.hpp"
+#include "../traits/cooperator_size.hpp"
 #include <concepts>
 #include <optional>
 #include <memory>
@@ -118,5 +118,5 @@ uninitialized_coop_array(C,V) -> uninitialized_coop_array<tensor_element_t<V>,C,
 
 } // end ubu
 
-#include "../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

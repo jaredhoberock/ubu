@@ -10,8 +10,8 @@
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/slices/slice.hpp"
 #include "../concepts/allocating_cooperator.hpp"
+#include "../containers/uninitialized_coop_array.hpp"
 #include "../primitives/synchronize.hpp"
-#include "../uninitialized_coop_array.hpp"
 #include <concepts>
 #include <utility>
 

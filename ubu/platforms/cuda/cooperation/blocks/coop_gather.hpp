@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/uninitialized_coop_array.hpp"
+#include "../../../../cooperation/containers/uninitialized_coop_array.hpp"
 #include "../warps/warp_like.hpp"
 #include "block_like.hpp"
 #include <optional>

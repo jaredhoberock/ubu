@@ -5,12 +5,12 @@
 #include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../concepts/allocating_cooperator.hpp"
 #include "../concepts/hierarchical_cooperator.hpp"
+#include "../containers/uninitialized_coop_array.hpp"
 #include "../primitives/subgroup.hpp"
 #include "../primitives/subgroup_count.hpp"
 #include "../primitives/subgroup_id.hpp"
 #include "../primitives/subgroup_size.hpp"
 #include "../primitives/synchronize.hpp"
-#include "../uninitialized_coop_array.hpp"
 #include <concepts>
 #include <optional>
 

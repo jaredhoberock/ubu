@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../cooperation/uninitialized_coop_optional_array.hpp"
+#include "../../../../cooperation/containers/uninitialized_coop_optional_array.hpp"
 #include "../../../../cooperation/primitives/synchronize.hpp"
 #include "../warps/coop_inclusive_scan.hpp"
 #include "block_like.hpp"
