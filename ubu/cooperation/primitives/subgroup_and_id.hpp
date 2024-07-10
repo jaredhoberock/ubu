@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../miscellaneous/integrals/integral_like.hpp"
-#include "concepts/hierarchical_cooperator.hpp"
+#include "../concepts/hierarchical_cooperator.hpp"
 #include "subgroup_and_coord.hpp"
 
 namespace ubu

@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../thread_scope.hpp"
-#include "../concepts/semicooperator.hpp"
+#include "../../concepts/semicooperator.hpp"
 #include <string_view>
 
 namespace ubu

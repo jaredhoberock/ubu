@@ -4,7 +4,7 @@
 
 #include "../../miscellaneous/tuples.hpp"
 #include "../../tensors/coordinates/concepts/coordinate.hpp"
-#include "concepts/cooperator.hpp"
+#include "../concepts/cooperator.hpp"
 #include <utility>
 
 namespace ubu

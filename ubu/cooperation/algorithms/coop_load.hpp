@@ -8,7 +8,7 @@
 #include "../../tensors/vectors/span_like.hpp"
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/slices/slice.hpp"
-#include "../primitives/concepts/allocating_cooperator.hpp"
+#include "../concepts/allocating_cooperator.hpp"
 #include "../primitives/synchronize.hpp"
 #include "../uninitialized_coop_array.hpp"
 #include "coop_load_cyclic.hpp"

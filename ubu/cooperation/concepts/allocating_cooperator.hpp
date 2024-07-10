@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../coop_alloca.hpp"
-#include "../coop_dealloca.hpp"
+#include "../primitives/coop_alloca.hpp"
+#include "../primitives/coop_dealloca.hpp"
 #include "cooperator.hpp"
 
 namespace ubu
@@ -21,5 +21,5 @@ concept allocating_cooperator =
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

@@ -6,7 +6,7 @@
 #include "../../tensors/coordinates/coord.hpp"
 #include "../../tensors/shapes/shape.hpp"
 #include "../../tensors/views/layouts/compact_left_major_layout.hpp"
-#include "concepts/semicooperator.hpp"
+#include "../concepts/semicooperator.hpp"
 #include <concepts>
 
 namespace ubu

@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/tuples.hpp"
-#include "../primitives/concepts/cooperator.hpp"
+#include "../concepts/cooperator.hpp"
 #include "../primitives/broadcast.hpp"
 #include "../primitives/last_id.hpp"
 #include "coop_exclusive_scan.hpp"

@@ -4,7 +4,7 @@
 #include "../miscellaneous/integrals/ceil_div.hpp"
 #include "../miscellaneous/integrals/integral_like.hpp"
 #include "../tensors/coordinates/traits/default_coordinate.hpp"
-#include "primitives/concepts/allocating_cooperator.hpp"
+#include "concepts/allocating_cooperator.hpp"
 #include "primitives/coop_alloca.hpp"
 #include "primitives/coop_dealloca.hpp"
 #include "primitives/traits/cooperator_size.hpp"

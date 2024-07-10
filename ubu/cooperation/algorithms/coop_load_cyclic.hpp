@@ -6,7 +6,7 @@
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
-#include "../primitives/concepts/semicooperator.hpp"
+#include "../concepts/semicooperator.hpp"
 #include <utility>
 
 namespace ubu

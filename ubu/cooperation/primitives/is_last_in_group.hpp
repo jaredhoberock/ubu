@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "concepts/semicooperator.hpp"
+#include "../concepts/semicooperator.hpp"
 #include "id.hpp"
 #include "last_id.hpp"
 

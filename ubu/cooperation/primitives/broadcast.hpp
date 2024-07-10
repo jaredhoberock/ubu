@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../miscellaneous/integrals/integral_like.hpp"
 #include "../uninitialized_coop_array.hpp"
-#include "concepts/allocating_cooperator.hpp"
+#include "../concepts/allocating_cooperator.hpp"
 #include "synchronize.hpp"
 #include "synchronize_and_any.hpp"
 #include <optional>

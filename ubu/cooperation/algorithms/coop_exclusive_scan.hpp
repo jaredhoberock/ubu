@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../primitives/concepts/cooperator.hpp"
+#include "../concepts/cooperator.hpp"
 #include <concepts>
 #include <optional>
 #include <utility>

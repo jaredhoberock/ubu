@@ -6,7 +6,7 @@
 #include "../../miscellaneous/integrals/size.hpp"
 #include "../../tensors/shapes/shape.hpp"
 #include "../../tensors/shapes/shape_size.hpp"
-#include "concepts/semicooperator.hpp"
+#include "../concepts/semicooperator.hpp"
 
 namespace ubu
 {

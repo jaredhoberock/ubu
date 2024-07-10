@@ -4,7 +4,7 @@
 
 #include "../../tensors/traits/tensor_reference.hpp"
 #include "../../tensors/concepts/tensor_like.hpp"
-#include "../primitives/concepts/cooperator.hpp"
+#include "../concepts/cooperator.hpp"
 #include "coop_transform.hpp"
 #include <concepts>
 #include <functional>

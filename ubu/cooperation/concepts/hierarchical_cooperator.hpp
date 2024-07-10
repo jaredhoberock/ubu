@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../subgroup_and_coord.hpp"
+#include "../primitives/subgroup_and_coord.hpp"
 #include "semicooperator.hpp"
 #include <type_traits>
 #include <utility>
@@ -25,5 +25,5 @@ using child_cooperator_t = std::remove_cvref_t<decltype(get<0>(subgroup_and_coor
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

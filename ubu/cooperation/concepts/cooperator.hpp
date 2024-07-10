@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../synchronize.hpp"
+#include "../primitives/synchronize.hpp"
 #include "semicooperator.hpp"
 
 namespace ubu
@@ -19,5 +19,5 @@ concept cooperator =
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

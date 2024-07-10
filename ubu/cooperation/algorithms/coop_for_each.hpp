@@ -10,7 +10,7 @@
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
 #include "../../tensors/views/nestle.hpp"
-#include "../primitives/concepts/cooperator.hpp"
+#include "../concepts/cooperator.hpp"
 #include "../primitives/size.hpp"
 #include "../primitives/synchronize.hpp"
 #include <concepts>
