@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../cooperation/concepts/cooperator.hpp"
-#include "../../../../cooperation/primitives/traits/cooperator_thread_scope.hpp"
+#include "../../../../cooperation/traits/cooperator_thread_scope.hpp"
 #include "../../../../miscellaneous/constant.hpp"
 #include "../../../../places/memory/buffers/empty_buffer.hpp"
 #include <string_view>

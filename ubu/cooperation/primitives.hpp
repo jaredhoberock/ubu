@@ -20,7 +20,6 @@
 #include "primitives/synchronize.hpp"
 #include "primitives/synchronize_and_any.hpp"
 #include "primitives/synchronize_and_count.hpp"
-#include "primitives/traits.hpp"
 
 #include "../detail/epilogue.hpp"
 

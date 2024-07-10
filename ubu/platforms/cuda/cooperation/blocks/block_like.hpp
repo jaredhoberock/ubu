@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../../cooperation/concepts/cooperator.hpp"
-#include "../../../../cooperation/primitives/traits/cooperator_thread_scope.hpp"
+#include "../../../../cooperation/traits/cooperator_thread_scope.hpp"
 #include <cstddef>
 #include <span>
 #include <string_view>

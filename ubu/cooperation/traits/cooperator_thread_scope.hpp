@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../../thread_scope.hpp"
-#include "../../concepts/semicooperator.hpp"
+#include "../thread_scope.hpp"
+#include "../concepts/semicooperator.hpp"
 #include <string_view>
 
 namespace ubu
@@ -15,5 +15,5 @@ inline constexpr const std::string_view cooperator_thread_scope_v = thread_scope
 
 } // end ubu
 
-#include "../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

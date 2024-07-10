@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../cooperation/concepts/cooperator.hpp"
-#include "../../../cooperation/primitives/traits/cooperator_thread_scope.hpp"
+#include "../../../cooperation/traits/cooperator_thread_scope.hpp"
 #include "detail/sync_grid_count_half.hpp"
 #include <nv/target>
 

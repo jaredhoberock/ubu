@@ -12,7 +12,7 @@
 #include "primitives/coop_alloca.hpp"
 #include "primitives/coop_dealloca.hpp"
 #include "primitives/synchronize_and_count.hpp"
-#include "primitives/traits/cooperator_size.hpp"
+#include "traits/cooperator_size.hpp"
 #include <concepts>
 #include <optional>
 #include <memory>
