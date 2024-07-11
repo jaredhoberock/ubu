@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../utilities/tuples.hpp"
 #include "detail/throw_on_cl_error.hpp"
 #include <algorithm>
 #include <concepts>
@@ -82,7 +83,7 @@ class event
       : event{}
     {
       // copy the arguments' handles
-      detail::for_each_arg([&](const event& e) mutable
+      tuples::for_each_arg([&](const event& e) mutable
       {
         native_handles_.insert(native_handles_.end(), e.begin(), e.end());
       }, e, es...);

@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../utilities/tuples.hpp"
 #include "../../execution/executors.hpp"
 #include "../../memory/allocators.hpp"
 #include "../../memory/pointers/construct_at.hpp"
@@ -39,7 +40,7 @@ intrusive_future<R,A,E> invoke_after(const E& ex, const A& alloc, H&& before, F&
     });
 
     // schedule the deletion of the future_args after the result is ready
-    detail::for_each_arg([&](auto&& future_arg)
+    tuples::for_each_arg([&](auto&& future_arg)
     {
       auto [alloc, ex, _, ptr] = std::move(future_arg).release();
       finally_delete_after(alloc, ex, result_ready, ptr, 1);
