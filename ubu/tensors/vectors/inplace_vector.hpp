@@ -35,8 +35,7 @@ class inplace_vector
     // construct/copy/destroy
     inplace_vector() = default;
 
-    template<integral_like I>
-    constexpr inplace_vector(I n, const T& value)
+    constexpr inplace_vector(size_type n, const T& value)
       : size_(n)
     {
       #pragma unroll
@@ -278,8 +277,7 @@ class inplace_vector
       return capacity();
     }
 
-    template<integral_like I>
-    constexpr bool element_exists(I i) const noexcept
+    constexpr bool element_exists(int i) const noexcept
     {
       return i < size();
     }
