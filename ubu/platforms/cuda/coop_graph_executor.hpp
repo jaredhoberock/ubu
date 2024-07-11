@@ -108,17 +108,17 @@ class coop_graph_executor
       allocator auto alloc = get_allocator();
 
       // allocate a zeroed outer buffer after the before node
-      auto [outer_buffer_ready, outer_buffer_ptr] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
+      auto [outer_buffer_ready, outer_buffer] = allocate_and_zero_after<std::byte>(alloc, *this, before, outer_buffer_size);
 
       // launch the kernel after the outer buffer is ready
-      std::span<std::byte> outer_buffer(outer_buffer_ptr.to_raw_pointer(), outer_buffer_size);
+      std::span<std::byte> raw_outer_buffer(outer_buffer.data().to_raw_pointer(), outer_buffer_size);
       graph_node after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
       {
-        std::invoke(f, coord, workspace_type(outer_buffer));
+        std::invoke(f, coord, workspace_type(raw_outer_buffer));
       });
 
       // deallocate outer buffer after the kernel
-      return deallocate_after(alloc, std::move(after_kernel), outer_buffer_ptr, outer_buffer_size);
+      return deallocate_after(alloc, std::move(after_kernel), outer_buffer);
     }
   
     template<std::invocable F>
