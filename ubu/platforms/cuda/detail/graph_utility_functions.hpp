@@ -85,7 +85,7 @@ inline cudaGraphNode_t make_kernel_node(cudaGraph_t graph, cudaGraphNode_t depen
     {
       throw_on_error(
         cudaGraphAddKernelNode(&result, graph, &dependency, 1, &params),
-        "cuda::detail::graph_context::make_kernel_node: After cudaGraphAddKernelNode"
+        "cuda::detail::make_kernel_node: After cudaGraphAddKernelNode"
       );
     });
   }
@@ -94,7 +94,40 @@ inline cudaGraphNode_t make_kernel_node(cudaGraph_t graph, cudaGraphNode_t depen
     ubu::detail::throw_runtime_error("cuda::detail::make_kernel_node requires the CUDA Runtime.");
   }
 #else
-  ubu::detail::throw_runtime_error("cuda::detail:make_kernel_node requires CUDA C++ language support.");
+  ubu::detail::throw_runtime_error("cuda::detail::make_kernel_node requires CUDA C++ language support.");
+#endif
+
+  return result;
+}
+
+
+template<std::invocable F>
+  requires std::is_trivially_copy_constructible_v<F>
+inline cudaGraphNode_t make_cooperative_kernel_node(cudaGraph_t graph, cudaGraphNode_t dependency, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, int device, F f)
+{
+  cudaGraphNode_t result{};
+
+#if defined(__CUDACC__)
+
+  if UBU_TARGET(has_runtime())
+  {
+    result = make_kernel_node(graph, dependency, grid_dim, block_dim, dynamic_shared_memory_size, device, f);
+
+    cudaKernelNodeAttrID attr = cudaKernelNodeAttributeCooperative;
+    cudaKernelNodeAttrValue value{};
+    value.cooperative = 1;
+
+    throw_on_error(
+      cudaGraphKernelNodeSetAttribute(result, attr, &value),
+      "cuda::detail::make_cooperative_kernel_node: After cudaGraphKernelNodeSetAttribute"
+    );
+  }
+  else
+  {
+    ubu::detail::throw_runtime_error("cuda::detail::make_cooperative_kernel_node requires the CUDA Runtime.");
+  }
+#else
+  ubu::detail::throw_runtime_error("cuda::detail::make_cooperative_kernel_node requires CUDA C++ language support.");
 #endif
 
   return result;

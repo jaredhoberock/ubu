@@ -4,6 +4,7 @@
 
 #include "cuda/callback_executor.hpp"
 #include "cuda/coop_executor.hpp"
+#include "cuda/coop_graph_executor.hpp"
 #include "cuda/cooperators.hpp"
 #include "cuda/device_allocator.hpp"
 #include "cuda/device_executor.hpp"
