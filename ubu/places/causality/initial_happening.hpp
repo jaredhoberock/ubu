@@ -97,7 +97,7 @@ struct dispatch_initial_happening
   }
 
   // customization for a range of happenings
-  // XXX a similar specialization for a tensor might be useful
+  // XXX this is incorrect because initial_happening needs to return the same type as its argument
   template<std::ranges::range R>
     requires (not has_initial_happening_customization<R&&>
               and has_initial_happening_customization<std::ranges::range_value_t<R&&>>)
