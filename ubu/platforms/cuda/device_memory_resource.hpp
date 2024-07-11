@@ -126,7 +126,7 @@ class device_memory_resource
 
     // enables the given peer device to read and write memory
     // in this device_memory_resource's pool
-    inline void enable_access(int peer_device) const
+    inline void enable_access_from(int peer_device) const
     {
       cudaMemAccessDesc access;
       access.location.type = cudaMemLocationTypeDevice;
@@ -134,7 +134,7 @@ class device_memory_resource
       access.flags = cudaMemAccessFlagsProtReadWrite;
 
       detail::throw_on_error(cudaMemPoolSetAccess(pool(), &access, 1),
-        "cuda::device_memory_resource::enable_access: after cudaMemPoolSetAccess"
+        "cuda::device_memory_resource::enable_access_from: after cudaMemPoolSetAccess"
       );
     }
 

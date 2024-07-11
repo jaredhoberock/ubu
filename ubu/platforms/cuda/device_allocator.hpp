@@ -4,6 +4,7 @@
 
 #include "../../detail/exception.hpp"
 #include "../../detail/reflection.hpp"
+#include "../../utilities/tuples.hpp"
 #include "device_memory_resource.hpp"
 #include "device_ptr.hpp"
 #include "event.hpp"
@@ -99,6 +100,13 @@ class device_allocator : private device_memory_resource
       return super_t::pool();
     }
 
+    // enables the given peer device to read and write memory
+    // allocated by this device_allocator
+    void enable_access_from(int peer) const
+    {
+      super_t::enable_access_from(peer);
+    }
+
     // returns the maximum size, in elements, of the largest
     // theoretical allocation allocate could accomodate
     inline std::size_t max_size() const
@@ -116,6 +124,24 @@ class device_allocator : private device_memory_resource
       return !(*this == other);
     }
 };
+
+
+template<class... Ts>
+constexpr void enable_all_access(const device_allocator<Ts>&... allocs)
+{
+  auto tuple = std::forward_as_tuple(allocs...);
+
+  tuples::for_each(tuple, [&](const auto& alloc)
+  {
+    tuples::for_each(tuple, [&](const auto& other_alloc)
+    {
+      if(alloc != other_alloc)
+      {
+        alloc.enable_access_from(other_alloc.device());
+      }
+    });
+  });
+}
 
 
 } // end ubu::cuda
