@@ -4,13 +4,13 @@
 
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/colexicographical_lift.hpp"
-#include <ranges>
+#include "../view_base.hpp"
 
 namespace ubu
 {
 
 template<coordinate S>
-class identity_layout : std::ranges::view_base
+class identity_layout : public view_base
 {
   public:
     constexpr identity_layout(const S& shape)

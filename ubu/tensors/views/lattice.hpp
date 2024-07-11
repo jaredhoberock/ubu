@@ -10,10 +10,10 @@
 #include "../coordinates/traits/rank.hpp"
 #include "../coordinates/traits/zeros.hpp"
 #include "../shapes/shape_size.hpp"
+#include "view_base.hpp"
 #include <concepts>
 #include <initializer_list>
 #include <iterator>
-#include <ranges>
 
 
 namespace ubu
@@ -21,7 +21,7 @@ namespace ubu
 
 
 template<coordinate C, congruent<C> S = C>
-class lattice : public std::ranges::view_base
+class lattice : public view_base
 {
   public:
     using coordinate_type = C;

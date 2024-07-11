@@ -18,6 +18,7 @@
 #include "views/transform.hpp"
 #include "views/trim.hpp"
 #include "views/unzip.hpp"
+#include "views/view_base.hpp"
 #include "views/zip.hpp"
 #include "views/zip_view.hpp"
 

@@ -14,7 +14,7 @@
 #include "../traits/tensor_shape.hpp"
 #include "slices/slice.hpp"
 #include "slices/slicer.hpp"
-#include <ranges>
+#include "view_base.hpp"
 #include <tuple>
 
 
@@ -34,7 +34,7 @@ constexpr auto invoke_zip(Args&&... args);
 
 template<view T, view... Ts>
   requires (... and congruent<tensor_shape_t<T>, tensor_shape_t<Ts>>)
-class zip_view : public std::ranges::view_base
+class zip_view : public view_base
 {
   public:
     using coordinate_type = tensor_coordinate_t<T>;

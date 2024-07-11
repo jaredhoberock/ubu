@@ -13,11 +13,11 @@
 #include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../vectors/span_like.hpp"
+#include "compose.hpp"
 #include "domain.hpp"
 #include "layouts/layout.hpp"
 #include "slices/slice.hpp"
-#include "compose.hpp"
-#include <ranges>
+#include "view_base.hpp"
 
 namespace ubu
 {
@@ -34,7 +34,7 @@ constexpr auto invoke_compose(Args&&... args);
 
 template<class A, view B>
   requires (std::is_object_v<A> and composable<A,B>)
-class composed_view : public std::ranges::view_base
+class composed_view : public view_base
 {
   public:
     using shape_type = tensor_shape_t<B>;

@@ -9,7 +9,7 @@
 #include "../../coordinates/one_extend_coordinate.hpp"
 #include "../../coordinates/truncate_coordinate.hpp"
 #include "../../shapes/shape_size.hpp"
-#include <ranges>
+#include "../view_base.hpp"
 
 namespace ubu
 {
@@ -19,7 +19,7 @@ namespace ubu
 // it is congruent with To
 template<coordinate From, subdimensional<From> To, congruent<To> R = default_coordinate_t<To>>
   requires congruent<To,R>
-class truncating_layout : public std::ranges::view_base
+class truncating_layout : public view_base
 {
   public:
     constexpr truncating_layout(const To& coshape)
