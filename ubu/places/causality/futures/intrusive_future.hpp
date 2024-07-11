@@ -2,10 +2,10 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../detail/for_each_arg.hpp"
 #include "../../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../../tensors/coordinates/traits/zeros.hpp"
 #include "../../../tensors/vectors/fancy_span.hpp"
+#include "../../../utilities/tuples.hpp"
 #include "../../execution/executors/bulk_execute_after.hpp"
 #include "../../execution/executors/concepts/executor.hpp"
 #include "../../execution/executors/traits/executor_workspace_shape.hpp"
@@ -188,7 +188,7 @@ class intrusive_future
         });
 
         // schedule the deletion of the future_args after the result is ready
-        detail::for_each_arg([&](auto&& future_arg)
+        tuples::for_each_arg([&](auto&& future_arg)
         {
           auto [alloc, exec, _, ptr] = std::move(future_arg).release();
           finally_delete_after(alloc, exec, result_ready, fancy_span(ptr, 1));

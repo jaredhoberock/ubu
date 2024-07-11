@@ -6,6 +6,13 @@
 #error "The print.hpp header requires fmtlib."
 #endif
 
+#ifdef FMT_VERSION
+// if FMT_VERSION is already defined, that means some other header got to fmtlib before us
+// since the stuff below depends on a particular configuration of fmtlib, we need to bail out with an error message
+// XXX there may be a way to WAR this if we are somehow able to wrap a new config of fmtlib in a detail namespace
+#error The print.hpp header must be the first header to include and configure fmtlib headers. An easy way to allow this is to #include <ubu/miscellaneous/print.hpp> first.
+#endif
+
 #include <cassert>
 #include <cstdio>
 #include <exception>

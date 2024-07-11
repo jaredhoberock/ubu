@@ -1532,6 +1532,54 @@ constexpr tuple_like auto replace_element(const T& tuple, const U& replacement)
 }
 
 
+namespace detail
+{
+
+template<class F, tuple_like T, std::size_t... I>
+constexpr bool invocable_on_all_elements_impl(std::index_sequence<I...>)
+{
+  return (... and invocable_on_element<F,I,T>);
+}
+
+} // end detail
+
+
+
+template<class F, class T>
+concept invocable_on_all_elements_of =
+  tuple_like<T>
+  and detail::invocable_on_all_elements_impl<F,T>(indices_v<T>)
+;
+
+
+template<tuple_like T, invocable_on_all_elements_of<T> F>
+constexpr void for_each(T&& t, F&& f)
+{
+  auto invoke_on_each_element = [&]<std::size_t... I>(std::index_sequence<I...>)
+  {
+    constexpr auto sink_for_pack_expression = [](auto&&...){};
+
+    // the business with the trailing comma zero avoids problems with void-returning f
+    sink_for_pack_expression(
+      (std::invoke(std::forward<F>(f), get<I>(std::forward<T>(t))), 0)...
+    );
+  };
+
+  invoke_on_each_element(indices_v<T>);
+}
+
+
+template<class F, class... Args>
+concept invocable_on_each = (... and std::invocable<F,Args>);
+
+template<class F, class... Args>
+  requires invocable_on_each<F&&,Args&&...>
+constexpr void for_each_arg(F&& f, Args&&... args)
+{
+  tuples::for_each(std::forward_as_tuple(std::forward<Args>(args)...), std::forward<F>(f));
+}
+
+
 } // end ubu::tuples
 
 

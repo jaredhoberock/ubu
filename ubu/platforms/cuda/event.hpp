@@ -4,7 +4,7 @@
 
 #include "../../detail/exception/terminate_with_message.hpp"
 #include "../../detail/exception/throw_runtime_error.hpp"
-#include "../../detail/for_each_arg.hpp"
+#include "../../utilities/tuples.hpp"
 #include "detail/has_runtime.hpp"
 #include "detail/temporarily_with_current_device.hpp"
 #include "detail/throw_on_error.hpp"
@@ -200,7 +200,7 @@ class event
           detail::throw_on_error(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking), "cuda::event ctor: after cudaStreamCreateWithFlags");
 
           // make the new stream wait on all the event parameters
-          ubu::detail::for_each_arg([s](const event& e)
+          tuples::for_each_arg([s](const event& e)
           {
             detail::throw_on_error(cudaStreamWaitEvent(s, e.native_handle()), "cuda::event ctor: after cudaStreamWaitEvent");
           }, e, es...);

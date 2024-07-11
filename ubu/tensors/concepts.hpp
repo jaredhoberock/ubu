@@ -10,6 +10,7 @@
 #include "concepts/tensor_like_of.hpp"
 #include "concepts/tensor_like_of_rank.hpp"
 #include "concepts/view.hpp"
+#include "concepts/viewable_tensor_like.hpp"
 
 #include "../detail/epilogue.hpp"
 
