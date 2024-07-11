@@ -55,10 +55,6 @@ struct bounded
   // unary operators
   constexpr bounded operator+() const noexcept { return *this; }
   constexpr bounded operator-() const noexcept { return -value; }
-  constexpr bounded& operator++() noexcept { ++value; return *this; }
-  constexpr bounded& operator--() noexcept { --value; return *this; }
-  constexpr bounded operator++(int) noexcept { return value++; }
-  constexpr bounded operator--(int) noexcept { return value--; }
 
   // binary operators against a value_type
 #define BIN_OP_VALUE(OP)\
