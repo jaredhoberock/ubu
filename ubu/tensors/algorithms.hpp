@@ -19,6 +19,7 @@ namespace ubu
 template<tensor_like T>
 constexpr bool empty(T&& tensor)
 {
+  // XXX this function only makes sense for sized_tensor_like
   return ubu::shape_size(ubu::shape(tensor)) == 0;
 }
 
