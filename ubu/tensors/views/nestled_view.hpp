@@ -14,7 +14,7 @@
 #include "all.hpp"
 #include "slices/slice.hpp"
 #include "slices/underscore.hpp"
-#include <ranges>
+#include "view_base.hpp"
 #include <utility>
 
 namespace ubu
@@ -23,7 +23,7 @@ namespace ubu
 
 template<view T>
   requires (tensor_rank_v<T> > 1)
-class nestled_view : public std::ranges::view_base
+class nestled_view : public view_base
 {
   public:
     constexpr nestled_view(T tensor)

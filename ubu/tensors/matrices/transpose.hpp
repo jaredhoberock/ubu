@@ -8,7 +8,7 @@
 #include "../shapes/shape.hpp"
 #include "../shapes/shape_size.hpp"
 #include "../views/compose.hpp"
-#include <ranges>
+#include "../views/view_base.hpp"
 #include <utility>
 
 namespace ubu
@@ -16,7 +16,7 @@ namespace ubu
 
 
 template<coordinate_of_rank<2> S>
-class transposing_layout : public std::ranges::view_base
+class transposing_layout : public view_base
 {
   public:
     constexpr transposing_layout(const S& transposed_shape)

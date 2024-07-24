@@ -18,12 +18,12 @@
 #include "../shapes/shape.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "../vectors/span_like.hpp"
+#include "compose.hpp"
 #include "domain.hpp"
 #include "layouts/concepts/layout_like.hpp"
 #include "slices/slice.hpp"
 #include "slices/slicer.hpp"
-#include "compose.hpp"
-#include <ranges>
+#include "view_base.hpp"
 #include <type_traits>
 
 
@@ -44,7 +44,7 @@ constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b);
 // presents of a single view of two tensors stacked along the given axis
 template<std::size_t axis_, view A, view B, class R>
   requires (axis_ <= tensor_rank_v<A> and same_tensor_rank<A,B>)
-class stacked_view : public std::ranges::view_base
+class stacked_view : public view_base
 {
   public:
     static constexpr constant<axis_> axis;

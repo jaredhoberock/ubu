@@ -686,7 +686,7 @@ constexpr auto zip_with_r_impl(std::index_sequence<I...>, F&& f, T&& t, Ts&&... 
 
 
 // this function zips the tuples by applying function f, and then passes the results of f as arguments to make_r<R>(...) and returns the resulting tuple_like
-template<template<class...> class R, class F, tuple_like T, tuple_like... Ts, std::size_t... I>
+template<template<class...> class R, class F, tuple_like T, tuple_like... Ts>
   requires zipper<F,T,Ts...>
 constexpr auto zip_with_r(F&& f, T&& t, Ts&&... ts)
 {

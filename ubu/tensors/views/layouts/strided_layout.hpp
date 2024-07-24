@@ -8,6 +8,7 @@
 #include "../slices/dice_coordinate.hpp"
 #include "../slices/slice_coordinate.hpp"
 #include "../slices/slicer.hpp"
+#include "../view_base.hpp"
 #include "concepts/layout_like.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
@@ -17,7 +18,6 @@
 #include "strides/compact_left_major_stride.hpp"
 #include "strides/stride_for.hpp"
 #include <concepts>
-#include <ranges>
 #include <type_traits>
 
 
@@ -29,7 +29,7 @@ template<coordinate S,
          coordinate R = apply_stride_t<D,default_coordinate_t<S>>
         >
   requires congruent<R,apply_stride_t<D,default_coordinate_t<S>>>
-class strided_layout : public std::ranges::view_base
+class strided_layout : public view_base
 {
   public:
     constexpr strided_layout(S shape, D stride)

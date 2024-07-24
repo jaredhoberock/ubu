@@ -8,17 +8,17 @@
 #include "../../shapes/shape.hpp"
 #include "../../shapes/shape_size.hpp"
 #include "../../traits/tensor_coordinate.hpp"
+#include "../view_base.hpp"
 #include "slice_coordinate.hpp"
 #include "slicer.hpp"
 #include "unslice_coordinate.hpp"
-#include <ranges>
 #include <utility>
 
 namespace ubu
 {
 
 template<view T, slicer_for<tensor_shape_t<T>> S>
-class sliced_view : public std::ranges::view_base
+class sliced_view : public view_base
 {
   public:
     constexpr sliced_view(T tensor, S katana)

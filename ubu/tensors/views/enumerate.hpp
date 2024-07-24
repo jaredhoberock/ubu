@@ -7,7 +7,7 @@
 #include "../concepts/view.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "all.hpp"
-#include <ranges>
+#include "view_base.hpp"
 #include <utility>
 
 namespace ubu
@@ -15,7 +15,7 @@ namespace ubu
 
 
 template<view V>
-class enumerated_view : public std::ranges::view_base
+class enumerated_view : public view_base
 {
   public:
     constexpr enumerated_view(V tensor)

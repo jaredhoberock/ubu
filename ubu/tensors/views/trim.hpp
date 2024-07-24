@@ -14,8 +14,8 @@
 #include "../vectors/span_like.hpp"
 #include "all.hpp"
 #include "slices/slice.hpp"
+#include "view_base.hpp"
 #include <span>
-#include <ranges>
 #include <utility>
 
 namespace ubu
@@ -23,7 +23,7 @@ namespace ubu
 
 
 template<view T, congruent<tensor_shape_t<T>> S>
-class trimmed_view : public std::ranges::view_base
+class trimmed_view : public view_base
 {
   public:
     // precondition: is_below_or_equal(shape, ubu::shape(tensor))

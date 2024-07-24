@@ -6,6 +6,7 @@
 #include "../../concepts/view.hpp"
 #include "../../element_exists.hpp"
 #include "../../shapes/shape.hpp"
+#include "../view_base.hpp"
 #include <ranges>
 #include <type_traits>
 
@@ -15,7 +16,7 @@ namespace ubu
 // XXX ideally, we want a general masked_view<tensor_like T, mask M>
 //     where a mask is a tensor_like of booleans
 template<view T>
-class uniform_masked_view : public std::ranges::view_base
+class uniform_masked_view : public view_base
 {
   public:
     constexpr uniform_masked_view(T tensor, bool mask)

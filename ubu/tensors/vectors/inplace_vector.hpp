@@ -38,7 +38,7 @@ class inplace_vector
       : size_(n)
     {
       #pragma unroll
-      for(size_type i = 0; i != capacity(); ++i)
+      for(int i = 0; i != capacity(); ++i)
       {
         if(i < size())
         {
@@ -65,13 +65,13 @@ class inplace_vector
     constexpr inplace_vector(from_vector_like_t, V&& vec)
     {
       #pragma unroll
-      for(size_type i = 0; i < ubu::shape(vec); ++i)
+      for(int i = 0; i < ubu::shape(vec); ++i)
       {
         if(i < capacity() and ubu::element_exists(vec, i))
         {
           // XXX we may need to move vec[i] vec was moved into this ctor
           std::construct_at(data() + i, vec[i]);
-          ++size_;
+          size_ = size_ + 1;
         }
       }
     }
@@ -88,8 +88,9 @@ class inplace_vector
     {
       // XXX ideally, we would just forward to the from_vector_like ctor
       //     but we don't currently have a good way to create a moving view
+      //     without as_rvalue
       #pragma unroll
-      for(size_type i = 0; i < ubu::shape(other); ++i)
+      for(int i = 0; i < ubu::shape(other); ++i)
       {
         if(i < capacity() and ubu::element_exists(other, i))
         {
@@ -159,12 +160,12 @@ class inplace_vector
     // static constexpr void shrink_to_fit();
 
     // element access
-    constexpr T& operator[](size_type n)
+    constexpr T& operator[](int n)
     {
       return data()[n];
     }
 
-    constexpr const T& operator[](size_type n) const
+    constexpr const T& operator[](int n) const
     {
       return data()[n];
     }
@@ -257,7 +258,7 @@ class inplace_vector
       if constexpr (not std::is_trivially_destructible_v<T>)
       {
         #pragma unroll
-        for(size_type i = 0; i < capacity(); ++i)
+        for(int i = 0; i < capacity(); ++i)
         {
           if(i < size())
           {
@@ -275,7 +276,7 @@ class inplace_vector
       return capacity();
     }
 
-    constexpr bool element_exists(size_type i) const noexcept
+    constexpr bool element_exists(int i) const noexcept
     {
       return i < size();
     }
@@ -285,7 +286,7 @@ class inplace_vector
     constexpr void store(V dst) const
     {
       #pragma unroll
-      for(size_type i = 0; i < capacity(); ++i)
+      for(int i = 0; i < capacity(); ++i)
       {
         if(i < size() and ubu::element_exists(dst, i))
         {
