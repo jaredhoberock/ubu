@@ -7,6 +7,7 @@
 #include "../coordinates/coordinate_sum.hpp"
 #include "../coordinates/iterators/colexicographical_iterator.hpp"
 #include "../coordinates/iterators/lexicographical_iterator.hpp"
+#include "../coordinates/traits/default_coordinate.hpp"
 #include "../coordinates/traits/rank.hpp"
 #include "../coordinates/traits/zeros.hpp"
 #include "../shapes/shape_size.hpp"
@@ -153,7 +154,7 @@ class lattice : public view_base
 
 
 template<coordinate S>
-lattice(const S&) -> lattice<S,S>;
+lattice(const S&) -> lattice<default_coordinate_t<S>,S>;
 
 
 } // end ubu
