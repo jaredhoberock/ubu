@@ -33,36 +33,26 @@ class sized_tensor_iterator
     using reference = tensor_reference_t<T>;
 
     constexpr sized_tensor_iterator(T tensor)
-      : tensor_(tensor), coord_(shape(tensor))
+      : sized_tensor_iterator(tensor, coord_iterator(shape(tensor)))
     {}
 
     sized_tensor_iterator(const sized_tensor_iterator&) = default;
 
     sized_tensor_iterator() requires std::default_initializable<T> = default;
 
-    constexpr const T& tensor() const
-    {
-      return tensor_;
-    }
-
-    constexpr const coord_iterator& coord() const
-    {
-      return coord_;
-    }
-
     constexpr decltype(auto) operator*() const
     {
-      return element(tensor_, *coord_);
+      return element(tensor_, *current_coord_);
     }
 
     constexpr decltype(auto) operator[](difference_type n) const
     {
-      return element(tensor_, coord_[n]);
+      return element(tensor_, current_coord_[n]);
     }
 
     constexpr sized_tensor_iterator& operator++()
     {
-      ++coord_;
+      ++current_coord_;
       return *this;
     }
 
@@ -75,7 +65,7 @@ class sized_tensor_iterator
 
     constexpr sized_tensor_iterator& operator--()
     {
-      --coord_;
+      --current_coord_;
       return *this;
     }
 
@@ -88,7 +78,7 @@ class sized_tensor_iterator
 
     constexpr sized_tensor_iterator& operator+=(difference_type n)
     {
-      coord_ += n;
+      current_coord_ += n;
       return *this;
     }
 
@@ -116,12 +106,12 @@ class sized_tensor_iterator
     
     constexpr auto operator-(const sized_tensor_iterator& rhs) const
     {
-      return coord_ - rhs.coord_;
+      return current_coord_ - rhs.current_coord_;
     }
 
     constexpr bool operator==(const sized_tensor_iterator& rhs) const
     {
-      return coord_ == rhs.coord_;
+      return current_coord_ == rhs.current_coord_;
     }
 
     constexpr bool operator!=(const sized_tensor_iterator& rhs) const
@@ -131,7 +121,7 @@ class sized_tensor_iterator
 
     constexpr bool operator<(const sized_tensor_iterator& rhs) const
     {
-      return coord_ < rhs.coord_;
+      return current_coord_ < rhs.current_coord_;
     }
 
     constexpr bool operator<=(const sized_tensor_iterator& rhs) const
@@ -152,7 +142,7 @@ class sized_tensor_iterator
     constexpr bool operator==(tensor_sentinel) const
     {
       // XXX it would be more efficient if the value of coord_iterator::end was state of tensor_sentinel
-      return coord_ == coord_iterator::end(shape(tensor_));
+      return current_coord_ == coord_iterator::end(shape(tensor_));
     }
 
     friend constexpr bool operator==(const tensor_sentinel& s, const sized_tensor_iterator& self)
@@ -163,21 +153,30 @@ class sized_tensor_iterator
     constexpr bool operator<(tensor_sentinel) const
     {
       // XXX it would be more efficient if the value of coord_iterator::end was state of tensor_sentinel
-      return coord_ < coord_iterator::end(shape(tensor_));
+      return current_coord_ < coord_iterator::end(shape(tensor_));
     }
 
     friend constexpr auto operator-(tensor_sentinel, const sized_tensor_iterator& self)
     {
       // XXX it would be more efficient if the value of coord_iterator::end was state of tensor_sentinel
-      return coord_iterator::end(shape(self.tensor_)) - self.coord_;
+      return coord_iterator::end(shape(self.tensor_)) - self.current_coord_;
+    }
+
+    static constexpr sized_tensor_iterator end(T tensor)
+    {
+      return {tensor, coord_iterator::end(shape(tensor))};
     }
 
   private:
+    constexpr sized_tensor_iterator(T tensor, coord_iterator current_coord)
+      : tensor_(tensor), current_coord_(current_coord)
+    {}
+
     // XXX both tensor_ and coord_ contain some redundant state (for example, shape)
     //     it would be more efficient to store tensor_ and the current coordinate
     //     and simply call the increment/decrement coordinate functions directly
     T tensor_;
-    coord_iterator coord_;
+    coord_iterator current_coord_;
 };
 
 
@@ -195,28 +194,16 @@ class unsized_tensor_iterator
     using reference         = tensor_reference_t<T>;
 
     constexpr unsized_tensor_iterator(T tensor)
-      : tensor_{tensor},
-        coord_end_{coord_iterator::end(shape(tensor))},
-        coord_{find_begin(tensor, coord_end_)}
+      : unsized_tensor_iterator(tensor, coord_iterator::end(shape(tensor)), find_begin(tensor, coord_iterator::end(shape(tensor))))
     {}
 
     unsized_tensor_iterator(const unsized_tensor_iterator&) = default;
 
     unsized_tensor_iterator() requires std::default_initializable<T> = default;
 
-    constexpr const T& tensor() const
-    {
-      return tensor_;
-    }
-
-    constexpr const coord_iterator& coord() const
-    {
-      return coord_;
-    }
-
     constexpr decltype(auto) operator*() const
     {
-      return tensor_[*coord_];
+      return tensor_[*current_coord_];
     }
 
     constexpr unsized_tensor_iterator& operator++()
@@ -224,9 +211,9 @@ class unsized_tensor_iterator
       // find either the first element that exists, or the end of the range
       do
       {
-        ++coord_;
+        ++current_coord_;
       }
-      while(coord_ != coord_end_ and not element_exists(tensor_, *coord_));
+      while(current_coord_ != end_coord_ and not element_exists(tensor_, *current_coord_));
 
       return *this;
     }
@@ -240,7 +227,7 @@ class unsized_tensor_iterator
 
     constexpr bool operator==(const unsized_tensor_iterator& rhs) const
     {
-      return coord_ == rhs.coord_;
+      return current_coord_ == rhs.current_coord_;
     }
 
     constexpr bool operator!=(const unsized_tensor_iterator& rhs) const
@@ -250,10 +237,22 @@ class unsized_tensor_iterator
 
     constexpr bool operator==(tensor_sentinel) const
     {
-      return coord_ == coord_end_;
+      return current_coord_ == end_coord_;
+    }
+
+    static constexpr unsized_tensor_iterator end(T tensor)
+    {
+      coord_iterator end_coord = coord_iterator::end(shape(tensor));
+      return {tensor, end_coord, end_coord};
     }
     
   private:
+    constexpr unsized_tensor_iterator(T tensor, coord_iterator end_coord, coord_iterator current_coord)
+      : tensor_(tensor),
+        end_coord_(end_coord),
+        current_coord_(current_coord)
+    {}
+
     static constexpr coord_iterator find_begin(T tensor, coord_iterator end)
     {
       coord_iterator coord{shape(tensor)};
@@ -266,12 +265,12 @@ class unsized_tensor_iterator
       return coord;
     }
 
-    // XXX tensor_, coord_end_, and coord_ contain some redundant state (for example, shape)
+    // XXX tensor_, end_coord_, and current_coord_ contain some redundant state (for example, shape)
     //     it would be more efficient to store tensor_ and the current coordinate range
     //     and simply call the increment/decrement coordinate functions directly
     T tensor_;
-    coord_iterator coord_end_;
-    coord_iterator coord_;
+    coord_iterator end_coord_;
+    coord_iterator current_coord_;
 };
 
 
@@ -294,10 +293,8 @@ class tensor_iterator<T> : public sized_tensor_iterator<T>
     using typename super_t::pointer;
     using typename super_t::reference;
 
-    // ctors, tensor, and coord function
+    // ctors
     using super_t::super_t;
-    using super_t::tensor;
-    using super_t::coord;
 
     // iterator interface follows
     using super_t::operator*;
@@ -389,10 +386,8 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
     using typename super_t::pointer;
     using typename super_t::reference;
 
-    // ctors, tensor, and coord function
+    // ctors
     using super_t::super_t;
-    using super_t::tensor;
-    using super_t::coord;
 
     // iterator interface follows
     using super_t::operator*;
@@ -441,6 +436,25 @@ template<tensor_like T>
 constexpr tensor_sentinel end(const T&)
 {
   return {};
+}
+
+
+// the difference between end and end_iterator is that unlike end, end_iterator returns the same type (an iterator) as begin
+// the reason they exist is for interoperation with legacy interfaces that do not support sentinels
+// these overloads of end_iterator are enabled when the corresponding overload of begin above is enabled
+
+template<tensor_like T>
+  requires (not requires(T& tensor) { tensor.begin(); })
+constexpr tensor_iterator<all_t<T&>> end_iterator(T& tensor)
+{
+  return tensor_iterator<all_t<T&>>::end(all(tensor));
+}
+
+template<tensor_like T>
+  requires (not requires(const T& tensor) { tensor.begin(); })
+constexpr tensor_iterator<all_t<const T&>> end_iterator(const T& tensor)
+{
+  return tensor_iterator<all_t<const T&>>::end(all(tensor));
 }
 
 
