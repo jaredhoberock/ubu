@@ -108,10 +108,33 @@ concept pair_like = tuple_like_of_size<T,2>;
 
 
 template<tuple_like_of_size_at_least<1> T>
+constexpr decltype(auto) first(T&& t)
+{
+  return get<0>(std::forward<T>(t));
+}
+
+template<tuple_like_of_size_at_least<1> T>
 using first_t = element_t<0,T>;
+
+
+template<tuple_like_of_size_at_least<2> T>
+constexpr decltype(auto) second(T&& t)
+{
+  return get<1>(std::forward<T>(t));
+}
 
 template<tuple_like_of_size_at_least<2> T>
 using second_t = element_t<1,T>;
+
+
+template<tuple_like_of_size_at_least<3> T>
+constexpr decltype(auto) third(T&& t)
+{
+  return get<2>(std::forward<T>(t));
+}
+
+template<tuple_like_of_size_at_least<3> T>
+using third_t = element_t<2,T>;
 
 
 template<tuple_like T>
