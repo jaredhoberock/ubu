@@ -115,7 +115,7 @@ class graph_executor
 
       // launch the kernel after the outer buffer is ready
       std::span raw_outer_buffer(outer_buffer.data().to_raw_pointer(), outer_buffer_size);
-      graph_node after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](shape_type coord)
+      graph_node after_kernel = with_dynamic_smem_size(inner_buffer_size).bulk_execute_after(outer_buffer_ready, shape, [=](auto coord)
       {
         std::invoke(f, coord, grid_workspace(raw_outer_buffer));
       });
@@ -127,7 +127,7 @@ class graph_executor
     template<std::invocable F>
     graph_node execute_after(const graph_node& before, F f) const
     {
-      return bulk_execute_after(before, one_extend_coordinate<shape_type>(1), [f](shape_type)
+      return bulk_execute_after(before, one_extend_coordinate<shape_type>(1), [f](auto)
       {
         // ignore the incoming parameter and just invoke the function
         std::invoke(f);
@@ -162,10 +162,13 @@ class graph_executor
       return {graph_, device_, stream_};
     }
 
-    constexpr static std::pair<dim3,dim3> as_dim3s(shape_type shape)
+    template<congruent<shape_type> S>
+    constexpr static std::pair<dim3,dim3> as_dim3s(S shape)
     {
-      dim3 grid_dim{static_cast<unsigned int>(shape.block.x), static_cast<unsigned int>(shape.block.y), static_cast<unsigned int>(shape.block.z)};
-      dim3 block_dim{static_cast<unsigned int>(shape.thread.x), static_cast<unsigned int>(shape.thread.y), static_cast<unsigned int>(shape.thread.z)};
+      auto [num_threads, num_blocks] = shape;
+
+      dim3  grid_dim{static_cast<unsigned int>(get<0>(num_blocks)),  static_cast<unsigned int>(get<1>(num_blocks)),  static_cast<unsigned int>(get<2>(num_blocks))};
+      dim3 block_dim{static_cast<unsigned int>(get<0>(num_threads)), static_cast<unsigned int>(get<1>(num_threads)), static_cast<unsigned int>(get<2>(num_threads))};
 
       return {block_dim, grid_dim};
     }

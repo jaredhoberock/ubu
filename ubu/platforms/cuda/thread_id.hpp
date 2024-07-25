@@ -39,9 +39,10 @@ struct thread_id
       block{thread_and_block.y, 0, 0}
   {}
 
-  // use pair<int3,int3> instead of block_id because thread_id is not yet complete
-  template<congruent<std::pair<int3,int3>> C>
-  constexpr thread_id(const C& thread_and_block)
+  // this ctor is marked explicit to avoid self-satisfaction cycles
+  // congruent that can occur to due to implicit conversion
+  template<class Self = thread_id, congruent<Self> C>
+  explicit constexpr thread_id(const C& thread_and_block)
     : thread_id{get<0>(thread_and_block), get<1>(thread_and_block)}
   {}
 
