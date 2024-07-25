@@ -161,7 +161,8 @@ class device_executor
       return {device_, stream_};
     }
 
-    constexpr static std::pair<dim3,dim3> as_dim3s(shape_type shape)
+    template<congruent<shape_type> S>
+    constexpr static std::pair<dim3,dim3> as_dim3s(S shape)
     {
       auto [num_threads, num_blocks] = shape;
 
