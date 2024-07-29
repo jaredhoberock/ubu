@@ -5,8 +5,8 @@
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/congruent.hpp"
+#include "../coordinates/coordinate_cat.hpp"
 #include "../coordinates/traits/rank.hpp"
-#include "../detail/coordinate_cat.hpp"
 #include "../detail/coordinate_tail.hpp"
 #include "../shapes/shape.hpp"
 #include "../traits/tensor_shape.hpp"
@@ -43,7 +43,7 @@ class nestled_view : public view_base
     template<congruent<shape_type> C>
     constexpr auto operator[](const C& coord) const
     {
-      return slice(tensor_, detail::coordinate_cat(ubu::_, coord));
+      return slice(tensor_, coordinate_cat(_, coord));
     }
 
     constexpr std::size_t size() const

@@ -4,7 +4,6 @@
 #include "../../utilities/tuples.hpp"
 #include "../coordinates.hpp"
 #include "as_tuple_of_constants.hpp"
-#include "coordinate_cat.hpp"
 #include "coordinate_max.hpp"
 
 namespace ubu::detail
