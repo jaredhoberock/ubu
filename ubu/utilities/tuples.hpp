@@ -1130,25 +1130,33 @@ namespace detail
 {
 
 
-template<std::size_t... I, tuple_like T>
-constexpr tuple_like auto drop_impl(std::index_sequence<I...>, T&& t)
+template<tuple_like Example, std::size_t... I, tuple_like T>
+constexpr tuple_like auto drop_like_impl(std::index_sequence<I...>, T&& t)
 {
   constexpr std::size_t num_dropped = size_v<T> - sizeof...(I);
 
-  return tuples::make_like<T>(get<I+num_dropped>(std::forward<T>(t))...);
+  return tuples::make_like<Example>(get<I+num_dropped>(std::forward<T>(t))...);
 }
 
 
 } // end detail
 
 
+template<tuple_like Example, std::size_t N, tuple_like T>
+  requires (N <= size_v<T>)
+constexpr tuple_like auto drop_like(T&& t)
+{
+  constexpr std::size_t num_kept = size_v<T> - N;
+  auto indices = std::make_index_sequence<num_kept>();
+  return detail::drop_like_impl<Example>(indices, std::forward<T>(t));
+}
+
+
 template<std::size_t N, tuple_like T>
   requires (N <= size_v<T>)
 constexpr tuple_like auto drop(T&& t)
 {
-  constexpr std::size_t num_kept = size_v<T> - N;
-  auto indices = std::make_index_sequence<num_kept>();
-  return detail::drop_impl(indices, std::forward<T>(t));
+  return tuples::drop_like<T,N>(std::forward<T>(t));
 }
 
 
@@ -1164,23 +1172,30 @@ namespace detail
 {
 
 
-template<std::size_t... I, tuple_like T>
+template<tuple_like Example, std::size_t... I, tuple_like T>
   requires (sizeof...(I) <= size_v<T>)
-constexpr tuple_like auto take_impl(std::index_sequence<I...>, T&& t)
+constexpr tuple_like auto take_like_impl(std::index_sequence<I...>, T&& t)
 {
-  return tuples::make_like<T>(get<I>(t)...);
+  return tuples::make_like<Example>(get<I>(t)...);
 }
 
 
 } // end detail
 
 
+template<tuple_like Example, std::size_t N, tuple_like T>
+  requires (N <= size_v<T>)
+constexpr tuple_like auto take_like(T&& t)
+{
+  auto indices = std::make_index_sequence<N>();
+  return detail::take_like_impl<Example>(indices, std::forward<T>(t));
+}
+
 template<std::size_t N, tuple_like T>
   requires (N <= size_v<T>)
 constexpr tuple_like auto take(T&& t)
 {
-  auto indices = std::make_index_sequence<N>();
-  return detail::take_impl(indices, std::forward<T>(t));
+  return tuples::take_like<T,N>(std::forward<T>(t));
 }
 
 
