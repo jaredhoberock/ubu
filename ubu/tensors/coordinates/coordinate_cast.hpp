@@ -4,7 +4,7 @@
 
 #include "../../utilities/tuples.hpp"
 #include "concepts/congruent.hpp"
-#include "concepts/coordinate.hpp"
+#include "concepts/semicoordinate.hpp"
 #include "detail/to_integral_like.hpp"
 #include <concepts>
 #include <type_traits>
