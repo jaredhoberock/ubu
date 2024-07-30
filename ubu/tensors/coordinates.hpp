@@ -10,6 +10,7 @@
 #include "coordinates/coordinate_cast.hpp"
 #include "coordinates/coordinate_cat.hpp"
 #include "coordinates/coordinate_difference.hpp"
+#include "coordinates/coordinate_modulo.hpp"
 #include "coordinates/coordinate_sum.hpp"
 #include "coordinates/element.hpp"
 #include "coordinates/iterators.hpp"
