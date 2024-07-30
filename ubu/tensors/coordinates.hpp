@@ -15,6 +15,7 @@
 #include "coordinates/iterators.hpp"
 #include "coordinates/one_extend_coordinate.hpp"
 #include "coordinates/point.hpp"
+#include "coordinates/split_coordinate_at.hpp"
 #include "coordinates/traits.hpp"
 #include "coordinates/truncate_coordinate.hpp"
 
