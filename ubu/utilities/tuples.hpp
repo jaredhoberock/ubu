@@ -1618,6 +1618,14 @@ constexpr void for_each_arg(F&& f, Args&&... args)
 }
 
 
+template<std::size_t N, tuple_like T>
+  requires (N <= size_v<T>)
+constexpr pair_like auto split_at(const T& t)
+{
+  return std::pair(tuples::take<N>(t), tuples::drop<N>(t));
+}
+
+
 } // end ubu::tuples
 
 
