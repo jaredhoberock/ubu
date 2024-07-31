@@ -35,6 +35,7 @@
 #include "tensors/inplace_tensor.hpp"
 #include "tensors/iterators.hpp"
 #include "tensors/matrices.hpp"
+#include "tensors/quilted_tensor.hpp"
 #include "tensors/shapes.hpp"
 #include "tensors/traits.hpp"
 #include "tensors/vectors.hpp"
