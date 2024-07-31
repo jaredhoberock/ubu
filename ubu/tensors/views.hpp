@@ -8,6 +8,7 @@
 #include "views/domain.hpp"
 #include "views/elements.hpp"
 #include "views/enumerate.hpp"
+#include "views/enumerate_transform.hpp"
 #include "views/lattice.hpp"
 #include "views/layouts.hpp"
 #include "views/masks.hpp"
