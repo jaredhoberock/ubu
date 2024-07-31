@@ -14,6 +14,7 @@
 #include "views/masks.hpp"
 #include "views/nestle.hpp"
 #include "views/nestled_view.hpp"
+#include "views/quilt.hpp"
 #include "views/slices.hpp"
 #include "views/stack.hpp"
 #include "views/tile.hpp"
