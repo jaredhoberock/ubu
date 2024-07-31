@@ -2,6 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
+#include "traits/inner_tensor.hpp"
+#include "traits/inner_tensor_shape.hpp"
 #include "traits/tensor_coordinate.hpp"
 #include "traits/tensor_element.hpp"
 #include "traits/tensor_rank.hpp"
