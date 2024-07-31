@@ -4,6 +4,7 @@
 
 #include "concepts/composable.hpp"
 #include "concepts/elemental_invocable.hpp"
+#include "concepts/nested_tensor_like.hpp"
 #include "concepts/same_tensor_rank.hpp"
 #include "concepts/sized_tensor_like.hpp"
 #include "concepts/tensor_like.hpp"

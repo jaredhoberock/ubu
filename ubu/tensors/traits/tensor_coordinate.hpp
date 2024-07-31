@@ -7,7 +7,7 @@ namespace ubu
 {
 
 template<tensor_like T>
-using tensor_coordinate_t = detail::nested_coordinate_or_default_t<T>;
+using tensor_coordinate_t = detail::member_coordinate_or_default_t<T>;
 
 } // end ubu
 
