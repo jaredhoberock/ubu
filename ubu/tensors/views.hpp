@@ -15,6 +15,7 @@
 #include "views/nestled_view.hpp"
 #include "views/slices.hpp"
 #include "views/stack.hpp"
+#include "views/tile.hpp"
 #include "views/transform.hpp"
 #include "views/trim.hpp"
 #include "views/unzip.hpp"
