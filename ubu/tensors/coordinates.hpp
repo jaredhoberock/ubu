@@ -19,6 +19,7 @@
 #include "coordinates/split_coordinate_at.hpp"
 #include "coordinates/traits.hpp"
 #include "coordinates/truncate_coordinate.hpp"
+#include "coordinates/zero_extend_coordinate.hpp"
 
 #include "../detail/epilogue.hpp"
 
