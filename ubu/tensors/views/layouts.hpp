@@ -6,6 +6,7 @@
 #include "layouts/compact_right_major_layout.hpp"
 #include "layouts/concepts.hpp"
 #include "layouts/coshape.hpp"
+#include "layouts/extending_layout.hpp"
 #include "layouts/identity_layout.hpp"
 #include "layouts/is_injective.hpp"
 #include "layouts/layout.hpp"
