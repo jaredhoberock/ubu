@@ -22,7 +22,7 @@ template<class E, class H, class S, class F>
 concept has_one_extending_default_bulk_execute_after =
   executor<E>
   and happening<H>
-  and strictly_subdimensional<S,executor_shape_t<E>> // XXX it think maybe we just want weakly_congruent. strictly_subdimensional seems superfluous
+  and strictly_subdimensional<S,executor_shape_t<E>>
   and std::invocable<F,default_coordinate_t<S>>
   and requires(E ex, H before, const S& user_shape)
   {
