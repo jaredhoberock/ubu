@@ -4,6 +4,7 @@
 
 #include "traits/allocator_happening_t.hpp"
 #include "traits/allocator_pointer_t.hpp"
+#include "traits/allocator_shape_t.hpp"
 #include "traits/allocator_size_t.hpp"
 #include "traits/allocator_value_t.hpp"
 
