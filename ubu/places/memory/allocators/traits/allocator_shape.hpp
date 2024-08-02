@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../concepts/asynchronous_allocator.hpp"
+#include "../concepts/allocator.hpp"
 #include "allocator_size.hpp"
 #include <type_traits>
 
@@ -26,7 +26,7 @@ struct allocator_shape<A>
 
 } // end detail
 
-template<asynchronous_allocator A>
+template<allocator A>
 using allocator_shape_t = typename detail::allocator_shape<A>::type;
 
 } // end ubu

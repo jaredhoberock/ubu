@@ -17,7 +17,7 @@
 namespace ubu::detail
 {
 
-
+// cf. has_one_extending_default_allocate_after
 template<class E, class H, class S, class F>
 concept has_one_extending_default_bulk_execute_after =
   executor<E>
@@ -31,6 +31,8 @@ concept has_one_extending_default_bulk_execute_after =
 ;
 
 
+// cf. one_extending_allocate_after
+//
 // the purpose of this default path for bulk_execute_after is to perform simple conversions on the user's arguments (right now, just user_shape)
 // to match the executor's expectations. Then, it simply forwards the arguments along to the executor's customization of bulk_execute_after
 //
