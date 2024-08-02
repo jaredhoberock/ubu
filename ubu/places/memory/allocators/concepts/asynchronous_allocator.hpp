@@ -6,8 +6,8 @@
 #include "../../../causality/initial_happening.hpp"
 #include "../allocate_after.hpp"
 #include "../deallocate_after.hpp"
-#include "../traits/allocator_pointer_t.hpp"
-#include "../traits/allocator_value_t.hpp"
+#include "../traits/allocator_pointer.hpp"
+#include "../traits/allocator_value.hpp"
 #include "allocator.hpp"
 #include <cstddef>
 #include <memory>

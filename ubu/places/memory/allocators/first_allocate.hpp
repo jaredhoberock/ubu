@@ -6,7 +6,7 @@
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocation.hpp"
 #include "concepts/asynchronous_allocator.hpp"
-#include "traits/allocator_value_t.hpp"
+#include "traits/allocator_value.hpp"
 #include <memory>
 #include <type_traits>
 #include <utility>

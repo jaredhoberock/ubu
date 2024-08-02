@@ -7,7 +7,7 @@
 #include "../../../memory/allocators/concepts/asynchronous_allocator.hpp"
 #include "../../../memory/allocators/allocate_and_zero_after.hpp"
 #include "../../../memory/allocators/deallocate_after.hpp"
-#include "../../../memory/allocators/traits/allocator_happening_t.hpp"
+#include "../../../memory/allocators/traits/allocator_happening.hpp"
 #include "../concepts/bulk_executable_on.hpp"
 #include "../concepts/executor.hpp"
 #include "../execute_after.hpp"

@@ -5,7 +5,7 @@
 #include "concepts/asynchronous_allocation.hpp"
 #include "detail/custom_allocate_after.hpp"
 #include "rebind_allocator.hpp"
-#include "traits/allocator_value_t.hpp"
+#include "traits/allocator_value.hpp"
 #include <utility>
 
 namespace ubu

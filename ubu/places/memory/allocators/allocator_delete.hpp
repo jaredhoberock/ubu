@@ -6,8 +6,8 @@
 #include "concepts/allocator.hpp"
 #include "deallocate.hpp"
 #include "destroy.hpp"
-#include "traits/allocator_pointer_t.hpp"
-#include "traits/allocator_size_t.hpp"
+#include "traits/allocator_pointer.hpp"
+#include "traits/allocator_size.hpp"
 
 
 namespace ubu

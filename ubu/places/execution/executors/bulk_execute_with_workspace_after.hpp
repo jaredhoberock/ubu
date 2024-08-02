@@ -4,7 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "../../memory/allocators/concepts/asynchronous_allocator.hpp"
-#include "../../memory/allocators/traits/allocator_happening_t.hpp"
+#include "../../memory/allocators/traits/allocator_happening.hpp"
 #include "concepts/executor.hpp"
 #include "detail/default_bulk_execute_with_workspace_after.hpp"
 #include "detail/one_extending_default_bulk_execute_with_workspace_after.hpp"

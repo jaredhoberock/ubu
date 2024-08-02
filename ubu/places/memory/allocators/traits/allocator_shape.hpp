@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../concepts/asynchronous_allocator.hpp"
-#include "allocator_size_t.hpp"
+#include "allocator_size.hpp"
 #include <type_traits>
 
 namespace ubu

@@ -2,11 +2,11 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "traits/allocator_happening_t.hpp"
-#include "traits/allocator_pointer_t.hpp"
-#include "traits/allocator_shape_t.hpp"
-#include "traits/allocator_size_t.hpp"
-#include "traits/allocator_value_t.hpp"
+#include "traits/allocator_happening.hpp"
+#include "traits/allocator_pointer.hpp"
+#include "traits/allocator_shape.hpp"
+#include "traits/allocator_size.hpp"
+#include "traits/allocator_value.hpp"
 
 #include "../../../detail/epilogue.hpp"
 
