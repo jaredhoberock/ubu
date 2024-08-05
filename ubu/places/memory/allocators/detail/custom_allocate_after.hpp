@@ -63,7 +63,7 @@ concept has_allocate_after_customization =
 
 
 template<class T, class A, class B, class S>
-concept has_allocate_after_customization_after_rebind =
+concept has_allocate_after_customization_once_rebound =
   has_rebind_allocator<T,A>
   and has_allocate_after_customization<
     T, rebind_allocator_result_t<T,A&&>, B, S
@@ -74,7 +74,7 @@ concept has_allocate_after_customization_after_rebind =
 template<class T, class A, class B, class S>
 concept has_custom_allocate_after =
   has_allocate_after_customization<T,A,B,S>
-  or has_allocate_after_customization_after_rebind<T,A,B,S>
+  or has_allocate_after_customization_once_rebound<T,A,B,S>
 ;
 
 
@@ -98,7 +98,7 @@ constexpr asynchronous_allocation auto custom_allocate_after(A&& alloc, B&& befo
   {
     return allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape));
   }
-  else if constexpr (has_allocate_after_customization_after_rebind<T,A&&,B&&,S&&>)
+  else if constexpr (has_allocate_after_customization_once_rebound<T,A&&,B&&,S&&>)
   {
     // rebind the allocator and recurse
     return custom_allocate_after<T>(rebind_allocator<T>(std::forward<A>(alloc)), std::forward<B>(before), std::forward<S>(shape));
