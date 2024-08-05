@@ -21,7 +21,7 @@ namespace ubu::detail
 template<class T, class A, class B, class S>
 concept has_one_extending_default_allocate_after =
   std::is_object_v<T>
-  and allocator<A> // XXX not sure we should use concept allocator here, but we use it to ensure that the use of allocator_shape_t below is legal
+  and allocator<A>
   and happening<B>
   and strictly_subdimensional<S,allocator_shape_t<A>>
   and has_custom_allocate_after<T,A,B,allocator_shape_t<A>>
