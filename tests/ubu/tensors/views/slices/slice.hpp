@@ -65,7 +65,7 @@ void test1()
 
   for(auto coord : ns::domain(view))
   {
-    int i = view.layout()[coord];
+    int i = view.b()[coord];
     data[i] = coord;
   }
 

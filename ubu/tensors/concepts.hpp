@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "concepts/composable.hpp"
+#include "concepts/decomposable.hpp"
 #include "concepts/elemental_invocable.hpp"
 #include "concepts/nested_tensor_like.hpp"
 #include "concepts/same_tensor_rank.hpp"
