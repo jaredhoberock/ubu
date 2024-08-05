@@ -7,6 +7,7 @@
 #include "../allocate_after.hpp"
 #include "../deallocate_after.hpp"
 #include "../traits/allocator_pointer.hpp"
+#include "../traits/allocator_shape.hpp"
 #include "../traits/allocator_value.hpp"
 #include "allocator.hpp"
 #include <cstddef>
@@ -22,13 +23,17 @@ concept asynchronous_allocator_of =
 
   and requires(A a)
   {
-    {initial_happening(a)} -> happening;
+    { initial_happening(a) } -> happening;
   }
 
-  and requires(A a, const initial_happening_result_t<A>& before, std::size_t n)
+  and requires(A a, const initial_happening_result_t<A>& before, allocator_shape_t<A> shape)
   {
-    allocate_after<T>(a, before, n);
-    deallocate_after(a, before, get<1>(allocate_after<T>(a, before, n)));
+    allocate_after<T>(a, before, shape);
+  }
+
+  and requires(A a, allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>> allocation)
+  {
+    deallocate_after(a, get<0>(allocation), get<1>(allocation));
   }
 ;
 
