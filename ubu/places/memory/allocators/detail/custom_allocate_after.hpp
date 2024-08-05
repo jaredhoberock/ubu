@@ -4,9 +4,10 @@
 
 #include "../../../causality/happening.hpp"
 #include "../concepts/asynchronous_allocation.hpp"
+#include "../rebind_allocator.hpp"
 #include <utility>
 
-// the purpose of custom_allocate_after is to simply call the first one of
+// the purpose of custom_allocate_after is to call the first one of
 //
 // 1. alloc.template allocate_after<T>(args...), or
 // 2. allocate_after<T>(alloc, args...), or
@@ -14,7 +15,11 @@
 // 4. allocate_after(alloc, args...)
 //
 // which is well-formed.
-// in other words, custom_allocate_after calls the allocator's customization of allocate_after, if one exists
+//
+// If none of these is well-formed, custom_allocate_after attempts to rebind the allocator's value_type and retries the above choices.
+//
+// in other words, custom_allocate_after calls the allocator's customization of allocate_after, if one exists, and it is allowed to
+// rebind the allocator in order to locate it.
 
 namespace ubu::detail
 {
@@ -49,11 +54,27 @@ concept has_allocate_after_free_function = requires(A alloc, B before, S shape)
 
 
 template<class T, class A, class B, class S>
-concept has_custom_allocate_after =
+concept has_allocate_after_customization =
   has_allocate_after_member_function_template<T,A,B,S>
   or has_allocate_after_free_function_template<T,A,B,S>
   or has_allocate_after_member_function<T,A,B,S>
   or has_allocate_after_free_function<T,A,B,S>
+;
+
+
+template<class T, class A, class B, class S>
+concept has_allocate_after_customization_after_rebind =
+  has_rebind_allocator<T,A>
+  and has_allocate_after_customization<
+    T, rebind_allocator_result_t<T,A&&>, B, S
+  >
+;
+
+
+template<class T, class A, class B, class S>
+concept has_custom_allocate_after =
+  has_allocate_after_customization<T,A,B,S>
+  or has_allocate_after_customization_after_rebind<T,A,B,S>
 ;
 
 
@@ -73,9 +94,14 @@ constexpr asynchronous_allocation auto custom_allocate_after(A&& alloc, B&& befo
   {
     return std::forward<A>(alloc).allocate_after(std::forward<B>(before), std::forward<S>(shape));
   }
-  else
+  else if constexpr (has_allocate_after_free_function<T,A&&,B&&,S&&>)
   {
     return allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape));
+  }
+  else if constexpr (has_allocate_after_customization_after_rebind<T,A&&,B&&,S&&>)
+  {
+    // rebind the allocator and recurse
+    return custom_allocate_after<T>(rebind_allocator<T>(std::forward<A>(alloc)), std::forward<B>(before), std::forward<S>(shape));
   }
 }
 
