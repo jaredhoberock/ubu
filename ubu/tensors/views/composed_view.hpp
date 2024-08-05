@@ -95,24 +95,24 @@ class composed_view : public view_base
       return b_;
     }
 
-    template<slicer_for<coordinate_type> K>
-    constexpr tensor_like auto slice(const K& katana) const
+    // returns the pair (a(),b())
+    constexpr std::pair<A,B> decompose() const
     {
-      return detail::invoke_compose(a_, ubu::slice(b_, katana));
+      return std::pair(a(), b());
     }
 
-    // returns .a() if it is span_like
+    // returns a() if it is span_like
+    // XXX TODO eliminate this function
     template<span_like S = A>
-    constexpr span_like auto span() const
+    constexpr S span() const
     {
       return a();
     }
 
-    // returns .b() if it is a layout
-    template<layout_like L = B>
-    constexpr layout_like auto layout() const
+    template<slicer_for<coordinate_type> K>
+    constexpr tensor_like auto slice(const K& katana) const
     {
-      return b();
+      return detail::invoke_compose(a_, ubu::slice(b_, katana));
     }
 
   private:

@@ -9,6 +9,7 @@
 #include "../../tensors/shapes/shape_element.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
+#include "../../tensors/views/decompose.hpp"
 #include "../../tensors/views/slices/slice.hpp"
 #include "../concepts/allocating_cooperator.hpp"
 #include "../concepts/cooperator.hpp"
@@ -25,9 +26,8 @@ constexpr void coop_store_columns(C self, const inplace_vector<T,N>& this_column
   if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix_like<M>)
   {
     // in this special case, we can use the entire group to accelerate stores
-    // the following assumes that M is a particular type of composed_view
-    // s.t. destination.tensor() is span_like
-    coop_store(self, this_column, destination.span());
+    auto [span, _] = decompose(destination);
+    coop_store(self, this_column, span);
   }
   else
   {

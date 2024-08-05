@@ -44,6 +44,7 @@ struct dispatch_layout
 } // end detail
 
 
+// XXX the decompose CPO makes this CPO superfluous
 inline constexpr detail::dispatch_layout layout;
 
 
