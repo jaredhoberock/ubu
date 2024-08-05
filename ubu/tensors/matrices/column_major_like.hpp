@@ -15,7 +15,7 @@ template<class T>
 concept column_major_like =
   layout_like<T>
   and matrix_like<T>
-  and constant_strided<T>
+  and constant_valued<stride_element_t<0,T>>
   and stride_element_v<0,T> == 1
 ;
 
