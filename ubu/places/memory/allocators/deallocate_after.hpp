@@ -4,6 +4,7 @@
 
 #include "../../causality/happening.hpp"
 #include "detail/custom_deallocate_after.hpp"
+#include "detail/decomposing_default_deallocate_after.hpp"
 #include <utility>
 
 namespace ubu
@@ -19,24 +20,26 @@ struct dispatch_deallocate_after
   // this dispatch path calls the allocator's customization of deallocate_after
   template<class A, class B, class T>
     requires has_custom_deallocate_after<A&&, B&&, T&&>
-  constexpr auto operator()(A&& alloc, B&& before, T&& tensor) const
+  constexpr happening auto operator()(A&& alloc, B&& before, T&& tensor) const
   {
     return custom_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<T>(tensor));
   }
 
-  // XXX add a default dispatch path analogous to one_extending_allocate_after
+  // this dispatch path calls decomposing_default_deallocate_after
+  template<class A, class B, class T>
+    requires (not has_custom_deallocate_after<A&&, B&&, T&&>
+              and has_decomposing_default_deallocate_after<A&&, B&&, T&&>)
+  constexpr happening auto operator()(A&& alloc, B&& before, T&& tensor) const
+  {
+    return decomposing_default_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<T>(tensor));
+  }
 };
 
 
 } // end detail
 
 
-namespace
-{
-
-constexpr detail::dispatch_deallocate_after deallocate_after;
-
-} // end anonymous namespace
+inline constexpr detail::dispatch_deallocate_after deallocate_after;
 
 
 template<class A, class B, class T>
