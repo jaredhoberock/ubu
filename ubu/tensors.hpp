@@ -29,6 +29,7 @@
 #include "detail/prologue.hpp"
 
 #include "tensors/algorithms.hpp"
+#include "tensors/composed_tensor.hpp"
 #include "tensors/concepts.hpp"
 #include "tensors/coordinates.hpp"
 #include "tensors/element_exists.hpp"

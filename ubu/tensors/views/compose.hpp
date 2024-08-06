@@ -17,11 +17,13 @@ namespace ubu
 namespace detail
 {
 
-// composed_view and compose have a cyclic dependency and can't use each other directly
+
+// compose and composed_view have a cyclic dependency (via composed_tensor) and can't use each other directly
 // declare detail::make_composed_view for compose's use
 template<class A, view B>
-  requires (std::is_object_v<A> and composable<A,B>)
-constexpr auto make_composed_view(A a, B b);
+  requires (std::is_object_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
+constexpr view auto make_composed_view(A, B);
+
 
 template<class R, class A, class B>
 concept legal_composition =
@@ -83,6 +85,7 @@ struct dispatch_compose
 
 } // end detail
 
+
 namespace
 {
 
@@ -90,18 +93,20 @@ constexpr detail::dispatch_compose compose;
 
 } // end anonymous namespace
 
+
 namespace detail
 {
 
-// composed_view and compose have a cyclic dependency and can't use each other directly
+// compose and composed_tensor have a cyclic dependency (via composed_view) and can't use each other directly
 // define detail::invoke_compose as soon as compose's definition is available
 template<class... Args>
-constexpr auto invoke_compose(Args&&... args)
+constexpr view auto invoke_compose(Args&&... args)
 {
   return compose(std::forward<Args>(args)...);
 }
 
 } // end detail
+
 
 } // end ubu
 
