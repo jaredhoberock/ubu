@@ -2,139 +2,54 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../utilities/integrals/size.hpp"
+#include "../composed_tensor.hpp"
 #include "../concepts/composable.hpp"
-#include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
-#include "../coordinates/element.hpp"
-#include "../element_exists.hpp"
-#include "../shapes/shape.hpp"
-#include "../traits/tensor_shape.hpp"
-#include "../traits/tensor_coordinate.hpp"
-#include "../vectors/span_like.hpp"
-#include "compose.hpp"
-#include "domain.hpp"
-#include "layouts/layout.hpp"
-#include "slices/slice.hpp"
 #include "view_base.hpp"
+#include <type_traits>
 
 namespace ubu
 {
-namespace detail
-{
-
-// composed_view and compose have a cyclic dependency and can't use each other directly
-// declare detail::invoke_compose for composed_view's use
-template<class... Args>
-constexpr auto invoke_compose(Args&&... args);
-
-} // end detail
 
 
+// composed_view and composed_tensor have a cyclic dependency (via compose) which means
+// composed_view needs this declaration of composed_tensor
 template<class A, view B>
   requires (std::is_object_v<A> and composable<A,B>)
-class composed_view : public view_base
+class composed_tensor;
+
+
+// the only difference between composed_view and composed_tensor is that composed_view
+// requires A to be a view if A is also tensor_like and composed_view is itself a view
+template<class A, view B>
+  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
+class composed_view : public composed_tensor<A,B>, public view_base
 {
   public:
-    using shape_type = tensor_shape_t<B>;
-    using coordinate_type = tensor_coordinate_t<B>;
-
-    constexpr composed_view(A a, B b)
-      : a_{a}, b_{b}
-    {}
-
+    constexpr composed_view(A a, B b) : composed_tensor<A,B>(a,b) {}
+  
     composed_view(const composed_view&) = default;
 
-    constexpr shape_type shape() const
-    {
-      return ubu::shape(b_);
-    }
-
-    template<class A_ = A, class B_ = B>
-      requires (not tensor_like<A_> and sized_tensor_like<B_>)
-    constexpr auto size() const
-    {
-      return ubu::size(b_);
-    }
-
-    // precondition: element_exists(coord)
-    template<coordinate_for<B> C>
-    constexpr decltype(auto) operator[](const C& coord) const
-    {
-      return element(a_, element(b_,coord));
-    }
-
-    // precondition: in_domain(b(), coord)
-    template<coordinate_for<B> C>
-    constexpr bool element_exists(const C& coord) const
-    {
-      if (not ubu::element_exists(b_, coord)) return false;
-
-      // if A actually fulfills the requirements of tensor_like,
-      // check the coordinate produced by b_ against a_
-      // otherwise, we assume that b_ always perfectly covers a_
-      if constexpr (tensor_like<A>)
-      {
-        auto a_coord = element(b_,coord);
-
-        if (not in_domain(a_, a_coord)) return false;
-        if (not ubu::element_exists(a_, a_coord)) return false;
-      }
-
-      return true;
-    }
-
-    constexpr A a() const
-    {
-      return a_;
-    }
-
-    constexpr B b() const
-    {
-      return b_;
-    }
-
-    // returns the pair (a(),b())
-    constexpr std::pair<A,B> decompose() const
-    {
-      return std::pair(a(), b());
-    }
-
-    // returns a() if it is span_like
-    // XXX TODO eliminate this function
-    template<span_like S = A>
-    constexpr S span() const
-    {
-      return a();
-    }
-
-    template<slicer_for<coordinate_type> K>
-    constexpr tensor_like auto slice(const K& katana) const
-    {
-      return detail::invoke_compose(a_, ubu::slice(b_, katana));
-    }
-
-  private:
-    A a_;
-    B b_;
+    // delete member all() inherited from composed_tensor
+    // this ensures that ubu::all returns exactly a copy of this
+    void all() const = delete;
 };
+
 
 namespace detail
 {
 
-// composed_view and compose have a cyclic dependency and can't use each other directly
-// define detail::make_composed_view as soon as composed_view's definition is available
+// composed_view and compose have a cyclic dependency (via composed_tensor) and can't use each other directly
+// define make_composed_view for compose's use as soon as composed_view is available
 template<class A, view B>
-  requires (std::is_object_v<A> and composable<A,B>)
-constexpr auto make_composed_view(A a, B b)
+  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
+constexpr view auto make_composed_view(A a, B b)
 {
-  return composed_view<A,B>(a,b);
+  return composed_view(a,b);
 }
 
-
 } // end detail
-
 
 } // end ubu
 

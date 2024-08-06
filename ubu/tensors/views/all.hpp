@@ -64,6 +64,8 @@ struct dispatch_all
               and not view<std::remove_cvref_t<V&&>>)
   constexpr view auto operator()(V&& vec) const
   {
+    static_assert(not std::is_rvalue_reference_v<V&&>, "all: temporary vector that is not also a view would produce a dangling view.");
+
     return fancy_span(data(std::forward<V>(vec)), size(std::forward<V>(vec)));
   }
 
