@@ -68,6 +68,9 @@ struct dispatch_compose
   {
     if constexpr(tensor_like<A>)
     {
+      // check for a dangling view
+      static_assert(not std::is_rvalue_reference_v<A&&> or view<A>, "compose: composition with temporary tensor A that is not also a view would produce a dangling view.");
+
       return detail::make_composed_view(all(std::forward<A>(a)), all(std::forward<B>(b)));
     }
     else
