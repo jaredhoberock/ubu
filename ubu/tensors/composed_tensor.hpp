@@ -19,7 +19,6 @@
 #include "views/domain.hpp"
 #include "views/layouts/layout.hpp"
 #include "views/slices/slice.hpp"
-#include "views/view_base.hpp"
 
 namespace ubu
 {
@@ -34,10 +33,9 @@ constexpr view auto invoke_compose(Args&&... args);
 } // end detail
 
 
-// composed_tensor is a view if A is a view or if A is not tensor_like
 template<class A, view B>
   requires (std::is_object_v<A> and composable<A,B>)
-class composed_tensor : public view_base_if<view<A> or not tensor_like<A>>
+class composed_tensor
 {
   public:
     using shape_type = tensor_shape_t<B>;
@@ -92,13 +90,13 @@ class composed_tensor : public view_base_if<view<A> or not tensor_like<A>>
 
     constexpr auto a() const
     {
-      if constexpr (view<A> or not tensor_like<A>)
+      if constexpr (not tensor_like<A>)
       {
         return a_;
       }
       else
       {
-        return all(a_);
+        return ubu::all(a_);
       }
     }
 
@@ -107,9 +105,6 @@ class composed_tensor : public view_base_if<view<A> or not tensor_like<A>>
       return b_;
     }
 
-    // conditionally customize all if this composed_tensor is not already a view
-    template<class A_ = A>
-      requires (tensor_like<A_> and not view<A_>)
     constexpr view auto all() const
     {
       return detail::invoke_compose(a_, b_);

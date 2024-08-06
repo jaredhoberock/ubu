@@ -21,7 +21,7 @@ namespace detail
 // compose and composed_view have a cyclic dependency (via composed_tensor) and can't use each other directly
 // declare detail::make_composed_view for compose's use
 template<class A, view B>
-  requires (std::is_object_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
+  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
 constexpr view auto make_composed_view(A, B);
 
 
