@@ -8,6 +8,7 @@
 #include "device_memory_resource.hpp"
 #include "device_ptr.hpp"
 #include "event.hpp"
+#include <cstddef>
 #include <cuda_runtime_api.h>
 #include <utility>
 
@@ -124,6 +125,8 @@ class device_allocator : private device_memory_resource
       return !(*this == other);
     }
 };
+
+device_allocator(int) -> device_allocator<std::byte>;
 
 
 template<class... Ts>
