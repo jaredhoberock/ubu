@@ -4,6 +4,7 @@
 
 #include "../concepts/composable.hpp"
 #include "../concepts/tensor_like.hpp"
+#include "../traits/tensor_element.hpp"
 #include "all.hpp"
 #include "composed_view.hpp"
 #include "layouts/layout.hpp"
@@ -23,22 +24,23 @@ template<class A, view B>
 constexpr auto make_composed_view(A a, B b);
 
 template<class R, class A, class B>
-concept composition_of_tensors =
-  view<R> and
-  composable<A,B> and
-  std::same_as<shape_t<R>, shape_t<B>>
+concept legal_composition =
+  view<R>
+  and composable<A,B>
+  and std::same_as<shape_t<R>, shape_t<B>>
+  and std::same_as<tensor_element_t<R>, element_t<A, tensor_element_t<B>>>
 ;
 
 template<class A, class B>
 concept has_compose_member_function = requires(A a, B b)
 {
-  { a.compose(b) } -> composition_of_tensors<A,B>;
+  { a.compose(b) } -> legal_composition<A,B>;
 };
 
 template<class A, class B>
 concept has_compose_free_function = requires(A a, B b)
 {
-  { compose(a,b) } -> composition_of_tensors<A,B>;
+  { compose(a,b) } -> legal_composition<A,B>;
 };
 
 struct dispatch_compose
