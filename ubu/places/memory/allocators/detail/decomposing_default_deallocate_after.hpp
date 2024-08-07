@@ -29,7 +29,7 @@ constexpr happening auto decomposing_default_deallocate_after(A&& alloc, B&& bef
   // decompose the tensor into an underlying allocation and a layout, which is discarded
   auto [allocation, _] = decompose(std::forward<T>(tensor));
 
-  return custom_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), allocation);
+  return custom_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), std::move(allocation));
 }
 
 
