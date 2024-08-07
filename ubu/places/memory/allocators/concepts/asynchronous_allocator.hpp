@@ -10,6 +10,8 @@
 #include "../traits/allocator_shape.hpp"
 #include "../traits/allocator_value.hpp"
 #include "allocator.hpp"
+#include "asynchronously_allocatable_with.hpp"
+#include "asynchronously_deallocatable_with.hpp"
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -26,15 +28,18 @@ concept asynchronous_allocator_of =
     { initial_happening(a) } -> happening;
   }
 
-  and requires(A a, const initial_happening_result_t<A>& before, allocator_shape_t<A> shape)
-  {
-    allocate_after<T>(a, before, shape);
-  }
+  and asynchronously_allocatable_with<
+    T,
+    A,
+    const initial_happening_result_t<A>&,
+    allocator_shape_t<A>
+  >
 
-  and requires(A a, allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>> allocation)
-  {
-    deallocate_after(a, get<0>(allocation), get<1>(allocation));
-  }
+  and asynchronously_deallocatable_with<
+    A, 
+    tuples::first_t<allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>>>,
+    tuples::second_t<allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>>>
+  >
 ;
 
 template<class A>
