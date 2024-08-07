@@ -19,31 +19,27 @@
 namespace ubu
 {
 
-template<class A, class T>
+// XXX S should default to A's allocator_shape_type, if it exists
+template<class A, class T, class S = std::size_t>
 concept asynchronous_allocator_of =
-  allocator_of<A,T>
+  std::is_object_v<T>
 
-  and requires(A a)
+  and requires(A alloc)
   {
-    { initial_happening(a) } -> happening;
+    { initial_happening(alloc) } -> happening;
   }
 
-  and asynchronously_allocatable_with<
-    T,
-    A,
-    const initial_happening_result_t<A>&,
-    allocator_shape_t<A>
-  >
-
+  and coordinate<S>
+  and asynchronously_allocatable_with<T,A,initial_happening_result_t<A>,S>
   and asynchronously_deallocatable_with<
     A, 
-    tuples::first_t<allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>>>,
-    tuples::second_t<allocate_after_result_t<T,A,initial_happening_result_t<A>,allocator_shape_t<A>>>
+    initial_happening_result_t<A>,
+    tuples::second_t<allocate_after_result_t<T,A,initial_happening_result_t<A>,S>>
   >
 ;
 
 template<class A>
-concept asynchronous_allocator = allocator<A> and asynchronous_allocator_of<A,std::byte>;
+concept asynchronous_allocator = allocator<A> and asynchronous_allocator_of<A,std::byte,allocator_shape_t<A>>;
 
 } // end ubu
 
