@@ -14,8 +14,8 @@ template<class T>
 concept contiguous_column_major_matrix_like =
   matrix_like<T>
   and decomposable<T>
-  and span_like<tuples::first_t<decompose_t<T>>>
-  and column_major_like<tuples::second_t<decompose_t<T>>>
+  and span_like<tuples::first_t<decompose_result_t<T>>>
+  and column_major_like<tuples::second_t<decompose_result_t<T>>>
 ;
 
 } // end ubu

@@ -61,7 +61,7 @@ struct dispatch_decompose
 inline constexpr detail::dispatch_decompose decompose;
 
 template<class T>
-using decompose_t = decltype(decompose(std::declval<T>()));
+using decompose_result_t = decltype(decompose(std::declval<T>()));
 
 } // end ubu
 
