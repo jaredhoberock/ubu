@@ -81,10 +81,6 @@ struct dispatch_quilt
 inline constexpr detail::dispatch_quilt quilt;
 
 
-template<class T, class S>
-using quilt_t = decltype(quilt(std::declval<T>(), std::declval<S>()));
-
-
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
