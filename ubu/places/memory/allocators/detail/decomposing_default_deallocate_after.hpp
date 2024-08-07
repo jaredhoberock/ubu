@@ -17,7 +17,7 @@ concept has_decomposing_default_deallocate_after =
   and happening<B>
   and decomposable<T>
   and has_custom_deallocate_after<
-    A,B,tuples::first_t<decompose_t<T>>
+    A,B,tuples::first_t<decompose_result_t<T>>
   >
 ;
 
