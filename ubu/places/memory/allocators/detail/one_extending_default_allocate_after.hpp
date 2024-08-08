@@ -5,9 +5,9 @@
 #include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
 #include "../../../../tensors/views/compose.hpp"
 #include "../../../../tensors/views/layouts/extending_layout.hpp"
+#include "../../../causality/asynchronous_view_of.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/allocator.hpp"
-#include "../concepts/asynchronous_view_of.hpp"
 #include "../traits/allocator_shape.hpp"
 #include "custom_allocate_after.hpp"
 #include <concepts>

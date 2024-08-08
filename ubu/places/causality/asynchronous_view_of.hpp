@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../../detail/prologue.hpp"
+#include "../../detail/prologue.hpp"
 
-#include "../../../../utilities/tuples.hpp"
-#include "../../../../tensors/concepts/view_of.hpp"
+#include "../../utilities/tuples.hpp"
+#include "../../tensors/concepts/view_of.hpp"
 
 namespace ubu
 {
@@ -17,5 +17,5 @@ concept asynchronous_view_of =
 
 } // end ubu
 
-#include "../../../../detail/epilogue.hpp"
+#include "../../detail/epilogue.hpp"
 

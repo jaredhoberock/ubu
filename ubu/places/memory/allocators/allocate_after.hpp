@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "concepts/asynchronous_view_of.hpp"
+#include "../../causality/asynchronous_view_of.hpp"
 #include "detail/custom_allocate_after.hpp"
 #include "detail/one_extending_default_allocate_after.hpp"
 #include <utility>

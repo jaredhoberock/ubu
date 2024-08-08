@@ -4,7 +4,6 @@
 
 #include "concepts/allocator.hpp"
 #include "concepts/asynchronous_allocator.hpp"
-#include "concepts/asynchronous_view_of.hpp"
 #include "concepts/asynchronously_allocatable_with.hpp"
 #include "concepts/asynchronously_deallocatable_with.hpp"
 

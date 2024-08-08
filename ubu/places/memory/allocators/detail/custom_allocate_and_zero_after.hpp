@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../concepts/asynchronous_view_of.hpp"
+#include "../../../causality/asynchronous_view_of.hpp"
 #include <utility>
 
 namespace ubu::detail

@@ -2,8 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../causality/happening.hpp"
-#include "../concepts/asynchronous_view_of.hpp"
+#include "../../../causality/asynchronous_view_of.hpp"
 #include "../rebind_allocator.hpp"
 #include <utility>
 

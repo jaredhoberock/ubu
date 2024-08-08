@@ -2,10 +2,10 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../causality/asynchronous_view_of.hpp"
 #include "../../causality/initial_happening.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocator.hpp"
-#include "concepts/asynchronous_view_of.hpp"
 #include "traits/allocator_value.hpp"
 #include <memory>
 #include <type_traits>

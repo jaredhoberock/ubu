@@ -2,12 +2,12 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../causality/asynchronous_view_of.hpp"
 #include "../../causality/happening.hpp"
 #include "../../execution/executors/concepts/executor.hpp"
 #include "../../execution/executors/bulk_execute_after.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocator.hpp"
-#include "concepts/asynchronous_view_of.hpp"
 #include "detail/custom_allocate_and_zero_after.hpp"
 #include <cstring>
 #include <utility>
