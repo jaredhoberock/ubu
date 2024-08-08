@@ -3,7 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../../../causality/happening.hpp"
-#include "../concepts/asynchronous_allocation.hpp"
+#include "../concepts/asynchronous_view_of.hpp"
 #include "../rebind_allocator.hpp"
 #include <utility>
 
@@ -28,28 +28,28 @@ namespace ubu::detail
 template<class T, class A, class B, class S>
 concept has_allocate_after_member_function_template = requires(A alloc, B before, S shape)
 {
-  { std::forward<A>(alloc).template allocate_after<T>(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
+  { std::forward<A>(alloc).template allocate_after<T>(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_view_of<T,S>;
 };
 
 
 template<class T, class A, class B , class S>
 concept has_allocate_after_free_function_template = requires(A alloc, B before, S shape)
 {
-  { allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
+  { allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_view_of<T,S>;
 };
 
 
 template<class T, class A, class B, class S>
 concept has_allocate_after_member_function = requires(A alloc, B before, S shape)
 {
-  { std::forward<A>(alloc).allocate_after(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
+  { std::forward<A>(alloc).allocate_after(std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_view_of<T,S>;
 };
 
 
 template<class T, class A, class B, class S>
 concept has_allocate_after_free_function = requires(A alloc, B before, S shape)
 {
-  { allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_tensor_like<T,S>;
+  { allocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape)) } -> asynchronous_view_of<T,S>;
 };
 
 
@@ -80,7 +80,7 @@ concept has_custom_allocate_after =
 
 template<class T, class A, class B, class S>
   requires has_custom_allocate_after<T,A&&,B&&,S&&>
-constexpr asynchronous_allocation auto custom_allocate_after(A&& alloc, B&& before, S&& shape)
+constexpr asynchronous_view_of<T,S> auto custom_allocate_after(A&& alloc, B&& before, S&& shape)
 {
   if constexpr (has_allocate_after_member_function_template<T,A&&,B&&,S&&>)
   {
