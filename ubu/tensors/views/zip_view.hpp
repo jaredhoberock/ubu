@@ -62,9 +62,13 @@ class zip_view : public view_base
     template<coordinate_for<T> C>
     constexpr std::tuple<tensor_reference_t<T>, tensor_reference_t<Ts>...> operator[](const C& coord) const
     {
+      // carefully define the result of the lambda below
+      // to avoid returning a tuple of dangling references
+      using result_type = std::tuple<tensor_reference_t<T>, tensor_reference_t<Ts>...>;
+
       return std::apply([=](const auto&... tensors)
       {
-        return std::forward_as_tuple(ubu::element(tensors, coord)...);
+        return result_type(ubu::element(tensors, coord)...);
       }, tuple_of_tensors_);
     }
 

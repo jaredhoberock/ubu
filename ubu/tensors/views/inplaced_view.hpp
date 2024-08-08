@@ -15,9 +15,8 @@ template<class T, bounded_coordinate S>
 class inplaced_view : public view_base
 {
   public:
-    // XXX is there a way to construct an inplace_tensor from a view which may have missing elements?
-    template<sized_view V>
-      requires std::constructible_from<T, tensor_element_t<V>>
+    template<view V>
+      requires (std::constructible_from<T, tensor_element_t<V>> and std::same_as<S, tensor_shape_t<V>>)
     constexpr inplaced_view(V view)
       : elements_(from_tensor_like, view)
     {}
@@ -31,21 +30,22 @@ class inplaced_view : public view_base
 
     constexpr auto size() const
     {
-      return ubu::size(elements_);
+      return elements_.size();
     }
 
+    // note that the return type of operator[] is a value, not a reference
     template<congruent<S> C>
-    constexpr auto element(C coord) const
+    constexpr auto operator[](C coord) const
     {
-      return ubu::element(elements_, coord);
+      return elements_[coord];
     }
 
   private:
     inplace_tensor<T,S> elements_;
 };
 
-template<sized_view V>
-  requires std::is_trivially_copy_constructible_v<tensor_element_t<V>>
+template<view V>
+  requires (std::is_trivially_copy_constructible_v<tensor_element_t<V>> and bounded_coordinate<tensor_shape_t<V>>)
 inplaced_view(V) -> inplaced_view<tensor_element_t<V>, tensor_shape_t<V>>;
 
 } // end ubu
