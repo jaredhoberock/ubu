@@ -30,7 +30,7 @@ concept has_inplace_free_function = requires(T tensor)
   { inplace(std::forward<T>(tensor)) } -> view;
 
   // XXX need to require that the result has the same shape and element type as T
-}
+};
 
 template<class T>
 concept has_inplace_customization = has_inplace_member_function<T> or has_inplace_free_function<T>;
@@ -61,7 +61,7 @@ struct dispatch_inplace
     }
     else
     {
-      return inplaced_view(all(std::forward<T>(t));
+      return inplaced_view(all(std::forward<T>(t)));
     }
   }
 };
