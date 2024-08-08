@@ -3,13 +3,13 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../utilities/integrals/smaller.hpp"
-#include "../../composed_tensor.hpp"
 #include "../../coordinates/concepts/congruent.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/coordinate_sum.hpp"
 #include "../../traits/tensor_element.hpp"
 #include "../../vectors/span_like.hpp"
 #include "../all.hpp"
+#include "../composed_view.hpp"
 #include "concepts/layout_like.hpp"
 #include "coshape.hpp"
 
