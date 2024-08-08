@@ -32,7 +32,8 @@ struct dispatch_allocate_and_zero_after
 
   // this dispatch path calls allocate_after and then bulk_execute_after to fill the tensor
   template<coordinate S, asynchronous_allocator_of<T,S> A, executor E, happening B>
-    requires (not has_custom_allocate_and_zero_after<T,A&&,E&&,B&&,S>)
+    requires (not has_custom_allocate_and_zero_after<T,A&&,E&&,B&&,S>
+              and std::is_scalar_v<T>)
   constexpr asynchronous_allocation auto operator()(A&& alloc, E&& exec, B&& before, S shape) const
   {
     // asynchronously allocate the memory
@@ -41,8 +42,9 @@ struct dispatch_allocate_and_zero_after
     // asynchronously zero the bits
     happening auto zero_finished = bulk_execute_after(std::forward<E>(exec), std::move(allocation_finished), shape, [tensor](auto coord)
     {
-      // XXX this won't work if operator& returns a fancy pointer
-      std::memset(&tensor[coord], 0, sizeof(T));
+      // XXX generalize this to work with non-scalar T
+      //     we need to use memset, but the problem is that &tensor[coord] may not be a raw pointer
+      tensor[coord] = T{};
     });
 
     // return the pair
