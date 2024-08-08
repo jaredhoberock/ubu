@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../tensors/concepts/view.hpp"
 #include "../../causality/happening.hpp"
 #include "detail/custom_deallocate_after.hpp"
 #include "detail/decomposing_default_deallocate_after.hpp"
@@ -26,12 +27,12 @@ struct dispatch_deallocate_after
   }
 
   // this dispatch path calls decomposing_default_deallocate_after
-  template<class A, class B, class T>
-    requires (not has_custom_deallocate_after<A&&, B&&, T&&>
-              and has_decomposing_default_deallocate_after<A&&, B&&, T&&>)
-  constexpr happening auto operator()(A&& alloc, B&& before, T&& tensor) const
+  template<class A, class B, view V>
+    requires (not has_custom_deallocate_after<A&&, B&&, V>
+              and has_decomposing_default_deallocate_after<A&&, B&&, V>)
+  constexpr happening auto operator()(A&& alloc, B&& before, V tensor) const
   {
-    return decomposing_default_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), std::forward<T>(tensor));
+    return decomposing_default_deallocate_after(std::forward<A>(alloc), std::forward<B>(before), tensor);
   }
 };
 

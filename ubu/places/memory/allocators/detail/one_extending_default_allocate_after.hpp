@@ -2,8 +2,8 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensors/composed_tensor.hpp"
 #include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensors/views/compose.hpp"
 #include "../../../../tensors/views/layouts/extending_layout.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/allocator.hpp"
@@ -44,12 +44,12 @@ constexpr asynchronous_tensor_like<T,S> auto one_extending_default_allocate_afte
   auto alloc_shape = one_extend_coordinate<allocator_shape_t<A>>(user_shape);
 
   // allocate a tensor of alloc_shape
-  auto [after, tensor] = detail::custom_allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), alloc_shape);
+  auto [after, view] = detail::custom_allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), alloc_shape);
 
   // compose with a layout that will zero-extend coordinates from user_shape to alloc_shape
-  composed_tensor result_tensor(std::move(tensor), extending_layout<S,allocator_shape_t<A>>(user_shape));
+  auto result_view = compose(view, extending_layout<S,allocator_shape_t<A>>(user_shape));
 
-  return std::pair(std::move(after), std::move(result_tensor));
+  return std::pair(std::move(after), result_view);
 }
 
 } // end ubu::detail
