@@ -6,27 +6,12 @@
 #include "../concepts/nested_tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../traits/inner_tensor_shape.hpp"
-#include "../quilted_tensor.hpp"
+#include "quilted_view.hpp"
 #include <utility>
 
 
 namespace ubu
 {
-
-// the only difference between quilted_view and quilted_tensor is that quilted_view
-// requires P to be a view
-template<nested_tensor_like P, congruent<inner_tensor_shape_t<P>> S = inner_tensor_shape_t<P>>
-  requires view<P>
-class quilted_view : public quilted_tensor<P,S>
-{
-  private:
-    using super_t = quilted_tensor<P,S>;
-
-  public:
-    using super_t::super_t;
-};
-
-
 namespace detail
 {
 
