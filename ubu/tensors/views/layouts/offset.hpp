@@ -10,6 +10,7 @@
 #include "../../vectors/span_like.hpp"
 #include "../all.hpp"
 #include "../composed_view.hpp"
+#include "concepts/coshaped_layout.hpp"
 #include "concepts/layout.hpp"
 #include "coshape.hpp"
 
@@ -61,7 +62,7 @@ struct offset_layout : composed_view<detail::add_offset<O>, L>
     if constexpr(coshaped_layout<L>)
     {
       // if the layout has a coshape, we can use it to bound the size of the new span
-      auto new_size = smaller(self.b().coshape(), s.size() - new_origin);
+      auto new_size = smaller(coshape(self.b()), s.size() - new_origin);
 
       return ubu::compose(s.subspan(new_origin, new_size), self.b());
     }

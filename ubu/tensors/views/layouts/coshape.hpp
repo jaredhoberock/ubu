@@ -58,13 +58,6 @@ concept coshaped =
   }
 ;
 
-template<class T>
-concept coshaped_layout =
-  layout<T>
-  and coshaped<T>
-  and congruent<coshape_t<T>, tensor_element_t<T>>
-;
-
 } // end ubu
 
 #include "../../../detail/epilogue.hpp"
