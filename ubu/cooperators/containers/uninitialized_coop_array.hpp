@@ -1,17 +1,19 @@
 #pragma once
 
 #include "../../detail/prologue.hpp"
-#include "../../utilities/integrals/integral_like.hpp"
+#include "../../places/memory/pointers/reinterpret_pointer.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/traits/tensor_size.hpp"
 #include "../../tensors/vectors/fancy_span.hpp"
 #include "../../tensors/vectors/sized_vector_like.hpp"
+#include "../../utilities/integrals/integral_like.hpp"
 #include "../algorithms/coop_copy.hpp"
 #include "../concepts/allocating_cooperator.hpp"
 #include "../primitives/coop_alloca.hpp"
 #include "../primitives/coop_dealloca.hpp"
 #include "../primitives/synchronize_and_count.hpp"
+#include "../traits/cooperator_pointer.hpp"
 #include "../traits/cooperator_size.hpp"
 #include <concepts>
 #include <optional>
@@ -24,10 +26,12 @@ template<class T, allocating_cooperator C, integral_like S = default_coordinate_
 class uninitialized_coop_array
 {
   public:
+    using pointer = reinterpret_pointer_result_t<T,cooperator_pointer_t<C>>;
+
     constexpr uninitialized_coop_array(C& self, S size)
       : self_{self},
         size_{size},
-        data_{reinterpret_cast<T*>(coop_alloca(self_, size_ * sizeof(T)))}
+        data_{reinterpret_pointer<T>(coop_alloca(self_, size_ * sizeof(T)))}
     {}
 
     template<sized_vector_like V>
@@ -43,7 +47,7 @@ class uninitialized_coop_array
       coop_dealloca(self_, size_ * sizeof(T));
     }
 
-    constexpr fancy_span<T*,S> all() const
+    constexpr fancy_span<pointer,S> all() const
     {
       return {data(), size()};
     }
@@ -54,20 +58,20 @@ class uninitialized_coop_array
     }
 
     template<std::integral I>
-    constexpr T& operator[](I i)
+    constexpr decltype(auto) operator[](I i)
     {
       return data_[i];
     }
 
     template<std::integral I>
-    constexpr const T& operator[](I i) const
+    constexpr decltype(auto) operator[](I i) const
     {
       return data_[i];
     }
 
     template<std::integral I, class... Args>
       requires std::constructible_from<T,Args&&...>
-    constexpr T& construct_at(I i, Args&&... args)
+    constexpr decltype(auto) construct_at(I i, Args&&... args)
     {
       return *std::construct_at(&data_[i], std::forward<Args>(args)...);
     }
@@ -102,7 +106,7 @@ class uninitialized_coop_array
       return result;
     }
 
-    constexpr T* data() const
+    constexpr pointer data() const
     {
       return data_;
     }
@@ -110,7 +114,7 @@ class uninitialized_coop_array
   private:
     C& self_;
     [[no_unique_address]] S size_;
-    T* data_;  // XXX This member should be a pointer_like related to the result of coop_alloca
+    pointer data_;
 };
 
 template<allocating_cooperator C, sized_vector_like V>
