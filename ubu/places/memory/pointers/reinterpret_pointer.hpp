@@ -62,6 +62,9 @@ struct dispatch_reinterpret_pointer
 template<class T>
 inline constexpr detail::dispatch_reinterpret_pointer<T> reinterpret_pointer;
 
+template<class T, pointer_like P>
+using reinterpret_pointer_result_t = decltype(reinterpret_pointer<T>(std::declval<P>()));
+
 
 } // end ubu
 
