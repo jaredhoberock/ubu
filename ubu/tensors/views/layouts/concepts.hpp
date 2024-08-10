@@ -2,8 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "concepts/laid_out.hpp"
-#include "concepts/layout_like.hpp"
+#include "concepts/layout.hpp"
 
 #include "../../../detail/epilogue.hpp"
 

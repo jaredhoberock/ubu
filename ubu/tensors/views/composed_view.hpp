@@ -17,7 +17,6 @@
 #include "all.hpp"
 #include "compose.hpp"
 #include "domain.hpp"
-#include "layouts/layout.hpp"
 #include "slices/slice.hpp"
 #include "view_base.hpp"
 

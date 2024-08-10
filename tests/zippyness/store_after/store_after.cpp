@@ -8,7 +8,7 @@
 #include <ubu/ubu.hpp>
 
 // postcondition: is_injective(result)
-constexpr ubu::layout_like_of_rank<3> auto layout_for_store(std::size_t n)
+constexpr ubu::layout_of_rank<3> auto layout_for_store(std::size_t n)
 {
   using namespace ubu;
 
@@ -28,7 +28,7 @@ ubu::cuda::event store_after(ubu::cuda::device_executor gpu, ubu::cuda::device_a
   using namespace ubu;
   using T = tensor_element_t<R>;
 
-  layout_like_of_rank<3> auto layout = layout_for_store(std::size(result));
+  layout_of_rank<3> auto layout = layout_for_store(std::size(result));
   tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
 
   auto shape = layout.shape();

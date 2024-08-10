@@ -8,7 +8,7 @@ template<class T>
 using device_vector = std::vector<T, ubu::cuda::managed_allocator<T>>;
 
 template<int max_num_elements_per_thread>
-void do_coop_store_columns(int block_size, ubu::span_like auto input, ubu::span_like auto result, ubu::layout_like auto matrix_layout)
+void do_coop_store_columns(int block_size, ubu::span_like auto input, ubu::span_like auto result, ubu::layout auto matrix_layout)
 {
   using namespace ubu;
 

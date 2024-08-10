@@ -11,7 +11,7 @@
 
 
 // postcondition: is_injective(result)
-constexpr ubu::layout_like_of_rank<3> auto even_share_layout(std::size_t num_elements, int device = 0)
+constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements, int device = 0)
 {
   using namespace std;
   using namespace ubu;
@@ -64,7 +64,7 @@ template<ubu::sized_vector_like V>
 constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
 {
   // create a 3d layout
-  ubu::layout_like_of_rank<3> auto layout = even_share_layout(ubu::size(vec), gpu.device());
+  ubu::layout_of_rank<3> auto layout = even_share_layout(ubu::size(vec), gpu.device());
 
   // create a 3d view of the data
   ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);

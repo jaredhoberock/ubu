@@ -2,6 +2,7 @@
 
 #include "../detail/prologue.hpp"
 
+#include "traits/cooperator_pointer.hpp"
 #include "traits/cooperator_size.hpp"
 #include "traits/cooperator_thread_scope.hpp"
 

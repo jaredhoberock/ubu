@@ -9,7 +9,7 @@
 #include "../slices/slice_coordinate.hpp"
 #include "../slices/slicer.hpp"
 #include "../view_base.hpp"
-#include "concepts/layout_like.hpp"
+#include "concepts/layout.hpp"
 #include "detail/strided_layout_complement_impl.hpp"
 #include "detail/strided_layout_compose_impl.hpp"
 #include "offset.hpp"
@@ -130,7 +130,7 @@ class strided_layout : public view_base
     }
 
     template<slicer_for<S> K>
-    constexpr layout_like auto slice(const K& katana) const
+    constexpr layout auto slice(const K& katana) const
     {
       auto needs_offset = cute_slice(katana);
       auto diced_layout = cute_dice(katana);

@@ -2,26 +2,27 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../utilities/integrals/size.hpp"
-#include "../utilities/tuples.hpp"
 #include "../places/memory/buffers/empty_buffer.hpp"
-#include "../places/memory/data.hpp"
+#include "../places/memory/pointers/pointer_like.hpp"
 #include "../tensors/coordinates/colexicographical_lift.hpp"
 #include "../tensors/coordinates/concepts/congruent.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"
 #include "../tensors/coordinates/traits/rank.hpp"
 #include "../tensors/shapes/shape_size.hpp"
+#include "../utilities/integrals/size.hpp"
+#include "../utilities/tuples.hpp"
 #include "barriers/arrive_and_wait.hpp"
 #include "barriers/sized_barrier_like.hpp"
 #include "concepts/cooperator.hpp"
-#include "primitives/subgroup.hpp"
 #include "primitives/id.hpp"
 #include "primitives/size.hpp"
+#include "primitives/subgroup.hpp"
 #include "workspaces/get_local_workspace.hpp"
 #include "workspaces/hierarchical_workspace.hpp"
 #include "workspaces/workspace.hpp"
 #include "workspaces/workspace_thread_scope.hpp"
 #include <concepts>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -41,26 +42,24 @@ struct basic_cooperator
   {}
 
   // cooperators with a concurrent workspace can synchronize with the barrier
-  template<class = void>
-    requires concurrent_workspace<W>
+  template<concurrent_workspace W_ = W>
   constexpr void synchronize() const
   {
     arrive_and_wait(get_barrier(workspace_));
   }
 
   // cooperators with non-empty buffer can allocate from the buffer
-  template<class = void>
-    requires nonempty_buffer_like<buffer_t<W>> 
-  constexpr std::byte* coop_alloca(int num_bytes)
+  template<nonempty_buffer_like B = buffer_t<W>>
+  constexpr pointer_like auto coop_alloca(int num_bytes)
   {
-    std::byte* result = data(get_buffer(workspace_)) + stack_counter_;
+    buffer_like auto buffer = get_buffer(workspace_);
+    pointer_like auto result = &buffer[stack_counter_];
     stack_counter_ += num_bytes;
     return result;
   }
 
   // cooperators with non-empty buffer can deallocate from the buffer
-  template<class = void>
-    requires nonempty_buffer_like<buffer_t<W>>
+  template<nonempty_buffer_like B = buffer_t<W>>
   constexpr void coop_dealloca(int num_bytes)
   {
     stack_counter_ -= num_bytes;

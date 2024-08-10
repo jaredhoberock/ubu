@@ -9,7 +9,6 @@
 #include "layouts/extending_layout.hpp"
 #include "layouts/identity_layout.hpp"
 #include "layouts/is_injective.hpp"
-#include "layouts/layout.hpp"
 #include "layouts/lifting_layout.hpp"
 #include "layouts/native_layout.hpp"
 #include "layouts/offset.hpp"

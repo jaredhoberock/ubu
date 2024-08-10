@@ -11,6 +11,7 @@
 #include <atomic>
 #include <concepts>
 #include <optional>
+#include <type_traits>
 
 namespace ubu
 {
@@ -18,19 +19,20 @@ namespace ubu
 
 // this is an optimized form of uninitialized_coop_array<std::optional<T>,C>
 // it compresses each std::optional's valid bit into a bitset stored separately from the values
-template<class T, ubu::allocating_cooperator C, ubu::integral_like S = ubu::default_coordinate_t<ubu::cooperator_size_t<C>>>
+template<class T, allocating_cooperator C, integral_like S = default_coordinate_t<cooperator_size_t<C>>>
+  requires std::is_pointer_v<cooperator_pointer_t<C>>
 class uninitialized_coop_optional_array
 {
   public:
     constexpr uninitialized_coop_optional_array(C& self, S size)
       : self_{self},
         size_{size},
-        allocation_{reinterpret_cast<T*>(ubu::coop_alloca(self_, allocation_size(size)))}
+        allocation_{reinterpret_cast<T*>(coop_alloca(self_, allocation_size(size)))}
     {}
 
     constexpr ~uninitialized_coop_optional_array()
     {
-      ubu::coop_dealloca(self_, allocation_size(size_));
+      coop_dealloca(self_, allocation_size(size_));
     }
 
     constexpr S size() const
@@ -104,7 +106,7 @@ class uninitialized_coop_optional_array
     constexpr static std::size_t allocation_size(S size)
     {
       // XXX probably needs to account for T's alignment
-      return size * sizeof(T) + ubu::ceil_div(size, sizeof(std::uint32_t));
+      return size * sizeof(T) + ceil_div(size, sizeof(std::uint32_t));
     }
 
     constexpr T* values() const

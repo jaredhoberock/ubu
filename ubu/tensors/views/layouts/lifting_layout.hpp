@@ -7,7 +7,7 @@
 #include "../../coordinates/colexicographical_lift.hpp"
 #include "../../shapes/shape_size.hpp"
 #include "../compose.hpp"
-#include "../layouts/concepts/layout_like.hpp"
+#include "../layouts/concepts/layout.hpp"
 #include "../view_base.hpp"
 
 namespace ubu
@@ -62,8 +62,8 @@ class lifting_layout : public lift<To>, public view_base
       return shape_size(shape());
     }
   
-    template<layout_like_for<lifting_layout> L>
-    constexpr layout_like auto compose(const L& rhs) const
+    template<layout_for<lifting_layout> L>
+    constexpr layout auto compose(const L& rhs) const
     {
       // it's safe to discard shape_ when composing with another layout
       return ubu::compose(static_cast<const lift<To>&>(*this), rhs);
