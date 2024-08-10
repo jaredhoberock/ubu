@@ -1,7 +1,7 @@
 #include <cassert>
 #include <cstddef>
 #include <span>
-#include <ubu/places/memory/buffers/get_buffer.hpp>
+#include <ubu/places/memory/views/get_buffer.hpp>
 
 namespace ns = ubu;
 

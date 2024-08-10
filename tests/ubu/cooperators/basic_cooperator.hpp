@@ -3,7 +3,7 @@
 #include <ubu/cooperators/barriers.hpp>
 #include <ubu/cooperators/basic_cooperator.hpp>
 #include <ubu/cooperators/workspaces/workspace.hpp>
-#include <ubu/places/memory/buffers/empty_buffer.hpp>
+#include <ubu/places/memory/views/empty_buffer.hpp>
 
 namespace ns = ubu;
 

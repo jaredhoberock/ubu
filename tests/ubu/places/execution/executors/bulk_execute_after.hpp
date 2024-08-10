@@ -3,7 +3,6 @@
 #include <ubu/places/causality/past_event.hpp>
 #include <ubu/places/causality/wait.hpp>
 #include <ubu/places/execution/executors/bulk_execute_after.hpp>
-#include <ubu/places/memory/buffers/reinterpret_buffer.hpp>
 #include <ubu/platforms/cpp/inline_executor.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
 #include <ubu/tensors/views/lattice.hpp>

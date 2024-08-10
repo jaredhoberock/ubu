@@ -6,7 +6,7 @@
 #include <ubu/places/execution/executors/execute_after.hpp>
 #include <ubu/places/execution/executors/first_execute.hpp>
 #include <ubu/places/execution/executors/finally_execute_after.hpp>
-#include <ubu/places/memory/buffers/reinterpret_buffer.hpp>
+#include <ubu/places/memory/views/reinterpret_buffer.hpp>
 #include <ubu/platforms/cpp/new_thread_group_executor.hpp>
 #include <barrier>
 #include <numeric>

@@ -4,7 +4,7 @@
 
 #include "../../../../cooperators/concepts/cooperator.hpp"
 #include "../../../../cooperators/traits/cooperator_thread_scope.hpp"
-#include "../../../../places/memory/buffers/basic_buffer.hpp"
+#include "../../../../places/memory/views/basic_buffer.hpp"
 #include <cstddef>
 #include <span>
 #include <string_view>

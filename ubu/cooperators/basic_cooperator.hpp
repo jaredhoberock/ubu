@@ -2,8 +2,8 @@
 
 #include "../detail/prologue.hpp"
 
-#include "../places/memory/buffers/empty_buffer.hpp"
 #include "../places/memory/pointers/pointer_like.hpp"
+#include "../places/memory/views/empty_buffer.hpp"
 #include "../tensors/coordinates/colexicographical_lift.hpp"
 #include "../tensors/coordinates/concepts/congruent.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"

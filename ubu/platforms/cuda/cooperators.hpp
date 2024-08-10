@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../detail/reflection.hpp"
-#include "../../places/memory/buffers/basic_buffer.hpp"
+#include "../../places/memory/views/basic_buffer.hpp"
 #include "cooperators/blocks.hpp"
 #include "cooperators/grids.hpp"
 #include "cooperators/warps.hpp"

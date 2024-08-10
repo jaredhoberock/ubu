@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../utilities/integrals/size.hpp"
 #include "../../utilities/tuples.hpp"
-#include "../../places/memory/buffers/get_buffer.hpp"
+#include "../../places/memory/views/get_buffer.hpp"
 #include "../../tensors/coordinates/point.hpp"
 #include "hierarchical_workspace.hpp"
 #include "workspace.hpp"
