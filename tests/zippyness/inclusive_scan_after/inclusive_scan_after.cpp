@@ -46,7 +46,7 @@ constexpr void inplace_inclusive_scan(V&& vec, BinaryFunction f)
 }
 
 // postcondition: is_injective(result)
-constexpr ubu::layout_like_of_rank<3> auto layout_for_scan(std::size_t n)
+constexpr ubu::layout_of_rank<3> auto layout_for_scan(std::size_t n)
 {
   using namespace ubu;
 
@@ -85,7 +85,7 @@ ubu::cuda::event inclusive_scan_after(ubu::cuda::device_executor gpu, ubu::cuda:
   using T = tensor_element_t<I>;
 
   // arrange the input and result into 3D tensors
-  layout_like_of_rank<3> auto layout = layout_for_scan(std::size(input));
+  layout_of_rank<3> auto layout = layout_for_scan(std::size(input));
   tensor_like_of_rank<3> auto input_tiles  = compose(input, layout);
   tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
 

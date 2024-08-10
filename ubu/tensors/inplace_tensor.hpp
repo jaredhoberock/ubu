@@ -16,7 +16,7 @@
 #include "vectors/inplace_vector.hpp"
 #include "views/compose.hpp"
 #include "views/layouts/compact_left_major_layout.hpp"
-#include "views/layouts/concepts/layout_like.hpp"
+#include "views/layouts/concepts/layout.hpp"
 #include "views/layouts/lifting_layout.hpp"
 #include <type_traits>
 #include <utility>
@@ -113,7 +113,7 @@ class inplace_tensor
     }
 
     // returns the layout : size -> shape
-    constexpr layout_like auto inverse_layout() const
+    constexpr ubu::layout auto inverse_layout() const
     {
       return lifting_layout(size(), shape());
     }

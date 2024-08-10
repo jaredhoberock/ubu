@@ -11,7 +11,7 @@
 #include <ubu/ubu.hpp>
 
 
-constexpr ubu::layout_like_of_rank<3> auto coop_reduction_layout(std::size_t n, int device = 0)
+constexpr ubu::layout_of_rank<3> auto coop_reduction_layout(std::size_t n, int device = 0)
 {
   using namespace ubu;
 
@@ -46,7 +46,7 @@ template<ubu::sized_vector_like V>
 constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::coop_executor ex)
 {
   // create a 3d layout
-  ubu::layout_like_of_rank<3> auto layout = coop_reduction_layout(ubu::size(vec), ex.device());
+  ubu::layout_of_rank<3> auto layout = coop_reduction_layout(ubu::size(vec), ex.device());
 
   // create a 3d view of the data
   ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);

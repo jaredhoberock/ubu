@@ -20,7 +20,7 @@
 #include "../vectors/span_like.hpp"
 #include "compose.hpp"
 #include "domain.hpp"
-#include "layouts/concepts/layout_like.hpp"
+#include "layouts/concepts/layout.hpp"
 #include "slices/slice.hpp"
 #include "slices/slicer.hpp"
 #include "view_base.hpp"
@@ -117,7 +117,7 @@ class stacked_view : public view_base
     }
 
     template<span_like S, class Self = stacked_view>
-      requires layout_like_for<Self, S>
+      requires layout_for<Self, S>
     friend view auto compose(S s, const stacked_view& self)
     {
       return stack<axis_>(ubu::compose(s, self.a()), ubu::compose(s, self.b()));

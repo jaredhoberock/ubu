@@ -4,7 +4,7 @@
 
 #include "../../traits/tensor_element.hpp"
 #include "../domain.hpp"
-#include "concepts/layout_like.hpp"
+#include "concepts/layout.hpp"
 #include <set>
 
 namespace ubu
@@ -12,7 +12,7 @@ namespace ubu
 
 // XXX this is provided for debugging purposes
 // the implementation is an exhaustive search
-template<layout_like L>
+template<layout L>
 constexpr bool is_injective(L l)
 {
   std::set<tensor_element_t<L>> codomain;

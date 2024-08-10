@@ -4,7 +4,7 @@
 
 #include "../../shapes/shape.hpp"
 #include "compact_left_major_layout.hpp"
-#include "concepts/layout_like.hpp"
+#include "concepts/layout.hpp"
 #include <utility>
 
 // The purpose of this CPO is for objects which produce coordinates to be able to describe a linear ordering with a "native" layout 
@@ -22,7 +22,7 @@ concept has_native_layout_member_function =
   coordinate<S>
   and requires(T arg, S shape)
   {
-    { arg.native_layout(shape) } -> layout_like;
+    { arg.native_layout(shape) } -> layout;
     { shape(arg.native_layout(shape)) } -> congruent<S>;
   }
 ;
@@ -32,7 +32,7 @@ concept has_native_layout_free_function =
   coordinate<S>
   and requires(T arg, S shape)
   {
-    { native_layout(arg, shape) } -> layout_like;
+    { native_layout(arg, shape) } -> layout;
     { shape(arg.native_layout(shape)) } -> congruent<S>;
   }
 ;
@@ -41,7 +41,7 @@ struct dispatch_native_layout
 {
   template<class T, class S>
     requires has_native_layout_member_function<T&&,S&&>
-  constexpr layout_like auto operator()(T&& arg, S&& shape) const
+  constexpr layout auto operator()(T&& arg, S&& shape) const
   {
     return std::forward<T>(arg).native_layout(std::forward<S>(shape));
   }
@@ -49,7 +49,7 @@ struct dispatch_native_layout
   template<class T, class S>
     requires (not has_native_layout_member_function<T&&,S&&>
               and has_native_layout_free_function<T&&,S&&>)
-  constexpr layout_like auto operator()(T&& arg, S&& shape) const
+  constexpr layout auto operator()(T&& arg, S&& shape) const
   {
     return native_layout(std::forward<T>(arg), std::forward<S>(shape));
   }
@@ -58,7 +58,7 @@ struct dispatch_native_layout
   template<class T, coordinate S>
     requires (not has_native_layout_member_function<T&&, const S&>
               and not has_native_layout_free_function<T&&, const S&>)
-  constexpr layout_like auto operator()(T&&, const S& shape) const
+  constexpr layout auto operator()(T&&, const S& shape) const
   {
     // produce a left-major ordering by default
     return compact_left_major_layout(shape);
