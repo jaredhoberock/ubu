@@ -9,7 +9,7 @@ namespace ubu
 {
 
 template<allocating_cooperator C>
-using cooperator_pointer_t = decltype(coop_alloca(std::declval<C>()));
+using cooperator_pointer_t = decltype(coop_alloca(std::declval<C>(), std::declval<int>()));
 
 } // end ubu
 
