@@ -6,6 +6,7 @@
 #include "../utilities/tuples.hpp"
 #include "../places/memory/buffers/empty_buffer.hpp"
 #include "../places/memory/data.hpp"
+#include "../places/memory/pointers/pointer_like.hpp"
 #include "../tensors/coordinates/colexicographical_lift.hpp"
 #include "../tensors/coordinates/concepts/congruent.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"
@@ -51,9 +52,9 @@ struct basic_cooperator
   // cooperators with non-empty buffer can allocate from the buffer
   template<class = void>
     requires nonempty_buffer_like<buffer_t<W>> 
-  constexpr std::byte* coop_alloca(int num_bytes)
+  constexpr pointer_like auto coop_alloca(int num_bytes)
   {
-    std::byte* result = data(get_buffer(workspace_)) + stack_counter_;
+    pointer_like auto result = data(get_buffer(workspace_)) + stack_counter_;
     stack_counter_ += num_bytes;
     return result;
   }
