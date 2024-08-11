@@ -71,13 +71,11 @@ constexpr decltype(auto) recursive_element(T&& obj, C&& coord)
     // split the coordinate into [leading..., last]
     auto [leading, last] = leading_and_last(std::forward<C>(coord));
 
-    //if constexpr (not std::is_void_v<recursive_element_result_t<T&&,decltype(last)>>)
     if constexpr (has_recursive_element<T&&,decltype(last)>)
     {
       // for the first lookup, recurse into the last mode of coord
       decltype(auto) first_lookup = recursive_element(std::forward<T>(obj), last);
 
-      //if constexpr (not std::is_void_v<decltype(first_lookup)>)
       if constexpr (has_recursive_element<decltype(first_lookup),decltype(leading)>)
       {
         // for the second lookup, recurse into the leading modes of coord
@@ -85,7 +83,7 @@ constexpr decltype(auto) recursive_element(T&& obj, C&& coord)
       }
       else
       {
-        // error case; can't recurse into the leading modes of coord; return void
+        // error case: can't recurse into the leading modes of coord; return void
         return;
       }
     }
