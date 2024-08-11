@@ -1,13 +1,11 @@
 #include <array>
+#include <cassert>
 #include <concepts>
 #include <ubu/tensors/coordinates/element.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
-
-#undef NDEBUG
-#include <cassert>
-
 #include <tuple>
 #include <utility>
+#include <vector>
 
 
 namespace ns = ubu;
@@ -65,6 +63,12 @@ void test_element_t()
 
   // test typedefs
   static_assert(std::same_as<int, ns::element_t<ns::int2, int>>);
+
+  // test nested std::vector with 1d coord
+  static_assert(std::same_as<std::vector<int>, ns::element_t<std::vector<std::vector<int>>, int>>);
+
+  // test nested std::vector with 2d coord
+  static_assert(std::same_as<int, ns::element_t<std::vector<std::vector<int>>, ns::int2>>);
 }
 
 
@@ -108,6 +112,22 @@ void test_cpo()
     ns::int2 x{13, 7};
     assert(13 == ns::element(x, 0));
     assert( 7 == ns::element(x, 1));
+  }
+
+  // test nested std::vector with 1d coord
+  {
+    std::vector<std::vector<int>> nested_vec({{13,7}, {42,66}});
+    assert(std::vector<int>({13, 7}) == ns::element(nested_vec, 0));
+    assert(std::vector<int>({42,66}) == ns::element(nested_vec, 1));
+  }
+
+  // test nested std::vector with 2d coord
+  {
+    std::vector<std::vector<int>> nested_vec({{13,7}, {42,66}});
+    assert(13 == ns::element(nested_vec, std::pair(0,0)));
+    assert( 7 == ns::element(nested_vec, std::pair(1,0)));
+    assert(42 == ns::element(nested_vec, std::pair(0,1)));
+    assert(66 == ns::element(nested_vec, std::pair(1,1)));
   }
 }
 
