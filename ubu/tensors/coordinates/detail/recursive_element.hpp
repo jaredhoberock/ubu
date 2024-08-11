@@ -11,6 +11,10 @@ namespace ubu::detail
 {
 
 
+// XXX this function is superfluous with split_coordinate_at,
+//     but we can't use it because split_coordinate_at depends on
+//     the coordinate concept, which depends on the element CPO,
+//     which we are currently defining below
 template<tuples::tuple_like_of_size_at_least<2> T>
 constexpr tuples::pair_like auto leading_and_last(const T& t)
 {
