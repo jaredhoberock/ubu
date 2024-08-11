@@ -1117,7 +1117,6 @@ tuple_like auto unzip(T&& t)
 //  );
 //}
 
-
 template<tuple_like T>
 constexpr decltype(auto) last(T&& t)
 {
@@ -1196,6 +1195,14 @@ template<std::size_t N, tuple_like T>
 constexpr tuple_like auto take(T&& t)
 {
   return tuples::take_like<T,N>(std::forward<T>(t));
+}
+
+// this returns the leading elements of T, if there are any
+// note that this will return a unit if T is single_like
+template<tuple_like_of_size_at_least<2> T>
+constexpr tuple_like auto leading(T&& t)
+{
+  return tuples::take<size_v<T>-1>(std::forward<T>(t));
 }
 
 
