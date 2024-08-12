@@ -83,10 +83,16 @@ class lattice : public view_base
       return size() == 0;
     }
 
-    // returns the value of the (i,j,k,...)th lattice point
-    constexpr C operator[](const C& idx) const
+    // returns the value of the element at coord
+    constexpr C operator[](const C& coord) const
     {
-      return coordinate_sum(origin(), idx);
+      return coordinate_sum(origin(), coord);
+    }
+
+    // reteurns whether the element at coord exists
+    constexpr bool element_exists(const C& coord) const
+    {
+      return contains(coord);
     }
 
     // returns the value of the ith lattice point in colexicographic order
@@ -95,6 +101,15 @@ class lattice : public view_base
     constexpr C operator[](I idx) const
     {
       return begin()[idx];
+    }
+
+    // returns whether the element of the ith lattice point exists
+    template<std::integral I>
+      requires (rank_v<C> > 1)
+    constexpr bool element_exists(I idx) const
+    {
+      C coord = (*this)[idx];
+      return element_exists(coord);
     }
 
     // reshape does not move the origin

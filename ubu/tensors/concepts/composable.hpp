@@ -4,6 +4,7 @@
 
 #include "../coordinates/element.hpp"
 #include "../traits/tensor_element.hpp"
+#include "../element_exists.hpp"
 #include "tensor_like.hpp"
 
 namespace ubu
@@ -15,14 +16,13 @@ namespace ubu
 //
 //     IOW, B could be an invocable and A could be a tensor_like
 //     the resulting composition's shape would simply be A's shape
-//
-// XXX I think this concept should simply check that compose(a,b) works
 template<class A, class B>
 concept composable =
   tensor_like<B> and 
   requires(A a, tensor_element_t<B> coord)
   {
     element(a, coord);
+    element_exists(a, coord);
   }
 ;
 
