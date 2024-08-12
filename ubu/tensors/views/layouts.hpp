@@ -4,6 +4,7 @@
 
 #include "layouts/compact_left_major_layout.hpp"
 #include "layouts/compact_right_major_layout.hpp"
+#include "layouts/concatenating_layout.hpp"
 #include "layouts/concepts.hpp"
 #include "layouts/coshape.hpp"
 #include "layouts/extending_layout.hpp"
