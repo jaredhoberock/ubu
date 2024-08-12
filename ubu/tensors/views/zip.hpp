@@ -7,6 +7,7 @@
 #include "../coordinates/concepts/congruent.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "all.hpp"
+#include "zip_view.hpp"
 #include <utility>
 
 namespace ubu

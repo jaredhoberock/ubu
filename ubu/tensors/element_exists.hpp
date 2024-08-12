@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../detail/prologue.hpp"
+
 #include "../utilities/integrals/size.hpp"
-#include <concepts>
-#include <ranges>
+#include "detail/recursive_element_exists.hpp"
 #include <utility>
 
 namespace ubu
@@ -11,39 +11,13 @@ namespace ubu
 namespace detail
 {
 
-template<class T, class C>
-concept has_element_exists_member_function = requires(T arg, C coord)
-{
-  { arg.element_exists(coord) } -> std::convertible_to<bool>;
-};
-
-template<class T, class C>
-concept has_element_exists_free_function = requires(T arg, C coord)
-{
-  { element_exists(arg, coord) } -> std::convertible_to<bool>;
-};
-
 struct dispatch_element_exists
 {
   template<class T, class C>
+    requires has_recursive_element_exists<T&&,C&&>
   constexpr bool operator()(T&& arg, C&& coord) const
   {
-    if constexpr (has_element_exists_member_function<T&&,C&&>)
-    {
-      return std::forward<T>(arg).element_exists(std::forward<C>(coord));
-    }
-    else if constexpr (has_element_exists_free_function<T&&,C&&>)
-    {
-      return element_exists(std::forward<T>(arg), std::forward<C>(coord));
-    }
-    else if constexpr (sized<T&&>)
-    {
-      return true;
-    }
-    else
-    {
-      static_assert(sized<T&&>, "Couldn't find customization for element_exists.");
-    }
+    return detail::recursive_element_exists(std::forward<T>(arg), std::forward<C>(coord));
   }
 };
 

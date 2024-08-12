@@ -19,7 +19,6 @@
 #include "../traits/tensor_reference.hpp"
 #include "../vectors/span_like.hpp"
 #include "compose.hpp"
-#include "domain.hpp"
 #include "layouts/concepts/layout.hpp"
 #include "slices/slice.hpp"
 #include "slices/slicer.hpp"
@@ -79,10 +78,10 @@ class stacked_view : public view_base
 
       if(stratum == 0)
       {
-        return in_domain(a_, local_coord) and ubu::element_exists(a_, local_coord);
+        return ubu::element_exists(a_, local_coord);
       }
 
-      return in_domain(b_, local_coord) and ubu::element_exists(b_, local_coord);
+      return ubu::element_exists(b_, local_coord);
     }
 
     template<congruent<shape_type> C>

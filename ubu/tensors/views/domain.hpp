@@ -4,7 +4,7 @@
 
 #include "../coordinates/comparisons/is_below.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../shapes.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "lattice.hpp"
@@ -27,13 +27,6 @@ constexpr lattice<tensor_coordinate_t<T>,tensor_shape_t<T>> domain(const T& tens
 
 template<tensor_like T>
 using domain_t = decltype(domain(std::declval<T>()));
-
-// returns true if coord[i] is < shape(tensor)[i] for all i in rank_v<C>
-template<tensor_like T, coordinate_for<T> C>
-constexpr bool in_domain(const T& tensor, const C& coord)
-{
-  return is_below(coord, shape(tensor));
-}
 
 } // end ubu
 

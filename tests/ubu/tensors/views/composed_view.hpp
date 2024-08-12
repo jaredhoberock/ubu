@@ -5,6 +5,7 @@
 #include <ubu/tensors/coordinates/comparisons.hpp>
 #include <ubu/tensors/iterators.hpp>
 #include <ubu/tensors/matrices/column_major_layout.hpp>
+#include <ubu/tensors/shapes/convert_shape.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
