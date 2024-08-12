@@ -49,14 +49,10 @@ void test_element_exists()
     assert(true == ns::element_exists(nested_vec, std::pair(0,1)));
     assert(true == ns::element_exists(nested_vec, std::pair(1,1)));
 
+    assert(false == ns::element_exists(nested_vec, std::pair(0,2)));
+    assert(false == ns::element_exists(nested_vec, std::pair(1,2)));
     assert(false == ns::element_exists(nested_vec, std::pair(2,0)));
     assert(false == ns::element_exists(nested_vec, std::pair(2,1)));
-
-    // XXX these should also return false
-    //     we need to fold the in_domain check into terminal_element_exists
-    //     to make this work
-    // assert(false == ns::element_exists(nested_vec, std::pair(0,2)));
-    // assert(false == ns::element_exists(nested_vec, std::pair(1,2)));
   }
 
   // test lambda
