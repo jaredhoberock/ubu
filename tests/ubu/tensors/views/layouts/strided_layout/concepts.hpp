@@ -7,9 +7,11 @@ void test_concepts()
 {
   using namespace ubu;
 
-  static_assert(tensor_like<strided_layout<int,int,int>>);
-  static_assert(view<strided_layout<int,int,int>>);
-  static_assert(layout<strided_layout<int,int,int>>);
+  using type = strided_layout<int,int,int>;
+
+  static_assert(tensor_like<type>);
+  static_assert(view<type>);
+  static_assert(layout<type>);
 }
 
 
