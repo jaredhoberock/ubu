@@ -4,6 +4,7 @@
 
 #include "../concepts/nested_tensor_like.hpp"
 #include "../coordinates/concepts/congruent.hpp"
+#include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/coordinate_cat.hpp"
 #include "../coordinates/element.hpp"
 #include "../coordinates/split_coordinate_at.hpp"
@@ -12,6 +13,8 @@
 #include "../shapes/shape.hpp"
 #include "../traits/inner_tensor_shape.hpp"
 #include "all.hpp"
+#include "slices/slice.hpp"
+#include "slices/slicer.hpp"
 #include "view_base.hpp"
 #include <concepts>
 #include <type_traits>
@@ -20,7 +23,7 @@ namespace ubu
 {
 
 
-template<nested_tensor_like V, congruent<inner_tensor_shape_t<V>> S = inner_tensor_shape_t<V>>
+template<nested_tensor_like V, coordinate_for<V> S = inner_tensor_shape_t<V>>
   requires view<V>
 class quilted_view : public view_base
 {
@@ -62,7 +65,7 @@ class quilted_view : public view_base
 
     // we can customize slice when the katana slices one of the patches
     template<congruent<shape_type> K, class Pair = split_coordinate_at_t<inner_rank,K>>
-      requires (slicer_for<tuples::first_t<Pair>,S> and congruent<tuples::second_t<Pair>,S>)
+      requires (slicer_for<tuples::first_t<Pair>,S> and coordinate_for<tuples::second_t<Pair>, V>)
     constexpr view auto slice(K katana) const
     {
       auto [patch_katana, patch_coord] = split_coordinate_at<inner_rank>(katana);
