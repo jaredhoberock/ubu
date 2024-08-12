@@ -20,7 +20,7 @@ namespace ubu
 {
 
 template<view T, slicer_for<tensor_shape_t<T>> S>
-  requires (not coordinate<S>) // S must contain an underscore
+  requires slicer_with_underscore<S>
 class sliced_view : public view_base
 {
   public:
