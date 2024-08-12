@@ -47,20 +47,15 @@ class quilted_view : public view_base
     template<congruent<shape_type> C>
     constexpr decltype(auto) operator[](C coord) const
     {
-      auto [element_coord, patch_coord] = split_coordinate_at<inner_rank>(coord);
-      return ubu::element(ubu::element(patches_, patch_coord), element_coord);
+      auto leading_and_last = split_coordinate_at<inner_rank>(coord);
+      return ubu::element(patches_, leading_and_last);
     }
 
     template<congruent<shape_type> C>
     constexpr bool element_exists(C coord) const
     {
-      auto [element_coord, patch_coord] = split_coordinate_at<inner_rank>(coord);
-      if(ubu::element_exists(patches_, patch_coord))
-      {
-        return ubu::element_exists(ubu::element(patches_, patch_coord), element_coord);
-      }
-
-      return false;
+      auto leading_and_last = split_coordinate_at<inner_rank>(coord);
+      return ubu::element_exists(patches_, leading_and_last);
     }
 
     // we can customize slice when the katana slices one of the patches
