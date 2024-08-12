@@ -4,7 +4,6 @@
 
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/element.hpp"
-#include "../shapes/in_domain.hpp"
 #include "terminal_element_exists.hpp"
 #include <concepts>
 #include <utility>
@@ -54,13 +53,6 @@ constexpr auto recursive_element_exists(T&& obj, C&& coord)
 
       // lookup the element obj[last]
       decltype(auto) e = element(std::forward<T>(obj), last);
-
-      if constexpr (shaped<decltype(e)> and coordinate_for<decltype(leading),decltype(e)>)
-      {
-        // if leading is outside e's domain, then the element does not exist
-        // XXX we should consider folding this test into terminal_element_exists
-        if (not in_domain(e, leading)) return false;
-      }
 
       // recurse into e
       return recursive_element_exists(std::forward<decltype(e)>(e), leading);

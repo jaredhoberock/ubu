@@ -9,6 +9,7 @@
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
+#include "../shapes/in_domain.hpp"
 #include "../shapes/shape.hpp"
 #include "../vectors/fancy_span.hpp"
 #include "../vectors/span_like.hpp"
@@ -47,7 +48,7 @@ class trimmed_view : public view_base
     template<congruent<S> C>
     constexpr bool element_exists(C coord) const
     {
-      return ubu::element_exists(tensor_, coord);
+      return is_below(coord, shape()) and ubu::element_exists(tensor_, coord);
     }
 
     template<slicer_for<S> K>

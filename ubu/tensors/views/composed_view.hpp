@@ -67,7 +67,6 @@ class composed_view : public view_base
       return element(a_, element(b_,coord));
     }
 
-    // precondition: in_domain(b(), coord)
     template<coordinate_for<B> C>
     constexpr bool element_exists(const C& coord) const
     {
@@ -77,7 +76,6 @@ class composed_view : public view_base
       if constexpr (shaped<A>)
       {
         auto a_coord = element(b_, coord);
-        if (not in_domain(a_, a_coord)) return false;
 
         return ubu::element_exists(a_, a_coord);
       }

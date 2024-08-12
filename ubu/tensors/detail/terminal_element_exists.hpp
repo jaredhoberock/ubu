@@ -7,6 +7,7 @@
 #include "../coordinates/comparisons/is_below.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
+#include "../shapes/in_domain.hpp"
 #include "../shapes/shape.hpp"
 #include <concepts>
 #include <utility>
@@ -40,7 +41,6 @@ template<class T, class C>
 concept sized_and_shaped_and_congruent =
   sized<T>
   and shaped<T>
-  and coordinate<C>
   and congruent<shape_t<T>,C>
 ;
 
@@ -80,11 +80,7 @@ constexpr bool terminal_element_exists(T&& obj, C&& coord)
   }
   else if constexpr (sized_and_shaped_and_congruent<T&&,C&&>)
   {
-    // obj has a shape and a size, coord is congruent with obj's shape
-    // all elements are assumed to exist in this case
-    // XXX consider returning in_domain(obj, coord) here instead of unconditionally true
-    //     such a change would mean that element_exists needs to return false if coord is outside the tensor's domain
-    return true;
+    return in_domain(std::forward<T>(obj), std::forward<C>(coord));
   }
   else
   {
