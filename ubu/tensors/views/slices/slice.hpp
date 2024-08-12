@@ -25,6 +25,15 @@ concept has_slice_free_function = requires(T arg, K katana)
   { slice(arg,katana) } -> view;
 };
 
+// a slicer without underscores yields
+// a single element of T
+template<class S, class T>
+concept singular_slicer_for =
+  tensor_like<T>
+  and congruent<tensor_shape_t<T>,S>
+  and coordinate<S>
+;
+
 struct dispatch_slice
 {
   template<class A, class K>
@@ -50,6 +59,11 @@ struct dispatch_slice
     if constexpr (is_underscore_v<K>)
     {
       // when katana is _, we simply return all of arg
+      return all(std::forward<A>(arg));
+    }
+    else if constexpr (singular_slicer_for<K,A>)
+    {
+      static_assert(not singular_slicer_for<K,A>, "slice: Singular slice is currently unsupported.");
       return all(std::forward<A>(arg));
     }
     else
