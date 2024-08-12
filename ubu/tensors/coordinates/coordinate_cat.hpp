@@ -20,7 +20,7 @@ constexpr semicoordinate auto coordinate_cat(const C1& coord1, const C2& coord2)
 }
 
 template<semicoordinate C1, semicoordinate C2>
-using coordinate_cat_t = decltype(coordinate_cat(std::declval<C1>(), std::declval<C2>()));
+using coordinate_cat_result_t = decltype(coordinate_cat(std::declval<C1>(), std::declval<C2>()));
 
 } // end ubu
 

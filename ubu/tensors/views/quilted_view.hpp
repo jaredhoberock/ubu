@@ -37,7 +37,7 @@ class quilted_view : public view_base
 
     quilted_view(const quilted_view&) = default;
 
-    using shape_type = coordinate_cat_t<S, tensor_shape_t<V>>;
+    using shape_type = coordinate_cat_result_t<S, tensor_shape_t<V>>;
 
     constexpr shape_type shape() const
     {
@@ -59,7 +59,7 @@ class quilted_view : public view_base
     }
 
     // we can customize slice when the katana slices one of the patches
-    template<congruent<shape_type> K, class Pair = split_coordinate_at_t<inner_rank,K>>
+    template<congruent<shape_type> K, class Pair = split_coordinate_at_result_t<inner_rank,K>>
       requires (slicer_for<tuples::first_t<Pair>,S> and coordinate_for<tuples::second_t<Pair>, V>)
     constexpr view auto slice(K katana) const
     {

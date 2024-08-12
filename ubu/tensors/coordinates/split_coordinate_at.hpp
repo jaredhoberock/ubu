@@ -20,7 +20,7 @@ constexpr tuples::pair_like auto split_coordinate_at(const C& coord)
 
 template<std::size_t N, semicoordinate C>
   requires (N < rank_v<C>)
-using split_coordinate_at_t = decltype(split_coordinate_at<N>(std::declval<C>()));
+using split_coordinate_at_result_t = decltype(split_coordinate_at<N>(std::declval<C>()));
 
 } // end ubu
 
