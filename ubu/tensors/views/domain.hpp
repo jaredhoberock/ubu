@@ -4,7 +4,7 @@
 
 #include "../coordinates/comparisons/is_below.hpp"
 #include "../concepts/tensor_like.hpp"
-#include "../shapes.hpp"
+#include "../shapes/shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "lattice.hpp"
