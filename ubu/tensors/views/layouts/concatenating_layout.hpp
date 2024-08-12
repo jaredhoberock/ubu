@@ -21,6 +21,18 @@
 namespace ubu
 {
 
+// XXX it would probably make sense for this template to be variadic
+//     i think we should actually call this splitting_layout
+//
+//     i think splitting_layout and concatenating_layout are a little different
+//
+//     concatenating_layout would take a layout and a split position, and simply
+//     split the layout's result at that position
+//
+//     concatenating_layout would do the equivalent of strided_layout::concatenate
+//
+// XXX for now, maybe we should call this quilting_layout, because right now
+//     it does exactly what quilt needs
 template<layout L, layout R>
   requires (view<L> and view<R>)
 class concatenating_layout : public view_base
@@ -48,23 +60,10 @@ class concatenating_layout : public view_base
       return coordinate_cat(ubu::shape(left_layout_), ubu::shape(right_layout_));
     }
 
-    // provide size if both L and R are sized
-    template<sized_tensor_like L_ = L, sized_tensor_like R_ = R>
-    constexpr integral_like auto size() const
-    {
-      return shape_size(shape());
-    }
-
-    // provide coshape if both L and R are coshaped
-    template<coshaped_layout L_ = L, coshaped_layout R_ = R>
-    constexpr coordinate auto coshape() const
-    {
-      return coordinate_cat(ubu::coshape(left_layout_), ubu::coshape(right_layout_));
-    }
-
-    constexpr auto operator[](congruent<shape_type> auto coord) const
+    constexpr coordinate auto operator[](congruent<shape_type> auto coord) const
     {
       auto [left_coord, right_coord] = split_coordinate_at<split_position>(coord);
+
       return std::pair(ubu::element(left_layout_, left_coord), ubu::element(right_layout_, right_coord));
     }
 
@@ -74,7 +73,21 @@ class concatenating_layout : public view_base
       return ubu::element_exists(left_layout_, left_coord) and ubu::element_exists(right_layout_, right_coord);
     }
 
-    // we customize slice if we can split the katana and use the two pieces to slice both layouts
+    // customize size if both L and R are sized
+    template<sized_tensor_like L_ = L, sized_tensor_like R_ = R>
+    constexpr integral_like auto size() const
+    {
+      return shape_size(shape());
+    }
+
+    // customize coshape if both L and R are coshaped
+    template<coshaped_layout L_ = L, coshaped_layout R_ = R>
+    constexpr coordinate auto coshape() const
+    {
+      return std::pair(ubu::coshape(left_layout_), ubu::coshape(right_layout_));
+    }
+
+    // customize slice if we can split the katana and use the two pieces to slice both layouts
     template<equal_rank<shape_type> K>
       requires (    sliceable<L, tuples::first_t<split_coordinate_at_result_t<split_position,K>>>
                 and sliceable<R, tuples::second_t<split_coordinate_at_result_t<split_position,K>>>)
