@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../../utilities/constant.hpp"
 #include "../../utilities/integrals/integral_like.hpp"
 #include "../../utilities/tuples.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
@@ -25,7 +26,7 @@ constexpr integral_like auto shape_size(const C& shape)
 template<nonscalar_coordinate C>
 constexpr integral_like auto shape_size(const C& shape)
 {
-  return tuples::fold_left(1, shape, [](const auto& partial_product, const auto& s)
+  return tuples::fold_left(1_c, shape, [](const auto& partial_product, const auto& s)
   {
     return partial_product * shape_size(s);
   });
