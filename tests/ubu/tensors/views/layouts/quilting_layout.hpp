@@ -4,14 +4,14 @@
 #include <ubu/tensors/coordinates/point.hpp>
 #include <ubu/tensors/iterators.hpp>
 #include <ubu/tensors/views/lattice.hpp>
-#include <ubu/tensors/views/layouts/concatenating_layout.hpp>
 #include <ubu/tensors/views/layouts/concepts/layout.hpp>
+#include <ubu/tensors/views/layouts/quilting_layout.hpp>
 #include <ubu/tensors/views/slices.hpp>
 #include <ranges>
 #include <tuple>
 #include <utility>
 
-void test_concatenating_layout()
+void test_quilting_layout()
 {
   using namespace ubu;
 
@@ -22,7 +22,7 @@ void test_concatenating_layout()
     int outer_shape = 5;
     std::tuple expected_shape(inner_shape, outer_shape);
 
-    concatenating_layout l(inner_shape, outer_shape);
+    quilting_layout l(inner_shape, outer_shape);
 
     assert(expected_shape == l.shape());
 
@@ -50,7 +50,7 @@ void test_concatenating_layout()
     ubu::int2 outer_shape(4,5);
     ubu::int4 expected_shape(2,3,4,5);
 
-    concatenating_layout l(inner_shape, outer_shape);
+    quilting_layout l(inner_shape, outer_shape);
 
     assert(expected_shape == l.shape()); 
 
@@ -95,7 +95,7 @@ void test_concatenating_layout()
         static_assert(tensor_like_of_rank<decltype(s),2>);
         assert(ubu::int2(2,5) == shape(s));
 
-        using expected_slice_type = concatenating_layout<
+        using expected_slice_type = quilting_layout<
           sliced_view<identity_layout<ubu::int2>, std::tuple<ubu::detail::underscore_t,int>>,
           sliced_view<identity_layout<ubu::int2>, std::tuple<int,ubu::detail::underscore_t>>
         >;

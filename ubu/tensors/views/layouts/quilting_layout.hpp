@@ -21,37 +21,30 @@
 namespace ubu
 {
 
-// XXX it would probably make sense for this template to be variadic
-//     i think we should actually call this splitting_layout
-//
-//     i think splitting_layout and concatenating_layout are a little different
-//
-//     concatenating_layout would take a layout and a split position, and simply
-//     split the layout's result at that position
-//
-//     concatenating_layout would do the equivalent of strided_layout::concatenate
-//
-// XXX for now, maybe we should call this quilting_layout, because right now
-//     it does exactly what quilt needs
+// XXX this is called a "quilting" layout because it does
+//     exactly what was needed by the old quilted_view
+//     it still feels a little janky, like we need some more
+//     primitive concatenating_layout type and then this layout
+//     could adapt that in some simple way
 template<layout L, layout R>
   requires (view<L> and view<R>)
-class concatenating_layout : public view_base
+class quilting_layout : public view_base
 {
   private:
     constexpr static std::size_t split_position = rank_v<shape_t<L>>;
 
   public:
-    constexpr concatenating_layout(L left_layout, R right_layout)
+    constexpr quilting_layout(L left_layout, R right_layout)
       : left_layout_(left_layout), right_layout_(right_layout)
     {}
 
     template<coordinate LS, coordinate RS>
       requires (std::constructible_from<L,LS> and std::constructible_from<R,RS>)
-    constexpr concatenating_layout(LS left_shape, RS right_shape)
-      : concatenating_layout(L(left_shape), R(right_shape))
+    constexpr quilting_layout(LS left_shape, RS right_shape)
+      : quilting_layout(L(left_shape), R(right_shape))
     {}
 
-    concatenating_layout(const concatenating_layout&) = default;
+    quilting_layout(const quilting_layout&) = default;
 
     using shape_type = coordinate_cat_result_t<shape_t<L>,shape_t<R>>;
 
@@ -88,6 +81,7 @@ class concatenating_layout : public view_base
     }
 
     // customize slice if we can split the katana and use the two pieces to slice both layouts
+    // XXX i think we could eliminate these constraints if ubu::slice could handle singular slices
     template<equal_rank<shape_type> K>
       requires (    sliceable<L, tuples::first_t<split_coordinate_at_result_t<split_position,K>>>
                 and sliceable<R, tuples::second_t<split_coordinate_at_result_t<split_position,K>>>)
@@ -96,13 +90,13 @@ class concatenating_layout : public view_base
       auto [left_katana, right_katana] = split_coordinate_at<split_position>(katana);
 
       // XXX this should ideally return the result of a concatenate CPO
-      return make_concatenating_layout(ubu::slice(left_layout_, left_katana), ubu::slice(right_layout_, right_katana));
+      return make_quilting_layout(ubu::slice(left_layout_, left_katana), ubu::slice(right_layout_, right_katana));
     }
 
   private:
     template<layout OtherL, layout OtherR>
       requires (view<OtherL> and view<OtherR>)
-    constexpr static concatenating_layout<OtherL,OtherR> make_concatenating_layout(OtherL l, OtherR r)
+    constexpr static quilting_layout<OtherL,OtherR> make_quilting_layout(OtherL l, OtherR r)
     {
       return {l,r};
     }
@@ -112,7 +106,7 @@ class concatenating_layout : public view_base
 };
 
 template<coordinate L, coordinate R>
-concatenating_layout(L,R) -> concatenating_layout<identity_layout<L>, identity_layout<R>>;
+quilting_layout(L,R) -> quilting_layout<identity_layout<L>, identity_layout<R>>;
 
 } // end ubu
 
