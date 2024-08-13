@@ -80,11 +80,14 @@ class quilting_layout : public view_base
       return std::pair(ubu::coshape(left_layout_), ubu::coshape(right_layout_));
     }
 
-    // customize slice if we can split the katana and use the two pieces to slice both layouts
-    // XXX i think we could eliminate these constraints if ubu::slice could handle singular slices
+    // customize slice if we can
+    // 1. split the katana, and
+    // 2. both halves contain an underscore
+    // XXX the reason for this additional constraint is that we aren't
+    //     able to correctly handle a singular (scalar?) view with unit () shape
     template<equal_rank<shape_type> K>
-      requires (    sliceable<L, tuples::first_t<split_coordinate_at_result_t<split_position,K>>>
-                and sliceable<R, tuples::second_t<split_coordinate_at_result_t<split_position,K>>>)
+      requires (    slicer_with_underscore<tuples::first_t<split_coordinate_at_result_t<split_position,K>>>
+                and slicer_with_underscore<tuples::second_t<split_coordinate_at_result_t<split_position,K>>>)
     constexpr layout auto slice(K katana) const
     {
       auto [left_katana, right_katana] = split_coordinate_at<split_position>(katana);
