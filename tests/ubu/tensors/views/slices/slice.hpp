@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <ubu/tensors/concepts/tensor_like_of_rank.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
@@ -161,9 +162,38 @@ void test2()
   }
 }
 
+void test_singular()
+{
+  using namespace ns;
+  using namespace std;
+
+  {
+    lattice tensor(ns::int2(2,3));
+
+    auto s = slice(tensor, ns::int2(1,2));
+
+    static_assert(tensor_like_of_rank<decltype(s),1>);
+    assert(s[0] == ns::int2(1,2));
+  }
+
+  {
+    // try something complex
+    tuple shape(tuple(pair(1,2),3), tuple(4,5), tuple(6));
+
+    lattice tensor(shape);
+
+    // pick out the final element
+    auto s = slice(tensor, tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
+
+    static_assert(tensor_like_of_rank<decltype(s),1>);
+    assert(s[0] == tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
+  }
+}
+
 void test_slice()
 {
   test1();
   test2();
+  test_singular();
 }
 
