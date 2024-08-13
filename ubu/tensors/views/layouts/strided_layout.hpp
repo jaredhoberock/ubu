@@ -91,21 +91,17 @@ class strided_layout : public view_base
       }
     }
 
-    // XXX the return type of this should be constrained to layout
     template<coordinate S1, stride_for<S1> D1, coordinate R1>
-    constexpr auto compose(const strided_layout<S1,D1,R1>& other) const
+    constexpr layout auto compose(const strided_layout<S1,D1,R1>& other) const
     {
       auto [s,d] = detail::strided_layout_compose_impl(shape(), stride(), other.shape(), other.stride());
       return make_strided_layout_r<R>(s,d);
     }
 
-    // XXX the return type of this should be constrained to layout
+    // this is the operation cute names "make_layout"
     template<coordinate... Ss, stride_for<Ss>... Ds, coordinate... Rs>
-    constexpr auto concatenate(const strided_layout<Ss,Ds,Rs>&... layouts) const
+    constexpr layout auto concatenate(const strided_layout<Ss,Ds,Rs>&... layouts) const
     {
-      // XXX what should be the resulting layout's result type?
-      //     some concatenation of the Rs?
-      
       using shape_tuple = std::conditional_t<tuples::tuple_like<S>, S, ubu::int1>;
       using stride_tuple = std::conditional_t<tuples::tuple_like<D>, D, ubu::int1>;
 
@@ -113,9 +109,8 @@ class strided_layout : public view_base
                                  tuples::make_like<stride_tuple>(stride(), layouts.stride()...));
     }
 
-    // XXX the return type of this should be constrained to layout
     template<std::integral I>
-    constexpr auto complement(I cosize_hi) const
+    constexpr layout auto complement(I cosize_hi) const
     {
       // XXX what should be the resulting layout's result type? I?
       
@@ -123,8 +118,7 @@ class strided_layout : public view_base
       return make_strided_layout(s,d);
     }
 
-    // XXX the return type of this should be constrained to layout
-    constexpr auto complement() const
+    constexpr layout auto complement() const
     {
       return complement(shape_size(coshape()));
     }
