@@ -63,5 +63,19 @@ void test_slice_coordinate()
     constexpr tuple expected(           1,   3,  tuple(4,5),       6);
     static_assert(expected == slice_coordinate(coord, katana));
   }
+
+  {
+    constexpr int coord = 1;
+    constexpr auto katana = 0;
+    constexpr auto expected = std::tuple();
+    static_assert(expected == ns::slice_coordinate(coord, katana));
+  }
+
+  {
+    constexpr ns::int2 coord(1,2);
+    constexpr ns::int2 katana(0,0);
+    constexpr auto expected = std::tuple();
+    static_assert(expected == ns::slice_coordinate(coord, katana));
+  }
 }
 
