@@ -16,7 +16,7 @@ template<coordinate C, congruent<C> O, congruent<C> E>
   requires (0 <= rank_v<C> and rank_v<C> <= 1)
 constexpr bool colexicographical_increment(C& coord, const O&, const E& end)
 {
-  if constexpr (rank_v<C> == 0)
+  if constexpr (nullary_coordinate<C>)
   {
     return true;
   }
