@@ -572,7 +572,7 @@ namespace detail
 
 
 template<std::size_t... Is, class I, tuple_like T, class F>
-constexpr auto fold_left_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
+constexpr auto fold_left_with_init_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
 {
   return detail::fold_args_left(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
 }
@@ -583,9 +583,9 @@ constexpr auto fold_left_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f
 
 // fold_left with init parameter
 template<class I, tuple_like T, class F>
-constexpr auto fold_left(I&& init, T&& t, F&& f)
+constexpr auto fold_left_with_init(I&& init, T&& t, F&& f)
 {
-  return detail::fold_left_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return detail::fold_left_with_init_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
 }
 
 
@@ -1460,7 +1460,9 @@ constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const 
 {
   using namespace std;
 
-  return tuples::fold_left(pair(tuple(), carry_in), input, [&f](const auto& prev_state, const auto& input_i)
+  auto init = pair(tuple(), carry_in);
+
+  return tuples::fold_left_with_init(init, input, [&f](const auto& prev_state, const auto& input_i)
   {
     // unpack the result of the previous fold iteration
     auto [prev_result, prev_carry] = prev_state;
