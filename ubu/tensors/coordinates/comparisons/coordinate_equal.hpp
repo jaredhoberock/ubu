@@ -19,13 +19,9 @@ constexpr bool coordinate_equal(const A& a, const B& b)
   }
   else
   {
-    return tuples::inner_product(a, b, [](auto a_i, auto b_i)
+    return tuples::equal(a, b, [](auto a_i, auto b_i)
     {
       return coordinate_equal(a_i, b_i);
-    },
-    [](bool a, bool b)
-    {
-      return a and b;
     });
   }
 }
