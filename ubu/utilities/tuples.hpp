@@ -927,7 +927,7 @@ constexpr bool all_of(const T& t, const P& pred)
     return partial_result and pred(element);
   };
 
-  return tuples::fold_left(t, folder);
+  return tuples::fold_left(true, t, folder);
 }
 
 
