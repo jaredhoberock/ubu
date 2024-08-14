@@ -12,6 +12,7 @@
 #include "layouts/lifting_layout.hpp"
 #include "layouts/native_layout.hpp"
 #include "layouts/offset.hpp"
+#include "layouts/quilting_layout.hpp"
 #include "layouts/strides.hpp"
 #include "layouts/strided_layout.hpp"
 #include "layouts/truncating_layout.hpp"

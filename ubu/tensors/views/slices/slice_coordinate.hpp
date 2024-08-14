@@ -84,6 +84,10 @@ constexpr slicer auto slice_coordinate(const C& coord, const K& katana)
   return detail::slice_coordinate_impl(coord, katana);
 }
 
+
+template<slicer C, slicer_for<C> K>
+using slice_coordinate_result_t = decltype(slice_coordinate(std::declval<C>(), std::declval<K>()));
+
 } // end ubu
 
 #include "../../../detail/epilogue.hpp"

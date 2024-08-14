@@ -5,6 +5,7 @@
 #include "slices/dice_coordinate.hpp"
 #include "slices/opposite_slicer.hpp"
 #include "slices/slice.hpp"
+#include "slices/sliceable.hpp"
 #include "slices/slice_coordinate.hpp"
 #include "slices/sliced_view.hpp"
 #include "slices/slicer.hpp"

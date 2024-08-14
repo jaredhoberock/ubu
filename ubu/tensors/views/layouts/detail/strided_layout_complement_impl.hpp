@@ -55,7 +55,9 @@ constexpr auto strided_layout_complement_impl(const S& shape, const D& stride, C
 
   std::sort(strides_and_shapes.begin(), strides_and_shapes.end());
 
-  auto [current_idx, partial_result] = tuples::fold_left(pair(1, pair(tuple(), tuple())), strides_and_shapes, [](auto state, auto stride_and_shape)
+  auto init = pair(1, pair(tuple(), tuple()));
+
+  auto [current_idx, partial_result] = tuples::fold_left_with_init(strides_and_shapes, init, [](auto state, auto stride_and_shape)
   {
     int current_idx = state.first;
     auto partial_result = state.second;

@@ -110,5 +110,27 @@ void test_unslice_coordinate()
 
     assert(coord == unsliced_coord);
   }
+
+  {
+    constexpr int coord = 1;
+    constexpr int katana = 0;
+
+    constexpr auto sliced_coord = slice_coordinate(coord, katana);
+    constexpr auto unsliced_coord = unslice_coordinate(sliced_coord, katana);
+
+    // when katana contains no underscore, unslice_coordinate returns katana
+    static_assert(katana == unsliced_coord);
+  }
+
+  {
+    constexpr ns::int2 coord(1,2);
+    constexpr ns::int2 katana(3,4);
+
+    constexpr auto sliced_coord = slice_coordinate(coord, katana);
+    constexpr auto unsliced_coord = unslice_coordinate(sliced_coord, katana);
+
+    // when katana contains no underscore, unslice_coordinate returns katana
+    static_assert(katana == unsliced_coord);
+  }
 }
 
