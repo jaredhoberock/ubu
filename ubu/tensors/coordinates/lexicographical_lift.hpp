@@ -13,23 +13,24 @@ namespace ubu
 namespace detail
 {
 
-template<scalar_coordinate C>
+template<coordinate C>
 constexpr C deep_reverse(const C& coord)
 {
-  return coord;
-}
-
-template<nonscalar_coordinate C>
-constexpr nonscalar_coordinate auto deep_reverse(const C& coord)
-{
-  // recursively reverse coord
-  return tuples::zip_with(tuples::reverse(coord), [](const auto& e)
+  if constexpr (unary_coordinate<C>)
   {
-    return deep_reverse(e);
-  });
+    return coord;
+  }
+  else
+  {
+    return tuples::zip_with(tuples::reverse(coord), [](const auto& e)
+    {
+      return deep_reverse(e);
+    });
+  }
 }
 
 } // end detail
+
 
 // lexicographical_lift "upcasts" a weakly_congruent coordinate into a higher-dimensional space described by a shape
 // because this lift operation is lexicographical, it "aligns" the modes of coord and shape at the right, and proceeds from right to left
