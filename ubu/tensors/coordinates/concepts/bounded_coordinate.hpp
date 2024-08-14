@@ -14,7 +14,7 @@ namespace detail
 template<coordinate C>
 constexpr bool elements_are_bounded()
 {
-  if constexpr(scalar_coordinate<C>)
+  if constexpr(unary_coordinate<C>)
   {
     return bounded_integral_like<to_integral_like_t<C>>;
   }

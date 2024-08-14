@@ -2,6 +2,7 @@
 #include <ubu/utilities/constant_valued.hpp>
 #include <ubu/utilities/integrals/integral_like.hpp>
 #include <ubu/tensors/coordinates/concepts/congruent.hpp>
+#include <ubu/tensors/coordinates/concepts/bounded_coordinate.hpp>
 #include <ubu/tensors/coordinates/concepts/coordinate.hpp>
 #include <utility>
 
@@ -13,6 +14,7 @@ void test_concepts()
 
   static_assert(integral_like<constant<1>>);
   static_assert(coordinate<constant<1>>);
+  static_assert(bounded_coordinate<constant<1>>);
   static_assert(congruent<constant<1>, int>);
   static_assert(weakly_congruent<constant<1>, std::pair<int,int>>);
   static_assert(constant_valued<constant<1>>);
