@@ -36,7 +36,7 @@ namespace detail
 {
 
 
-template<std::size_t I, nonscalar_coordinate C, congruent<C> O, congruent<C> E>
+template<std::size_t I, multiary_coordinate C, congruent<C> O, congruent<C> E>
 constexpr bool colexicographical_increment_impl(C& coord, const O& origin, const E& end)
 {
   // increment the Ith element
