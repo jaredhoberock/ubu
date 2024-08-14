@@ -8,6 +8,7 @@
 #include "concepts/semicoordinate.hpp"
 #include "detail/to_integral_like.hpp"
 #include "traits/rank.hpp"
+#include "traits/zeros.hpp"
 #include <concepts>
 #include <type_traits>
 
@@ -33,7 +34,7 @@ constexpr congruent<T> auto coordinate_cast(const C& coord)
     }
 
     // else, check if C is a full coordinate (not just a semicoordinate)
-    else if constexpr (scalar_coordinate<C>)
+    else if constexpr (coordinate<C>)
     {
       if constexpr (std::constructible_from<T,detail::to_integral_like_t<C>>)
       {
@@ -58,9 +59,7 @@ constexpr congruent<T> auto coordinate_cast(const C& coord)
     // both T and C are tuple_like
     static_assert(tuples::tuple_like<T> and tuples::tuple_like<C>);
 
-    T zero{};
-
-    return tuples::zip_with(zero, coord, [](auto z, const auto& c)
+    return tuples::zip_with(zeros_v<T>, coord, [](auto z, const auto& c)
     {
       return coordinate_cast<decltype(z)>(c);
     });
