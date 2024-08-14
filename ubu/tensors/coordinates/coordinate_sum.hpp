@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../../utilities/integrals/integral_like.hpp"
 #include "../../utilities/tuples.hpp"
 #include "concepts/congruent.hpp"
 #include "concepts/coordinate.hpp"
@@ -13,20 +12,21 @@ namespace ubu
 {
 
 
-template<scalar_coordinate C1, scalar_coordinate C2>
-constexpr integral_like auto coordinate_sum(const C1& coord1, const C2& coord2)
+template<coordinate A, coordinate B>
+  requires congruent<A,B>
+constexpr congruent<A> auto coordinate_sum(const A& a, const B& b)
 {
-  return detail::to_integral_like(coord1) + detail::to_integral_like(coord2);
-}
-
-template<nonscalar_coordinate C1, nonscalar_coordinate C2>
-  requires congruent<C1,C2>
-constexpr congruent<C1> auto coordinate_sum(const C1& coord1, const C2& coord2)
-{
-  return tuples::zip_with(coord1, coord2, [](const auto& c1, const auto& c2)
+  if constexpr (unary_coordinate<A>)
   {
-    return coordinate_sum(c1, c2);
-  });
+    return detail::to_integral_like(a) + detail::to_integral_like(b);
+  }
+  else
+  {
+    return tuples::zip_with(a, b, [](const auto& a_i, const auto& b_i)
+    {
+      return coordinate_sum(a_i, b_i);
+    });
+  }
 }
 
 
