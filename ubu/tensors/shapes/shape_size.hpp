@@ -26,7 +26,7 @@ constexpr integral_like auto shape_size(const C& shape)
 template<nonscalar_coordinate C>
 constexpr integral_like auto shape_size(const C& shape)
 {
-  return tuples::fold_left_with_init(1_c, shape, [](const auto& partial_product, const auto& s)
+  return tuples::fold_left_with_init(shape, 1_c, [](const auto& partial_product, const auto& s)
   {
     return partial_product * shape_size(s);
   });

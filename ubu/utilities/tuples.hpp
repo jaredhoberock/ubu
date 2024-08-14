@@ -571,8 +571,8 @@ namespace detail
 {
 
 
-template<std::size_t... Is, class I, tuple_like T, class F>
-constexpr auto fold_left_with_init_impl(std::index_sequence<Is...>, I&& init, T&& t, F&& f)
+template<std::size_t... Is, tuple_like T, class I, class F>
+constexpr auto fold_left_with_init_impl(std::index_sequence<Is...>, T&& t, I&& init, F&& f)
 {
   return detail::fold_args_left(std::forward<F>(f), std::forward<I>(init), get<Is>(std::forward<T>(t))...);
 }
@@ -582,10 +582,10 @@ constexpr auto fold_left_with_init_impl(std::index_sequence<Is...>, I&& init, T&
 
 
 // fold_left with init parameter
-template<class I, tuple_like T, class F>
-constexpr auto fold_left_with_init(I&& init, T&& t, F&& f)
+template<tuple_like T, class I, class F>
+constexpr auto fold_left_with_init(T&& t, I&& init, F&& f)
 {
-  return detail::fold_left_with_init_impl(indices_v<T>, std::forward<I>(init), std::forward<T>(t), std::forward<F>(f));
+  return detail::fold_left_with_init_impl(indices_v<T>, std::forward<T>(t), std::forward<I>(init), std::forward<F>(f));
 }
 
 
@@ -927,7 +927,7 @@ constexpr bool all_of(const T& t, const P& pred)
     return partial_result and pred(element);
   };
 
-  return tuples::fold_left_with_init(true, t, folder);
+  return tuples::fold_left_with_init(t, true, folder);
 }
 
 
@@ -1462,7 +1462,7 @@ constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const 
 
   auto init = pair(tuple(), carry_in);
 
-  return tuples::fold_left_with_init(init, input, [&f](const auto& prev_state, const auto& input_i)
+  return tuples::fold_left_with_init(input, init, [&f](const auto& prev_state, const auto& input_i)
   {
     // unpack the result of the previous fold iteration
     auto [prev_result, prev_carry] = prev_state;
