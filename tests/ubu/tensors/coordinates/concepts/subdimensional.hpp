@@ -8,12 +8,18 @@ void test_subdimensional()
 {
   using namespace ubu;
 
-  // test some scalars
+  // test some nullary_coordinates
+  static_assert(subdimensional<std::tuple<>, std::tuple<>>);
+  static_assert(subdimensional<std::tuple<>, int>);
+  static_assert(subdimensional<std::tuple<>, std::array<int,1>>);
+
+  // test some unary_coordinates
   static_assert(subdimensional<int,int>);
   static_assert(subdimensional<int,unsigned int>);
   static_assert(subdimensional<unsigned int,int>);
   static_assert(subdimensional<char, int>);
   static_assert(subdimensional<std::array<int,1>, int>);
+  static_assert(not subdimensional<int, std::tuple<>>);
 
   {
     // test some coordinates that are weakly_congruent
