@@ -14,7 +14,7 @@ template<coordinate C1, coordinate C2>
   requires congruent<C1,C2>
 constexpr congruent<C1> auto coordinate_modulo(const C1& dividend, const C2& divisor)
 {
-  if constexpr (scalar_coordinate<C1>)
+  if constexpr (unary_coordinate<C1>)
   {
     return detail::to_integral_like(dividend) % detail::to_integral_like(divisor);
   }
