@@ -886,17 +886,17 @@ constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, 
 }
 
 
-template<tuple_like T>
-constexpr auto sum(const T& t)
+template<tuple_like T, class I>
+constexpr auto sum(const T& t, const I& init)
 {
-  return tuples::fold_left(t, std::plus{});
+  return tuples::fold_left_with_init(t, init, std::plus{});
 }
 
 
-template<tuple_like T>
-constexpr auto product(const T& t)
+template<tuple_like T, class I>
+constexpr auto product(const T& t, const I& init)
 {
-  return tuples::fold_left(t, std::multiplies{});
+  return tuples::fold_left_with_init(t, init, std::multiplies{});
 }
 
 

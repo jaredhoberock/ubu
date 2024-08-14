@@ -613,12 +613,12 @@ class point : public detail::point_base<T,N>
 
     constexpr T product() const
     {
-      return tuples::product(*this);
+      return tuples::product(*this, T(1));
     }
 
     constexpr T sum() const
     {
-      return tuples::sum(*this);
+      return tuples::sum(*this, T(0));
     }
 
 
