@@ -28,14 +28,14 @@ namespace ubu::detail
 // The types of combine's input and carry_in parameters must be integers.
 // The type of combine's carry_out result must be an integer.
 
-template<scalar_coordinate C1, scalar_coordinate C2, class F>
+template<unary_coordinate C1, unary_coordinate C2, class F>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
   // the use of to_integral_like ensures that we pass integral_likes (i.e., not tuples) to combine
   return combine(to_integral_like(coord), to_integral_like(carry_in));
 }
 
-template<nonscalar_coordinate C1, scalar_coordinate C2, class F>
+template<multiary_coordinate C1, unary_coordinate C2, class F>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
   return tuples::inclusive_scan_and_fold(coord, carry_in, [&](auto coord_i, auto carry_i)
@@ -45,7 +45,7 @@ constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, cons
 }
 
 // the returned carry is congruent with C2
-template<nonscalar_coordinate C1, nonscalar_coordinate C2, class F>
+template<multiary_coordinate C1, multiary_coordinate C2, class F>
   requires weakly_congruent<C2,C1>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
@@ -61,16 +61,16 @@ constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, cons
 // when the combine function yields an integer result, then the result of coordinate_inclusive_scan_with_final is a coordinate congruent with
 // the input coordinate.
 
-template<scalar_coordinate C1, scalar_coordinate C2, class F1, class F2>
+template<unary_coordinate C1, unary_coordinate C2, class F1, class F2>
 constexpr auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& carry_in, const F1&, const F2& final_combine)
 {
-  // when both the coord and carry_in arguments are scalars, then this is the final combination operation
+  // when both the coord and carry_in arguments are unary_coordinates, then this is the final combination operation
   // just return its result
   return final_combine(coord, carry_in);
 }
 
 // XXX if the combine function is allowed to return anything, then the result of this function may not be a coordinate
-template<nonscalar_coordinate C1, scalar_coordinate C2, class F1, class F2>
+template<multiary_coordinate C1, unary_coordinate C2, class F1, class F2>
 constexpr tuples::tuple_like_of_size<rank_v<C1>> auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& carry_in, const F1& combine, const F2& final_combine)
 {
   // Some scan-like operations on coordinates need to treat the final mode of the coordinate specially
@@ -105,7 +105,7 @@ constexpr tuples::tuple_like_of_size<rank_v<C1>> auto coordinate_inclusive_scan_
   return tuples::append_like<C1>(tuples::wrap_if<rank_v<C1> == 2>(result_front), result_last);
 }
 
-template<nonscalar_coordinate C1, nonscalar_coordinate C2, class F1, class F2>
+template<multiary_coordinate C1, multiary_coordinate C2, class F1, class F2>
   requires (not congruent<C1,C2> and weakly_congruent<C2,C1>)
 constexpr tuples::tuple_like_of_size<rank_v<C1>> auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& carry_in, const F1& combine, const F2& final_combine)
 {
