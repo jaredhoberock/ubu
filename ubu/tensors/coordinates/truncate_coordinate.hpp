@@ -16,7 +16,7 @@ namespace ubu
 template<coordinate R, superdimensional<R> C>
 constexpr congruent<R> auto truncate_coordinate(const C& coord)
 {
-  if constexpr (scalar_coordinate<R>)
+  if constexpr (unary_coordinate<R>)
   {
     if constexpr (integral_like<C>)
     {
