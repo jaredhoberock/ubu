@@ -26,9 +26,9 @@ namespace ubu
 
 template<coordinate S,
          stride_for<S> D = S,
-         coordinate R = apply_stride_t<D,default_coordinate_t<S>>
+         coordinate R = apply_stride_result_t<D,default_coordinate_t<S>>
         >
-  requires congruent<R,apply_stride_t<D,default_coordinate_t<S>>>
+  requires congruent<R,apply_stride_result_t<D,default_coordinate_t<S>>>
 class strided_layout : public view_base
 {
   public:
@@ -158,7 +158,7 @@ class strided_layout : public view_base
     }
 
     template<class R1, class S1, stride_for<S1> D1>
-      requires congruent<R,apply_stride_t<D1,S1>>
+      requires congruent<R,apply_stride_result_t<D1,S1>>
     constexpr static strided_layout<S1,D1,R1> make_strided_layout_r(S1 s, D1 d)
     {
       return {s, d};
