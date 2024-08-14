@@ -13,25 +13,21 @@
 namespace ubu
 {
 
-
-// scalar case
-template<scalar_coordinate C>
-constexpr integral_like auto shape_size(const C& shape)
+template<coordinate S>
+constexpr integral_like auto shape_size(const S& shape)
 {
-  return detail::to_integral_like(shape);
-}
-
-
-// nonscalar case
-template<nonscalar_coordinate C>
-constexpr integral_like auto shape_size(const C& shape)
-{
-  return tuples::fold_left(shape, 1_c, [](const auto& partial_product, const auto& s)
+  if constexpr (unary_coordinate<S>)
   {
-    return partial_product * shape_size(s);
-  });
+    return detail::to_integral_like(shape);
+  }
+  else
+  {
+    return tuples::fold_left(shape, 1_c, [](const auto& partial_product, const auto& s)
+    {
+      return partial_product * shape_size(s);
+    });
+  }
 }
-
 
 } // end ubu
 
