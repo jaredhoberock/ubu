@@ -35,9 +35,8 @@ constexpr coordinate auto apply_stride(const D& stride, const C& coord)
   }
   else
   {
-    // stride & coord are tuples of the same rank, inner_product
-    static_assert(tuples::tuple_like<D> and tuples::tuple_like<C>);
-    static_assert(equal_rank<D,C>);
+    // stride & coord are non-empty tuples of the same rank, inner_product
+    static_assert(tuples::tuple_like_of_size_at_least<D,1> and tuples::same_size<D,C>);
 
     auto star = [](const auto& s_i, const auto& c_i)
     {
@@ -49,7 +48,9 @@ constexpr coordinate auto apply_stride(const D& stride, const C& coord)
       return coordinate_sum(c1,c2);
     };
 
-    return tuples::inner_product(stride, coord, star, plus);
+    auto init = star(get<0>(stride), get<0>(coord));
+
+    return tuples::inner_product(tuples::drop_first(stride), tuples::drop_first(coord), init, star, plus);
   }
 }
 

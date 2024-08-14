@@ -557,16 +557,6 @@ constexpr auto fold_right(I&& init, T&& t, F&& f)
 }
 
 
-template<class F, class T>
-concept left_folder =
-  tuple_like<T>
-  and requires(T t, F f)
-  {
-    fold_left(t,f);
-  }
-;
-
-
 namespace detail
 {
 
@@ -587,6 +577,16 @@ constexpr auto fold_left_with_init(T&& t, I&& init, F&& f)
 {
   return detail::fold_left_with_init_impl(indices_v<T>, std::forward<T>(t), std::forward<I>(init), std::forward<F>(f));
 }
+
+
+template<class F, class T, class I>
+concept left_folder =
+  tuple_like<T>
+  and requires(T t, I i, F f)
+  {
+    fold_left_with_init(t,i,f);
+  }
+;
 
 
 namespace detail
@@ -872,17 +872,17 @@ constexpr tuple_like auto zip(const T& t, const Ts&... ts)
 }
 
 
-template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op1, left_folder<zip_with_result_t<Op1,T1,T2>> Op2>
-constexpr auto inner_product(const T1& t1, const T2& t2, Op1 star, Op2 plus)
+template<tuple_like T1, tuple_like T2, class I, zipper<T1,T2> Op1, left_folder<zip_with_result_t<Op1,T1,T2>,I> Op2>
+constexpr auto inner_product(const T1& t1, const T2& t2, const I& init, Op1 star, Op2 plus)
 {
-  return tuples::fold_left(tuples::zip_with(t1, t2, star), plus);
+  return tuples::fold_left_with_init(tuples::zip_with(t1, t2, star), init, plus);
 }
 
 
-template<tuple_like T1, tuple_like T2, tuple_like T3, zipper<T1,T2,T3> Op1, left_folder<zip_with_result_t<Op1,T1,T2,T3>> Op2>
-constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, Op1 star, Op2 plus)
+template<tuple_like T1, tuple_like T2, tuple_like T3, class I, zipper<T1,T2,T3> Op1, left_folder<zip_with_result_t<Op1,T1,T2,T3>,I> Op2>
+constexpr auto tuple_transform_reduce(const T1& t1, const T2& t2, const T3& t3, const I& init, Op1 star, Op2 plus)
 {
-  return tuples::fold_left(tuples::zip_with(t1, t2, t3, star), plus);
+  return tuples::fold_left_with_init(tuples::zip_with(t1, t2, t3, star), init, plus);
 }
 
 
@@ -904,7 +904,7 @@ template<tuple_like T1, tuple_like T2, zipper<T1,T2> Op>
   requires zipper_r<bool,Op,T1,T2>
 constexpr bool equal(const T1& t1, const T2& t2, Op eq)
 {
-  return tuples::inner_product(t1, t2, eq, std::logical_and{});
+  return tuples::inner_product(t1, t2, true, eq, std::logical_and{});
 }
 
 
@@ -927,7 +927,7 @@ constexpr bool all_of(const T& t, const P& pred)
     return partial_result and pred(element);
   };
 
-  return tuples::fold_left(t, folder);
+  return tuples::fold_left_with_init(t, true, folder);
 }
 
 
