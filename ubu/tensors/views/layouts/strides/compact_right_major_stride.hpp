@@ -40,7 +40,9 @@ constexpr congruent<S> auto compact_right_major_stride_impl(const D& current_str
 template<scalar_coordinate D, nonscalar_coordinate S>
 constexpr congruent<S> auto compact_right_major_stride_impl(const D& current_stride, const S& shape)
 {
-  auto [_,result] = tuples::fold_right(std::pair(current_stride, std::tuple()), shape, [](auto prev, auto s)
+  auto init = std::pair(current_stride, std::tuple());
+
+  auto [_,result] = tuples::fold_right(shape, init, [](auto prev, auto s)
   {
     auto [current_stride, prev_result] = prev;
     auto result = tuples::prepend_like<S>(prev_result, compact_right_major_stride_impl(current_stride, s));
