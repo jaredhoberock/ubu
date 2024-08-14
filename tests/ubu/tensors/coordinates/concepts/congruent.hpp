@@ -8,6 +8,8 @@ void test_congruent()
   using namespace ubu;
 
   // test some congruent coordinates
+  static_assert(congruent<std::tuple<>, std::tuple<>>);
+  static_assert(congruent<std::tuple<>, std::array<int,0>&>);
   static_assert(congruent<int,int>);
   static_assert(congruent<int,unsigned int>);
   static_assert(congruent<unsigned int,int>);
