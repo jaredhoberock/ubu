@@ -27,8 +27,7 @@ constexpr bool colexicographical_increment(C& coord, const O&, const E& end)
 }
 
 
-template<coordinate C, congruent<C> O, congruent<C> E>
-  requires (rank_v<C> > 1)
+template<multiary_coordinate C, congruent<C> O, congruent<C> E>
 constexpr bool colexicographical_increment(C& coord, const O& origin, const E& end);
 
 
@@ -64,8 +63,7 @@ constexpr bool colexicographical_increment_impl(C& coord, const O& origin, const
 } // end detail
 
 
-template<coordinate C, congruent<C> O, congruent<C> E>
-  requires (rank_v<C> > 1)
+template<multiary_coordinate C, congruent<C> O, congruent<C> E>
 constexpr bool colexicographical_increment(C& coord, const O& origin, const E& end)
 {
   return detail::colexicographical_increment_impl<0>(coord, origin, end);
