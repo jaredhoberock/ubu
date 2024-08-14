@@ -2,7 +2,6 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../comparisons/is_below.hpp"
 #include "../concepts/congruent.hpp"
 #include "../concepts/coordinate.hpp"
 #include "../detail/to_integral_like.hpp"
