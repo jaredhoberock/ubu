@@ -24,7 +24,7 @@ constexpr bool colexicographical_decrement(C& coord, const O& origin, const E&)
   else
   {
     // note that postdecrement compares the original value of coord to origin
-    detail::to_integral_like(coord)-- == origin;
+    detail::to_integral_like(coord)-- == detail::to_integral_like(origin);
   }
 }
 
