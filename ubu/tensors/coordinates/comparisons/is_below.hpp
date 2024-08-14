@@ -16,14 +16,10 @@ namespace ubu
 // is_below(lhs, rhs) returns true if all modes of lhs is < their corresponding mode of rhs
 
 template<coordinate A, coordinate B>
-  requires congruent<A,B>
+  requires (congruent<A,B> and rank_v<A> > 0)
 constexpr bool is_below(const A& a, const B& b)
 {
-  if constexpr (rank_v<A> == 0)
-  {
-    return false;
-  }
-  else if constexpr (rank_v<A> == 1)
+  if constexpr (rank_v<A> == 1)
   {
     return detail::to_integral_like(a) < detail::to_integral_like(b);
   }
@@ -45,6 +41,7 @@ constexpr bool is_below(const A& a, const B& b)
 // is_below_or_equal(lhs, rhs) returns true if all modes of lhs is <= their corresponding mode of rhs
 
 template<coordinate A, coordinate B>
+  requires (congruent<A,B> and rank_v<A> > 0)
 constexpr bool is_below_or_equal(const A& a, const B& b)
 {
   if constexpr (rank_v<A> == 1)
