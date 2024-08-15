@@ -19,11 +19,17 @@ namespace detail
 template<semicoordinate T1, semicoordinate T2>
 constexpr bool is_weakly_congruent()
 {
-  if constexpr(rank_v<T1> == 1)
+  if constexpr(rank_v<T1> == 0)
+  {
+    // terminal case 0: T1 has rank 0
+    // rank-0 types are weakly congruent to all other ranked types
+    return true;
+  }
+  else if constexpr(rank_v<T1> == 1)
   {
     // terminal case 1: T1 has rank 1
-    // rank-1 types are weakly congruent to all other ranked types
-    return true;
+    // rank-1 types are weakly congruent to all other ranked types except rank-0
+    return rank_v<T2> != 0;
   }
   else if constexpr(not equal_rank<T1,T2>)
   {
