@@ -22,9 +22,9 @@ template<coordinate R, coordinate D, weakly_congruent<D> C>
   requires (nonnullary_coordinate<C> and congruent<R, apply_stride_result_t<D,C>> and not std::is_reference_v<R>)
 constexpr R apply_stride_r(const D& stride, const C& coord)
 {
-  if constexpr (scalar_coordinate<C>)
+  if constexpr (unary_coordinate<C>)
   {
-    if constexpr (scalar_coordinate<D>)
+    if constexpr (unary_coordinate<D>)
     {
       // both stride & coord are integral, just cast the result of apply_stride
       return static_cast<R>(apply_stride(stride, coord));
