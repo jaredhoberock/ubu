@@ -19,7 +19,7 @@ namespace ubu
 // this variant of apply_stride allows control over the width of the result type, R
 // R must be congruent to the result returned by the other variant, apply_stride()
 template<coordinate R, coordinate D, weakly_congruent<D> C>
-  requires (congruent<R, apply_stride_result_t<D,C>> and not std::is_reference_v<R>)
+  requires (nonnullary_coordinate<C> and congruent<R, apply_stride_result_t<D,C>> and not std::is_reference_v<R>)
 constexpr R apply_stride_r(const D& stride, const C& coord)
 {
   if constexpr (scalar_coordinate<C>)

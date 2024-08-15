@@ -15,11 +15,12 @@ namespace ubu
 
 
 template<coordinate D, weakly_congruent<D> C>
+  requires nonnullary_coordinate<C>
 constexpr coordinate auto apply_stride(const D& stride, const C& coord)
 {
-  if constexpr (scalar_coordinate<C>)
+  if constexpr (unary_coordinate<C>)
   {
-    if constexpr (scalar_coordinate<D>)
+    if constexpr (unary_coordinate<D>)
     {
       // both stride & coord are integral, just multiply
       return detail::to_integral_like(stride) * detail::to_integral_like(coord);
@@ -56,6 +57,7 @@ constexpr coordinate auto apply_stride(const D& stride, const C& coord)
 
 
 template<coordinate D, weakly_congruent<D> C>
+  requires nonnullary_coordinate<C>
 using apply_stride_result_t = decltype(apply_stride(std::declval<D>(), std::declval<C>()));
 
 
