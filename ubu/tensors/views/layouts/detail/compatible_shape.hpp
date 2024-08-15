@@ -15,8 +15,7 @@ namespace ubu::detail
 
 // compatible_shape converts a shape to be compatible with another weakly_congruent shape
 // postcondition: shape_size(result) == shape_size(n)
-template<ubu::coordinate S1, ubu::scalar_coordinate S2>
-  requires weakly_congruent<S2,S1>
+template<ubu::coordinate S1, ubu::unary_coordinate S2>
 constexpr S1 compatible_shape(const S1& shape, const S2& n)
 {
   // the combine operation returns the smaller of s and n
