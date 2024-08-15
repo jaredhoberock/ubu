@@ -16,7 +16,7 @@ namespace ubu::detail
 // 1. quotient is a coordinate that is the result of dividing numerator by denominator, and
 // 2. divisor is a tuple of integers, where each element contains the divisor used to produce
 //    the corresponding element of quotient
-template<coordinate N, scalar_coordinate D>
+template<coordinate N, unary_coordinate D>
 constexpr tuples::pair_like auto divide_shape(const N& numerator, const D& denominator)
 {
   // combine's primary result is the quotient of n and d, along with the divisor used in the quotient
