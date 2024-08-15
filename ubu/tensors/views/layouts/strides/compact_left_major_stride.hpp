@@ -23,25 +23,25 @@ namespace detail
 
 
 template<coordinate D, coordinate S>
-constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stride, const S& shape)
+constexpr congruent<S> auto compact_left_major_stride_impl(const D& prev_product, const S& shape)
 {
   if constexpr (unary_coordinate<D>)
   {
     if constexpr (unary_coordinate<S>)
     {
-      return to_integral_like(current_stride);
+      return to_integral_like(prev_product);
     }
     else
     {
       auto unit = tuples::make_like<S>();
-      auto init = std::pair(current_stride, unit);
+      auto init = std::pair(prev_product, unit);
 
       auto [_,result] = tuples::fold_left(shape, init, [](auto prev, auto s)
       {
-        auto [current_stride, prev_result] = prev;
-        auto result = tuples::append_like<S>(prev_result, compact_left_major_stride_impl(current_stride, s));
+        auto [prev_product, prev_result] = prev;
+        auto result = tuples::append_like<S>(prev_result, compact_left_major_stride_impl(prev_product, s));
 
-        return std::pair(current_stride * shape_size(s), result);
+        return std::pair(prev_product * shape_size(s), result);
       });
 
       return result;
@@ -49,9 +49,9 @@ constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stri
   }
   else
   {
-    return tuples::zip_with(current_stride, shape, [](const auto& cs, const auto& s)
+    return tuples::zip_with(prev_product, shape, [](const auto& p, const auto& s)
     {
-      return compact_left_major_stride_impl(cs, s);
+      return compact_left_major_stride_impl(p, s);
     });
   }
 }
