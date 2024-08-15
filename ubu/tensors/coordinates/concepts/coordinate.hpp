@@ -57,6 +57,16 @@ concept nullary_coordinate =
 ;
 
 
+// XXX ideally, we wouldn't need this concept
+//     we're using it to document interfaces
+//     for which we're unsure can support 0-rank shapes/coordinates
+template<class T>
+concept nonnullary_coordinate =
+  coordinate<T>
+  and (not nullary_coordinate<T>)
+;
+
+
 template<class T>
 concept unary_coordinate =
   coordinate<T>
