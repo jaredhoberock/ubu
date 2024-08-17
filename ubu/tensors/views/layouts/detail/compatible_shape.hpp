@@ -22,9 +22,8 @@ constexpr S1 compatible_shape(const S1& shape, const S2& n)
   // the carry of this operation is the "unused portion" of n
   auto combine = [](auto n, auto s)
   {
-    using namespace std;
     auto kept = s < n ? s : n;
-    return pair(kept, ceil_div(n, kept));
+    return std::pair(kept, ceil_div(n, kept));
   };
 
   // the final combine operation just sets the result to n,
