@@ -19,11 +19,11 @@ namespace ubu::detail
 //   2. carry_out is an integer, and is the carry_out result of the final application
 //      of the combine function
 //
-// When the result of the combine function's is an integer, then the result_tuple is a
+// When the result of the combine function is an integer, then the result_tuple is a
 // coordinate conguent with C1.
 //
 // The combination function has control over the value of the carry after each combination
-// combine(input, carry_in) must return the pair (result, carry_out)
+// combine(carry_in, input) must return the pair (result, carry_out)
 //
 // The types of combine's input and carry_in parameters must be integers.
 // The type of combine's carry_out result must be an integer.
@@ -32,13 +32,13 @@ template<scalar_coordinate C1, scalar_coordinate C2, class F>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
   // the use of to_integral_like ensures that we pass integral_likes (i.e., not tuples) to combine
-  return combine(to_integral_like(coord), to_integral_like(carry_in));
+  return combine(to_integral_like(carry_in), to_integral_like(coord));
 }
 
 template<nonscalar_coordinate C1, scalar_coordinate C2, class F>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
-  return tuples::inclusive_scan_and_fold(coord, carry_in, [&](auto coord_i, auto carry_i)
+  return tuples::inclusive_scan_and_fold(coord, carry_in, [&](auto carry_i, auto coord_i)
   {
     return coordinate_inclusive_scan(coord_i, carry_i, combine);
   });
@@ -49,10 +49,10 @@ template<nonscalar_coordinate C1, nonscalar_coordinate C2, class F>
   requires weakly_congruent<C2,C1>
 constexpr tuples::pair_like auto coordinate_inclusive_scan(const C1& coord, const C2& carry_in, const F& combine)
 {
-  return tuples::unzip(tuples::zip_with(coord, carry_in), [&](const auto& coord_i, const auto& carry_i)
+  return tuples::unzip(tuples::zip_with(coord, carry_in, [&](const auto& coord_i, const auto& carry_i)
   {
     return coordinate_inclusive_scan(coord_i, carry_i, combine);
-  });
+  }));
 }
 
 
@@ -66,7 +66,7 @@ constexpr auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& c
 {
   // when both the coord and carry_in arguments are scalars, then this is the final combination operation
   // just return its result
-  return final_combine(coord, carry_in);
+  return final_combine(carry_in, coord);
 }
 
 // XXX if the combine function is allowed to return anything, then the result of this function may not be a coordinate

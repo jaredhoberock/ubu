@@ -21,7 +21,7 @@ constexpr tuples::pair_like auto divide_shape(const N& numerator, const D& denom
 {
   // combine's primary result is the quotient of n and d, along with the divisor used in the quotient
   // the carry is the reciprocal of this quotient
-  auto combine = [](auto n, auto d)
+  auto combine = [](auto d, auto n)
   {
     auto quotient = ceil_div(n,d);
     auto divisor = n < d ? n : d;
@@ -35,7 +35,7 @@ constexpr tuples::pair_like auto divide_shape(const N& numerator, const D& denom
 
   // the final combination just returns the arguments
   // it doesn't do any division on the final mode
-  auto final_combine = [](auto n, auto d)
+  auto final_combine = [](auto d, auto n)
   {
     return std::pair(n,d);
   };

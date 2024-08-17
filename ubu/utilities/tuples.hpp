@@ -1007,7 +1007,7 @@ namespace detail
 template<unit_like T>
 constexpr bool all_elements_have_same_size(std::index_sequence<>)
 {
-  return false;
+  return true;
 }
 
 template<tuple_like T, std::size_t Zero, std::size_t... I>
@@ -1445,7 +1445,7 @@ constexpr tuple_like auto flatten(const T& arg)
 //   1. a tuple with the same size as the input, and
 //   2. a carry out value (i.e., the result of fold_left)
 // the user's combination function f has control over the value of the carry after each combination
-// f(input[i], carry_in) must return the pair (result[i], carry_out)
+// f(carry_in, input[i]) must return the pair (result[i], carry_out)
 template<tuple_like T, class C, class F>
 constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const F& f)
 {
@@ -1459,7 +1459,7 @@ constexpr auto inclusive_scan_and_fold(const T& input, const C& carry_in, const 
     auto [prev_result, prev_carry] = prev_state;
     
     // combine the carry from the previous iteration with the current input element
-    auto [result_i, carry_out] = f(input_i, prev_carry);
+    auto [result_i, carry_out] = f(prev_carry, input_i);
 
     // return the result of this iteration and the carry for the next iteration
     return pair(tuples::append_like<T>(prev_result, result_i), carry_out);
