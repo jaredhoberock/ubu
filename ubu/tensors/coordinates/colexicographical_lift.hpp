@@ -38,7 +38,7 @@ constexpr congruent<C2> auto colexicographical_lift(const C1& coord, const C2& s
 
     // the combine operation is divmod
     // the result of the operation is the remainder, and the "carry" is the quotient
-    auto combine = [](auto current_divisor, auto prev_quotient)
+    auto combine = [](auto prev_quotient, auto current_divisor)
     {
       auto quotient = prev_quotient / current_divisor;
       auto remainder = prev_quotient % current_divisor;
@@ -46,7 +46,7 @@ constexpr congruent<C2> auto colexicographical_lift(const C1& coord, const C2& s
     };
 
     // the final combine operation ignores the divisor and returns the previous quotient
-    auto final_combine = [](auto current_divisor, auto prev_quotient)
+    auto final_combine = [](auto prev_quotient, auto current_divisor)
     {
       return prev_quotient;
     };

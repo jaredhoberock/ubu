@@ -20,7 +20,7 @@ constexpr S1 compatible_shape(const S1& shape, const S2& n)
 {
   // the combine operation returns the smaller of s and n
   // the carry of this operation is the "unused portion" of n
-  auto combine = [](auto s, auto n)
+  auto combine = [](auto n, auto s)
   {
     using namespace std;
     auto kept = s < n ? s : n;
@@ -29,7 +29,7 @@ constexpr S1 compatible_shape(const S1& shape, const S2& n)
 
   // the final combine operation just sets the result to n,
   // because when n is an integer, the only shape compatible with n is n
-  auto final_combine = [](auto s, auto n)
+  auto final_combine = [](auto n, auto s)
   {
     return n;
   };
