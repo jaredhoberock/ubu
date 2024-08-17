@@ -1004,43 +1004,43 @@ constexpr bool colexicographical_compare(const T1& t1, const T2& t2)
 namespace detail
 {
 
+template<unit_like T>
+constexpr bool all_elements_have_same_size(std::index_sequence<>)
+{
+  return false;
+}
 
 template<tuple_like T, std::size_t Zero, std::size_t... I>
 constexpr bool all_elements_have_same_size(std::index_sequence<Zero,I...>)
 {
-  using tuple_type = std::remove_cvref_t<T>;
-
-  return same_size<
-    element_t<0, tuple_type>,
-    element_t<I, tuple_type>...
-  >;
+  return same_size<element_t<0, T>, element_t<I, T>...>;
 }
 
 
 // treats the tuple t as a matrix and returns the Ith element of the Jth element of t
 template<std::size_t I, std::size_t J, tuple_like T>
-decltype(auto) get2d(T&& t)
+constexpr decltype(auto) get2d(T&& t)
 {
   return get<I>(get<J>(std::forward<T>(t)));
 }
 
 
 template<std::size_t Row, std::size_t... Col, tuple_like T>
-tuple_like auto unzip_row_impl(std::index_sequence<Col...>, T&& t)
+constexpr tuple_like auto unzip_row_impl(std::index_sequence<Col...>, T&& t)
 {
   return tuples::make_r<tuple_template_like<T>::template tuple>(detail::get2d<Row,Col>(std::forward<T>(t))...);
 }
 
 
 template<std::size_t Row, tuple_like T>
-tuple_like auto unzip_row(T&& t)
+constexpr tuple_like auto unzip_row(T&& t)
 {
   return detail::unzip_row_impl<Row>(indices_v<T>, std::forward<T>(t));
 }
 
 
 template<std::size_t... Row, tuple_like T>
-tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
+constexpr tuple_like auto unzip_impl(std::index_sequence<Row...>, T&& t)
 {
   using inner_tuple_type = element_t<0,T>;
   
@@ -1066,13 +1066,19 @@ concept unzippable_tuple_like =
 // in other words, it returns the transpose of the matrix
 //
 // this probably has an elegant solution with zip_with or fold_left, but I don't know what it is
-template<tuple_like T>
-  requires unzippable_tuple_like<T>
-tuple_like auto unzip(T&& t)
+template<unzippable_tuple_like T>
+constexpr tuple_like auto unzip(T&& t)
 {
-  using inner_tuple_type = element_t<0,T>;
+  if constexpr (unit_like<T>)
+  {
+    return std::forward<T>(t);
+  }
+  else
+  {
+    using inner_tuple_type = element_t<0,T>;
 
-  return detail::unzip_impl(indices_v<inner_tuple_type>, std::forward<T>(t));
+    return detail::unzip_impl(indices_v<inner_tuple_type>, std::forward<T>(t));
+  }
 }
 
 
