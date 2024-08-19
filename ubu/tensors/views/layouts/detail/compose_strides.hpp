@@ -14,7 +14,7 @@ namespace ubu::detail
 
 
 template<coordinate A, coordinate B>
-  requires (rank_v<A> != 0 and rank_v<A> <= rank_v<B>)
+  requires weakly_congruent<A,B>
 constexpr congruent<B> auto compose_strides(const A& a, const B& b)
 {
   if constexpr (unary_coordinate<A> and unary_coordinate<B>)
