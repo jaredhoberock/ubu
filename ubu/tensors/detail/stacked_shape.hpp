@@ -18,7 +18,7 @@ constexpr coordinate auto stacked_shape(const A& shape_a, const B& shape_b)
   {
     return coordinate_cat(coordinate_max(shape_a,shape_b),2);
   }
-  else if constexpr (scalar_coordinate<A>)
+  else if constexpr (unary_coordinate<A>)
   {
     return coordinate_sum(shape_a, shape_b);
   }

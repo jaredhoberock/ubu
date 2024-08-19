@@ -18,7 +18,7 @@ template<std::size_t i, semicoordinate A, coordinate B>
             and congruent<coordinate_element_t<i,A>, B>) // a[i] must be congruent to b
 constexpr congruent<A> auto subtract_element(const A& a, const B& b)
 {
-  if constexpr (scalar_coordinate<A>)
+  if constexpr (unary_coordinate<A>)
   {
     return to_integral_like(a) - to_integral_like(b);
   }
