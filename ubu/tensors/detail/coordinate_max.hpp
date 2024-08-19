@@ -12,7 +12,7 @@ namespace ubu::detail
 template<coordinate C1, congruent<C1> C2>
 constexpr congruent<C1> auto coordinate_max(const C1& coord1, const C2& coord2)
 {
-  if constexpr (scalar_coordinate<C1>)
+  if constexpr (unary_coordinate<C1>)
   {
     return to_integral_like(coord1) < to_integral_like(coord2) ? to_integral_like(coord2) : to_integral_like(coord1);
   }
