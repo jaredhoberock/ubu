@@ -38,22 +38,14 @@ constexpr tuples::pair_like auto coordinate_inclusive_scan_and_fold(const C1& co
     // terminal case 0: coord and carry_in are both (), return the pair ((), ())
     return std::pair(coord, carry_in);
   }
-  else if constexpr (unary_coordinate<C1>)
+  else if constexpr (unary_coordinate<C1> and unary_coordinate<C2>)
   {
-    // terminal case 1: coord is unary, carry_in is either unary or nullary; call combine
-    // if carry_in is (), we map that to zero
-    if constexpr (nullary_coordinate<C2>)
-    {
-      return combine(0_c, detail::to_integral_like(coord));
-    }
-    else
-    {
-      return combine(detail::to_integral_like(carry_in), detail::to_integral_like(coord));
-    }
+    // terminal case 1: coord and carry_in are unary; call combine
+    return combine(detail::to_integral_like(carry_in), detail::to_integral_like(coord));
   }
   else if constexpr (equal_rank<C1, C2>)
   {
-    // recursive case 0: coord and carry_in are non-empty tuples of the same rank
+    // recursive case 0: coord and carry_in are tuples of the same rank
     // map coordinate_inclusive_scan_and_fold across coord & carry_in and unzip the result
     return tuples::unzip(tuples::zip_with(coord, carry_in, [&](auto coord_i, auto carry_i)
     {
@@ -62,10 +54,9 @@ constexpr tuples::pair_like auto coordinate_inclusive_scan_and_fold(const C1& co
   }
   else
   {
-    // recursive case 1: coord is multiary and carry_in is either nullary or unary
+    // recursive case 1: coord is multiary and carry_in is unary
     // recursively scan and fold across coord using coordinate_inclusive_scan_and_fold as the fold operation
-    static_assert(multiary_coordinate<C1>);
-    static_assert(nullary_coordinate<C2> or unary_coordinate<C2>);
+    static_assert(multiary_coordinate<C1> and unary_coordinate<C2>);
 
     return tuples::inclusive_scan_and_fold(coord, carry_in, [&](auto carry_i, auto coord_i)
     {
@@ -86,18 +77,15 @@ constexpr tuples::pair_like auto coordinate_inclusive_scan_and_fold(const C1& co
 template<coordinate C1, weakly_congruent<C1> C2, class F1, class F2>
 constexpr auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& carry_in, const F1& combine, const F2& final_combine)
 {
-  if constexpr (unary_coordinate<C1>)
+  if constexpr (nullary_coordinate<C1> and nullary_coordinate<C2>)
   {
-    // terminal case 0: coord is unary, carry_in is either unary or nullary; call final_combine
-    // if carry_in is (), we map that to zero
-    if constexpr (nullary_coordinate<C2>)
-    {
-      return final_combine(0_c, detail::to_integral_like(coord));
-    }
-    else
-    {
-      return final_combine(detail::to_integral_like(carry_in), detail::to_integral_like(coord));
-    }
+    // terminal case 0: coord and carry_in are both (), return carry_in (which is ())
+    return carry_in;
+  }
+  if constexpr (unary_coordinate<C1> and unary_coordinate<C1>)
+  {
+    // terminal case 0: coord and carry_in are unary; call final_combine
+    return final_combine(detail::to_integral_like(carry_in), detail::to_integral_like(coord));
   }
   else if constexpr (equal_rank<C1,C2>)
   {
@@ -111,17 +99,16 @@ constexpr auto coordinate_inclusive_scan_with_final(const C1& coord, const C2& c
   }
   else
   {
-    // recursive case 2: coord is multiary and carry_in is either nullary or unary
-    static_assert(multiary_coordinate<C1>);
-    static_assert(nullary_coordinate<C2> or unary_coordinate<C2>);
+    // recursive case 2: coord is multiary and carry_in is unary
+    static_assert(multiary_coordinate<C1> and unary_coordinate<C2>);
 
     // Some scan-like operations on coordinates need to treat the final mode of the coordinate specially
-    // To accomplish this, we split the input coord into its front elements and its final element
+    // To accomplish this, we split the input coord into its front elements and its last element
 
     // We use a normal inclusive scan on the front portion. We pass the carry_in to that and receive 
     // the front portion of the result coordinate and a carry_out
     //
-    // Then, we recurse on the final element of coord, and pass the carry_out to that recursion
+    // Then, we recurse on the last element of coord, and pass the carry_out to that recursion
     //
     // Finally, we return the front result appended to the last result 
 

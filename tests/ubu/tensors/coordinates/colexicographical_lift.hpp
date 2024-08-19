@@ -8,7 +8,6 @@ void test_colexicographical_lift()
 {
   using namespace ubu;
 
-
   {
     // () -> ()
 
@@ -22,35 +21,11 @@ void test_colexicographical_lift()
   }
 
   {
-    // () -> ((), ())
+    // ((), ()) -> ((), ())
 
-    constexpr auto coord = std::tuple();
+    constexpr auto coord = std::tuple(std::tuple(), std::tuple());
     constexpr auto shape = std::tuple(std::tuple(), std::tuple());
     constexpr auto expected = std::tuple(std::tuple(), std::tuple());
-    constexpr auto result = colexicographical_lift(coord, shape);
-
-    static_assert(std::same_as<decltype(expected), decltype(result)>);
-    static_assert(expected == result);
-  }
-
-  {
-    // () -> int
-
-    constexpr auto coord = std::tuple();
-    constexpr auto shape = 10;
-    constexpr auto expected = 0_c;
-    constexpr auto result = colexicographical_lift(coord, shape);
-
-    static_assert(std::same_as<decltype(expected), decltype(result)>);
-    static_assert(expected == result);
-  }
-
-  {
-    // () -> (int,int)
-
-    constexpr auto coord = std::tuple();
-    constexpr auto shape = std::tuple(1,2);
-    constexpr auto expected = std::tuple(0,0);
     constexpr auto result = colexicographical_lift(coord, shape);
 
     static_assert(std::same_as<decltype(expected), decltype(result)>);
@@ -136,18 +111,6 @@ void test_colexicographical_lift()
     constexpr auto coord    = std::tuple(1, std::tuple(2, std::tuple(3,4)));
     constexpr auto shape    = std::tuple(std::pair(1,2), std::tuple(ubu::int3(2,2,2), std::tuple(3,ubu::int4(4,4,4,4))));
     constexpr auto expected = std::tuple(std::pair(0,1), std::tuple(ubu::int3(0,1,0), std::tuple(3,ubu::int4(0,1,0,0))));
-    constexpr auto result   = colexicographical_lift(coord, shape);
-
-    static_assert(std::same_as<decltype(expected), decltype(result)>);
-    static_assert(expected == result);
-  }
-
-  {
-    //  ((), (int, ((),int))) -> ((int,int), ((int,int,int), ((),(int,int,int,int))))
-
-    constexpr auto coord    = std::tuple(std::tuple(), std::tuple(2, std::tuple(std::tuple(),4)));
-    constexpr auto shape    = std::tuple(std::pair(1,2), std::tuple(ubu::int3(2,2,2), std::tuple(std::tuple(),ubu::int4(4,4,4,4))));
-    constexpr auto expected = std::tuple(std::pair(0,0), std::tuple(ubu::int3(0,1,0), std::tuple(std::tuple(),ubu::int4(0,1,0,0))));
     constexpr auto result   = colexicographical_lift(coord, shape);
 
     static_assert(std::same_as<decltype(expected), decltype(result)>);
