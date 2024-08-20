@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../utilities/integrals/integral_like.hpp"
 #include "../../coordinates/concepts/congruent.hpp"
 #include "../../coordinates/concepts/weakly_congruent.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
@@ -33,7 +34,7 @@ class identity_layout : public view_base
       return shape_;
     }
 
-    constexpr std::size_t size() const
+    constexpr integral_like auto size() const
     {
       return shape_size(shape());
     }
