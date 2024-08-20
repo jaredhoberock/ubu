@@ -74,14 +74,20 @@ class strided_layout : public view_base
       return stride_;
     }
 
-    // XXX consider whether the following functions need to be members
-
     constexpr R coshape() const
     {
-      // this check avoids a divide by zero in operator[] that occurs
-      // when one of the modes of shape is zero
-      if(size() != 0)
+      if constexpr (tuples::unit_like<S>)
       {
+        // we need this branch to handles () shape
+        // because we can't use integers with operator[] in that case
+
+        return operator[](zeros_v<S>);
+      }
+      else if(size() != 0)
+      {
+        // this branch avoids a divide by zero in operator[] that occurs
+        // when one of the modes of shape is zero
+
         R last_position = operator[](size() - 1);
         return coordinate_sum(last_position, ones_v<decltype(last_position)>);
       }
