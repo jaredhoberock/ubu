@@ -6,6 +6,7 @@
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
 #include <ubu/tensors/views/lattice.hpp>
+#include <ubu/tensors/views/layouts/identity_layout.hpp>
 #include <ubu/tensors/views/layouts/strided_layout.hpp>
 #include <ubu/tensors/views/slices/slice.hpp>
 
@@ -162,31 +163,56 @@ void test2()
   }
 }
 
-void test_singular()
+void test_scalar()
 {
   using namespace ns;
   using namespace std;
 
   {
-    lattice tensor(ns::int2(2,3));
+    // slice a lattice
 
-    auto s = slice(tensor, ns::int2(1,2));
+    constexpr lattice tensor(ns::int2(2,3));
 
-    static_assert(tensor_like_of_rank<decltype(s),1>);
-    assert(s[0] == ns::int2(1,2));
+    constexpr auto s = slice(tensor, ns::int2(1,2));
+
+    static_assert(tensor_like_of_rank<decltype(s),0>);
+
+    constexpr auto expected = ns::int2(1,2);
+
+    static_assert(expected == s[std::tuple()]);
   }
 
   {
     // try something complex
-    tuple shape(tuple(pair(1,2),3), tuple(4,5), tuple(6));
+    constexpr tuple shape(tuple(pair(1,2),3), tuple(4,5), tuple(6));
 
-    lattice tensor(shape);
+    constexpr lattice tensor(shape);
 
     // pick out the final element
-    auto s = slice(tensor, tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
+    constexpr auto s = slice(tensor, tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
 
-    static_assert(tensor_like_of_rank<decltype(s),1>);
-    assert(s[0] == tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
+    static_assert(tensor_like_of_rank<decltype(s),0>);
+
+    constexpr auto expected = tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5));
+
+    static_assert(expected == s[std::tuple()]);
+  }
+
+  {
+    // slice an identity_layout
+
+    constexpr int rows = 4;
+    constexpr int cols = 5;
+
+    constexpr auto matrix = identity_layout(ubu::int2(rows,cols));
+
+    constexpr auto s = slice(matrix, ubu::int2(2,3));
+
+    static_assert(tensor_like_of_rank<decltype(s),0>);
+
+    constexpr auto expected = ubu::int2(2,3);
+
+    static_assert(expected == s[std::tuple()]);
   }
 }
 
@@ -194,6 +220,6 @@ void test_slice()
 {
   test1();
   test2();
-  test_singular();
+  test_scalar();
 }
 
