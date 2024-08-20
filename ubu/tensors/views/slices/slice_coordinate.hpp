@@ -2,7 +2,6 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../../utilities/integrals/integral_like.hpp"
 #include "../../../utilities/tuples.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "slicer.hpp"
@@ -10,83 +9,76 @@
 #include <tuple>
 #include <utility>
 
+
 namespace ubu
 {
-namespace detail
-{
 
 
-// terminal case 1: katana is literally the underscore: keep the whole coordinate
-template<slicer C>
-constexpr C slice_coordinate_impl(const C& coord, detail::underscore_t)
-{
-  return coord;
-}
-
-// terminal case 2: katana does not contain an underscore, discard the whole coordinate
 template<slicer C, slicer_for<C> K>
-  requires slicer_without_underscore<K>
-constexpr std::tuple<> slice_coordinate_impl(const C&, const K&)
+constexpr semicoordinate auto slice_coordinate(const C& coord, const K& katana)
 {
-  return {};
-}
+  using namespace ubu;
 
-// recursive case: katana is nonscalar
-// this is a forward declaration for recursive_slice_coordinate_impl
-template<slicer C, nonscalar_slicer_for<C> K>
-  requires slicer_with_underscore<K>
-constexpr auto slice_coordinate_impl(const C& coord, const K& katana);
-
-template<tuples::tuple_like R, class MaybeUnderscore, class Arg>
-constexpr auto wrap_if_underscore_or_int(const Arg& arg)
-{
-  if constexpr(is_underscore_v<MaybeUnderscore> or integral_like<Arg>)
+  if constexpr (slicer_without_underscore<K>)
   {
-    return tuples::make_like<R>(arg);
+    // terminal case 0: katana contains no underscore, discard the whole coordinate
+    return std::tuple();
+  }
+  else if constexpr (detail::is_underscore_v<K>)
+  {
+    // terminal case 1: katana is literally the underscore, keep the whole coordinate
+    return coord;
   }
   else
   {
-    return arg;
+    static_assert(tuples::same_size<C,K>);
+
+    // recursive case: the katana contains at least one underscore and is a tuple
+
+    auto coord_and_katana = tuples::zip(coord,katana);
+
+    // the idea is to apply slice_coordinate(c_i,k_i) and concatenate all the results
+    auto result_tuple = tuples::fold_left(coord_and_katana, std::tuple(), [](const auto& prev_result, const auto& c_i_and_k_i)
+    {
+      const auto& [c_i, k_i] = c_i_and_k_i;
+
+      auto r_i = slice_coordinate(c_i,k_i);
+
+      // before concatenating r_i, we may need to wrap it in an extra tuple layer
+      // for the concatenation to work out. We do this if:
+      //
+      // 1. r_i is not a tuple, or
+      // 2. k_i is _, or
+      // 3. k_i contains an underscore and r is (), in this case a () element was selected by k_i
+      //
+      // Case 2. preserves the tuple structure of any tuples selected by k_i
+
+      auto maybe_wrap = [&]<class T>(const T& r)
+      {
+        if constexpr (not tuples::tuple_like<T> or
+                      detail::is_underscore_v<decltype(k_i)> or
+                      (slicer_with_underscore<decltype(k_i)> and tuples::unit_like<T>))
+        {
+          return tuples::make_like<C>(r);
+        }
+        else
+        {
+          return r;
+        }
+      };
+
+      return tuples::concatenate_like<C>(prev_result, maybe_wrap(r_i));
+    });
+
+    // finally, because it's really inconvenient for this function to return a (single_thing), we unwrap any singles we find
+    return tuples::unwrap_single(result_tuple);
   }
-}
-
-template<slicer C, nonscalar_slicer_for<C> K, std::size_t... I>
-constexpr auto recursive_slice_coordinate_impl(std::index_sequence<I...>, const C& coord, const K& katana)
-{
-  // we apply slice_coordinate to each element of coord & katana and we want to concatenate all the results
-  // we also want to preserve the tuple structure of any tuples that were selected by underscore at element I
-  //
-  // so, if element I of katana is an underscore, we wrap that result in an extra tuple layer to preserve the tuple in the concatenation
-  // we also need to wrap slice_coordinate's result if it returns a raw integer for tuples::concatenate to work
-
-  // finally, because it's really inconvenient for this function to return a (single_thing), we unwrap any singles we find
-
-  auto result_tuple = tuples::concatenate_like<C>(wrap_if_underscore_or_int<C,std::tuple_element_t<I,K>>(slice_coordinate_impl(get<I>(coord), get<I>(katana)))...);
-  return tuples::unwrap_single(result_tuple);
-}
-
-
-// recursive case: katana is nonscalar
-template<slicer C, nonscalar_slicer_for<C> K>
-  requires slicer_with_underscore<K>
-constexpr auto slice_coordinate_impl(const C& coord, const K& katana)
-{
-  return recursive_slice_coordinate_impl(tuples::indices_v<K>, coord, katana);
-}
-
-
-} // end detail
-
-
-template<slicer C, slicer_for<C> K>
-constexpr slicer auto slice_coordinate(const C& coord, const K& katana)
-{
-  return detail::slice_coordinate_impl(coord, katana);
 }
 
 
 template<slicer C, slicer_for<C> K>
 using slice_coordinate_result_t = decltype(slice_coordinate(std::declval<C>(), std::declval<K>()));
+
 
 } // end ubu
 
