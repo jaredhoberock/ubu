@@ -44,7 +44,7 @@ constexpr slicer auto unslice_coordinate_impl(const K& katana, const Cs&... cs)
     t::tuple_like auto katana_tail = t::drop_first(katana);
 
     // count the number of underscores in katana's head
-    constexpr std::size_t n = underscore_count_v<decltype(katana_head)>;
+    constexpr std::size_t n = detail::underscore_count_v<decltype(katana_head)>;
 
     // tuple the cs
     t::tuple_like auto tupled_cs = std::make_tuple(cs...);
@@ -75,8 +75,8 @@ constexpr slicer auto unslice_coordinate_impl(const K& katana, const Cs&... cs)
 } // end detail
 
 
-template<ubu::slicer C, ubu::unslicer_for<C> K>
-constexpr ubu::slicer auto unslice_coordinate(const C& coord, const K& katana)
+template<slicer C, unslicer_for<C> K>
+constexpr slicer auto unslice_coordinate(const C& coord, const K& katana)
 {
   // we may need to unpack coord into its constituent elements when calling the impl
 
@@ -85,24 +85,18 @@ constexpr ubu::slicer auto unslice_coordinate(const C& coord, const K& katana)
     // katana is literally the underscore, just return coord
     return coord;
   }
-  else if constexpr(coordinate<C> and rank_v<C> == 1)
+  else if constexpr(rank_v<C> <= 1)
   {
-    // we don't unpack rank-1 coordinates (even if they are singles) when calling the impl
-    return detail::unslice_coordinate_impl(katana, coord);
-  }
-  else if constexpr(tuples::tuple_like<C> and tuples::size_v<C> == 1)
-  {
-    // we don't unpack singles when calling the impl
-    // an example of a single that is not a coordinate would be (_)
+    // when calling the impl,
+    // we don't unpack rank-0 or rank-1 coordinates
+    // even when they are singles such as (10)
     return detail::unslice_coordinate_impl(katana, coord);
   }
   else
   {
-    // if coord's rank is not 1 then it must be a tuple
-    // either it is empty or rank > 1
-    static_assert(tuples::tuple_like<C>);
+    // coord is a tuple
 
-    // unpack the tuple and call the implementation
+    // unpack coord and call the implementation
     return tuples::unpack_and_invoke(coord, [&](const auto&... cs)
     {
       return detail::unslice_coordinate_impl(katana, cs...);
