@@ -107,7 +107,7 @@ class composed_view : public view_base
       return a();
     }
 
-    template<slicer_for<coordinate_type> K>
+    template<slicer_for<shape_type> K>
     constexpr view auto slice(const K& katana) const
     {
       return detail::invoke_compose(a_, ubu::slice(b_, katana));
