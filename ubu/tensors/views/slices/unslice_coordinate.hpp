@@ -3,7 +3,6 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../utilities/tuples.hpp"
-#include "../../coordinates/concepts/coordinate.hpp"
 #include "slicer.hpp"
 #include "underscore.hpp"
 #include "unslicer.hpp"
