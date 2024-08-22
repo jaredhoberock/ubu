@@ -61,11 +61,10 @@ struct dispatch_all
   template<contiguous_vector_like V>
     requires (not has_all_member_function<V&&>
               and not has_all_free_function<V&&>
-              and not view<std::remove_cvref_t<V&&>>)
+              and not view<std::remove_cvref_t<V&&>>
+              and not std::is_rvalue_reference_v<V&&>)
   constexpr view auto operator()(V&& vec) const
   {
-    static_assert(not std::is_rvalue_reference_v<V&&>, "all: temporary vector that is not also a view would produce a dangling view.");
-
     return fancy_span(data(std::forward<V>(vec)), size(std::forward<V>(vec)));
   }
 

@@ -18,6 +18,7 @@
 #include "all.hpp"
 #include "compose.hpp"
 #include "slices/slice.hpp"
+#include "slices/slicer.hpp"
 #include "view_base.hpp"
 
 
@@ -30,6 +31,11 @@ namespace detail
 // declare detail::invoke_compose for composed_view's use
 template<class... Args>
 constexpr view auto invoke_compose(Args&&... args);
+
+// composed_view and slice have a cyclic dependency and can't use each other directly
+// declare detail::invoke_slice for composed_view's use
+template<class... Args>
+constexpr view auto invoke_slice(Args&&... args);
 
 } // end detail
 
@@ -110,7 +116,14 @@ class composed_view : public view_base
     template<slicer_for<shape_type> K>
     constexpr view auto slice(const K& katana) const
     {
-      return detail::invoke_compose(a_, ubu::slice(b_, katana));
+      return detail::invoke_compose(a_, detail::invoke_slice(b_, katana));
+    }
+
+    template<class C>
+      requires composable<composed_view,C&&>
+    constexpr view auto compose(C&& c) const
+    {
+      return detail::invoke_compose(a_, detail::invoke_compose(b_, std::forward<C>(c)));
     }
 
   private:

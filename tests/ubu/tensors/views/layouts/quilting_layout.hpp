@@ -96,8 +96,8 @@ void test_quilting_layout()
         assert(ubu::int2(2,5) == shape(s));
 
         using expected_slice_type = quilting_layout<
-          sliced_view<identity_layout<ubu::int2>, std::tuple<ubu::detail::underscore_t,int>>,
-          sliced_view<identity_layout<ubu::int2>, std::tuple<int,ubu::detail::underscore_t>>
+          slicing_layout<int, std::tuple<ubu::detail::underscore_t,int>, ubu::int2>,
+          slicing_layout<int, std::tuple<int,ubu::detail::underscore_t>, ubu::int2>
         >;
 
         static_assert(std::same_as<expected_slice_type, decltype(s)>);

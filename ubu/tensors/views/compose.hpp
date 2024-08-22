@@ -4,6 +4,8 @@
 
 #include "../concepts/composable.hpp"
 #include "../concepts/tensor_like.hpp"
+#include "../concepts/viewable_tensor_like.hpp"
+#include "../coordinates/concepts/congruent.hpp"
 #include "../traits/tensor_element.hpp"
 #include "all.hpp"
 #include "composed_view.hpp"
@@ -28,8 +30,13 @@ template<class R, class A, class B>
 concept legal_composition =
   view<R>
   and composable<A,B>
-  and std::same_as<shape_t<R>, shape_t<B>>
+  and congruent<shape_t<R>, shape_t<B>>
   and std::same_as<tensor_element_t<R>, element_t<A, tensor_element_t<B>>>
+;
+
+template<class T>
+concept viewable_tensor_like_or_not_tensor_like =
+  viewable_tensor_like<T> or not tensor_like<T>
 ;
 
 template<class A, class B>
@@ -61,16 +68,14 @@ struct dispatch_compose
     return compose(std::forward<A>(a), std::forward<B>(b));
   }
 
-  template<class A, tensor_like B>
+  template<viewable_tensor_like_or_not_tensor_like A, tensor_like B>
     requires (not has_compose_member_function<A&&,B&&>
               and not has_compose_free_function<A&&,B&&>
               and composable<A,B>)
   constexpr view auto operator()(A&& a, B&& b) const
   {
-    if constexpr(tensor_like<A>)
+    if constexpr(viewable_tensor_like<A>)
     {
-      // check for a dangling view
-      static_assert(not std::is_rvalue_reference_v<A&&> or view<A>, "compose: composition with temporary tensor A that is not also a view would produce a dangling view.");
 
       return detail::make_composed_view(all(std::forward<A>(a)), all(std::forward<B>(b)));
     }

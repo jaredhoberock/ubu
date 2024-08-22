@@ -10,7 +10,6 @@
 #include "../../shapes/shape.hpp"
 #include "../../shapes/shape_size.hpp"
 #include "../slices/slice.hpp"
-#include "../slices/sliceable.hpp"
 #include "../slices/slicer.hpp"
 #include "../view_base.hpp"
 #include "concepts/coshaped_layout.hpp"

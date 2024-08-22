@@ -2,17 +2,18 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "slice.hpp"
+#include "../../concepts/viewable_tensor_like.hpp"
+#include "slicer.hpp"
 #include <utility>
 
 namespace ubu
 {
 
 template<class T, class K>
-concept sliceable = requires(T t, K k)
-{
-  slice(std::forward<T>(t), std::forward<K>(k));
-};
+concept sliceable_with =
+  viewable_tensor_like<T>
+  and slicer_for<K,tensor_shape_t<T>>
+;
 
 } // end ubu
 
