@@ -104,6 +104,10 @@ constexpr slicer auto unslice_coordinate(const C& coord, const K& katana)
 }
 
 
+template<slicer C, unslicer_for<C> K>
+using unslice_coordinate_result_t = decltype(unslice_coordinate(std::declval<C>(),std::declval<K>()));
+
+
 } // end ubu
 
 #include "../../../detail/epilogue.hpp"
