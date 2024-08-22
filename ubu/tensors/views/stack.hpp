@@ -30,7 +30,7 @@ namespace ubu
 {
 
 
-template<std::size_t axis_, view A, view B, class R = std::common_type_t<tensor_reference_t<A>, tensor_reference_t<B>>>
+template<std::size_t axis_, view A, view B, class R = std::common_reference_t<tensor_reference_t<A>, tensor_reference_t<B>>>
   requires (axis_ <= tensor_rank_v<A> and same_tensor_rank<A,B>)
 class stacked_view;
 
@@ -100,7 +100,7 @@ class stacked_view : public view_base
 
     template<slicer_for<shape_type> K, class A_ = A, class B_ = B>
       requires std::same_as<A_,B_>
-    constexpr tensor_like auto slice(const K& katana) const
+    constexpr view auto slice(const K& katana) const
     {
       // when A and B are the same type, and katana does not cut the stacking axis,
       // (i.e., the slice is completely contained within A or B)
