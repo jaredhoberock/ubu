@@ -61,7 +61,7 @@ void test_colexicographical_lift()
 
     constexpr auto coord = std::tuple(5);
     constexpr auto shape = 10;
-    constexpr auto expected = 5;
+    constexpr auto expected = std::tuple(5);
 
     constexpr auto result = colexicographical_lift(coord, shape);
 
