@@ -10,7 +10,7 @@ namespace ubu
 {
 
 template<tensor_like T>
-using tensor_reference_t = decltype(element(std::declval<T>(), std::declval<tensor_coordinate_t<T>>()));
+using tensor_reference_t = element_reference_t<T, tensor_coordinate_t<T>>;
 
 } // end ubu
 
