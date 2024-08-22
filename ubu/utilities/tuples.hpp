@@ -137,6 +137,10 @@ template<tuple_like_of_size_at_least<3> T>
 using third_t = element_t<2,T>;
 
 
+template<tuple_like_of_size_at_least<1> T>
+using last_t = element_t<size_v<T>-1,T>;
+
+
 template<tuple_like T>
 constexpr auto indices_v = std::make_index_sequence<size_v<T>>{};
 
