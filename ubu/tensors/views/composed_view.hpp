@@ -119,13 +119,6 @@ class composed_view : public view_base
       return detail::invoke_compose(a_, detail::invoke_slice(b_, katana));
     }
 
-    template<class C>
-      requires composable<composed_view,C&&>
-    constexpr view auto compose(C&& c) const
-    {
-      return detail::invoke_compose(a_, detail::invoke_compose(b_, std::forward<C>(c)));
-    }
-
   private:
     A a_;
     B b_;

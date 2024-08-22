@@ -3,11 +3,14 @@
 #include "../../detail/prologue.hpp"
 
 #include "../concepts/composable.hpp"
+#include "../concepts/decomposable.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/viewable_tensor_like.hpp"
 #include "all.hpp"
 #include "composed_view.hpp"
+#include "decompose.hpp"
 #include "detail/view_of_composition.hpp"
+#include "composed_view.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -63,9 +66,19 @@ struct dispatch_compose
               and composable<A,B>)
   constexpr view_of_composition<A&&,B&&> auto operator()(A&& a, B&& b) const
   {
-    if constexpr(viewable_tensor_like<A>)
+    if constexpr (decomposable<A&&>)
     {
+      // decompose a into left & right views
+      auto [left, right] = decompose(std::forward<A>(a));
 
+      // get a nice name for this CPO
+      auto compose = *this;
+      
+      // recursively compose A's right part with b and compose that result with A's left part
+      return compose(left, compose(right, std::forward<B>(b)));
+    }
+    else if constexpr(viewable_tensor_like<A>)
+    {
       return detail::make_composed_view(all(std::forward<A>(a)), all(std::forward<B>(b)));
     }
     else
