@@ -21,7 +21,7 @@ namespace detail
 
 
 template<class R, class T, class K>
-concept legal_slice =
+concept view_of_slice =
   view<R>
   and sliceable_with<T,K>
   and congruent<tensor_shape_t<R>, slice_coordinate_result_t<tensor_shape_t<T>,K>>
@@ -32,13 +32,13 @@ concept legal_slice =
 template<class T, class K>
 concept has_slice_member_function = requires(T arg, K katana)
 {
-  { arg.slice(katana) } -> legal_slice<T,K>;
+  { arg.slice(katana) } -> view_of_slice<T,K>;
 };
 
 template<class T, class K>
 concept has_slice_free_function = requires(T arg, K katana)
 {
-  { slice(arg,katana) } -> legal_slice<T,K>;
+  { slice(arg,katana) } -> view_of_slice<T,K>;
 };
 
 
@@ -59,7 +59,7 @@ struct dispatch_slice
 {
   template<class A, class K>
     requires has_slice_member_function<A&&,K&&>
-  constexpr view auto operator()(A&& arg, K&& katana) const
+  constexpr view_of_slice<A,K> auto operator()(A&& arg, K&& katana) const
   {
     return std::forward<A>(arg).slice(std::forward<K>(katana));
   }
@@ -67,7 +67,7 @@ struct dispatch_slice
   template<class A, class K>
     requires (not has_slice_member_function<A&&,K&&>
               and has_slice_free_function<A&&,K&&>)
-  constexpr view auto operator()(A&& arg, K&& katana) const
+  constexpr view_of_slice<A,K> auto operator()(A&& arg, K&& katana) const
   {
     return slice(std::forward<A>(arg), std::forward<K>(katana));
   }
@@ -75,7 +75,7 @@ struct dispatch_slice
   template<class K, sliceable_with<K> A>
     requires (not has_slice_member_function<A&&,K>
               and not has_slice_free_function<A&&,K>)
-  constexpr view auto operator()(A&& arg, K katana) const
+  constexpr view_of_slice<A,K> auto operator()(A&& arg, K katana) const
   {
     auto result_coshape = shape(arg);
     auto result_shape = slice_coordinate(result_coshape, katana);

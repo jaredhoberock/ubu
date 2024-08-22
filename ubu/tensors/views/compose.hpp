@@ -27,7 +27,7 @@ constexpr view auto make_composed_view(A, B);
 
 
 template<class R, class A, class B>
-concept legal_composition =
+concept view_of_composition =
   view<R>
   and composable<A,B>
   and congruent<shape_t<R>, shape_t<B>>
@@ -42,20 +42,20 @@ concept viewable_tensor_like_or_not_tensor_like =
 template<class A, class B>
 concept has_compose_member_function = requires(A a, B b)
 {
-  { a.compose(b) } -> legal_composition<A,B>;
+  { a.compose(b) } -> view_of_composition<A,B>;
 };
 
 template<class A, class B>
 concept has_compose_free_function = requires(A a, B b)
 {
-  { compose(a,b) } -> legal_composition<A,B>;
+  { compose(a,b) } -> view_of_composition<A,B>;
 };
 
 struct dispatch_compose
 {
   template<class A, class B>
     requires has_compose_member_function<A&&,B&&>
-  constexpr view auto operator()(A&& a, B&& b) const
+  constexpr view_of_composition<A&&,B&&> auto operator()(A&& a, B&& b) const
   {
     return std::forward<A>(a).compose(std::forward<B>(b));
   }
@@ -63,7 +63,7 @@ struct dispatch_compose
   template<class A, class B>
     requires (not has_compose_member_function<A&&,B&&>
               and has_compose_free_function<A&&,B&&>)
-  constexpr view auto operator()(A&& a, B&& b) const
+  constexpr view_of_composition<A&&,B&&> auto operator()(A&& a, B&& b) const
   {
     return compose(std::forward<A>(a), std::forward<B>(b));
   }
@@ -72,7 +72,7 @@ struct dispatch_compose
     requires (not has_compose_member_function<A&&,B&&>
               and not has_compose_free_function<A&&,B&&>
               and composable<A,B>)
-  constexpr view auto operator()(A&& a, B&& b) const
+  constexpr view_of_composition<A&&,B&&> auto operator()(A&& a, B&& b) const
   {
     if constexpr(viewable_tensor_like<A>)
     {
