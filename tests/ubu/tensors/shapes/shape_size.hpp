@@ -11,6 +11,10 @@ void test_shape_size()
 {
   namespace ns = ubu;
 
+  // 0D spaces
+  static_assert(1 == ns::shape_size(std::tuple()));
+  static_assert(1 == ns::shape_size(std::array<int,0>()));
+
   // 1D spaces
   assert(13 == ns::shape_size(13));
   assert(7 == ns::shape_size(7));

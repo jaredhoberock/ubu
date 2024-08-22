@@ -4,6 +4,9 @@
 #include "../../utilities/tuples.hpp"
 #include "../concepts/composable.hpp"
 #include "../concepts/view.hpp"
+#include "../concepts/viewable_tensor_like.hpp"
+#include "all.hpp"
+#include "detail/view_of_composition.hpp"
 #include <utility>
 
 namespace ubu
@@ -11,28 +14,24 @@ namespace ubu
 namespace detail
 {
 
-template<class P>
-concept composable_pair =
+template<class P, class C>
+concept decomposition_of =
   tuples::pair_like<P>
   and composable<tuples::first_t<P>,tuples::second_t<P>>
+  and viewable_tensor_like<C>
+  and view_of_composition<all_t<C>,tuples::first_t<P>,tuples::second_t<P>>
 ;
 
 template<class T>
 concept has_decompose_member_function = requires(T tensor)
 {
-  { tensor.decompose() } -> composable_pair;
-
-  // XXX should also require that the element type of the A and the element type of T are the same
-  // XXX should also require that the shape of B and the shape of T are congruent
+  { tensor.decompose() } -> decomposition_of<T>;
 };
 
 template<class T>
 concept has_decompose_free_function = requires(T tensor)
 {
-  { decompose(tensor) } -> composable_pair;
-
-  // XXX should also require that the element type of the A and the element type of T are the same
-  // XXX should also require that the shape of B and the shape of T are congruent
+  { decompose(tensor) } -> decomposition_of<T>;
 };
 
 
@@ -40,7 +39,7 @@ struct dispatch_decompose
 {
   template<class T>
     requires has_decompose_member_function<T&&>
-  constexpr composable_pair auto operator()(T&& tensor) const
+  constexpr decomposition_of<T&&> auto operator()(T&& tensor) const
   {
     return std::forward<T>(tensor).decompose();
   }
@@ -48,7 +47,7 @@ struct dispatch_decompose
   template<class T>
     requires (not has_decompose_member_function<T&&>
               and has_decompose_free_function<T&&>)
-  constexpr composable_pair auto operator()(T&& tensor) const
+  constexpr decomposition_of<T&&> auto operator()(T&& tensor) const
   {
     return decompose(std::forward<T>(tensor));
   }

@@ -12,6 +12,7 @@
 #include <ubu/tensors/views/lattice.hpp>
 #include <ubu/tensors/views/layouts/compact_left_major_layout.hpp>
 #include <ubu/tensors/views/layouts/compact_right_major_layout.hpp>
+#include <ubu/tensors/views/slices/slice.hpp>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -81,7 +82,7 @@ void test_slice()
 
     array<int,3> expected{{3,4,5}};
 
-    auto column_1 = A.slice(pair(_,1));
+    auto column_1 = slice(A, pair(_,1));
 
     static_assert(std::same_as<decltype(column_1), composed_view<int*, strided_layout<int, constant<1>>>>);
 
@@ -103,7 +104,7 @@ void test_slice()
 
     array<int,3> expected{{3,4,5}};
 
-    auto column_1 = A.slice(pair(_,1));
+    auto column_1 = slice(A, pair(_,1));
 
     static_assert(std::same_as<decltype(column_1), composed_view<span<int>, strided_layout<int, constant<1>>>>);
 

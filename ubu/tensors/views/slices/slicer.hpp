@@ -5,6 +5,7 @@
 #include "../../../utilities/integrals/integral_like.hpp"
 #include "../../../utilities/tuples.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
+#include "../../coordinates/concepts/semicoordinate.hpp"
 #include "underscore.hpp"
 #include <tuple>
 #include <type_traits>

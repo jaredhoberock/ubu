@@ -26,16 +26,16 @@ constexpr T convert_shape(const S& shape)
   return coordinate_cast<T>(shape);
 }
 
-// downcast to scalar
-template<scalar_coordinate T, nonscalar_coordinate S>
+// downcast to unary_coordinate
+template<unary_coordinate T, multiary_coordinate S>
 constexpr T convert_shape(const S& shape)
 {
   return coordinate_cast<T>(shape_size(shape));
 }
 
-// upcast from scalar
+// upcast from unary_coordinate
 // when the shape is an integral, factor it and recurse
-template<nonscalar_coordinate T, scalar_coordinate S>
+template<multiary_coordinate T, unary_coordinate S>
 constexpr T convert_shape(const S& shape)
 {
   // we need to go from a rank 1 shape to a type with higher rank
@@ -51,9 +51,9 @@ constexpr T convert_shape(const S& shape)
   });
 }
 
-// upcast from nonscalar case 1
+// upcast from multiary_coordinate case 1
 // when weakly_congruent<S,T>, recurse across dimensions
-template<nonscalar_coordinate T, nonscalar_coordinate S>
+template<multiary_coordinate T, multiary_coordinate S>
   requires (not congruent<T,S> and weakly_congruent<S,T>)
 constexpr T convert_shape(const S& shape)
 {
@@ -63,9 +63,9 @@ constexpr T convert_shape(const S& shape)
   });
 }
 
-// upcast from nonscalar case 2
+// upcast from mulitary_coordinate case 2
 // when not weakly_congruent<S,T>, collapse the shape to an integer and recurse
-template<nonscalar_coordinate T, nonscalar_coordinate S>
+template<multiary_coordinate T, multiary_coordinate S>
   requires (not congruent<T,S> and not weakly_congruent<S,T>)
 constexpr T convert_shape(const S& shape)
 {

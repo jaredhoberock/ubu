@@ -10,19 +10,20 @@
 namespace ubu
 {
 
-template<scalar_coordinate C1, scalar_coordinate C2>
-constexpr bool colexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
+template<coordinate L, congruent<L> R>
+constexpr bool colexicographical_compare_coordinates(const L& lhs, const R& rhs)
 {
-  return detail::to_integral_like(lhs) < detail::to_integral_like(rhs);
-}
-
-template<nonscalar_coordinate C1, congruent<C1> C2>
-constexpr bool colexicographical_compare_coordinates(const C1& lhs, const C2& rhs)
-{
-  return tuples::colexicographical_compare(lhs, rhs, [](const auto& l, const auto& r)
+  if constexpr (unary_coordinate<L>)
   {
-    return colexicographical_compare_coordinates(l,r);
-  });
+    return detail::to_integral_like(lhs) < detail::to_integral_like(rhs);
+  }
+  else
+  {
+    return tuples::colexicographical_compare(lhs, rhs, [](const auto& l, const auto& r)
+    {
+      return colexicographical_compare_coordinates(l,r);
+    });
+  }
 }
 
 
@@ -31,8 +32,8 @@ namespace detail
 
 struct colex_less_t
 {
-  template<coordinate C1, congruent<C1> C2>
-  constexpr bool operator()(const C1& lhs, const C2& rhs) const
+  template<coordinate L, congruent<L> R>
+  constexpr bool operator()(const L& lhs, const R& rhs) const
   {
     return colexicographical_compare_coordinates(lhs, rhs);
   }
@@ -40,7 +41,7 @@ struct colex_less_t
 
 } // end detail
 
-constexpr detail::colex_less_t colex_less{};
+inline constexpr detail::colex_less_t colex_less;
 
 
 } // end ubu

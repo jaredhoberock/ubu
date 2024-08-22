@@ -7,44 +7,36 @@
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/equal_rank.hpp"
 #include "../../../coordinates/detail/to_integral_like.hpp"
-#include <concepts>
 
 
 namespace ubu::detail
 {
 
 
-template<scalar_coordinate A, scalar_coordinate B>
-constexpr integral_like auto compose_strides(const A& a, const B& b)
-{
-  return to_integral_like(a) * to_integral_like(b);
-}
-
-
-template<nonscalar_coordinate A, nonscalar_coordinate B>
-  requires equal_rank<A,B>
-constexpr congruent<B> auto compose_strides(const A& a, const B& b);
-
-
-template<coordinate A, nonscalar_coordinate B>
-  requires (rank_v<A> < rank_v<B>)
+template<coordinate A, coordinate B>
+  requires weakly_congruent<A,B>
 constexpr congruent<B> auto compose_strides(const A& a, const B& b)
 {
-  return tuples::zip_with(b, [&](const auto& bi)
+  if constexpr (unary_coordinate<A> and unary_coordinate<B>)
   {
-    return compose_strides(a, bi);
-  });
-}
-
-
-template<nonscalar_coordinate A, nonscalar_coordinate B>
-  requires equal_rank<A,B>
-constexpr congruent<B> auto compose_strides(const A& a, const B& b)
-{
-  return tuples::zip_with(a, b, [](const auto& ai, const auto& bi)
+    return to_integral_like(a) * to_integral_like(b);
+  }
+  else if constexpr (rank_v<A> < rank_v<B>)
   {
-    return compose_strides(ai, bi);
-  });
+    return tuples::zip_with(b, [&](const auto& bi)
+    {
+      return compose_strides(a, bi);
+    });
+  }
+  else
+  {
+    static_assert(equal_rank<A,B>);
+
+    return tuples::zip_with(a, b, [](const auto& ai, const auto& bi)
+    {
+      return compose_strides(ai,bi);
+    });
+  }
 }
 
 

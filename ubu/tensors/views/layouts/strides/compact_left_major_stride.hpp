@@ -22,36 +22,38 @@ namespace detail
 {
 
 
-template<scalar_coordinate D, scalar_coordinate S>
-constexpr integral_like auto compact_left_major_stride_impl(const D& current_stride, const S&)
+template<coordinate D, coordinate S>
+constexpr congruent<S> auto compact_left_major_stride_impl(const D& prev_product, const S& shape)
 {
-  return to_integral_like(current_stride);
-}
-
-template<nonscalar_coordinate D, nonscalar_coordinate S>
-  requires equal_rank<D,S>
-constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stride, const S& shape)
-{
-  return tuples::zip_with(current_stride, shape, [](const auto& cs, const auto& s)
+  if constexpr (unary_coordinate<D>)
   {
-    return compact_left_major_stride_impl(cs, s);
-  });
-}
+    if constexpr (unary_coordinate<S>)
+    {
+      return to_integral_like(prev_product);
+    }
+    else
+    {
+      auto unit = tuples::make_like<S>();
+      auto init = std::pair(prev_product, unit);
 
-template<scalar_coordinate D, nonscalar_coordinate S>
-constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stride, const S& shape)
-{
-  auto init = std::pair(current_stride, std::tuple());
+      auto [_,result] = tuples::fold_left(shape, init, [](auto prev, auto s)
+      {
+        auto [prev_product, prev_result] = prev;
+        auto result = tuples::append_like<S>(prev_result, compact_left_major_stride_impl(prev_product, s));
 
-  auto [_,result] = tuples::fold_left(shape, init, [](auto prev, auto s)
+        return std::pair(prev_product * shape_size(s), result);
+      });
+
+      return result;
+    }
+  }
+  else
   {
-    auto [current_stride, prev_result] = prev;
-    auto result = tuples::append_like<S>(prev_result, compact_left_major_stride_impl(current_stride, s));
-
-    return std::pair{current_stride * shape_size(s), result};
-  });
-
-  return result;
+    return tuples::zip_with(prev_product, shape, [](const auto& p, const auto& s)
+    {
+      return compact_left_major_stride_impl(p, s);
+    });
+  }
 }
 
 
@@ -61,8 +63,6 @@ constexpr congruent<S> auto compact_left_major_stride_impl(const D& current_stri
 template<coordinate S>
 constexpr congruent<S> auto compact_left_major_stride(const S& shape)
 {
-  // XXX ideally, the type of the constant we use here should
-  //     be the same type as coordinate_element_t<0,S>
   return detail::compact_left_major_stride_impl(1_c, shape);
 }
 

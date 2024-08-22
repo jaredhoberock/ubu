@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../utilities/tuples.hpp"
 #include "../detail/to_integral_like.hpp"
 #include "../element.hpp"
 #include "../traits/rank.hpp"
@@ -13,72 +14,80 @@
 
 namespace ubu
 {
-
-
-// XXX we might need to also insist that zeros_v<T> exist and its result be integral_like
-//     the type of zeros_v<T> is allowed to differ from T, but it must be comparable to T
-template<class T>
-concept scalar_coordinate =
-  requires(T coord)
-  {
-    detail::to_integral_like(coord);
-  }
-;
-
-
 namespace detail
 {
 
 
 template<class T>
-struct is_nonscalar_coordinate;
-
-
-// check T for elements 0... N-1, and make sure that each one is itself a coordinate
-template<class T, std::size_t... I>
-constexpr bool has_elements_that_are_coordinates(std::index_sequence<I...>)
+constexpr bool is_coordinate()
 {
-  return (... and (scalar_coordinate<std::tuple_element_t<I,T>> or is_nonscalar_coordinate<std::tuple_element_t<I,T>>::value));
-}
-
-
-template<class T>
-concept static_rank_greater_than_one =
-  static_rank<T>
-  and (rank_v<T> > 1)
-;
-
-
-template<class T>
-struct is_nonscalar_coordinate
-{
-  template<class U = T>
-    requires static_rank_greater_than_one<U>
-  static constexpr bool test(int)
+  if constexpr (integral_like<T>)
   {
-    return has_elements_that_are_coordinates<std::remove_cvref_t<U>>(std::make_index_sequence<rank_v<U>>{});
+    return true;
   }
+  else if constexpr (tuples::tuple_like<T>)
+  {
+    // note that this case handles both unit_like and tuples of a single integral_like
 
-  static constexpr bool test(...)
+    auto all_elements_are_coordinates = []<std::size_t... I>(std::index_sequence<I...>)
+    {
+      return (... and is_coordinate<tuples::element_t<I,T>>());
+    };
+
+    return all_elements_are_coordinates(tuples::indices_v<T>);
+  }
+  else
   {
     return false;
   }
-
-  static constexpr bool value = test(0);
-};
+}
 
 
 } // end detail
 
 
-// nonscalar_coordinate is a recursive concept, so we need to implement it with traditional SFINAE techniques
 template<class T>
-concept nonscalar_coordinate = detail::is_nonscalar_coordinate<T>::value;
+concept coordinate = detail::is_coordinate<T>();
 
 
-// a coordinate is either a scalar or nonscalar coordinate
 template<class T>
-concept coordinate = scalar_coordinate<T> or nonscalar_coordinate<T>;
+concept nullary_coordinate =
+  coordinate<T>
+  and rank_v<T> == 0
+;
+
+
+// XXX ideally, we wouldn't need this concept
+//     we're using it to document interfaces
+//     for which we're unsure can support 0-rank shapes/coordinates
+template<class T>
+concept nonnullary_coordinate =
+  coordinate<T>
+  and (not nullary_coordinate<T>)
+;
+
+
+template<class T>
+concept unary_coordinate =
+  coordinate<T>
+  and rank_v<T> == 1
+;
+
+// XXX eliminate this name eventually
+template<class T>
+concept scalar_coordinate = unary_coordinate<T>;
+
+
+template<class T>
+concept multiary_coordinate = 
+  coordinate<T>
+  and (rank_v<T> > 1)
+;
+
+// XXX eliminate this name eventually
+template<class T>
+concept nonscalar_coordinate = multiary_coordinate<T>;
+
 
 template<class... Types>
 concept coordinates = (... and coordinate<Types>);

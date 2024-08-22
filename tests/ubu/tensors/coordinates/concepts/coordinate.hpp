@@ -11,6 +11,10 @@ namespace ns = ubu;
 void test_coordinate()
 {
   // test some coordinates
+  static_assert(ns::coordinate<std::tuple<>>);
+  static_assert(ns::coordinate<std::tuple<>&>);
+  static_assert(ns::coordinate<std::array<int,0>>);
+  static_assert(ns::coordinate<const std::tuple<>&>);
   static_assert(ns::coordinate<int>);
   static_assert(ns::coordinate<unsigned int>);
   static_assert(ns::coordinate<std::size_t>);
