@@ -7,7 +7,7 @@
 #include "../../concepts/view.hpp"
 #include "../../concepts/composable.hpp"
 #include "../../shapes/shape.hpp"
-#include "../../traits/tensor_element.hpp"
+#include "../../traits/tensor_reference.hpp"
 #include <concepts>
 
 namespace ubu::detail
@@ -19,7 +19,7 @@ concept view_of_composition =
   view<R>
   and composable<A,B>
   and congruent<shape_t<R>, shape_t<B>>
-  and std::same_as<tensor_element_t<R>, element_t<A, tensor_element_t<B>>>
+  and std::same_as<tensor_reference_t<R>, element_reference_t<A, tensor_reference_t<B>>>
 ;
 
 

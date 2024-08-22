@@ -35,7 +35,10 @@ inline constexpr detail::dispatch_element element;
 
 
 template<class T, class C>
-using element_t = std::remove_cvref_t<decltype(element(std::declval<T>(), std::declval<C>()))>;
+using element_reference_t = decltype(element(std::declval<T>(), std::declval<C>()));
+
+template<class T, class C>
+using element_t = std::remove_cvref_t<element_reference_t<T,C>>;
 
 
 } // end ubu
