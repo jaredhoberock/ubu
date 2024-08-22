@@ -43,6 +43,10 @@ concept has_slice_free_function = requires(T arg, K katana)
 };
 
 
+template<class T, class K>
+concept has_slice_customization = has_slice_member_function<T,K> or has_slice_free_function<T,K>;
+
+
 // slice and slicing_layout have a cyclic dependency and can't use each other directly
 // declare detail::make_slicing_layout for slice's use
 template<coordinate S, slicer K, coordinate R>
@@ -50,32 +54,24 @@ template<coordinate S, slicer K, coordinate R>
 constexpr view auto make_slicing_layout(S shape, K katana, R coshape);
 
 
-// slice and compose have a cyclic dependency and can't use each other directly
-// declare detail::invoke_compose for slice's use
-template<class... Args>
-constexpr view auto invoke_compose(Args&&... args);
-
-
 struct dispatch_slice
 {
   template<class A, class K>
-    requires has_slice_member_function<A&&,K&&>
+    requires has_slice_customization<A&&,K&&>
   constexpr view_of_slice<A,K> auto operator()(A&& arg, K&& katana) const
   {
-    return std::forward<A>(arg).slice(std::forward<K>(katana));
-  }
-
-  template<class A, class K>
-    requires (not has_slice_member_function<A&&,K&&>
-              and has_slice_free_function<A&&,K&&>)
-  constexpr view_of_slice<A,K> auto operator()(A&& arg, K&& katana) const
-  {
-    return slice(std::forward<A>(arg), std::forward<K>(katana));
+    if constexpr (has_slice_member_function<A&&,K&&>)
+    {
+      return std::forward<A>(arg).slice(std::forward<K>(katana));
+    }
+    else
+    {
+      return slice(std::forward<A>(arg), std::forward<K>(katana));
+    }
   }
 
   template<class K, sliceable_with<K> A>
-    requires (not has_slice_member_function<A&&,K>
-              and not has_slice_free_function<A&&,K>)
+    requires (not has_slice_customization<A&&,K>)
   constexpr view_of_slice<A,K> auto operator()(A&& arg, K katana) const
   {
     if constexpr (decomposable<A&&>)
