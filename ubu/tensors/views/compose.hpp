@@ -5,11 +5,9 @@
 #include "../concepts/composable.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/viewable_tensor_like.hpp"
-#include "../coordinates/concepts/congruent.hpp"
-#include "../traits/tensor_element.hpp"
 #include "all.hpp"
 #include "composed_view.hpp"
-#include <concepts>
+#include "detail/view_of_composition.hpp"
 #include <type_traits>
 #include <utility>
 
@@ -24,15 +22,6 @@ namespace detail
 template<class A, view B>
   requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
 constexpr view auto make_composed_view(A, B);
-
-
-template<class R, class A, class B>
-concept view_of_composition =
-  view<R>
-  and composable<A,B>
-  and congruent<shape_t<R>, shape_t<B>>
-  and std::same_as<tensor_element_t<R>, element_t<A, tensor_element_t<B>>>
-;
 
 template<class T>
 concept viewable_tensor_like_or_not_tensor_like =
