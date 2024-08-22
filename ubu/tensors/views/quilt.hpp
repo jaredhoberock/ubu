@@ -2,11 +2,17 @@
 
 #include "../../detail/prologue.hpp"
 
+#include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/concepts/congruent.hpp"
+#include "../coordinates/coordinate_cat.hpp"
 #include "../concepts/nested_tensor_like.hpp"
 #include "../concepts/view.hpp"
+#include "../concepts/viewable_tensor_like.hpp"
 #include "../traits/inner_tensor_shape.hpp"
-#include "quilted_view.hpp"
+#include "../traits/tensor_shape.hpp"
+#include "compose.hpp"
+#include "layouts/identity_layout.hpp"
+#include <concepts>
 #include <utility>
 
 
@@ -14,6 +20,23 @@ namespace ubu
 {
 namespace detail
 {
+
+
+template<class T, class S>
+concept quiltable_with =
+  nested_tensor_like<T>
+  and coordinate<S>
+  and congruent<inner_tensor_shape_t<T&&>,S>
+;
+
+
+template<class R, class T, class S>
+concept quilted_view_of = 
+  view<R>
+  and quiltable_with<T,S>
+  and congruent<tensor_shape_t<R>, coordinate_cat_result_t<tensor_shape_t<T>,inner_tensor_shape_t<T>>>
+  and std::same_as<tensor_reference_t<R>, tensor_reference_t<inner_tensor_t<T>>>
+;
 
 
 template<class T, class S>
@@ -29,17 +52,14 @@ concept has_quilt_free_function = requires(T t, S s)
 };
 
 template<class T, class S>
-concept has_quilt_customization = 
-  has_quilt_member_function<T,S>
-  or has_quilt_free_function<T,S>
-;
+concept has_quilt_customization = has_quilt_member_function<T,S> or has_quilt_free_function<T,S>;
 
 
 struct dispatch_quilt
 {
   template<class T, class S>
     requires has_quilt_customization<T&&,S&&>
-  constexpr view auto operator()(T&& t, S&& s) const
+  constexpr quilted_view_of<T&&,S&&> auto operator()(T&& t, S&& s) const
   {
     if constexpr (has_quilt_member_function<T&&,S&&>)
     {
@@ -51,11 +71,12 @@ struct dispatch_quilt
     }
   }
 
-  template<nested_tensor_like T, congruent<inner_tensor_shape_t<T&&>> S>
-    requires (not has_quilt_customization<T&&,S>) const
-  constexpr view auto operator()(T&& t, S s) const
+  template<viewable_tensor_like T, coordinate S>
+    requires (not has_quilt_customization<T&&,S> and quiltable_with<T&&,S>)
+  constexpr quilted_view_of<T&&,S> auto operator()(T&& t, S s) const
   {
-    return quilted_view(all(std::forward<T>(t)), s);
+    auto new_shape = coordinate_cat(s, shape(t));
+    return compose(std::forward<T>(t), identity_layout(new_shape));
   }
 };
 

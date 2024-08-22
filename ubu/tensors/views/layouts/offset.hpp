@@ -9,7 +9,7 @@
 #include "../../traits/tensor_element.hpp"
 #include "../../vectors/span_like.hpp"
 #include "../all.hpp"
-#include "../composed_view.hpp"
+#include "../compose.hpp"
 #include "concepts/coshaped_layout.hpp"
 #include "concepts/layout.hpp"
 #include "coshape.hpp"

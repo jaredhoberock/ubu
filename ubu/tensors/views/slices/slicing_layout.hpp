@@ -16,8 +16,8 @@
 #include "../all.hpp"
 #include "../view_base.hpp"
 #include "sliceable_with.hpp"
-#include "slicer.hpp"
 #include "unslice_coordinate.hpp"
+#include "unslicer.hpp"
 
 
 namespace ubu
@@ -35,7 +35,7 @@ constexpr view auto invoke_slice(Args&&... args);
 } // end detail
 
 
-template<coordinate S, slicer K, coordinate R = unslice_coordinate_result_t<S,K>>
+template<coordinate S, unslicer_for<S> K, coordinate R = unslice_coordinate_result_t<S,K>>
   requires congruent<R,unslice_coordinate_result_t<S,K>>
 class slicing_layout : public view_base
 {
@@ -81,6 +81,7 @@ class slicing_layout : public view_base
     // 3. T's nested tensor is sliceable with katana's leading elements
     //
     // returns slice(element(tensor, last(katana)), leading(katana)))
+    // XXX consider moving this customization into ubu::slice so we don't have this circular dependency between ubu::slice and slicing_layout
     template<nested_tensor_like T>
       requires composable<T&&,slicing_layout>
                and coordinate_for<tuples::last_t<K>,T&&>
