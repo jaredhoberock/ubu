@@ -3,41 +3,22 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../utilities/integrals/size.hpp"
-#include "../../utilities/tuples.hpp"
 #include "../concepts/composable.hpp"
 #include "../concepts/sized_tensor_like.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
-#include "../shapes/in_domain.hpp"
 #include "../shapes/shape.hpp"
-#include "../traits/tensor_shape.hpp"
 #include "../traits/tensor_coordinate.hpp"
+#include "../traits/tensor_shape.hpp"
 #include "../vectors/span_like.hpp"
 #include "all.hpp"
-#include "compose.hpp"
-#include "slices/slice.hpp"
-#include "slices/slicer.hpp"
 #include "view_base.hpp"
 
 
 namespace ubu
 {
-namespace detail
-{
-
-// composed_view and compose have a cyclic dependency and can't use each other directly
-// declare detail::invoke_compose for composed_view's use
-template<class... Args>
-constexpr view auto invoke_compose(Args&&... args);
-
-// composed_view and slice have a cyclic dependency and can't use each other directly
-// declare detail::invoke_slice for composed_view's use
-template<class... Args>
-constexpr view auto invoke_slice(Args&&... args);
-
-} // end detail
 
 
 template<class A, view B>
@@ -113,31 +94,11 @@ class composed_view : public view_base
       return a();
     }
 
-    template<slicer_for<shape_type> K>
-    constexpr view auto slice(const K& katana) const
-    {
-      return detail::invoke_compose(a_, detail::invoke_slice(b_, katana));
-    }
-
   private:
     A a_;
     B b_;
 };
 
-
-namespace detail
-{
-
-// composed_view and compose have a cyclic dependency and can't use each other directly
-// define make_composed_view for compose's use as soon as composed_view is available
-template<class A, view B>
-  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
-constexpr view auto make_composed_view(A a, B b)
-{
-  return composed_view(a,b);
-}
-
-} // end detail
 
 } // end ubu
 

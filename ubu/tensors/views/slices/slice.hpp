@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
+#include "../../concepts/decomposable.hpp"
 #include "../../concepts/tensor_like.hpp"
 #include "../../concepts/view.hpp"
 #include "../../coordinates/concepts/congruent.hpp"
@@ -77,10 +78,24 @@ struct dispatch_slice
               and not has_slice_free_function<A&&,K>)
   constexpr view_of_slice<A,K> auto operator()(A&& arg, K katana) const
   {
-    auto result_coshape = shape(arg);
-    auto result_shape = slice_coordinate(result_coshape, katana);
+    if constexpr (decomposable<A&&>)
+    {
+      // decompose a into left & right views
+      auto [left, right] = decompose(std::forward<A>(arg));
 
-    return detail::invoke_compose(std::forward<A>(arg), make_slicing_layout(result_shape, katana, result_coshape));
+      // get a nice name for this CPO
+      auto slice = *this;
+
+      // recursively slice A's right part and compose that result with A's left part
+      return compose(left, slice(right, katana));
+    }
+    else
+    {
+      auto result_coshape = shape(arg);
+      auto result_shape = slice_coordinate(result_coshape, katana);
+
+      return compose(std::forward<A>(arg), make_slicing_layout(result_shape, katana, result_coshape));
+    }
   }
 };
 
