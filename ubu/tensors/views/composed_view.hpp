@@ -13,6 +13,8 @@
 #include "../traits/tensor_coordinate.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "../vectors/span_like.hpp"
+#include "layouts/concepts/coshaped_layout.hpp"
+#include "layouts/coshape.hpp"
 #include "all.hpp"
 #include "view_base.hpp"
 
@@ -38,6 +40,12 @@ class composed_view : public view_base
     constexpr shape_type shape() const
     {
       return ubu::shape(b_);
+    }
+
+    template<coshaped_layout A_ = A>
+    constexpr auto coshape() const
+    {
+      return ubu::coshape(a());
     }
 
     template<class A_ = A, class B_ = B>
