@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../causality/asynchronous_view_of.hpp"
+#include "../../causality/asynchronous_memory_view_of.hpp"
 #include "detail/custom_allocate_after.hpp"
 #include "detail/one_extending_default_allocate_after.hpp"
 #include <utility>
@@ -21,7 +21,7 @@ struct dispatch_allocate_after
   // this dispatch path calls the allocator's customization of allocate_after
   template<class A, class B, class S>
     requires has_custom_allocate_after<T, A&&, B&&, S&&>
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, B&& before, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, B&& before, S&& shape) const
   {
     return custom_allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), std::forward<S>(shape));
   }
@@ -30,7 +30,7 @@ struct dispatch_allocate_after
   template<class A, happening B, coordinate S>
     requires (not has_custom_allocate_after<T, A&&, B&&, const S&>
               and has_one_extending_default_allocate_after<T,A&&,B&&,const S&>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, B&& before, const S& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, B&& before, const S& shape) const
   {
     return one_extending_default_allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), shape);
   }

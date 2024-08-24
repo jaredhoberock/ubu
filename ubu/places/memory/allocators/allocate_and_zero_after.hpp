@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../causality/asynchronous_view_of.hpp"
+#include "../../causality/asynchronous_memory_view_of.hpp"
 #include "../../causality/happening.hpp"
 #include "../../execution/executors/concepts/executor.hpp"
 #include "../../execution/executors/bulk_execute_after.hpp"
@@ -25,7 +25,7 @@ struct dispatch_allocate_and_zero_after
   // this dispatch path calls the customization of allocate_and_zero_after
   template<class A, class E, class B, class S>
     requires has_custom_allocate_and_zero_after<T,A&&,E&&,B&&,S&&>
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, E&& exec, B&& before, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, E&& exec, B&& before, S&& shape) const
   {
     return custom_allocate_and_zero_after<T>(std::forward<A>(alloc), std::forward<E>(exec), std::forward<B>(before), std::forward<S>(shape));
   }
@@ -34,7 +34,7 @@ struct dispatch_allocate_and_zero_after
   template<coordinate S, asynchronous_allocator_of<T,S> A, executor E, happening B>
     requires (not has_custom_allocate_and_zero_after<T,A&&,E&&,B&&,S>
               and std::is_scalar_v<T>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, E&& exec, B&& before, S shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, E&& exec, B&& before, S shape) const
   {
     // asynchronously allocate the memory
     auto [allocation_finished, tensor] = allocate_after<T>(std::forward<A>(alloc), std::forward<B>(before), shape);

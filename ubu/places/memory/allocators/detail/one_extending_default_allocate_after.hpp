@@ -5,7 +5,7 @@
 #include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
 #include "../../../../tensors/views/compose.hpp"
 #include "../../../../tensors/views/layouts/extending_layout.hpp"
-#include "../../../causality/asynchronous_view_of.hpp"
+#include "../../../causality/asynchronous_memory_view_of.hpp"
 #include "../../../causality/happening.hpp"
 #include "../concepts/allocator.hpp"
 #include "../traits/allocator_shape.hpp"
@@ -38,7 +38,7 @@ concept has_one_extending_default_allocate_after =
 // in principle, we could also convert the before argument into the allocator's happening type, if the type of before doesn't match allocator_happening_t<A>
 template<class T, allocator A, happening B, strictly_subdimensional<allocator_shape_t<A>> S>
   requires has_one_extending_default_allocate_after<T,A&&,B&&,S>
-constexpr asynchronous_view_of<T,S> auto one_extending_default_allocate_after(A&& alloc, B&& before, const S& user_shape)
+constexpr asynchronous_memory_view_of<T,S> auto one_extending_default_allocate_after(A&& alloc, B&& before, const S& user_shape)
 {
   // we'll one-extend the user's requested shape and layout the allocator's result tensor using a zero-extending layout
   auto alloc_shape = one_extend_coordinate<allocator_shape_t<A>>(user_shape);

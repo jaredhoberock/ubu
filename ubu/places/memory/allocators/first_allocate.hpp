@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
-#include "../../causality/asynchronous_view_of.hpp"
+#include "../../causality/asynchronous_memory_view_of.hpp"
 #include "../../causality/initial_happening.hpp"
 #include "allocate_after.hpp"
 #include "concepts/asynchronous_allocator.hpp"
@@ -20,28 +20,28 @@ namespace detail
 template<class T, class A, class S>
 concept has_first_allocate_member_function_template = requires(A alloc, S shape)
 {
-  { alloc.template first_allocate<T>(shape) } -> asynchronous_view_of<T,S>;
+  { alloc.template first_allocate<T>(shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_free_function_template = requires(A alloc, S shape)
 {
-  { first_allocate<T>(alloc, shape) } -> asynchronous_view_of<T,S>;
+  { first_allocate<T>(alloc, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_member_function = requires(A alloc, S shape)
 {
-  { alloc.first_allocate(shape) } -> asynchronous_view_of<T,S>;
+  { alloc.first_allocate(shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 
 template<class T, class A, class S>
 concept has_first_allocate_free_function = requires(A alloc, S shape)
 {
-  { first_allocate(alloc, shape) } -> asynchronous_view_of<T,S>;
+  { first_allocate(alloc, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 
@@ -61,7 +61,7 @@ struct dispatch_first_allocate
   // this path calls the member function template
   template<class A, class S>
     requires has_first_allocate_member_function_template<T, A&&, S&&>
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
   {
     return std::forward<A>(alloc).template first_allocate<T>(std::forward<S>(shape));
   }
@@ -70,7 +70,7 @@ struct dispatch_first_allocate
   template<class A, class S>
     requires (not has_first_allocate_member_function_template<T, A&&, S&&>
               and has_first_allocate_free_function_template<T, A&&, S&&>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
   {
     return first_allocate<T>(std::forward<A>(alloc), std::forward<S>(shape));
   }
@@ -80,7 +80,7 @@ struct dispatch_first_allocate
     requires (not has_first_allocate_member_function_template<T, A&&, S&&>
               and not has_first_allocate_free_function_template<T, A&&, S&&>
               and has_first_allocate_member_function<T, A&&, S&&>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
   {
     return std::forward<A>(alloc).first_allocate(std::forward<S>(shape));
   }
@@ -91,7 +91,7 @@ struct dispatch_first_allocate
               and not has_first_allocate_free_function_template<T, A&&, S&&>
               and not has_first_allocate_member_function<T, A&&, S&&>
               and has_first_allocate_free_function<T, A&&, S&&>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
   {
     return first_allocate(std::forward<A>(alloc), std::forward<S>(shape));
   }
@@ -100,7 +100,7 @@ struct dispatch_first_allocate
   template<class A, class S>
     requires (not has_first_allocate_customization<T,A&&,S&&>
               and has_first_allocate_customization<T, rebind_allocator_result_t<T,A&&>, S&&>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S&& shape) const
   {
     auto rebound_alloc = rebind_allocator<T>(std::forward<A>(alloc));
     return (*this)(rebound_alloc, std::forward<S>(shape));
@@ -110,7 +110,7 @@ struct dispatch_first_allocate
   template<asynchronous_allocator A, coordinate S>
     requires (not has_first_allocate_customization<T, A&&, S>
               and not has_first_allocate_customization<T, rebind_allocator_result_t<T,A&&>, S>)
-  constexpr asynchronous_view_of<T,S> auto operator()(A&& alloc, S shape) const
+  constexpr asynchronous_memory_view_of<T,S> auto operator()(A&& alloc, S shape) const
   {
     return allocate_after<T>(std::forward<A>(alloc), initial_happening(alloc), shape);
   }

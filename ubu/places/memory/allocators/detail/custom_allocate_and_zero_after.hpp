@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../causality/asynchronous_view_of.hpp"
+#include "../../../causality/asynchronous_memory_view_of.hpp"
 #include <utility>
 
 namespace ubu::detail
@@ -33,49 +33,49 @@ namespace ubu::detail
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_0 = requires(A alloc, E exec, B before, S shape)
 {
-  { alloc.template allocate_and_zero_after<T>(exec, before, shape) } -> asynchronous_view_of<T,S>;
+  { alloc.template allocate_and_zero_after<T>(exec, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B , class S>
 concept has_allocate_and_zero_after_customization_1 = requires(A alloc, E exec, B before, S shape)
 {
-  { allocate_and_zero_after<T>(alloc, exec, before, shape) } -> asynchronous_view_of<T,S>;
+  { allocate_and_zero_after<T>(alloc, exec, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_2 = requires(A alloc, E exec, B before, S shape)
 {
-  { alloc.allocate_and_zero_after(exec, before, shape) } -> asynchronous_view_of<T,S>;
+  { alloc.allocate_and_zero_after(exec, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_3 = requires(A alloc, E exec, B before, S shape)
 {
-  { allocate_and_zero_after(alloc, exec, before, shape) } -> asynchronous_view_of<T,S>;
+  { allocate_and_zero_after(alloc, exec, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_4 = requires(A alloc, B before, S shape)
 {
-  { alloc.template allocate_and_zero_after<T>(before, shape) } -> asynchronous_view_of<T,S>;
+  { alloc.template allocate_and_zero_after<T>(before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B , class S>
 concept has_allocate_and_zero_after_customization_5 = requires(A alloc, B before, S shape)
 {
-  { allocate_and_zero_after<T>(alloc, before, shape) } -> asynchronous_view_of<T,S>;
+  { allocate_and_zero_after<T>(alloc, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_6 = requires(A alloc, B before, S shape)
 {
-  { alloc.allocate_and_zero_after(before, shape) } -> asynchronous_view_of<T,S>;
+  { alloc.allocate_and_zero_after(before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 template<class T, class A, class E, class B, class S>
 concept has_allocate_and_zero_after_customization_7 = requires(A alloc, B before, S shape)
 {
-  { allocate_and_zero_after(alloc, before, shape) } -> asynchronous_view_of<T,S>;
+  { allocate_and_zero_after(alloc, before, shape) } -> asynchronous_memory_view_of<T,S>;
 };
 
 
@@ -94,7 +94,7 @@ concept has_allocate_and_zero_after_customization =
 
 template<class T, class A, class E, class B, class S>
   requires has_allocate_and_zero_after_customization<T,A&&,E&&,B&&,S&&>
-constexpr asynchronous_view_of<T,S> auto custom_allocate_and_zero_after(A&& alloc, E&& exec, B&& before, S&& shape)
+constexpr asynchronous_memory_view_of<T,S> auto custom_allocate_and_zero_after(A&& alloc, E&& exec, B&& before, S&& shape)
 {
   if constexpr (has_allocate_and_zero_after_customization_0<T,A&&,E&&,B&&,S&&>)
   {
