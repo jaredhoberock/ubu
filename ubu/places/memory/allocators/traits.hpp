@@ -7,6 +7,7 @@
 #include "traits/allocator_shape.hpp"
 #include "traits/allocator_size.hpp"
 #include "traits/allocator_value.hpp"
+#include "traits/allocator_view.hpp"
 
 #include "../../../detail/epilogue.hpp"
 

@@ -2,33 +2,19 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../allocate.hpp"
+#include "../../../../tensors/vectors/span_like.hpp"
+#include "../../data.hpp"
 #include "../concepts/allocator.hpp"
-#include <memory>
+#include "allocator_value.hpp"
+#include "allocator_view.hpp"
 
 namespace ubu
 {
-namespace detail
-{
 
-template<allocator A, class T>
-struct allocator_pointer
-{
-  using type = allocate_result_t<T, std::remove_cvref_t<A>&,std::size_t>;
-};
-
-template<allocator A>
-struct allocator_pointer<A,void>
-{
-  using type = typename std::allocator_traits<std::decay_t<A>>::pointer;
-};
-
-} // end detail
-
-
-template<allocator A, class T = void>
-using allocator_pointer_t = typename detail::allocator_pointer<A,T>::type;
-
+// XXX we should eliminate this trait because allocators that return a span are a special case
+template<allocator A, class T = allocator_value_t<A>>
+  requires span_like<allocator_view_t<A,T>>
+using allocator_pointer_t = data_t<allocator_view_t<A,T>>;
 
 } // end ubu
 

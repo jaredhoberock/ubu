@@ -49,7 +49,7 @@ void test_asynchronous_allocation()
 
   ready.wait();
 
-  ns::deallocate(alloc, span.data(), span.size());
+  ns::deallocate(alloc, span);
 }
 
 
@@ -73,7 +73,7 @@ void test_asynchronous_allocation_and_synchronous_deletion()
 
   auto [ready,span] = ns::first_allocate<T>(alloc, 1);
   
-  ns::deallocate(alloc, span.data(), span.size());
+  ns::deallocate(alloc, span);
 }
 
 
