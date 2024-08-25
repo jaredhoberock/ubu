@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensors/coordinates/concepts/subdimensional.hpp"
 #include "../../../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "../../../../tensors/views/layouts/truncating_layout.hpp"
 #include "../../../causality/happening.hpp"
@@ -23,7 +23,7 @@ concept has_one_extending_default_bulk_execute_with_workspace_after =
   executor<E>
   and asynchronous_allocator<A>
   and happening<H>
-  and strictly_subdimensional<S,executor_shape_t<E>>
+  and subdimensional<S,executor_shape_t<E>>
   and congruent<W,executor_workspace_shape_t<E>>
   and equal_rank<S,W>
   and std::invocable<F,default_coordinate_t<S>,executor_workspace_t<E>>
@@ -39,7 +39,7 @@ concept has_one_extending_default_bulk_execute_with_workspace_after =
 template<executor E,
          asynchronous_allocator A,
          happening H,
-         strictly_subdimensional<executor_shape_t<E>> S,
+         subdimensional<executor_shape_t<E>> S,
          congruent<executor_workspace_shape_t<E>> W,
          std::invocable<default_coordinate_t<S>,executor_workspace_t<E>> F
         >
