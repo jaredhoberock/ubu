@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensors/coordinates/concepts/subdimensional.hpp"
 #include "../../../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "../../../../tensors/views/layouts/truncating_layout.hpp"
 #include "../../../causality/happening.hpp"
@@ -22,7 +22,7 @@ template<class E, class H, class S, class F>
 concept has_one_extending_default_bulk_execute_after =
   executor<E>
   and happening<H>
-  and strictly_subdimensional<S,executor_shape_t<E>>
+  and subdimensional<S,executor_shape_t<E>>
   and std::invocable<F,default_coordinate_t<S>>
   and requires(E ex, H before, const S& user_shape)
   {
@@ -39,7 +39,7 @@ concept has_one_extending_default_bulk_execute_after =
 // The conversion performed on user_shape simply makes it congruent with executor_shape_t<E> by one-extending the value of the user's shape
 //
 // in principle, we could also convert the before argument into the executor's happening type, if the type of before doesn't match executor_happening_t<E>
-template<executor E, happening H, strictly_subdimensional<executor_shape_t<E>> S, std::invocable<default_coordinate_t<S>> F>
+template<executor E, happening H, subdimensional<executor_shape_t<E>> S, std::invocable<default_coordinate_t<S>> F>
   requires has_one_extending_default_bulk_execute_after<E&&,H&&,S,F>
 executor_happening_t<E> one_extending_default_bulk_execute_after(E&& ex, H&& before, const S& user_shape, F user_function)
 {
