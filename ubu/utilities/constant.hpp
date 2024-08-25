@@ -23,6 +23,16 @@ struct constant
     return value;
   }
 
+  // conversion to constant of other comparable type
+  template<auto other>
+    requires (std::convertible_to<value_type,decltype(other)>
+              and std::equality_comparable_with<value_type,decltype(other)>
+              and (v == other))
+  constexpr operator constant<other> () const noexcept
+  {
+    return {};
+  }
+
   // element(tuple, constant) indexes a tuple-like
   template<tuples::tuple_like T>
     requires (std::integral<decltype(v)>
