@@ -24,9 +24,9 @@ concept has_one_extending_default_bulk_execute_with_workspace_after =
   and asynchronous_allocator<A>
   and happening<H>
   and subdimensional<S,executor_shape_t<E>>
-  and congruent<W,executor_workspace_shape_t<E>>
+  and congruent<W,executor_workspace_shape_t<E,A>>
   and equal_rank<S,W>
-  and std::invocable<F,default_coordinate_t<S>,executor_workspace_t<E>>
+  and std::invocable<F,default_coordinate_t<S>,executor_workspace_t<E,A>>
   and requires(E ex, A alloc, H before, const S& user_shape, const W& workspace_shape)
   {
     { detail::custom_bulk_execute_with_workspace_after(std::forward<E>(ex), std::forward<A>(alloc), std::forward<H>(before), truncating_layout<executor_shape_t<E>,S>(user_shape).shape(), workspace_shape, [](auto,auto){}) } -> happening;
@@ -40,8 +40,8 @@ template<executor E,
          asynchronous_allocator A,
          happening H,
          subdimensional<executor_shape_t<E>> S,
-         congruent<executor_workspace_shape_t<E>> W,
-         std::invocable<default_coordinate_t<S>,executor_workspace_t<E>> F
+         congruent<executor_workspace_shape_t<E,A>> W,
+         std::invocable<default_coordinate_t<S>,executor_workspace_t<E,A>> F
         >
   requires (equal_rank<S,W> and has_one_extending_default_bulk_execute_with_workspace_after<E&&,A&&,H&&,S,W,F>)
 executor_happening_t<E> one_extending_default_bulk_execute_with_workspace_after(E&& ex, A&& alloc, H&& before, const S& user_shape, const W& workspace_shape, F user_function)
