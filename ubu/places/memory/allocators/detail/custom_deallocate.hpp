@@ -116,13 +116,19 @@ constexpr void custom_deallocate(A&& alloc, V&& view)
     }
     else
     {
+      // rebind the allocator and recurse
+      using T = tensor_element_t<V&&>;
+
+      return custom_deallocate(rebind_allocator<T>(std::forward<A>(alloc)), std::forward<V>(view));
     }
   }
+  else
+  {
+    // rebind the allocator and recurse
+    using T = tensor_element_t<V&&>;
 
-  // rebind the allocator and recurse
-  using T = tensor_element_t<V&&>;
-
-  return custom_deallocate(rebind_allocator<T>(std::forward<A>(alloc)), std::forward<V>(view));
+    return custom_deallocate(rebind_allocator<T>(std::forward<A>(alloc)), std::forward<V>(view));
+  }
 }
 
 
