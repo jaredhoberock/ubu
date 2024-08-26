@@ -3,14 +3,14 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../concepts/allocator.hpp"
-#include <memory>
+#include <type_traits>
 
 namespace ubu
 {
 
 
 template<allocator A>
-using allocator_value_t = typename std::allocator_traits<std::decay_t<A>>::value_type;
+using allocator_value_t = typename std::remove_cvref_t<A>::value_type;
 
 
 } // end ubu
