@@ -16,7 +16,7 @@ namespace detail
 
 // by default, A's shape type is std::size_t
 template<class A>
-struct allocator_shape
+struct maybe_allocator_shape
 {
   using type = std::size_t;
 };
@@ -25,32 +25,38 @@ struct allocator_shape
 template<class A>
 concept has_member_shape_type = requires
 {
-  typename A::shape_type;
+  typename std::remove_cvref_t<A>::shape_type;
 };
 
 
 // if A has a member type ::shape_type, use it
 template<class A>
   requires has_member_shape_type<A>
-struct allocator_shape<A>
+struct maybe_allocator_shape<A>
 {
-  using type = typename A::shape_type;
+  using type = typename std::remove_cvref_t<A>::shape_type;
 };
 
 template<class A>
 concept has_allocator_traits_size_type = requires
 {
-  typename std::allocator_traits<A>::size_type;
+  typename std::allocator_traits<std::remove_cvref_t<A>>::size_type;
 };
 
 // if std::allocator_traits<A>::size_type exists, use it
 template<class A>
-  requires has_allocator_traits_size_type<A>
-struct allocator_shape<A>
+  requires (not has_member_shape_type<A>
+            and has_allocator_traits_size_type<A>)
+struct maybe_allocator_shape<A>
 {
-  using type = typename std::allocator_traits<A>::size_type;
+  using type = typename std::allocator_traits<std::remove_cvref_t<A>>::size_type;
 };
 
+
+// the difference between this an allocator_shape_t<A>
+// is that A needn't be an allocator to use this trait
+template<class A>
+using maybe_allocator_shape_t = typename maybe_allocator_shape<A>::type;
 
 
 } // end detail
@@ -66,10 +72,7 @@ concept allocator_of =
   // we must be able to figure out the element type of tensors allocated by A
   and requires { typename std::remove_cvref_t<A>::value_type; }
 
-  // we must be able to figure out the shape of tensors allocated by A
-  and requires { typename detail::allocator_shape<std::remove_cvref_t<A>>::type; }
-
-  and requires(std::remove_cvref_t<A>& a, typename detail::allocator_shape<std::remove_cvref_t<A>>::type shape)
+  and requires(std::remove_cvref_t<A>& a, detail::maybe_allocator_shape_t<A> shape)
   {
     ubu::deallocate(a, ubu::allocate<T>(a, shape));
   }

@@ -9,7 +9,7 @@ namespace ubu
 {
 
 template<allocator A>
-using allocator_shape_t = typename detail::allocator_shape<std::remove_cvref_t<A>>::type;
+using allocator_shape_t = detail::maybe_allocator_shape_t<A>;
 
 } // end ubu
 
