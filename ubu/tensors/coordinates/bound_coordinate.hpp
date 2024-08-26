@@ -31,7 +31,7 @@ constexpr congruent<C> auto bound_coordinate(const C& coord, const U& upper_boun
 
         // convert upper_bound to coord's integral type
         using integral_type = to_integral_t<C>;
-        constexpr integral_type b = to_integral(upper_bound);
+        constexpr integral_type b = U{};
 
         return bounded<b>(coord);
       }

@@ -61,6 +61,12 @@ inline constexpr detail::dispatch_decompose decompose;
 template<class T>
 using decompose_result_t = decltype(decompose(std::declval<T>()));
 
+template<class T>
+using decompose_result_first_t = tuples::first_t<decompose_result_t<T>>;
+
+template<class T>
+using decompose_result_second_t = tuples::second_t<decompose_result_t<T>>;
+
 } // end ubu
 
 #include "../../detail/epilogue.hpp"
