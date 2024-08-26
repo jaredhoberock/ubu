@@ -15,8 +15,10 @@ template<class T, bounded_coordinate S>
 class inplaced_view : public view_base
 {
   public:
-    template<view V>
-      requires (std::constructible_from<T, tensor_element_t<V>> and std::same_as<S, tensor_shape_t<V>>)
+    template<class V>
+      requires (not std::same_as<V,inplaced_view>
+                and view<V>
+                and std::constructible_from<T, tensor_element_t<V>> and std::same_as<S, tensor_shape_t<V>>)
     constexpr inplaced_view(V view)
       : elements_(from_tensor_like, view)
     {}
