@@ -14,8 +14,7 @@ namespace ubu::detail
 
 template<class A, class B, class V>
 concept has_decomposing_default_deallocate_after =
-  allocator<A>
-  and happening<B>
+      happening<B>
   and view<V>
   and decomposable<V>
   and has_custom_deallocate_after<
@@ -24,7 +23,7 @@ concept has_decomposing_default_deallocate_after =
 ;
 
 
-template<allocator A, happening B, view V>
+template<class A, happening B, view V>
   requires has_decomposing_default_deallocate_after<A&&,B&&,V>
 constexpr happening auto decomposing_default_deallocate_after(A&& alloc, B&& before, V tensor)
 {

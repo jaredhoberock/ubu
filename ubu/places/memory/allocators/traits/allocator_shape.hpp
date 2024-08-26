@@ -3,6 +3,7 @@
 #include "../../../../detail/prologue.hpp"
 
 #include "../concepts/allocator.hpp"
+#include "detail/maybe_allocator_shape.hpp"
 #include <type_traits>
 
 namespace ubu

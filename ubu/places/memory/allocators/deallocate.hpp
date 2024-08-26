@@ -3,6 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "detail/custom_deallocate.hpp"
+#include "detail/decomposing_default_deallocate.hpp"
 #include <utility>
 
 namespace ubu
@@ -22,7 +23,14 @@ struct dispatch_deallocate
     custom_deallocate(std::forward<A>(alloc), std::forward<V>(view));
   }
 
-  // XXX another dispatch path should call decomposing_default_deallocate
+  // this dispatch path calls decomposing_default_deallocate
+  template<class A, view V>
+    requires (not has_custom_deallocate<A&&, V>
+              and has_decomposing_default_deallocate<A&&, V>)
+  constexpr void operator()(A&& alloc, V tensor) const
+  {
+    decomposing_default_deallocate_after(std::forward<A>(alloc), tensor);
+  }
 };
 
 

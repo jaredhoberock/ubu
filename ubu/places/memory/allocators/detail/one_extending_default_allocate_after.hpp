@@ -2,7 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensors/coordinates/concepts/strictly_subdimensional.hpp"
+#include "../../../../tensors/coordinates/concepts/subdimensional.hpp"
 #include "../../../../tensors/views/compose.hpp"
 #include "../../../../tensors/views/layouts/extending_layout.hpp"
 #include "../../../causality/asynchronous_memory_view_of.hpp"
