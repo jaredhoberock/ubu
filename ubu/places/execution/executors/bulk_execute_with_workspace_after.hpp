@@ -29,7 +29,7 @@ struct dispatch_bulk_execute_with_workspace_after
   }
 
   // dispatch path 4 calls one_extending_bulk_execute_with_workspace_after
-  template<executor E, asynchronous_allocator A, happening B, coordinate S, coordinate W, std::invocable<S,executor_workspace_t<E>> F>
+  template<executor E, asynchronous_allocator A, happening B, coordinate S, coordinate W, std::invocable<S,executor_workspace_t<E,A>> F>
     requires (not has_custom_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,const W&,F&&>
               and has_one_extending_default_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,const W&,F&&>)
   constexpr happening auto operator()(E&& executor, A&& alloc, B&& before, const S& kernel_shape, const W& workspace_shape, F&& function) const
@@ -38,7 +38,7 @@ struct dispatch_bulk_execute_with_workspace_after
   }
   
   // dispatch path 5 calls default_bulk_execute_with_workspace_after
-  template<executor E, asynchronous_allocator A, happening B, coordinate S, std::invocable<S,executor_workspace_t<E>> F>
+  template<executor E, asynchronous_allocator A, happening B, coordinate S, std::invocable<S,executor_workspace_t<E,A>> F>
     requires (    not has_custom_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,std::size_t,F&&>
               and not has_one_extending_default_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,std::size_t,F&&>
               and has_default_bulk_execute_with_workspace_after<E&&,A&&,B&&,const S&,std::size_t,F&&>)

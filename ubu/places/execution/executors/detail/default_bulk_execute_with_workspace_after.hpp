@@ -37,10 +37,15 @@ using default_bulk_execute_with_workspace_after_invocable_t = decltype(make_defa
 
 
 // XXX for now, this default version of bulk_execute_with_workspace_after will only work for executors whose workspace type is std::span
-template<class E>
-concept executor_with_simple_workspace = executor<E> and std::same_as<std::span<std::byte>, executor_workspace_t<E>>;
+template<class E, class A>
+concept executor_with_simple_workspace =
+  executor<E> and
+  asynchronous_allocator<A> and
+  std::same_as<std::span<std::byte>, executor_workspace_t<E,A>>
+;
 
-template<executor_with_simple_workspace E, asynchronous_allocator A, happening B, coordinate S, std::invocable<S,executor_workspace_t<E>> F>
+
+template<asynchronous_allocator A, executor_with_simple_workspace<A> E, happening B, coordinate S, std::invocable<S,executor_workspace_t<E,A>> F>
   requires bulk_executable_on<default_bulk_execute_with_workspace_after_invocable_t<S,F>, E, allocator_happening_t<A>, S>
 allocator_happening_t<A> default_bulk_execute_with_workspace_after(const E& ex, const A& alloc, B&& before, const S& shape, std::size_t workspace_size, F&& function)
 {
