@@ -296,6 +296,11 @@ class tensor_iterator<T> : public sized_tensor_iterator<T>
     // ctors
     using super_t::super_t;
 
+    // XXX this ctor shouldn't be necessary, but clang 18.1.3 insists
+    constexpr tensor_iterator(const super_t& other)
+      : super_t(other)
+    {}
+
     // iterator interface follows
     using super_t::operator*;
     using super_t::operator[];
@@ -388,6 +393,11 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
 
     // ctors
     using super_t::super_t;
+
+    // XXX this ctor shouldn't be necessary, but clang 18.1.3 insists
+    constexpr tensor_iterator(const super_t& other)
+      : super_t(other)
+    {}
 
     // iterator interface follows
     using super_t::operator*;
