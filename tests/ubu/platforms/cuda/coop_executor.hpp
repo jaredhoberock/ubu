@@ -1,3 +1,4 @@
+#include "validate_workspace.hpp"
 #include <array>
 #include <ubu/cooperators/workspaces/get_local_workspace.hpp>
 #include <ubu/places/causality.hpp>
@@ -246,8 +247,8 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::coop_execu
 
   cuda::coop_executor::shape_type shape(block_size, num_blocks);
 
-  // create local workspaces with block_size ints and a global workspace with num_blocks ints
-  ns::int2 workspace_shape(block_size * sizeof(int), num_blocks * sizeof(int));
+  // create workspaces with one int per thread per group
+  ns::int2 workspace_shape(sizeof(int) * block_size, sizeof(int) * block_size * num_blocks);
 
   try
   {
@@ -259,54 +260,8 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::coop_execu
       int result = hash(coord);
       array[coord.y][coord.x] = result;
 
-      auto [thread_id, block_id] = coord;
-
-      // test the outer workspace
-      {
-        std::span<int> block_indices = reinterpret_buffer<int>(get_buffer(ws));
-
-        // the leader of each block records its block index in the global workspace
-        if(thread_id == 0)
-        {
-          block_indices[block_id] = block_id;
-        }
-
-        // use the global barrier
-        arrive_and_wait(get_barrier(ws));
-
-        // the first thread of the first block checks that each block was recorded in the global workspace
-        if(thread_id == 0 and block_id == 0)
-        {
-          int expected = 0;
-          for(int id : block_indices)
-          {
-            assert(expected == id);
-            ++expected;
-          }
-        }
-      }
-
-      // test the local workspace
-      {
-        std::span<int> thread_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
-
-        // each thread records its index in the local workspace
-        thread_indices[thread_id] = thread_id;
-
-        // use the local barrier
-        arrive_and_wait(get_barrier(get_local_workspace(ws)));
-
-        // the first thread of each block checks that each thread was recorded in the local workspace
-        if(thread_id == 0)
-        {
-          int expected = 0;
-          for(int id : thread_indices)
-          {
-            assert(expected == id);
-            ++expected;
-          }
-        }
-      }
+      // check that the workspace works
+      validate_workspace(coord, shape, ws);
     });
 
     wait(e);
@@ -338,8 +293,8 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::coop_e
 
   cuda::coop_executor::shape_type shape(block_size, num_blocks);
 
-  // create local workspaces with block_size ints and a global workspace with num_blocks ints
-  ns::int2 workspace_shape(block_size * sizeof(int), num_blocks * sizeof(int));
+  // create workspaces with one int per thread per group
+  ns::int2 workspace_shape(sizeof(int) * block_size, sizeof(int) * block_size * num_blocks);
 
   try
   {
@@ -353,54 +308,8 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::coop_e
       int result = hash(coord);
       array[coord.y][coord.x] = result;
 
-      auto [thread_id, block_id] = coord;
-
-      // test the outer workspace
-      {
-        std::span<int> block_indices = reinterpret_buffer<int>(get_buffer(ws));
-
-        // the leader of each block records its block index in the global workspace
-        if(thread_id == 0)
-        {
-          block_indices[block_id] = block_id;
-        }
-
-        // use the global barrier
-        arrive_and_wait(get_barrier(ws));
-
-        // the first thread of the first block checks that each block was recorded in the global workspace
-        if(thread_id == 0 and block_id == 0)
-        {
-          int expected = 0;
-          for(int id : block_indices)
-          {
-            assert(expected == id);
-            ++expected;
-          }
-        }
-      }
-
-      // test the local workspace
-      {
-        std::span<int> thread_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
-
-        // each thread records its index in the local workspace
-        thread_indices[thread_id] = thread_id;
-
-        // use the local barrier
-        arrive_and_wait(get_barrier(get_local_workspace(ws)));
-
-        // the first thread of each block checks that each thread was recorded in the local workspace
-        if(thread_id == 0)
-        {
-          int expected = 0;
-          for(int id : thread_indices)
-          {
-            assert(expected == id);
-            ++expected;
-          }
-        }
-      }
+      // check that the workspace works
+      validate_workspace(coord, shape, ws);
     });
 
     wait(e);

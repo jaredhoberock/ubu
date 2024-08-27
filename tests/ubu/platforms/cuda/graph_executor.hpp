@@ -1,3 +1,4 @@
+#include "validate_workspace.hpp"
 #include <array>
 #include <ubu/cooperators/workspaces/get_local_workspace.hpp>
 #include <ubu/places/causality.hpp>
@@ -222,8 +223,8 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::graph_exec
     {array_shape[2],array_shape[1],array_shape[0]}
   };
 
-  // create local workspaces with block_size ints and a global workspace with 32 bytes
-  ns::int2 workspace_shape(sizeof(int) * shape_size(shape.thread), 32);
+  // create workspaces with one int per thread per group
+  ns::int2 workspace_shape(sizeof(int) * shape_size(shape.thread), sizeof(int) * shape_size(shape));
 
   try
   {
@@ -235,35 +236,8 @@ void test_bulk_execute_with_workspace_after_member_function(ns::cuda::graph_exec
       int result = hash(coord);
       array[coord.block.z][coord.block.y][coord.block.x][coord.thread.z][coord.thread.y][coord.thread.x] = result;
 
-      // check that the global workspace works
-      std::span<std::byte> global_workspace = get_buffer(ws);
-
-      // each thread checks that the global workspace is initialized to zero
-      for(std::byte b : global_workspace)
-      {
-        assert(b == std::byte(0));
-      }
-
-      // check that the local workspace works
-      std::span<int> local_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
-
-      // each thread records its local index in the local workspace
-      int local_idx = apply_stride(coord.thread, compact_left_major_stride(shape.thread));
-      local_indices[local_idx] = local_idx;
-
-      // use the local barrier
-      arrive_and_wait(get_barrier(get_local_workspace(ws)));
-
-      // the first thread of the local group checks that each thread was recorded in the local workspace
-      if(local_idx == 0)
-      {
-        int expected = 0;
-        for(int idx : local_indices)
-        {
-          assert(expected == idx);
-          ++expected;
-        }
-      }
+      // check that the workspace works
+      validate_workspace(coord, shape, ws);
     });
 
     wait(e);
@@ -302,8 +276,8 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::graph_
     array_shape[2]*array_shape[1]*array_shape[0]  // num blocks
   };
 
-  // create a workspace with block_size ints and num_blocks * block_size ints
-  ns::int2 workspace_shape(sizeof(int) * shape_size(shape[0]), sizeof(int) * shape_size(shape));
+  // create workspaces with one int per thread per group
+  ns::int2 workspace_shape(sizeof(int) * shape.x, sizeof(int) * shape.x * shape.y);
 
   try
   {
@@ -318,35 +292,8 @@ void test_bulk_execute_with_workspace_after_customization_point(ns::cuda::graph_
 
       array[c[0]][c[1]][c[2]][c[3]][c[4]][c[5]] = i;
 
-      // check that the global workspace works
-      std::span<std::byte> global_workspace = get_buffer(ws);
-
-      // each thread checks that the global workspace is initialized to zero
-      for(std::byte b : global_workspace)
-      {
-        assert(b == std::byte(0));
-      }
-
-      // check that the local workspace works
-      std::span<int> local_indices = reinterpret_buffer<int>(get_buffer(get_local_workspace(ws)));
-
-      // each thread records its local index in the local workspace
-      int local_idx = apply_stride(coord[0], compact_left_major_stride(shape[0]));
-      local_indices[local_idx] = local_idx;
-
-      // use the local barrier
-      arrive_and_wait(get_barrier(get_local_workspace(ws)));
-
-      // the first thread of the local group checks that each thread was recorded in the local workspace
-      if(local_idx == 0)
-      {
-        int expected = 0;
-        for(int idx : local_indices)
-        {
-          assert(expected == idx);
-          ++expected;
-        }
-      }
+      // check that the workspace works
+      validate_workspace(coord, shape, ws);
     });
 
     wait(e);
