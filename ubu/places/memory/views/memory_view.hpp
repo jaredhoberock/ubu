@@ -5,6 +5,7 @@
 #include "../../../tensors/concepts/decomposable.hpp"
 #include "../../../tensors/concepts/nested_tensor_like.hpp"
 #include "../../../tensors/concepts/tensor_like_of.hpp"
+#include "../../../tensors/concepts/view_of.hpp"
 #include "../../../tensors/coordinates/concepts/congruent.hpp"
 #include "../../../tensors/coordinates/concepts/coordinate.hpp"
 #include "../../../tensors/views/layouts/concepts/coshaped_layout.hpp"
