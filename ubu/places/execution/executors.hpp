@@ -9,6 +9,7 @@
 #include "executors/concepts.hpp"
 #include "executors/execute_after.hpp"
 #include "executors/execute_kernel.hpp"
+#include "executors/executor_tensor.hpp"
 #include "executors/finally_execute_after.hpp"
 #include "executors/first_execute.hpp"
 #include "executors/kernel_layout.hpp"
