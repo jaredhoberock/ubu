@@ -12,7 +12,7 @@
 #include "../../tensors/coordinates/traits/ones.hpp"
 #include "cooperators.hpp"
 #include "detail/default_dynamic_shared_memory_size.hpp"
-#include "detail/launch_as_cooperative_kernel.hpp"
+#include "detail/launch_as_cooperative_kernel_after.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
 #include <concepts>
