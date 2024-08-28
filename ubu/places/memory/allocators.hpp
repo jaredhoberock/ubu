@@ -6,6 +6,7 @@
 #include "allocators/allocate_after.hpp"
 #include "allocators/allocate_and_zero_after.hpp"
 #include "allocators/allocator_delete.hpp"
+#include "allocators/allocator_tensor.hpp"
 #include "allocators/concepts.hpp"
 #include "allocators/construct.hpp"
 #include "allocators/deallocate.hpp"
