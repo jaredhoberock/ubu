@@ -130,7 +130,8 @@ class event
 
     inline static event initial_happening()
     {
-      return {0, cudaStream_t{0}};
+      // note that we do not record the event on a stream
+      return {0};
     }
 
     inline void swap(event& other)
