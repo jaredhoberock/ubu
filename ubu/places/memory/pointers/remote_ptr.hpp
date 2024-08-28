@@ -72,14 +72,18 @@ class remote_ref : private L
     }
 
     // equality
-    friend bool operator==(const remote_ref& self, const value_type& value)
+    template<class O>
+      requires (not std::same_as<O,remote_ref> and std::equality_comparable_with<value_type,O>)
+    friend bool operator==(const remote_ref& self, const O& other)
     {
-      return self.operator value_type () == value;
+      return self.operator value_type () == other;
     }
 
-    friend bool operator==(const value_type& value, const remote_ref& self)
+    template<class O>
+      requires (not std::same_as<O,remote_ref> and std::equality_comparable_with<value_type,O>)
+    friend bool operator==(const O& other, const remote_ref& self)
     {
-      return self.operator value_type () == value;
+      return other == self.operator value_type ();
     }
 
     friend bool operator==(const remote_ref& lhs, const remote_ref& rhs)
@@ -88,14 +92,18 @@ class remote_ref : private L
     }
 
     // inequality
-    friend bool operator!=(const remote_ref& self, const value_type& value)
+    template<class O>
+      requires (not std::same_as<O,remote_ref> and std::equality_comparable_with<value_type,O>)
+    friend bool operator!=(const remote_ref& self, const O& other)
     {
-      return !(self == value);
+      return !(self == other);
     }
 
-    friend bool operator!=(const value_type& value, const remote_ref& self)
+    template<class O>
+      requires (not std::same_as<O,remote_ref> and std::equality_comparable_with<value_type,O>)
+    friend bool operator!=(const O& other, const remote_ref& self)
     {
-      return !(self == value);
+      return !(self == other);
     }
 
     friend bool operator!=(const remote_ref& lhs, const remote_ref& rhs)
