@@ -2,6 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../utilities/tuples.hpp"
+#include "../concepts/elemental_invocable.hpp"
 #include "../concepts/tensor_like.hpp"
 #include "../concepts/view.hpp"
 #include "compose.hpp"
