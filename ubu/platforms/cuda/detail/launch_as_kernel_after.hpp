@@ -16,22 +16,20 @@ namespace ubu::cuda::detail
 {
 
 
-template<class Arg>
-void workaround_unused_variable_warning(Arg&&) noexcept {}
-
-
 template<std::invocable F>
   requires std::is_trivially_copy_constructible_v<F>
-void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
+event launch_as_kernel_after(const event& before, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
 {
 #if defined(__CUDACC__)
-  temporarily_with_current_device(device, [=]() mutable
+  temporarily_with_current_device(device, [&]()
   {
+    // make the stream wait on the before event
+    throw_on_error(cudaStreamWaitEvent(stream, before.native_handle()),
+      "cuda::detail::launch_as_kernel_after: after cudaStreamWaitEvent"
+    );
+
     // point to the kernel
     void* ptr_to_kernel = reinterpret_cast<void*>(&kernel_entry_point<F>);
-
-    // reference the kernel to encourage the compiler not to optimize it away
-    workaround_unused_variable_warning(ptr_to_kernel);
 
     if UBU_TARGET(has_runtime())
     {
@@ -45,7 +43,7 @@ void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_
 
           // launch the kernel
           throw_on_error(cudaLaunchKernel(ptr_to_kernel, grid_dim, block_dim, ptr_to_arg, dynamic_shared_memory_size, stream),
-            "cuda::detail::launch_as_kernel: after cudaLaunchKernel"
+            "cuda::detail::launch_as_kernel_after: after cudaLaunchKernel"
           );
         }
         else
@@ -56,32 +54,20 @@ void launch_as_kernel(dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_
 
           // launch the kernel
           throw_on_error(cudaLaunchDevice(ptr_to_kernel, ptr_to_arg, grid_dim, block_dim, dynamic_shared_memory_size, stream),
-            "cuda::detail::launch_as_kernel: after cudaLaunchDevice"
+            "cuda::detail::launch_as_kernel_after: after cudaLaunchDevice"
           );
         }
       }
     }
     else
     {
-      ubu::detail::throw_runtime_error("cuda::detail::launch_as_kernel requires the CUDA Runtime.");
+      ubu::detail::throw_runtime_error("cuda::detail::launch_as_kernel_after requires the CUDA Runtime.");
     }
   });
 #else
-  ubu::detail::throw_runtime_error("cuda::detail::launch_as_kernel requires CUDA C++ language support.");
+  ubu::detail::throw_runtime_error("cuda::detail::launch_as_kernel_after requires CUDA C++ language support.");
 #endif
-}
 
-
-template<std::invocable F>
-  requires std::is_trivially_copy_constructible_v<F>
-event launch_as_kernel_after(const event& before, dim3 grid_dim, dim3 block_dim, std::size_t dynamic_shared_memory_size, cudaStream_t stream, int device, F f)
-{
-  // make the stream wait on the before event
-  throw_on_error(cudaStreamWaitEvent(stream, before.native_handle()), "cuda::detail::launch_as_kernel_after: CUDA error after cudaStreamWaitEvent");
-  
-  // launch the kernel
-  launch_as_kernel(grid_dim, block_dim, dynamic_shared_memory_size, stream, device, f);
-  
   // record an event on the stream
   return {device, stream};
 }

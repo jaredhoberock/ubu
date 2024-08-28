@@ -12,7 +12,7 @@
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "cooperators.hpp"
-#include "detail/launch_as_kernel.hpp"
+#include "detail/launch_as_kernel_after.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
 #include "thread_id.hpp"
