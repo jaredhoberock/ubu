@@ -3,6 +3,7 @@
 #include "../detail/prologue.hpp"
 
 #include "views/all.hpp"
+#include "views/as_rvalue.hpp"
 #include "views/compose.hpp"
 #include "views/composed_view.hpp"
 #include "views/decompose.hpp"
