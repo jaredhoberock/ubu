@@ -9,31 +9,28 @@ namespace ubu::detail
 {
 
 
-template<class T>
-concept not_void = not std::is_void_v<T>;
-
 template<class T, class C>
 concept has_element_member_function = requires(T obj, C coord)
 {
-  { obj.element(coord) } -> not_void;
+  obj.element(coord);
 };
 
 template<class T, class C>
 concept has_element_free_function = requires(T obj, C coord)
 {
-  { element(obj,coord) } -> not_void;
+  element(obj,coord);
 };
 
 template<class T, class C>
 concept has_operator_bracket = requires(T obj, C coord)
 {
-  { obj[coord] } -> not_void;
+  obj[coord];
 };
 
 template<class T, class C>
 concept has_operator_parens = requires(T obj, C coord)
 {
-  { obj(coord) } -> not_void;
+  obj(coord);
 };
 
 

@@ -29,10 +29,16 @@ using leading_and_last_result_t = decltype(std::declval<T>());
 template<class T, class C>
 constexpr decltype(auto) recursive_element(T&& obj, C&& coord);
 
+// this type is returned by failure cases of recursive_element below to indicate cases where recursive_element does not exist
+struct recursive_element_failure_result {};
+
+template<class T>
+concept recursive_element_success = not std::same_as<T,recursive_element_failure_result>;
+
 template<class T, class C>
 concept has_recursive_element = requires(T obj, C coord)
 {
-  { detail::recursive_element(std::forward<T>(obj), std::forward<C>(coord)) } -> not_void;
+  { detail::recursive_element(std::forward<T>(obj), std::forward<C>(coord)) } -> recursive_element_success;
 };
 
 
@@ -60,6 +66,7 @@ concept has_recursive_element = requires(T obj, C coord)
 //
 //     int x = element(nested_vec, coord);
 //
+// If none of these attemps work, recursive_element returns recursive_element_failure
 template<class T, class C>
 constexpr decltype(auto) recursive_element(T&& obj, C&& coord)
 {
@@ -87,20 +94,20 @@ constexpr decltype(auto) recursive_element(T&& obj, C&& coord)
       }
       else
       {
-        // error case: can't recurse into the leading modes of coord; return void
-        return;
+        // failure case: can't recurse into the leading modes of coord
+        return recursive_element_failure_result{};
       }
     }
     else
     {
-      // error case: can't recurse into the last mode of coord; return void
-      return;
+      // failure case: can't recurse into the last mode of coord
+      return recursive_element_failure_result{};
     }
   }
   else
   {
-    // error case: C is either not a tuple or is not a large enough tuple; return void
-    return;
+    // error case: C is either not a tuple or is not a large enough tuple
+    return recursive_element_failure_result{};
   }
 }
 
