@@ -8,8 +8,8 @@ namespace ubu
 {
 
 template<class T>
-concept viewable_tensor_like =
-  tensor_like<T>
+concept viewable_tensor =
+  tensor<T>
   and requires(T t)
   {
     all(std::forward<T>(t));

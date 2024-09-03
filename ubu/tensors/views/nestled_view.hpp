@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cat.hpp"

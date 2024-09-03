@@ -34,7 +34,7 @@ using member_coordinate_or_default_t = typename member_coordinate_or_default<T>:
 
 
 template<class T>
-concept tensor_like =
+concept tensor =
   // we must be able to get the shape of a tensor
   shaped<T>
 

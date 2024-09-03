@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <ubu/tensors/concepts/tensor_like_of_rank.hpp>
+#include <ubu/tensors/concepts/tensor_of_rank.hpp>
 #include <ubu/tensors/shapes/shape_size.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
@@ -175,7 +175,7 @@ void test_scalar()
 
     constexpr auto s = slice(tensor, ns::int2(1,2));
 
-    static_assert(tensor_like_of_rank<decltype(s),0>);
+    static_assert(tensor_of_rank<decltype(s),0>);
 
     constexpr auto expected = ns::int2(1,2);
 
@@ -191,7 +191,7 @@ void test_scalar()
     // pick out the final element
     constexpr auto s = slice(tensor, tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5)));
 
-    static_assert(tensor_like_of_rank<decltype(s),0>);
+    static_assert(tensor_of_rank<decltype(s),0>);
 
     constexpr auto expected = tuple(tuple(pair(0,1),2), tuple(3,4), tuple(5));
 
@@ -208,7 +208,7 @@ void test_scalar()
 
     constexpr auto s = slice(matrix, ubu::int2(2,3));
 
-    static_assert(tensor_like_of_rank<decltype(s),0>);
+    static_assert(tensor_of_rank<decltype(s),0>);
 
     constexpr auto expected = ubu::int2(2,3);
 

@@ -5,7 +5,7 @@
 #include "../../utilities/integrals/ceil_div.hpp"
 #include "../../utilities/integrals/size.hpp"
 #include "../../tensors/traits/tensor_reference.hpp"
-#include "../../tensors/concepts/tensor_like.hpp"
+#include "../../tensors/concepts/tensor.hpp"
 #include "../../tensors/matrices/row_major_layout.hpp"
 #include "../../tensors/vectors/vector_like.hpp"
 #include "../../tensors/views/compose.hpp"
@@ -23,7 +23,7 @@ namespace detail
 
 
 // XXX reorganize this into ubu/algorithms/sequential/for_each.hpp if we decide that's necessary
-template<ubu::tensor_like T, std::invocable<ubu::tensor_reference_t<T>> F>
+template<ubu::tensor T, std::invocable<ubu::tensor_reference_t<T>> F>
 constexpr void for_each(T tensor, F f)
 {
   for(auto&& e : tensor)
@@ -36,7 +36,7 @@ constexpr void for_each(T tensor, F f)
 
 } // end detail
 
-template<cooperator C, tensor_like T, std::invocable<tensor_reference_t<T>> F>
+template<cooperator C, tensor T, std::invocable<tensor_reference_t<T>> F>
 constexpr void coop_for_each(C self, T tensor, F f)
 {
   if constexpr (vector_like<T>)

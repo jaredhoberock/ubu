@@ -36,7 +36,7 @@
 namespace ubu
 {
 
-// XXX this thing does not actually satisfy tensor_like yet
+// XXX this thing does not actually satisfy tensor yet
 template<executor E, bounded_coordinate S>
   requires std::is_trivially_copy_constructible_v<E>
 class executor_tensor
@@ -48,16 +48,16 @@ class executor_tensor
     using happening_type = executor_happening_t<E>;
     using shape_type = coordinate_cat_result_t<executor_shape_t<E>, S>;
 
-    template<tensor_like OtherExecs>
+    template<tensor OtherExecs>
       requires congruent<shape_t<OtherExecs>,S>
-    constexpr executor_tensor(from_tensor_like_t, OtherExecs&& execs)
-      : execs_(from_tensor_like, all(std::forward<OtherExecs>(execs)))
+    constexpr executor_tensor(from_tensor_t, OtherExecs&& execs)
+      : execs_(from_tensor, all(std::forward<OtherExecs>(execs)))
     {}
 
     template<std::size_t N>
       requires (rank_v<S> == 1)
     constexpr executor_tensor(std::array<E,N> execs)
-      : executor_tensor(from_tensor_like, execs)
+      : executor_tensor(from_tensor, execs)
     {}
 
     template<std::same_as<E>... U>
@@ -162,9 +162,9 @@ class executor_tensor
     inplace_tensor<E,S> execs_;
 };
 
-template<tensor_like Execs>
+template<tensor Execs>
   requires shaped_and_bounded<Execs>
-executor_tensor(from_tensor_like_t, Execs&&) -> executor_tensor<tensor_element_t<Execs&&>, tensor_shape_t<Execs&&>>;
+executor_tensor(from_tensor_t, Execs&&) -> executor_tensor<tensor_element_t<Execs&&>, tensor_shape_t<Execs&&>>;
 
 template<executor E, std::same_as<E>... Execs>
 executor_tensor(E exec, Execs... execs) -> executor_tensor<E, constant<1+sizeof...(execs)>>;

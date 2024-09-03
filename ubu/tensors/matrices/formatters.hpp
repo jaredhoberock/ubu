@@ -7,7 +7,7 @@
 #include "../element_exists.hpp"
 #include "../iterators.hpp"
 #include "../shapes/shape.hpp"
-#include "matrix_like.hpp"
+#include "matrix.hpp"
 #include "rows.hpp"
 #include <format> // XXX we should probably guard use of this #include
 #include <iterator>
@@ -21,7 +21,7 @@ namespace detail
 // XXX to make matrix formatting work on the GPU, we would need to use "compiled" format strings in the following
 
 
-template<matrix_like M, congruent<shape_t<M>> S>
+template<matrix M, congruent<shape_t<M>> S>
 std::vector<int> compute_column_widths(const M& matrix, S max_shape)
 {
   if(ubu::empty(matrix)) return {};
@@ -100,7 +100,7 @@ std::vector<int> compute_column_widths(const M& matrix, S max_shape)
 } // end detail
 
 
-template<class OutputIt, matrix_like M, congruent<shape_t<M>> S = shape_t<M>>
+template<class OutputIt, matrix M, congruent<shape_t<M>> S = shape_t<M>>
 constexpr OutputIt format_matrix_to(OutputIt out, const M& matrix, S max_shape = zeros_v<S>)
 {
   if(ubu::empty(matrix)) return out;
@@ -224,7 +224,7 @@ constexpr OutputIt format_matrix_to(OutputIt out, const M& matrix, S max_shape =
 }
 
 
-template<matrix_like M, congruent<shape_t<M>> S = shape_t<M>>
+template<matrix M, congruent<shape_t<M>> S = shape_t<M>>
 constexpr std::string format_matrix(const M& matrix, S max_shape = zeros_v<S>)
 {
   std::string result;
@@ -237,7 +237,7 @@ namespace detail
 {
 
 
-template<ubu::matrix_like M>
+template<ubu::matrix M>
 struct matrix_formatter
 {
   std::pair<size_t,size_t> max_shape{}; // defaults to output the entire matrix
@@ -262,7 +262,7 @@ struct matrix_formatter
 } // end ubu
 
 
-template<ubu::matrix_like M>
+template<ubu::matrix M>
 struct std::formatter<M> : ubu::detail::matrix_formatter<M> {};
 
 #if __has_include(<fmt/format.h>)
@@ -270,11 +270,11 @@ struct std::formatter<M> : ubu::detail::matrix_formatter<M> {};
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 
-template<ubu::matrix_like M>
+template<ubu::matrix M>
 struct fmt::formatter<M> : ubu::detail::matrix_formatter<M> {};
 
-// disable fmtlib detecting matrix_like as a range
-template<ubu::matrix_like M>
+// disable fmtlib detecting matrix as a range
+template<ubu::matrix M>
 struct fmt::is_range<M,char> : std::false_type {};
 
 #endif // __has_include(<fmt/format.h>)

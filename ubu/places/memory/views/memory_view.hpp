@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../tensors/concepts/decomposable.hpp"
-#include "../../../tensors/concepts/nested_tensor_like.hpp"
-#include "../../../tensors/concepts/tensor_like_of.hpp"
+#include "../../../tensors/concepts/nested_tensor.hpp"
+#include "../../../tensors/concepts/tensor_of.hpp"
 #include "../../../tensors/concepts/view_of.hpp"
 #include "../../../tensors/coordinates/concepts/congruent.hpp"
 #include "../../../tensors/coordinates/concepts/coordinate.hpp"
@@ -29,11 +29,11 @@ constexpr bool is_memory_view_of()
 
   if constexpr (view<T>)
   {
-    if constexpr (span_like<T> and (std::is_void_v<E> or tensor_like_of<T,E>))
+    if constexpr (span_like<T> and (std::is_void_v<E> or tensor_of<T,E>))
     {
       return true;
     }
-    else if constexpr (nested_tensor_like<T> and is_memory_view_of<tensor_element_t<T>,E>())
+    else if constexpr (nested_tensor<T> and is_memory_view_of<tensor_element_t<T>,E>())
     {
       return true;
     }

@@ -16,7 +16,7 @@ constexpr std::vector<T> to_host(const std::vector<T, ubu::cuda::managed_allocat
   return {vec.begin(), vec.end()};
 }
 
-template<ubu::tensor_like T>
+template<ubu::tensor T>
   requires std::is_trivially_copyable_v<T>
 constexpr T to_host(T tensor)
 {

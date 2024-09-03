@@ -27,7 +27,7 @@ ubu::cuda::event load_after(ubu::cuda::device_executor gpu, const ubu::cuda::eve
   using T = tensor_element_t<I>;
 
   layout_of_rank<3> auto layout = layout_for_load(std::size(input));
-  tensor_like_of_rank<3> auto input_tiles = compose(input, layout);
+  tensor_of_rank<3> auto input_tiles = compose(input, layout);
   
   auto shape = layout.shape();
 

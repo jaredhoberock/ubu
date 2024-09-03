@@ -2,16 +2,15 @@
 
 #include "../../detail/prologue.hpp"
 #include "../traits/tensor_element.hpp"
-#include "tensor_like.hpp"
-#include <concepts>
+#include "tensor.hpp"
 
 namespace ubu
 {
 
-template<class T, class U>
-concept tensor_like_of =
-  tensor_like<T>
-  and std::same_as<tensor_element_t<T>,U>
+template<class T>
+concept nested_tensor =
+  tensor<T>
+  and tensor<tensor_element_t<T>>
 ;
 
 } // end ubu

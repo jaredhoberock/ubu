@@ -51,7 +51,7 @@ class identity_layout : public view_base
       return shape();
     }
 
-    template<tensor_like A>
+    template<tensor A>
       requires congruent<tensor_shape_t<A>,S>
     friend constexpr view auto compose(A&& a, const identity_layout&)
     {

@@ -2,7 +2,6 @@
 
 #include "../../../../detail/prologue.hpp"
 
-#include "../../../../tensors/concepts/tensor_like.hpp"
 #include "../deallocate_after.hpp"
 #include <utility>
 

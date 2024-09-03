@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../traits/tensor_shape.hpp"
@@ -50,7 +50,7 @@ struct dispatch_zip
     return zip(std::forward<T>(tensor), std::forward<Ts>(tensors)...);
   }
 
-  template<tensor_like T, tensor_like... Ts>
+  template<tensor T, tensor... Ts>
     requires (not has_zip_member_function<T&&,Ts&&...>
               and not has_zip_free_function<T&&,Ts&&...>
               and (... and congruent<tensor_shape_t<T>, tensor_shape_t<Ts>>))

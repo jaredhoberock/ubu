@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../views/decompose.hpp"
-#include "tensor_like.hpp"
+#include "tensor.hpp"
 
 namespace ubu
 {
@@ -10,10 +10,10 @@ namespace ubu
 
 template<class T>
 concept decomposable =
-  tensor_like<T> and
-  requires(T tensor)
+  tensor<T> and
+  requires(T t)
   {
-    decompose(tensor);
+    decompose(t);
   }
 ;
 

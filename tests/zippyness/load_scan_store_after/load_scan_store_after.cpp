@@ -70,8 +70,8 @@ ubu::cuda::event load_scan_store_after(ubu::cuda::device_executor gpu, ubu::cuda
   using T = tensor_element_t<I>;
 
   layout_of_rank<3> auto layout = layout_for_scan(std::size(input));
-  tensor_like_of_rank<3> auto input_tiles  = compose(input, layout);
-  tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
+  tensor_of_rank<3> auto input_tiles  = compose(input, layout);
+  tensor_of_rank<3> auto result_tiles = compose(result, layout);
 
   auto [max_num_elements_per_thread, block_size, num_blocks] = shape(layout);
   auto tile_size = max_num_elements_per_thread * block_size;
@@ -95,8 +95,8 @@ ubu::cuda::event load_scan_store_after(ubu::cuda::device_executor gpu, ubu::cuda
     auto [block, block_idx] = subgroup_and_id(grid);
 
     // tiles of the input and result are two-dimensional
-    matrix_like auto input_tile  = slice(input_tiles, std::tuple(_, _, block_idx));
-    matrix_like auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
+    matrix auto input_tile  = slice(input_tiles, std::tuple(_, _, block_idx));
+    matrix auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
 
     // load each thread's column of the input
     inplace_vector thread_values = coop_load_columns(block, input_tile);

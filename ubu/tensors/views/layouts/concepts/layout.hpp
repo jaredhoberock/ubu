@@ -4,8 +4,8 @@
 
 #include "../../../coordinates/concepts/congruent.hpp"
 #include "../../../coordinates/concepts/coordinate.hpp"
-#include "../../../concepts/tensor_like.hpp"
-#include "../../../concepts/tensor_like_of_rank.hpp"
+#include "../../../concepts/tensor.hpp"
+#include "../../../concepts/tensor_of_rank.hpp"
 #include "../../../traits/tensor_element.hpp"
 
 namespace ubu
@@ -13,7 +13,7 @@ namespace ubu
 
 template<class T>
 concept layout =
-  tensor_like<T>
+  tensor<T>
   and coordinate<tensor_element_t<T>>
 ;
 

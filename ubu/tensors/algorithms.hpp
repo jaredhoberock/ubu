@@ -2,7 +2,7 @@
 
 #include "../detail/prologue.hpp"
 #include "concepts/elemental_invocable.hpp"
-#include "concepts/tensor_like.hpp"
+#include "concepts/tensor.hpp"
 #include "coordinates/element.hpp"
 #include "element_exists.hpp"
 #include "shapes/shape.hpp"
@@ -16,15 +16,15 @@ namespace ubu
 {
 
 
-template<tensor_like T>
+template<tensor T>
 constexpr bool empty(T&& tensor)
 {
-  // XXX this function only makes sense for sized_tensor_like
+  // XXX this function only makes sense for sized_tensor
   return ubu::shape_size(ubu::shape(tensor)) == 0;
 }
 
 
-// XXX TODO: to generalize this to tensor_like, we need to use bulk_execute + inline_executor
+// XXX TODO: to generalize this to tensor, we need to use bulk_execute + inline_executor
 //           to generate coordinates in an efficient (i.e., loop-unrollable) way
 // XXX TODO: receive an optional init parameter
 // XXX TODO: require that elemental_invoke_result_t is convertible to tensor_element_t<V>

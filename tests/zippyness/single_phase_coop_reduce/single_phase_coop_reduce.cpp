@@ -43,13 +43,13 @@ constexpr ubu::layout_of_rank<3> auto coop_reduction_layout(std::size_t n, int d
 
 template<ubu::sized_vector_like V>
   requires std::is_trivially_copyable_v<V>
-constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::coop_executor ex)
+constexpr ubu::matrix auto as_reduction_matrix(V vec, ubu::cuda::coop_executor ex)
 {
   // create a 3d layout
   ubu::layout_of_rank<3> auto layout = coop_reduction_layout(ubu::size(vec), ex.device());
 
   // create a 3d view of the data
-  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);
+  ubu::tensor_of_rank<3> auto view3d = ubu::compose(vec, layout);
 
   // nestle the 3d view into a 2d matrix of slices
   return ubu::nestle(view3d);
@@ -62,7 +62,7 @@ ubu::cuda::event single_phase_coop_reduce(ubu::cuda::coop_executor gpu, ubu::cud
   using namespace ubu;
 
   // arrange the input into a 2D matrix of 1D tiles
-  matrix_like auto tiles = as_reduction_matrix(input, gpu);
+  matrix auto tiles = as_reduction_matrix(input, gpu);
 
   auto grid_shape = shape(tiles);
   auto [num_threads, num_blocks] = grid_shape;

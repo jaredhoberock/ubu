@@ -2,6 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 
+#include "../../../tensors/concepts/tensor.hpp"
 #include "../../../tensors/coordinates/comparisons/is_below.hpp"
 #include "../../../tensors/coordinates/concepts/bounded_coordinate.hpp"
 #include "../../../tensors/coordinates/concepts/congruent.hpp"
@@ -53,16 +54,16 @@ class allocator_tensor
     using happening_type = allocator_happening_t<A>;
     using shape_type = coordinate_cat_result_t<inner_shape_type, S>;
 
-    template<tensor_like OtherAllocs>
+    template<tensor OtherAllocs>
       requires congruent<shape_t<OtherAllocs>,S>
-    constexpr allocator_tensor(from_tensor_like_t, OtherAllocs&& allocs)
-      : allocs_(from_tensor_like, all(std::forward<OtherAllocs>(allocs)))
+    constexpr allocator_tensor(from_tensor_t, OtherAllocs&& allocs)
+      : allocs_(from_tensor, all(std::forward<OtherAllocs>(allocs)))
     {}
 
     template<std::size_t N>
       requires (rank_v<S> == 1)
     constexpr allocator_tensor(std::array<A,N> allocs)
-      : allocator_tensor(from_tensor_like, allocs)
+      : allocator_tensor(from_tensor, allocs)
     {}
 
     template<std::same_as<A>... U>
@@ -104,7 +105,7 @@ class allocator_tensor
       });
 
       // materialize the result of the calls to bulk_allocate_after into a tensor
-      inplace_tensor happenings_and_allocations(from_tensor_like, xfrm);
+      inplace_tensor happenings_and_allocations(from_tensor, xfrm);
 
       // unzip that tensor into a pair of views
       auto [happenings_view, allocations] = unzip(happenings_and_allocations);
@@ -113,7 +114,7 @@ class allocator_tensor
       view auto result_view = compose(inplace(allocations), layout);
 
       // move the happenings into a tensor
-      inplace_tensor happenings(from_tensor_like, as_rvalue(happenings_view));
+      inplace_tensor happenings(from_tensor, as_rvalue(happenings_view));
 
       // "reduce" the happenings into a single happening
       auto result_happening = after_all(happenings);
@@ -144,7 +145,7 @@ class allocator_tensor
       });
 
       // materialize the deallocate calls into a tensor of postcedents
-      inplace_tensor postcedents(from_tensor_like, xfrm);
+      inplace_tensor postcedents(from_tensor, xfrm);
 
       // "reduce" the postcedents into a single postcedent
       return after_all(postcedents);
@@ -174,9 +175,9 @@ class allocator_tensor
     inplace_tensor<A,S> allocs_;
 };
 
-template<tensor_like Allocs>
+template<tensor Allocs>
   requires shaped_and_bounded<Allocs>
-allocator_tensor(from_tensor_like_t, Allocs&&) -> allocator_tensor<tensor_element_t<Allocs&&>, tensor_shape_t<Allocs&&>>;
+allocator_tensor(from_tensor_t, Allocs&&) -> allocator_tensor<tensor_element_t<Allocs&&>, tensor_shape_t<Allocs&&>>;
 
 template<asynchronous_allocator A, std::same_as<A>... Allocs>
 allocator_tensor(A alloc, Allocs... allocs) -> allocator_tensor<A, constant<1+sizeof...(allocs)>>;

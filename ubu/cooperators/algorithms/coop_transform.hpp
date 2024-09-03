@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../tensors/traits/tensor_reference.hpp"
-#include "../../tensors/concepts/tensor_like.hpp"
+#include "../../tensors/concepts/tensor.hpp"
 #include "../../tensors/views/zip.hpp"
 #include "../concepts/cooperator.hpp"
 #include <concepts>
@@ -11,7 +11,7 @@
 namespace ubu
 {
 
-template<cooperator C, tensor_like I, tensor_like O, std::invocable<tensor_reference_t<I>> F>
+template<cooperator C, tensor I, tensor O, std::invocable<tensor_reference_t<I>> F>
   requires std::assignable_from<tensor_reference_t<O>, tensor_reference_t<I>>
 constexpr void coop_transform(C self, I input, O output, F f)
 {

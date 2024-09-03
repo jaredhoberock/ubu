@@ -20,7 +20,7 @@ class inplaced_view : public view_base
                 and view<V>
                 and std::constructible_from<T, tensor_element_t<V>> and std::same_as<S, tensor_shape_t<V>>)
     constexpr inplaced_view(V view)
-      : elements_(from_tensor_like, view)
+      : elements_(from_tensor, view)
     {}
 
     constexpr inplaced_view(const inplaced_view&) = default;

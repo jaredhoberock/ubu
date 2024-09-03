@@ -1,6 +1,6 @@
 #include <array>
 #include <cassert>
-#include <ubu/tensors/matrices/matrix_like.hpp>
+#include <ubu/tensors/matrices/matrix.hpp>
 #include <ubu/tensors/matrices/row_major_layout.hpp>
 #include <ubu/tensors/views/composed_view.hpp>
 #include <ubu/tensors/views/domain.hpp>
@@ -12,7 +12,7 @@ namespace ns = ubu;
 // all elements of expected must exist
 // negative elements of expected indicate that the
 // corresponding element of result must not exist
-template<ubu::matrix_like E, ubu::matrix_like R>
+template<ubu::matrix E, ubu::matrix R>
 bool are_equal(E expected, R result)
 {
   using namespace ubu;

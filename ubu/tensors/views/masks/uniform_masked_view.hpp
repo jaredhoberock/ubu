@@ -2,7 +2,7 @@
 
 #include "../../../detail/prologue.hpp"
 #include "../../../utilities/integrals/size.hpp"
-#include "../../concepts/sized_tensor_like.hpp"
+#include "../../concepts/sized_tensor.hpp"
 #include "../../concepts/view.hpp"
 #include "../../element_exists.hpp"
 #include "../../shapes/shape.hpp"
@@ -13,8 +13,8 @@
 namespace ubu
 {
 
-// XXX ideally, we want a general masked_view<tensor_like T, mask M>
-//     where a mask is a tensor_like of booleans
+// XXX ideally, we want a general masked_view<tensor T, mask M>
+//     where a mask is a tensor of booleans
 template<view T>
 class uniform_masked_view : public view_base
 {
@@ -30,7 +30,7 @@ class uniform_masked_view : public view_base
       return ubu::shape(tensor_);
     }
 
-    template<sized_tensor_like T_ = T>
+    template<sized_tensor T_ = T>
     constexpr auto size() const
     {
       return ubu::size(tensor_);

@@ -14,13 +14,13 @@ namespace ns = ubu;
 
 void test_view()
 {
-  // test some tensor_likes that are views
+  // test some tensors that are views
   static_assert(ns::view<ns::lattice<int>>);
   static_assert(ns::view<ns::lattice<ns::int2>>);
   static_assert(ns::view<std::span<int>>);
   static_assert(ns::view<std::string_view>);
 
-  // test some non tensor_likes
+  // test some non tensors
   static_assert(not ns::view<std::vector<int>>);
   static_assert(not ns::view<std::array<int,4>>);
   static_assert(not ns::view<std::string>);

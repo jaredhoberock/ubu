@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_modulo.hpp"
@@ -84,7 +84,7 @@ struct dispatch_tile
 {
   template<class T, class S>
     requires (has_tile_customization<T,S>
-              or (tensor_like<T> and congruent<tensor_shape_t<T>,S>))
+              or (tensor<T> and congruent<tensor_shape_t<T>,S>))
   constexpr view auto operator()(T&& tensor, S&& shape) const
   {
     if constexpr (has_tile_member_function<T&&,S&&>)

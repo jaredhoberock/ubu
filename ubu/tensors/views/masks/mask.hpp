@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../detail/prologue.hpp"
-#include "../../concepts/tensor_like.hpp"
+#include "../../concepts/tensor.hpp"
 #include "../../concepts/view.hpp"
 #include "../all.hpp"
 #include "uniform_masked_view.hpp"
@@ -41,7 +41,7 @@ struct dispatch_mask
     return mask(std::forward<T>(t), std::forward<M>(m));
   }
 
-  template<tensor_like T>
+  template<tensor T>
     requires (not has_mask_member_function<T&&,bool>
               and not has_mask_free_function<T&&,bool>)
   constexpr view auto operator()(T&& t, bool m) const

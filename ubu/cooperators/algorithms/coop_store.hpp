@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../utilities/constant.hpp"
 #include "../../tensors/matrices/column_major_layout.hpp"
-#include "../../tensors/matrices/matrix_like.hpp"
+#include "../../tensors/matrices/matrix.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
 #include "../../tensors/vectors/span_like.hpp"
@@ -38,7 +38,7 @@ constexpr void coop_store(C self, const inplace_vector<T,N>& input, D destinatio
 
   // create a column-major view of the stage
   std::pair shape(constant<N>(), size(self));
-  matrix_like auto matrix = compose(stage.all(), column_major_layout(shape));
+  ubu::matrix auto matrix = compose(stage.all(), column_major_layout(shape));
 
   // get my slice of the stage
   auto my_slice = slice(matrix, std::pair(_, id(self)));

@@ -29,7 +29,7 @@ ubu::cuda::event store_after(ubu::cuda::device_executor gpu, ubu::cuda::device_a
   using T = tensor_element_t<R>;
 
   layout_of_rank<3> auto layout = layout_for_store(std::size(result));
-  tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
+  tensor_of_rank<3> auto result_tiles = compose(result, layout);
 
   auto shape = layout.shape();
 
@@ -56,7 +56,7 @@ ubu::cuda::event store_after(ubu::cuda::device_executor gpu, ubu::cuda::device_a
     auto [block, block_idx] = subgroup_and_id(grid);
 
     // tiles of result are two-dimensional
-    matrix_like auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
+    matrix auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
 
     // generate output for this thread as an inplace_vector
     auto my_result_slice = slice(result_tile, std::pair(_,id(block)));

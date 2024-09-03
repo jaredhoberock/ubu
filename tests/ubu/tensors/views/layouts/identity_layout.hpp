@@ -1,5 +1,5 @@
 #include <cassert>
-#include <ubu/tensors/concepts/tensor_like.hpp>
+#include <ubu/tensors/concepts/tensor.hpp>
 #include <ubu/tensors/coordinates/point.hpp>
 #include <ubu/tensors/concepts/view.hpp>
 #include <ubu/tensors/iterators.hpp>
@@ -20,7 +20,7 @@ void test_identity_layout()
 
     using type = decltype(l);
 
-    static_assert(tensor_like<type>);
+    static_assert(tensor<type>);
     static_assert(view<type>);
     static_assert(layout<type>);
   }
@@ -30,7 +30,7 @@ void test_identity_layout()
 
     using type = decltype(l);
 
-    static_assert(tensor_like<type>);
+    static_assert(tensor<type>);
     static_assert(view<type>);
     static_assert(layout<type>);
 
@@ -60,7 +60,7 @@ void test_identity_layout()
 
     using type = decltype(l);
 
-    static_assert(tensor_like<type>);
+    static_assert(tensor<type>);
     static_assert(view<type>);
     static_assert(layout<type>);
 
@@ -70,7 +70,7 @@ void test_identity_layout()
       {
         auto s = slice(l, std::tuple(_,2,_,4));
 
-        static_assert(tensor_like<decltype(s)>);
+        static_assert(tensor<decltype(s)>);
         static_assert(view<decltype(s)>);
         static_assert(layout<decltype(s)>);
 
@@ -88,7 +88,7 @@ void test_identity_layout()
 
     using type = decltype(l);
 
-    static_assert(tensor_like<type>);
+    static_assert(tensor<type>);
     static_assert(view<type>);
     static_assert(layout<type>);
   }

@@ -5,7 +5,7 @@
 #include "../../utilities/integrals/size.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
-#include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/sized_tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../element_exists.hpp"
 #include "../shapes/shape.hpp"
@@ -53,7 +53,7 @@ class zip_view : public view_base
     }
 
     template<class T_ = T>
-      requires (sized_tensor_like<T_> and (... and sized_tensor_like<Ts>))
+      requires (sized_tensor<T_> and (... and sized_tensor<Ts>))
     constexpr auto size() const
     {
       return ubu::size(get<0>(tuple_of_tensors_));

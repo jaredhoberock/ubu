@@ -3,8 +3,8 @@
 #include "../../../detail/prologue.hpp"
 #include "../../../utilities/tuples.hpp"
 #include "../../concepts/composable.hpp"
-#include "../../concepts/nested_tensor_like.hpp"
-#include "../../concepts/viewable_tensor_like.hpp"
+#include "../../concepts/nested_tensor.hpp"
+#include "../../concepts/viewable_tensor.hpp"
 #include "../../coordinates/concepts/coordinate.hpp"
 #include "../../coordinates/concepts/semicoordinate.hpp"
 #include "../../coordinates/element.hpp"
@@ -68,7 +68,7 @@ class slicing_layout : public view_base
     }
 
     // when K is underscore, returns all(tensor)
-    template<tensor_like T, class K_ = K>
+    template<tensor T, class K_ = K>
       requires detail::is_underscore_v<K_>
     friend constexpr view auto compose(T&& tensor, const slicing_layout& self)
     {
@@ -82,7 +82,7 @@ class slicing_layout : public view_base
     //
     // returns slice(element(tensor, last(katana)), leading(katana)))
     // XXX consider moving this customization into ubu::slice so we don't have this circular dependency between ubu::slice and slicing_layout
-    template<nested_tensor_like T>
+    template<nested_tensor T>
       requires composable<T&&,slicing_layout>
                and coordinate_for<tuples::last_t<K>,T&&>
                and sliceable_with<tensor_reference_t<T&&>,tuples::first_t<detail::leading_and_last_result_t<K>>>

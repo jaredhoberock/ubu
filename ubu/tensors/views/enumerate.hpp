@@ -49,7 +49,7 @@ struct dispatch_enumerate
     }
   }
 
-  template<tensor_like T>
+  template<tensor T>
     requires (not has_enumerate_customization<T>)
   constexpr view auto operator()(T&& t) const
   {

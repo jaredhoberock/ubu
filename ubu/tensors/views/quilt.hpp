@@ -5,9 +5,9 @@
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cat.hpp"
-#include "../concepts/nested_tensor_like.hpp"
+#include "../concepts/nested_tensor.hpp"
 #include "../concepts/view.hpp"
-#include "../concepts/viewable_tensor_like.hpp"
+#include "../concepts/viewable_tensor.hpp"
 #include "../traits/inner_tensor_shape.hpp"
 #include "../traits/tensor_shape.hpp"
 #include "compose.hpp"
@@ -24,7 +24,7 @@ namespace detail
 
 template<class T, class S>
 concept quiltable_with =
-  nested_tensor_like<T>
+  nested_tensor<T>
   and coordinate<S>
   and congruent<inner_tensor_shape_t<T&&>,S>
 ;
@@ -71,7 +71,7 @@ struct dispatch_quilt
     }
   }
 
-  template<viewable_tensor_like T, coordinate S>
+  template<viewable_tensor T, coordinate S>
     requires (not has_quilt_customization<T&&,S> and quiltable_with<T&&,S>)
   constexpr quilted_view_of<T&&,S> auto operator()(T&& t, S s) const
   {

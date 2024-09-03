@@ -61,13 +61,13 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
 
 template<ubu::sized_vector_like V>
   requires std::is_trivially_copyable_v<V>
-constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
+constexpr ubu::matrix auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
 {
   // create a 3d layout
   ubu::layout_of_rank<3> auto layout = even_share_layout(ubu::size(vec), gpu.device());
 
   // create a 3d view of the data
-  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);
+  ubu::tensor_of_rank<3> auto view3d = ubu::compose(vec, layout);
 
   // nestle the 3d view into a 2d matrix of slices
   return ubu::nestle(view3d);
@@ -82,7 +82,7 @@ ubu::cuda::event two_pass_reduce(ubu::cuda::device_executor gpu, ubu::cuda::devi
   using T = tensor_element_t<I>;
 
   // slices is a matrix indexed by (threadIdx, blockIdx) of 1d slices
-  matrix_like auto slices = as_reduction_matrix(input, gpu);
+  matrix auto slices = as_reduction_matrix(input, gpu);
 
   // each thread of the kernel receives one slice
   auto shape = slices.shape();
@@ -116,7 +116,7 @@ ubu::cuda::event two_pass_reduce(ubu::cuda::device_executor gpu, ubu::cuda::devi
   });
 
   // second phase, reduce partial sums
-  matrix_like auto partial_sum_slices = as_reduction_matrix(partial_sums, gpu);
+  matrix auto partial_sum_slices = as_reduction_matrix(partial_sums, gpu);
 
   cuda::event result_ready = bulk_execute_with_workspace_after(gpu, alloc, partial_sums_ready, partial_sum_slices.shape(), workspace_shape, [=](ubu::int2 idx, workspace auto ws)
   {

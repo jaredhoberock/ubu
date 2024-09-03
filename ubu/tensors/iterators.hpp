@@ -19,7 +19,7 @@ namespace ubu
 struct tensor_sentinel {};
 
 
-template<sized_tensor_like T>
+template<sized_tensor T>
   requires view<T>
 class sized_tensor_iterator
 {
@@ -180,8 +180,8 @@ class sized_tensor_iterator
 };
 
 
-template<tensor_like T>
-  requires (not sized_tensor_like<T> and view<T>)
+template<tensor T>
+  requires (not sized_tensor<T> and view<T>)
 class unsized_tensor_iterator
 {
   public:
@@ -274,12 +274,12 @@ class unsized_tensor_iterator
 };
 
 
-template<tensor_like T>
+template<tensor T>
 class tensor_iterator;
 
 
 template<view T>
-  requires sized_tensor_like<T>
+  requires sized_tensor<T>
 class tensor_iterator<T> : public sized_tensor_iterator<T>
 {
   private:
@@ -377,7 +377,7 @@ class tensor_iterator<T> : public sized_tensor_iterator<T>
 
 
 template<view T>
-  requires (not sized_tensor_like<T>)
+  requires (not sized_tensor<T>)
 class tensor_iterator<T> : public unsized_tensor_iterator<T>
 {
   private:
@@ -420,28 +420,28 @@ class tensor_iterator<T> : public unsized_tensor_iterator<T>
 };
 
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<T&>> begin(T& tensor)
 {
   return {all(tensor)};
 }
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(const T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<const T&>> begin(const T& tensor)
 {
   return {all(tensor)};
 }
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(T& tensor) { tensor.end(); })
 constexpr tensor_sentinel end(T&)
 {
   return {};
 }
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(const T& tensor) { tensor.end(); })
 constexpr tensor_sentinel end(const T&)
 {
@@ -453,14 +453,14 @@ constexpr tensor_sentinel end(const T&)
 // the reason they exist is for interoperation with legacy interfaces that do not support sentinels
 // these overloads of end_iterator are enabled when the corresponding overload of begin above is enabled
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<T&>> end_iterator(T& tensor)
 {
   return tensor_iterator<all_t<T&>>::end(all(tensor));
 }
 
-template<tensor_like T>
+template<tensor T>
   requires (not requires(const T& tensor) { tensor.begin(); })
 constexpr tensor_iterator<all_t<const T&>> end_iterator(const T& tensor)
 {
