@@ -46,8 +46,8 @@ class transposing_layout : public view_base
 };
 
 
-template<matrix_like M>
-constexpr matrix_like auto transpose(M&& matrix)
+template<matrix M>
+constexpr matrix auto transpose(M&& matrix)
 {
   auto transposed_shape = tuples::reverse(shape(matrix));
 

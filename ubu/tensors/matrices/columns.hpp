@@ -3,13 +3,13 @@
 #include "../../detail/prologue.hpp"
 #include "../vectors/vector_like.hpp"
 #include "../views/nestle.hpp"
-#include "matrix_like.hpp"
+#include "matrix.hpp"
 #include <utility>
 
 namespace ubu
 {
 
-template<matrix_like M>
+template<matrix M>
 constexpr vector_like auto columns(M&& m)
 {
   return nestle(std::forward<M>(m));

@@ -100,8 +100,8 @@ ubu::cuda::event load_scan_store_tiles_after(ubu::cuda::device_executor gpu, ubu
     for(int tile_idx = 0; tile_idx < num_tiles_per_block; ++tile_idx)
     {
       // tiles of the input and result are two-dimensional
-      matrix_like auto input_tile  = slice(input_tiles, std::tuple(_, _, tile_idx, block_idx));
-      matrix_like auto result_tile = slice(result_tiles, std::tuple(_, _, tile_idx, block_idx));
+      matrix auto input_tile  = slice(input_tiles, std::tuple(_, _, tile_idx, block_idx));
+      matrix auto result_tile = slice(result_tiles, std::tuple(_, _, tile_idx, block_idx));
 
       // load each thread's column of the input
       inplace_vector thread_values = coop_load_columns(block, input_tile);

@@ -3,9 +3,9 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../utilities/constant_valued.hpp"
-#include "../../tensors/matrices/contiguous_column_major_matrix_like.hpp"
+#include "../../tensors/matrices/contiguous_column_major_matrix.hpp"
 #include "../../tensors/matrices/matrix_height.hpp"
-#include "../../tensors/matrices/matrix_like.hpp"
+#include "../../tensors/matrices/matrix.hpp"
 #include "../../tensors/shapes/shape_element.hpp"
 #include "../../tensors/traits/tensor_element.hpp"
 #include "../../tensors/vectors/inplace_vector.hpp"
@@ -19,11 +19,11 @@
 namespace ubu
 {
 
-template<cooperator C, matrix_like M>
+template<cooperator C, matrix M>
   requires constant_valued<matrix_height_t<M>>
 constexpr inplace_vector<tensor_element_t<M>, matrix_height_v<M>> coop_load_columns(C self, M source)
 {
-  if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix_like<M>)
+  if constexpr (allocating_cooperator<C> and contiguous_column_major_matrix<M>)
   {
     // in this special case, we can use the entire group to optimize loads
     auto [span, _] = decompose(source);

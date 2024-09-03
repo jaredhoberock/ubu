@@ -75,8 +75,8 @@ ubu::cuda::event load_store_after(ubu::cuda::device_executor gpu, ubu::cuda::dev
     auto [block, block_idx] = subgroup_and_id(grid);
 
     // tiles of the input and result are two-dimensional
-    matrix_like auto input_tile  = slice(input_tiles, std::tuple(_, _, block_idx));
-    matrix_like auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
+    matrix auto input_tile  = slice(input_tiles, std::tuple(_, _, block_idx));
+    matrix auto result_tile = slice(result_tiles, std::tuple(_, _, block_idx));
 
     // tiles of the input and result are two-dimensional
     inplace_vector thread_values = coop_load_columns(block, input_tile);

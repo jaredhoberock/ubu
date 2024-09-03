@@ -8,7 +8,7 @@ namespace ubu
 {
 
 template<class T>
-concept matrix_like = tensor_of_rank<T,2>;
+concept matrix = tensor_of_rank<T,2>;
 
 } // end ubu
 

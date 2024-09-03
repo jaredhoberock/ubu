@@ -66,7 +66,7 @@ constexpr ubu::layout_of_rank<3> auto even_share_layout(std::size_t num_elements
 
 template<ubu::sized_vector_like V>
   requires std::is_trivially_copyable_v<V>
-constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
+constexpr ubu::matrix auto as_reduction_matrix(V vec, ubu::cuda::device_executor gpu)
 {
   // create a 3d layout
   ubu::layout_of_rank<3> auto layout = even_share_layout(ubu::size(vec), gpu.device());
@@ -84,7 +84,7 @@ ubu::cuda::event inplace_reduce_after(ubu::cuda::device_executor gpu, ubu::cuda:
   using namespace ubu;
 
   // arrange the input into a 2D matrix of 1D tiles
-  matrix_like auto tiles = as_reduction_matrix(input, gpu);
+  matrix auto tiles = as_reduction_matrix(input, gpu);
 
   auto shape = ubu::shape(tiles);
   auto [block_size, num_blocks] = shape;
