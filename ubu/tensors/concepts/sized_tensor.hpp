@@ -2,14 +2,14 @@
 
 #include "../../detail/prologue.hpp"
 #include "../../utilities/integrals/size.hpp"
-#include "tensor_like.hpp"
+#include "tensor.hpp"
 #include <ranges>
 
 namespace ubu
 {
 
 template<class T>
-concept sized_tensor_like = tensor_like<T> and sized<T>;
+concept sized_tensor = tensor<T> and sized<T>;
 
 } // end ubu
 

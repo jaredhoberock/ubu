@@ -29,7 +29,7 @@ ubu::cuda::event store_after(ubu::cuda::device_executor gpu, ubu::cuda::device_a
   using T = tensor_element_t<R>;
 
   layout_of_rank<3> auto layout = layout_for_store(std::size(result));
-  tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
+  tensor_of_rank<3> auto result_tiles = compose(result, layout);
 
   auto shape = layout.shape();
 

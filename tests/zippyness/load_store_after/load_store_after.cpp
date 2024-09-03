@@ -47,8 +47,8 @@ ubu::cuda::event load_store_after(ubu::cuda::device_executor gpu, ubu::cuda::dev
   using T = tensor_element_t<I>;
 
   layout_of_rank<3> auto layout = layout_for_load_store(std::size(input));
-  tensor_like_of_rank<3> auto input_tiles  = compose(input, layout);
-  tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
+  tensor_of_rank<3> auto input_tiles  = compose(input, layout);
+  tensor_of_rank<3> auto result_tiles = compose(result, layout);
 
   auto shape = layout.shape();
   constexpr auto max_num_elements_per_thread = get<0>(shape);

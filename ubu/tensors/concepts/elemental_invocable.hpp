@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 #include "../traits/tensor_reference.hpp"
-#include "tensor_like.hpp"
+#include "tensor.hpp"
 #include <concepts>
 
 namespace ubu
@@ -10,7 +10,7 @@ namespace ubu
 
 template<class F, class Tensor, class... Tensors>
 concept elemental_invocable =
-  (tensor_like<Tensor> and ... and tensor_like<Tensors>)
+  (tensor<Tensor> and ... and tensor<Tensors>)
   and std::invocable<F, tensor_reference_t<Tensor>, tensor_reference_t<Tensors>...>
 ;
 

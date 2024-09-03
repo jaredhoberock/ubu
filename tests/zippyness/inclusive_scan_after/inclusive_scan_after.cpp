@@ -86,8 +86,8 @@ ubu::cuda::event inclusive_scan_after(ubu::cuda::device_executor gpu, ubu::cuda:
 
   // arrange the input and result into 3D tensors
   layout_of_rank<3> auto layout = layout_for_scan(std::size(input));
-  tensor_like_of_rank<3> auto input_tiles  = compose(input, layout);
-  tensor_like_of_rank<3> auto result_tiles = compose(result, layout);
+  tensor_of_rank<3> auto input_tiles  = compose(input, layout);
+  tensor_of_rank<3> auto result_tiles = compose(result, layout);
 
   // configure kernel launch
   auto [max_num_elements_per_thread, block_size, num_blocks] = shape(layout);

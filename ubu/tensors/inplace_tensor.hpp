@@ -4,7 +4,7 @@
 
 #include "../utilities/constant.hpp"
 #include "../utilities/integrals/integral_like.hpp"
-#include "concepts/tensor_like.hpp"
+#include "concepts/tensor.hpp"
 #include "concepts/view.hpp"
 #include "coordinates/concepts/bounded_coordinate.hpp"
 #include "coordinates/concepts/congruent.hpp"
@@ -24,9 +24,9 @@
 namespace ubu
 {
 
-struct from_tensor_like_t {};
+struct from_tensor_t{};
 
-constexpr inline from_tensor_like_t from_tensor_like;
+constexpr inline from_tensor_t from_tensor;
 
 template<class T, bounded_coordinate S>
 class inplace_tensor
@@ -47,9 +47,9 @@ class inplace_tensor
     // view ctor
     // effects: for each coord in domain(other), constructs (*this)[coord] from element(other, coord)
     // postcondition: shape() == shape(other)
-    template<tensor_like O>
+    template<tensor O>
       requires (view<O> and congruent<shape_t<O>, S>)
-    constexpr inplace_tensor(from_tensor_like_t, O other)
+    constexpr inplace_tensor(from_tensor_t, O other)
       : shape_(ubu::shape(other)),
         elements_(from_vector_like, ubu::compose(other, inverse_layout()))
     {}
@@ -150,9 +150,9 @@ class inplace_tensor
     inplace_vector<T, max_size()> elements_;
 };
 
-template<tensor_like T>
+template<tensor T>
   requires shaped_and_bounded<T>
-inplace_tensor(from_tensor_like_t, T&&) -> inplace_tensor<tensor_element_t<T&&>, tensor_shape_t<T&&>>; 
+inplace_tensor(from_tensor_t, T&&) -> inplace_tensor<tensor_element_t<T&&>, tensor_shape_t<T&&>>; 
 
 } // end ubu
 

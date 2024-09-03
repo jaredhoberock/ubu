@@ -4,8 +4,8 @@
 
 #include "../concepts/composable.hpp"
 #include "../concepts/decomposable.hpp"
-#include "../concepts/tensor_like.hpp"
-#include "../concepts/viewable_tensor_like.hpp"
+#include "../concepts/tensor.hpp"
+#include "../concepts/viewable_tensor.hpp"
 #include "all.hpp"
 #include "composed_view.hpp"
 #include "decompose.hpp"
@@ -21,8 +21,8 @@ namespace detail
 
 
 template<class T>
-concept viewable_tensor_like_or_not_tensor_like =
-  viewable_tensor_like<T> or not tensor_like<T>
+concept viewable_tensor_or_not_tensor =
+  viewable_tensor<T> or not tensor<T>
 ;
 
 template<class A, class B>
@@ -58,7 +58,7 @@ struct dispatch_compose
     }
   }
 
-  template<viewable_tensor_like_or_not_tensor_like A, tensor_like B>
+  template<viewable_tensor_or_not_tensor A, tensor B>
     requires (not has_compose_customization<A&&,B&&>
               and composable<A,B>)
   constexpr view_of_composition<A&&,B&&> auto operator()(A&& a, B&& b) const
@@ -74,13 +74,13 @@ struct dispatch_compose
       // recursively compose A's right part with b and compose that result with A's left part
       return compose(left, compose(right, std::forward<B>(b)));
     }
-    else if constexpr(viewable_tensor_like<A>)
+    else if constexpr(viewable_tensor<A>)
     {
       return composed_view(all(std::forward<A>(a)), all(std::forward<B>(b)));
     }
     else
     {
-      // when A is not tensor_like (it could be a pointer or invocable), we don't call all(a)
+      // when A is not a tensor (it could be a pointer or invocable), we don't call all(a)
       return composed_view(std::forward<A>(a), all(std::forward<B>(b)));
     }
   }

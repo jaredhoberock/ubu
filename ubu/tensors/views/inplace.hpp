@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/concepts/bounded_coordinate.hpp"
 #include "../traits/tensor_element.hpp"
@@ -37,7 +37,7 @@ concept has_inplace_customization = has_inplace_member_function<T> or has_inplac
 
 template<class T>
 concept inplacable =
-  tensor_like<T>
+  tensor<T>
   and bounded_coordinate<tensor_shape_t<T>>
   and std::is_trivially_copy_constructible_v<tensor_element_t<T>>
 ;

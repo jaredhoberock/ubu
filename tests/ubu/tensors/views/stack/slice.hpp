@@ -9,7 +9,7 @@
 // all elements of expected must exist
 // negative elements of expected indicate that the
 // corresponding element of result must not exist
-template<ubu::tensor_like E, ubu::same_tensor_rank<E> R>
+template<ubu::tensor E, ubu::same_tensor_rank<E> R>
 bool are_equal(E expected, R result)
 {
   using namespace ubu;

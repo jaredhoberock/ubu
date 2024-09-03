@@ -13,7 +13,7 @@ namespace ubu
 {
 
 
-// XXX shape is not the best thing to call this because a workspace is not a tensor_like
+// XXX shape is not the best thing to call this because a workspace is not a tensor
 template<workspace W>
 inline constexpr auto workspace_shape(W ws)
 {

@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../traits/tensor_reference.hpp"
 #include "transform.hpp"
@@ -13,7 +13,7 @@ namespace ubu
 {
 
 
-template<tensor_like T>
+template<tensor T>
   requires std::is_reference_v<tensor_reference_t<T>>
 constexpr view auto as_rvalue(T&& tensor)
 {

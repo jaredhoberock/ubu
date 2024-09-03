@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "all.hpp"
 #include "nestled_view.hpp"
@@ -51,7 +51,7 @@ struct dispatch_nestle
     }
   }
 
-  template<tensor_like T>
+  template<tensor T>
     requires (not has_nestle_customization<T&&>)
   constexpr view auto operator()(T&& tensor) const
   {

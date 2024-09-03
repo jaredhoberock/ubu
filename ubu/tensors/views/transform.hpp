@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 #include "../../utilities/tuples.hpp"
 #include "../concepts/elemental_invocable.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "compose.hpp"
 #include "zip.hpp"
@@ -49,14 +49,14 @@ struct dispatch_transform
     }
   }
 
-  template<tensor_like T, elemental_invocable<T&&> F>
+  template<tensor T, elemental_invocable<T&&> F>
     requires (not has_transform_customization<T&&,F>)
   constexpr view auto operator()(T&& t, F f) const
   {
     return compose(f, std::forward<T>(t));
   }
 
-  template<tensor_like T1, tensor_like T2, elemental_invocable<T1&&,T2&&> F>
+  template<tensor T1, tensor T2, elemental_invocable<T1&&,T2&&> F>
     requires (not has_transform_customization<T1&&,T2&&,F>)
   constexpr view auto operator()(T1&& t1, T2&& t2, F f) const
   {
@@ -70,7 +70,7 @@ struct dispatch_transform
     return compose(g, zipped);
   }
 
-  template<tensor_like T1, tensor_like T2, tensor_like T3, elemental_invocable<T1&&,T2&&,T3&&> F>
+  template<tensor T1, tensor T2, tensor T3, elemental_invocable<T1&&,T2&&,T3&&> F>
     requires (not has_transform_customization<T1&&,T2&&,T3&&,F>)
   constexpr view auto operator()(T1&& t1, T2&& t2, T3&& t3, F f) const
   {
@@ -84,7 +84,7 @@ struct dispatch_transform
     return compose(g, zipped);
   }
 
-  template<tensor_like T1, tensor_like T2, tensor_like T3, tensor_like T4, elemental_invocable<T1&&,T2&&,T3&&,T4&&> F>
+  template<tensor T1, tensor T2, tensor T3, tensor T4, elemental_invocable<T1&&,T2&&,T3&&,T4&&> F>
     requires (not has_transform_customization<T1&&,T2&&,T3&&,T4&&,F>)
   constexpr view auto operator()(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F f) const
   {

@@ -2,6 +2,7 @@
 
 #include "../../../../detail/prologue.hpp"
 
+#include "../../../../tensors/concepts/tensor.hpp"
 #include "../../../../tensors/traits/tensor_element.hpp"
 #include "../../../causality/happening.hpp"
 #include "../rebind_allocator.hpp"
@@ -43,7 +44,7 @@ concept has_deallocate_after_customization =
 template<class A, class B, class T>
 concept has_deallocate_after_customization_once_rebound =
   has_deallocate_after_customization<A,B,T>
-  or (tensor_like<T> 
+  or (tensor<T> 
       and has_rebind_allocator<tensor_element_t<T>,A>
       and has_deallocate_after_customization<
         rebind_allocator_result_t<tensor_element_t<T>,A>, B, T

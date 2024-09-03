@@ -8,9 +8,9 @@
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/coordinate_cast.hpp"
 #include "../coordinates/element.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/same_tensor_rank.hpp"
-#include "../concepts/sized_tensor_like.hpp"
+#include "../concepts/sized_tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../detail/stacked_shape.hpp"
 #include "../detail/subtract_element.hpp"
@@ -35,7 +35,7 @@ template<std::size_t axis_, view A, view B, class R = std::common_reference_t<te
 class stacked_view;
 
 
-template<std::size_t axis, tensor_like A, same_tensor_rank<A> B>
+template<std::size_t axis, tensor A, same_tensor_rank<A> B>
   requires (axis <= tensor_rank_v<A>)
 constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b);
 
@@ -92,7 +92,7 @@ class stacked_view : public view_base
     }
 
     template<class A_ = A, class B_ = B>
-      requires (sized_tensor_like<A_> and sized_tensor_like<B_>)
+      requires (sized_tensor<A_> and sized_tensor<B_>)
     constexpr auto size() const
     {
       return ubu::size(a_) + ubu::size(b_);
@@ -190,7 +190,7 @@ class stacked_view : public view_base
 };
 
 
-template<std::size_t axis, tensor_like A, same_tensor_rank<A> B>
+template<std::size_t axis, tensor A, same_tensor_rank<A> B>
   requires (axis <= tensor_rank_v<A>)
 constexpr stacked_view<axis, all_t<A&&>, all_t<B&&>> stack(A&& a, B&& b)
 {

@@ -4,8 +4,8 @@
 
 #include "../../utilities/integrals/size.hpp"
 #include "../concepts/composable.hpp"
-#include "../concepts/sized_tensor_like.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/sized_tensor.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/element.hpp"
 #include "../element_exists.hpp"
@@ -24,7 +24,7 @@ namespace ubu
 
 
 template<class A, view B>
-  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor_like<A>))
+  requires (std::is_trivially_copy_constructible_v<A> and composable<A,B> and (view<A> or not tensor<A>))
 class composed_view : public view_base
 {
   public:
@@ -49,7 +49,7 @@ class composed_view : public view_base
     }
 
     template<class A_ = A, class B_ = B>
-      requires (not tensor_like<A_> and sized_tensor_like<B_>)
+      requires (not tensor<A_> and sized_tensor<B_>)
     constexpr auto size() const
     {
       return ubu::size(b_);

@@ -49,7 +49,7 @@ constexpr ubu::matrix_like auto as_reduction_matrix(V vec, ubu::cuda::coop_execu
   ubu::layout_of_rank<3> auto layout = coop_reduction_layout(ubu::size(vec), ex.device());
 
   // create a 3d view of the data
-  ubu::tensor_like_of_rank<3> auto view3d = ubu::compose(vec, layout);
+  ubu::tensor_of_rank<3> auto view3d = ubu::compose(vec, layout);
 
   // nestle the 3d view into a 2d matrix of slices
   return ubu::nestle(view3d);

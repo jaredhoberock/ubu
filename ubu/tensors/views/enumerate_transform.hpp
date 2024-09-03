@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../concepts/elemental_invocable.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "domain.hpp"
 #include "transform.hpp"
@@ -50,28 +50,28 @@ struct dispatch_enumerate_transform
     }
   }
 
-  template<tensor_like T1, elemental_invocable<domain_t<T1&&>,T1&&> F>
+  template<tensor T1, elemental_invocable<domain_t<T1&&>,T1&&> F>
     requires (not has_enumerate_transform_customization<T1&&,F&&>)
   constexpr view auto operator()(T1&& t1, F&& f) const
   {
     return transform(domain(std::forward<T1>(t1)), std::forward<T1>(t1), std::forward<F>(f));
   }
 
-  template<tensor_like T1, tensor_like T2, elemental_invocable<domain_t<T1&&>,T1&&,T2&&> F>
+  template<tensor T1, tensor T2, elemental_invocable<domain_t<T1&&>,T1&&,T2&&> F>
     requires (not has_enumerate_transform_customization<T1&&,T2&&,F&&>)
   constexpr view auto operator()(T1&& t1, T2&& t2, F&& f) const
   {
     return transform(domain(std::forward<T1>(t1)), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<F>(f));
   }
 
-  template<tensor_like T1, tensor_like T2, tensor_like T3, elemental_invocable<domain_t<T1&&>,T1&&,T2&&,T3&&> F>
+  template<tensor T1, tensor T2, tensor T3, elemental_invocable<domain_t<T1&&>,T1&&,T2&&,T3&&> F>
     requires (not has_enumerate_transform_customization<T1&&,T2&&,T3&&,F&&>)
   constexpr view auto operator()(T1&& t1, T2&& t2, T3&& t3, F&& f) const
   {
     return transform(domain(std::forward<T1>(t1)), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3), std::forward<F>(f));
   }
 
-  template<tensor_like T1, tensor_like T2, tensor_like T3, tensor_like T4, elemental_invocable<domain_t<T1&&>,T1&&,T2&&,T3&&,T4&&> F>
+  template<tensor T1, tensor T2, tensor T3, tensor T4, elemental_invocable<domain_t<T1&&>,T1&&,T2&&,T3&&,T4&&> F>
     requires (not has_enumerate_transform_customization<T1&&,T2&&,T3&&,T4&&,F&&>)
   constexpr view auto operator()(T1&& t1, T2&& t2, T3&& t3, T4&& t4, F&& f) const
   {

@@ -4,7 +4,7 @@
 #include "../../utilities/tuples.hpp"
 #include "../concepts/composable.hpp"
 #include "../concepts/view.hpp"
-#include "../concepts/viewable_tensor_like.hpp"
+#include "../concepts/viewable_tensor.hpp"
 #include "all.hpp"
 #include "detail/view_of_composition.hpp"
 #include <utility>
@@ -18,7 +18,7 @@ template<class P, class C>
 concept decomposition_of =
   tuples::pair_like<P>
   and composable<tuples::first_t<P>,tuples::second_t<P>>
-  and viewable_tensor_like<C>
+  and viewable_tensor<C>
   and view_of_composition<all_t<C>,tuples::first_t<P>,tuples::second_t<P>>
 ;
 

@@ -3,7 +3,7 @@
 #include "../../detail/prologue.hpp"
 
 #include "../../places/memory/data.hpp"
-#include "../concepts/tensor_like.hpp"
+#include "../concepts/tensor.hpp"
 #include "../concepts/view.hpp"
 #include "../coordinates/bound_coordinate.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
@@ -106,7 +106,7 @@ struct dispatch_trim
 {
   template<class T, class S>
     requires (has_trim_customization<T,S>
-              or (tensor_like<T> and congruent<tensor_shape_t<T>, S>))
+              or (tensor<T> and congruent<tensor_shape_t<T>, S>))
   constexpr view auto operator()(T&& tensor, S&& shape) const
   {
     if constexpr (has_trim_member_function<T&&,S&&>)

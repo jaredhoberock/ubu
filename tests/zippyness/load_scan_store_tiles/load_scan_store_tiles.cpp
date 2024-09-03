@@ -71,8 +71,8 @@ ubu::cuda::event load_scan_store_tiles_after(ubu::cuda::device_executor gpu, ubu
   using T = tensor_element_t<I>;
 
   layout_of_rank<4> auto layout = layout_for_scan(std::size(input));
-  tensor_like_of_rank<4> auto input_tiles  = compose(input, layout);
-  tensor_like_of_rank<4> auto result_tiles = compose(result, layout);
+  tensor_of_rank<4> auto input_tiles  = compose(input, layout);
+  tensor_of_rank<4> auto result_tiles = compose(result, layout);
 
   auto [max_num_elements_per_thread, block_size, num_tiles_per_block, num_blocks] = shape(layout);
   auto tile_size = max_num_elements_per_thread * block_size;
