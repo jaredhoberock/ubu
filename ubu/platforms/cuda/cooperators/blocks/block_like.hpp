@@ -31,6 +31,25 @@ struct block_workspace
   };
 
   barrier_type barrier;
+
+  constexpr block_workspace() : buffer(smem()), barrier() {}
+
+  // returns the span of dynamically-allocated smem
+  constexpr static basic_buffer<int> smem()
+  {
+    std::byte* data = nullptr;
+    int size = 0;
+#if defined(__CUDACC__)
+    if UBU_TARGET(ubu::detail::is_device())
+    {
+      extern __shared__ std::byte smem[];
+      data = smem;
+
+      asm("mov.u32 %0, %%dynamic_smem_size;" : "=r"(size));
+    }
+#endif
+    return {data,size};
+  }
 };
 
 

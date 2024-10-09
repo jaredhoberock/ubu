@@ -3,7 +3,6 @@
 #include "../detail/prologue.hpp"
 
 #include "../places/memory/pointers/pointer_like.hpp"
-#include "../places/memory/views/empty_buffer.hpp"
 #include "../tensors/coordinates/colexicographical_lift.hpp"
 #include "../tensors/coordinates/concepts/congruent.hpp"
 #include "../tensors/coordinates/concepts/coordinate.hpp"
@@ -11,16 +10,12 @@
 #include "../tensors/shapes/shape_size.hpp"
 #include "../utilities/integrals/size.hpp"
 #include "../utilities/tuples.hpp"
-#include "barriers/arrive_and_wait.hpp"
-#include "barriers/sized_barrier_like.hpp"
+#include "barriers.hpp"
 #include "concepts/cooperator.hpp"
 #include "primitives/id.hpp"
 #include "primitives/size.hpp"
 #include "primitives/subgroup.hpp"
-#include "workspaces/get_local_workspace.hpp"
-#include "workspaces/hierarchical_workspace.hpp"
-#include "workspaces/workspace.hpp"
-#include "workspaces/workspace_thread_scope.hpp"
+#include "workspaces.hpp"
 #include <concepts>
 #include <string_view>
 #include <type_traits>
@@ -38,7 +33,7 @@ struct basic_cooperator
   static constexpr std::string_view thread_scope = workspace_thread_scope_v<W>;
 
   constexpr basic_cooperator(const C& c, const S& s, const W& w = W{})
-    : coord{c}, shape{s}, workspace_{w}, stack_counter_{0}
+    : coord{c}, shape{s}, workspace_{w}
   {}
 
   // cooperators with a concurrent workspace can synchronize with the barrier
@@ -48,21 +43,18 @@ struct basic_cooperator
     arrive_and_wait(get_barrier(workspace_));
   }
 
-  // cooperators with non-empty buffer can allocate from the buffer
-  template<nonempty_buffer_like B = buffer_t<W>>
+  // cooperators with a stack workspace can deallocate from the workspace
+  template<stack_workspace W_ = W>
   constexpr pointer_like auto coop_alloca(int num_bytes)
   {
-    buffer_like auto buffer = get_buffer(workspace_);
-    pointer_like auto result = &buffer[stack_counter_];
-    stack_counter_ += num_bytes;
-    return result;
+    return push_allocation(workspace_, num_bytes);
   }
 
-  // cooperators with non-empty buffer can deallocate from the buffer
-  template<nonempty_buffer_like B = buffer_t<W>>
+  // cooperators with a stack workspace can allocate from the workspace
+  template<stack_workspace W_ = W>
   constexpr void coop_dealloca(int num_bytes)
   {
-    stack_counter_ -= num_bytes;
+    pop_allocation(workspace_, num_bytes);
   }
 
   // precondition: shape_size(new_shape) == size(self)
@@ -129,8 +121,7 @@ struct basic_cooperator
   }
 
   private:
-    const W workspace_;
-    int stack_counter_; // XXX we should just try to manipulate the workspace's buffer directly rather than keep this extra state around
+    W workspace_;
 
     template<ubu::workspace OtherW, coordinate OtherS, coordinate OtherC>
     static constexpr basic_cooperator<OtherW,OtherS,OtherC> make_basic_cooperator(OtherC c, OtherS s, OtherW w)

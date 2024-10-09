@@ -25,21 +25,8 @@ struct grid_workspace
   block_workspace local_workspace;
 
   constexpr explicit grid_workspace(std::span<std::byte> outer_buffer = {})
-  {
-#if defined(__CUDACC__)
-    if UBU_TARGET(ubu::detail::is_device())
-    {
-      // count the number of dynamically-allocated shared memory bytes
-      unsigned int dynamic_smem_size;
-      asm("mov.u32 %0, %%dynamic_smem_size;" : "=r"(dynamic_smem_size));
-
-      // create workspace
-      extern __shared__ std::byte inner_buffer[];
-      buffer = outer_buffer;
-      local_workspace.buffer = std::span(inner_buffer, dynamic_smem_size);
-    }
-#endif
-  }
+    : buffer(outer_buffer), local_workspace()
+  {}
 };
 
 
