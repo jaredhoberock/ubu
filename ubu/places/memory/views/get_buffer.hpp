@@ -34,22 +34,23 @@ concept has_get_buffer_free_function = requires(T arg)
 struct dispatch_get_buffer
 {
   template<buffer_like B>
-  constexpr B operator()(B buf) const
+  constexpr B&& operator()(B&& buf) const
   {
-    return buf;
+    return std::forward<B>(buf);
   }
 
   template<class T>
     requires has_buffer_member_variable<T&&>
-  constexpr buffer_like auto operator()(T&& arg) const
+  constexpr buffer_like decltype(auto) operator()(T&& arg) const
   {
-    return std::forward<T>(arg).buffer;
+    // return a reference to the member
+    return (std::forward<T>(arg).buffer);
   }
 
   template<class T>
     requires (not has_buffer_member_variable<T&&>
               and has_get_buffer_member_function<T&&>)
-  constexpr buffer_like auto operator()(T&& arg) const
+  constexpr buffer_like decltype(auto) operator()(T&& arg) const
   {
     return std::forward<T>(arg).get_buffer();
   }
@@ -58,7 +59,7 @@ struct dispatch_get_buffer
     requires (not has_buffer_member_variable<T&&>
               and not has_get_buffer_member_function<T&&>
               and has_get_buffer_free_function<T&&>)
-  constexpr buffer_like auto operator()(T&& arg) const
+  constexpr buffer_like decltype(auto) operator()(T&& arg) const
   {
     return get_buffer(std::forward<T>(arg));
   }
