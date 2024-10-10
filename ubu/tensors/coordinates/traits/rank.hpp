@@ -16,18 +16,6 @@ namespace detail
 {
 
 
-// XXX WAR circle bug
-//     https://godbolt.org/z/747sxhzE3
-template<class T>
-struct circle_tuple_bug_static_rank_workaround;
-
-template<class T>
-concept has_circle_tuple_bug_static_rank_workaround = requires
-{
-  { circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>::rank } -> std::convertible_to<std::size_t>;
-};
-
-
 template<class T>
 concept has_rank_static_member_variable = requires
 {
@@ -72,23 +60,14 @@ struct dispatch_rank
 {
   // static cases do not take a parameter
   template<class T>
-    requires has_circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>
-  constexpr std::size_t operator()() const
-  {
-    return circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>::rank;
-  }
-
-  template<class T>
-    requires (not has_circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>
-              and has_rank_static_member_variable<std::remove_cvref_t<T>>)
+    requires has_rank_static_member_variable<std::remove_cvref_t<T>>
   constexpr std::size_t operator()() const
   {
     return std::remove_cvref_t<T>::rank;
   }
 
   template<class T>
-    requires (not has_circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>
-              and not has_rank_static_member_variable<std::remove_cvref_t<T>>
+    requires (not has_rank_static_member_variable<std::remove_cvref_t<T>>
               and has_rank_static_member_function<std::remove_cvref_t<T>>)
   constexpr std::size_t operator()() const
   {
@@ -96,8 +75,7 @@ struct dispatch_rank
   }
 
   template<class T>
-    requires (not has_circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>
-              and not has_rank_static_member_variable<std::remove_cvref_t<T>>
+    requires (not has_rank_static_member_variable<std::remove_cvref_t<T>>
               and not has_rank_static_member_function<std::remove_cvref_t<T>>
               and integral_like<T>)
   constexpr std::size_t operator()() const
@@ -106,8 +84,7 @@ struct dispatch_rank
   }
 
   template<class T>
-    requires (not has_circle_tuple_bug_static_rank_workaround<std::remove_cvref_t<T>>
-              and not has_rank_static_member_variable<std::remove_cvref_t<T>>
+    requires (not has_rank_static_member_variable<std::remove_cvref_t<T>>
               and not has_rank_static_member_function<std::remove_cvref_t<T>>
               and not integral_like<T>
               and is_tuple_like_of_types_each_with_static_rank<std::remove_cvref_t<T>>::value)
