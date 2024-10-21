@@ -5,7 +5,7 @@
 #include "../../../detail/exception/throw_runtime_error.hpp"
 #include "../event.hpp"
 #include "has_runtime.hpp"
-#include "kernel_entry_point.hpp"
+#include "kernel_for_invocable.hpp"
 #include "throw_on_error.hpp"
 #include <cuda_runtime.h>
 #include <set>
@@ -75,7 +75,7 @@ inline cudaGraphNode_t make_kernel_node(cudaGraph_t graph, cudaGraphNode_t depen
     void* kernel_params[] = {reinterpret_cast<void*>(&f)};
 
     cudaKernelNodeParams params{};
-    params.func = reinterpret_cast<void*>(&kernel_entry_point<decltype(f)>);
+    params.func = reinterpret_cast<void*>(kernel_for_invocable(f));
     params.gridDim = grid_dim;
     params.blockDim = block_dim;
     params.kernelParams = kernel_params;

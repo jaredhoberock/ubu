@@ -12,7 +12,7 @@
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/default_coordinate.hpp"
 #include "cooperators.hpp"
-#include "detail/launch_as_kernel_after.hpp"
+#include "detail/launch_as_kernel.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
 #include "thread_id.hpp"
@@ -88,7 +88,7 @@ class device_executor
       auto [block_dim, grid_dim] = as_dim3s(shape);
 
       // launch the kernel
-      return detail::launch_as_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
+      return detail::launch_as_kernel(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
     }
 
     template<congruent<shape_type> S, congruent<workspace_shape_type> W, std::invocable<default_coordinate_t<S>, workspace_type> F>

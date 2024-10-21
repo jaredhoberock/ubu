@@ -11,8 +11,7 @@
 #include "../../tensors/coordinates/point.hpp"
 #include "../../tensors/coordinates/traits/ones.hpp"
 #include "cooperators.hpp"
-#include "detail/default_dynamic_shared_memory_size.hpp"
-#include "detail/launch_as_cooperative_kernel_after.hpp"
+#include "detail/launch_as_kernel.hpp"
 #include "device_allocator.hpp"
 #include "event.hpp"
 #include <concepts>
@@ -83,7 +82,7 @@ class coop_executor
       auto [block_dim, grid_dim] = as_dim3s(shape);
 
       // launch the kernel
-      return detail::launch_as_cooperative_kernel_after(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
+      return detail::launch_as_cooperative_kernel(before, grid_dim, block_dim, dynamic_smem_size_, stream_, device_, kernel);
     }
 
     template<std::invocable F>
