@@ -97,6 +97,27 @@ void store_release(volatile T* ptr, T value)
 }
 
 
+// this is provided because at low optimization levels, the use of std::atomic_ref::store
+// causes LLVM to attempt to emit store seq_cst and crashes with a can't select error
+template<class T>
+  requires (std::is_trivially_copyable_v<T> and (sizeof(T) == sizeof(uint32_t)))
+inline void store_relaxed(volatile T* ptr, T value)
+{
+  NV_IF_ELSE_TARGET(NV_IS_DEVICE, (
+    NV_IF_TARGET(NV_PROVIDES_SM_70, (
+      asm volatile("st.relaxed.gpu.u32 [%0],%1;" : : "l"((T*)ptr), "r"(value) : "memory");
+    ), (
+      // use a stronger store if we can't generate a relaxed store
+      // XXX what should we actually do here for sm < 70?
+      ubu::detail::store_release(ptr, value);
+    ))
+  ), (
+    // XXX circle emits an LLVM ERROR : cannot select on this alternative to the above:
+    std::atomic_ref(*ptr).store(value, std::memory_order_relaxed);
+  ))
+}
+
+
 } // end ubu::detail
 
 #include "epilogue.hpp"

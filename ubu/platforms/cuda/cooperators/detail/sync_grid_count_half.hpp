@@ -11,15 +11,17 @@
 namespace ubu::cuda::detail
 {
 
-inline uint32_t fetch_add_to_lower_half(std::atomic_ref<uint32_t> number, uint16_t value)
+inline uint32_t fetch_add_to_lower_half(uint32_t* number_ptr, uint16_t value)
 {
   uint32_t expected;
   uint32_t desired;
 
+  std::atomic_ref number(*number_ptr);
+
   do
   {
-    expected = number.load(std::memory_order_acq_rel);
-    // XXX circle crashes on this alternative to the above:
+    expected = ubu::detail::load_acquire(number_ptr);
+    // XXX circle emits an LLVM ERROR : cannot select on this alternative to the above:
     //expected = number.load();
 
     uint16_t lower_half = expected & 0x0000FFFF;
@@ -38,12 +40,11 @@ inline uint16_t arrive_and_wait_and_sum(uint16_t value, uint32_t num_expected_th
   const uint32_t generation_bit = 1 << 31;
   const uint32_t counter_mask = generation_bit - 1;
 
-  // get atomic_refs
+  // get an atomic_ref to the counter & generation
   std::atomic_ref counter_and_generation(*counter_and_generation_ptr);
-  std::atomic_ref accumulator(*accumulator_ptr);
 
   // add our value to the accumulator
-  fetch_add_to_lower_half(accumulator, value);
+  fetch_add_to_lower_half(accumulator_ptr, value);
 
   // increment the thread counter
   uint32_t old_counter_and_generation = counter_and_generation.fetch_add(1, std::memory_order_acq_rel);
@@ -56,7 +57,7 @@ inline uint16_t arrive_and_wait_and_sum(uint16_t value, uint32_t num_expected_th
 
     // reset the accumulator by moving the lower bits to the high bits
     uint32_t accumulator_value = load_acquire(accumulator_ptr);
-    accumulator.store((accumulator_value << 16) | accumulator_reset_value, std::memory_order_relaxed);
+    store_relaxed(accumulator_ptr, (accumulator_value << 16) | accumulator_reset_value);
 
     // reset the counter for the next generation
     store_release(counter_and_generation_ptr, generation ? 0 : generation_bit);
