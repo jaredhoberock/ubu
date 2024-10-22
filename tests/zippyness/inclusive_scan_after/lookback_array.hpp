@@ -136,7 +136,7 @@ class lookback_storage<T,C,Z>
     constexpr void store_sum(I idx, const T& value)
     {
       value_and_status store_me{value, sum_available};
-      ubu::detail::atomic_store(data_ + idx, store_me, std::memory_order_relaxed);
+      ubu::detail::store_relaxed(data_ + idx, store_me);
     }
 
     // precondition: 0 <= idx and idx < size()
@@ -144,7 +144,7 @@ class lookback_storage<T,C,Z>
     constexpr void store_cumulative_sum(I idx, const T& value)
     {
       value_and_status store_me{value, cumulative_sum_available};
-      ubu::detail::atomic_store(data_ + idx, store_me, std::memory_order_relaxed);
+      ubu::detail::store_relaxed(data_ + idx, store_me);
     }
 
     // precondition: idx < size()
@@ -191,7 +191,7 @@ class lookback_storage<T,C,Z>
     constexpr value_and_status checked_load(I idx) const
     {
       return idx >= 0 ?
-        ubu::detail::atomic_load(data_ + idx, std::memory_order_relaxed) :
+        ubu::detail::load_relaxed(data_ + idx) :
         value_and_status{{}, cumulative_sum_available}
       ;
     }
