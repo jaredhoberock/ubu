@@ -4,7 +4,7 @@
 
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/weakly_congruent.hpp"
-#include "../../../coordinates/coordinate_product.hpp"
+#include "../../../coordinates/coordinate_weak_product.hpp"
 #include <utility>
 
 
@@ -15,7 +15,7 @@ namespace ubu
 template<coordinate D, weakly_congruent<D> C>
 constexpr coordinate auto apply_stride(const D& stride, const C& coord)
 {
-  return coordinate_product(coord,stride);
+  return coordinate_weak_product(coord,stride);
 }
 
 

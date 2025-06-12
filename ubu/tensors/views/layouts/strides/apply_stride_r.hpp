@@ -7,6 +7,7 @@
 #include "../../../coordinates/concepts/coordinate.hpp"
 #include "../../../coordinates/concepts/weakly_congruent.hpp"
 #include "../../../coordinates/coordinate_sum.hpp"
+#include "../../../coordinates/coordinate_weak_product.hpp"
 #include "../../../coordinates/detail/to_integral_like.hpp"
 #include "../../../coordinates/traits/zeros.hpp"
 #include "apply_stride.hpp"
@@ -22,7 +23,7 @@ template<coordinate R, coordinate D, weakly_congruent<D> C>
   requires (congruent<R, apply_stride_result_t<D,C>> and not std::is_reference_v<R>)
 constexpr R apply_stride_r(const D& stride, const C& coord)
 {
-  return coordinate_product_r<R>(coord, stride);
+  return coordinate_weak_product_r<R>(coord, stride);
 }
 
 

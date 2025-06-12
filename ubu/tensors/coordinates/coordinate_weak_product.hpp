@@ -52,21 +52,21 @@ concept all_elements_congruent =
 
 } // end detail
 
-// coordinate_product is a kind of relaxed integer multiplication operation
+// coordinate_weak_product is a kind of relaxed integer multiplication operation
 //
 // when congruent<A,B>, then this function is the inner product between a & b and returns integral_like
 // if weakly_congruent<A,B>, then this function recursively maps itself across the elements of B
 //
 // In the examples below, letters of the alphabet represent integers:
 //
-// * coordinate_product(a, b) => a*b
-// * coordinate_product((),()) => 0
-// * coordinate_product((a,b,c), (c,d,e)) => a*c + b*d + c*e
-// * coordinate_product(a, (b, c, d)) => (a*b, a*c, a*d)
-// * coordinate_product(a, ((b,c), d, (e,f))) => ((a*b,a*c), a*d, (a*e,a*f))
+// * coordinate_weak_product(a, b) => a*b
+// * coordinate_weak_product((),()) => 0
+// * coordinate_weak_product((a,b,c), (c,d,e)) => a*c + b*d + c*e
+// * coordinate_weak_product(a, (b, c, d)) => (a*b, a*c, a*d)
+// * coordinate_weak_product(a, ((b,c), d, (e,f))) => ((a*b,a*c), a*d, (a*e,a*f))
 template<coordinate A, coordinate B>
   requires weakly_congruent<A,B>
-constexpr coordinate auto coordinate_product(const A& a, const B& b)
+constexpr coordinate auto coordinate_weak_product(const A& a, const B& b)
 {
   if constexpr (nullary_coordinate<A> and nullary_coordinate<B>)
   {
@@ -82,10 +82,10 @@ constexpr coordinate auto coordinate_product(const A& a, const B& b)
     }
     else
     {
-      // b is a tuple, map coordinate_product across it
+      // b is a tuple, map coordinate_weak_product across it
       return tuples::zip_with(b, [&](const auto& b_i)
       {
-        return coordinate_product(a, b_i);
+        return coordinate_weak_product(a, b_i);
       });
     }
   }
@@ -95,7 +95,7 @@ constexpr coordinate auto coordinate_product(const A& a, const B& b)
 
     auto star = [](const auto& a_i, const auto& b_i)
     {
-      return coordinate_product(a_i, b_i);
+      return coordinate_weak_product(a_i, b_i);
     };
 
     auto products = tuples::zip_with(a,b,star);
@@ -131,27 +131,27 @@ constexpr coordinate auto coordinate_product(const A& a, const B& b)
 
 template<coordinate A, coordinate B>
   requires weakly_congruent<A,B>
-using coordinate_product_result_t = decltype(coordinate_product(std::declval<A>(),std::declval<B>()));
+using coordinate_weak_product_result_t = decltype(coordinate_weak_product(std::declval<A>(),std::declval<B>()));
 
 
-// this variant of coordinate_product allows control over the width of the reuslt type, R
-// R must be congruent to the result returned by the other variant, coordinate_product
+// this variant of coordinate_weak_product allows control over the width of the reuslt type, R
+// R must be congruent to the result returned by the other variant, coordinate_weak_product
 template<coordinate R, coordinate A, coordinate B>
-  requires (weakly_congruent<A,B> and congruent<R, coordinate_product_result_t<A,B>> and not std::is_reference_v<R>)
-constexpr R coordinate_product_r(const A& a, const B& b)
+  requires (weakly_congruent<A,B> and congruent<R, coordinate_weak_product_result_t<A,B>> and not std::is_reference_v<R>)
+constexpr R coordinate_weak_product_r(const A& a, const B& b)
 {
   if constexpr (   (nullary_coordinate<A> and nullary_coordinate<B>)
                 or (unary_coordinate<A> and unary_coordinate<B>))
   {
-    // just cast the result of coordinate_product
-    return static_cast<R>(coordinate_product(a,b));
+    // just cast the result of coordinate_weak_product
+    return static_cast<R>(coordinate_weak_product(a,b));
   }
   else if constexpr (unary_coordinate<A>)
   {
-    // b is a tuple, map coordinate_product across a
+    // b is a tuple, map coordinate_weak_product across a
     return tuples::zip_with(b, zeros_v<R>, [&](const auto& b_i, auto r_i)
     {
-      return coordinate_product_r<decltype(r_i)>(a, b_i);
+      return coordinate_weak_product_r<decltype(r_i)>(a, b_i);
     });
   }
   else
@@ -160,7 +160,7 @@ constexpr R coordinate_product_r(const A& a, const B& b)
 
     auto star = [](const auto& a_i, const auto& b_i)
     {
-      return coordinate_product_r<R>(a_i, b_i);
+      return coordinate_weak_product_r<R>(a_i, b_i);
     };
 
     auto products = tuples::zip_with(a,b,star);
