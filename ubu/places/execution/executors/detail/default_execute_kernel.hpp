@@ -39,7 +39,7 @@ void default_execute_kernel(E ex, const S& user_shape, F&& f)
   bulk_execute(ex, shape(to_user_coord), [=](const executor_coordinate_t<E>& ex_coord)
   {
     S user_coord = to_user_coord[ex_coord];
-    if(is_below(user_coord, user_shape))
+    if(is_strictly_inside(user_coord, user_shape))
     {
       f(user_coord);
     }

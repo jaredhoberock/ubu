@@ -27,7 +27,7 @@ template<view T, congruent<tensor_shape_t<T>> S>
 class trimmed_view : public view_base
 {
   public:
-    // precondition: is_below_or_equal(shape, ubu::shape(tensor))
+    // precondition: is_inside(shape, ubu::shape(tensor))
     constexpr trimmed_view(T tensor, S shape)
       : tensor_(tensor), shape_(shape)
     {}
@@ -48,7 +48,7 @@ class trimmed_view : public view_base
     template<congruent<S> C>
     constexpr bool element_exists(C coord) const
     {
-      return is_below(coord, shape()) and ubu::element_exists(tensor_, coord);
+      return is_strictly_inside(coord, shape()) and ubu::element_exists(tensor_, coord);
     }
 
     template<slicer_for<S> K>
@@ -57,7 +57,7 @@ class trimmed_view : public view_base
       return ubu::slice(tensor_, katana);
     }
 
-    // precondition: is_below_or_equal(new_shape, this->shape())
+    // precondition: is_inside(new_shape, this->shape())
     template<congruent<S> N>
     constexpr trimmed_view<T,N> trim(N new_shape) const
     {
@@ -119,7 +119,7 @@ struct dispatch_trim
     }
     else
     {
-      // a precondition on trim is is_below_or_equal(shape, ubu::shape(tensor))
+      // a precondition on trim is is_inside(shape, ubu::shape(tensor))
       // this means we can use ubu::shape(tensor) as a bound for the shape of the trimmed result
 
       // XXX it might be more convenient if we had bound(tensor, shape) as an operation

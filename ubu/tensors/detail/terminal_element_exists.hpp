@@ -4,7 +4,6 @@
 
 #include "../../utilities/integrals/integral_like.hpp"
 #include "../../utilities/integrals/size.hpp"
-#include "../coordinates/comparisons/is_below.hpp"
 #include "../coordinates/concepts/congruent.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../shapes/in_domain.hpp"

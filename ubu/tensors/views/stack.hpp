@@ -142,7 +142,7 @@ class stacked_view : public view_base
         auto bound = element(ubu::shape(a_), axis);
 
         // check if coord[axis] < shape(a)[axis]
-        if(is_below(element(coord, axis), bound))
+        if(is_strictly_inside(element(coord, axis), bound))
         {
           return std::pair(0, coord);
         }
@@ -176,7 +176,7 @@ class stacked_view : public view_base
       auto bound = element(ubu::shape(a_), axis);
 
       // check if katana[axis] < shape(a)[axis]
-      if(is_below(element(katana, axis), bound))
+      if(is_strictly_inside(element(katana, axis), bound))
       {
         return std::pair(0, katana);
       }

@@ -39,7 +39,7 @@ class tiled_view : public view_base
 
     constexpr bool element_exists(congruent<S> auto coord) const
     {
-      return is_below(coord, shape()) and ubu::element_exists(tensor_, coordinate_modulo(coord, ubu::shape(tensor_)));
+      return is_strictly_inside(coord, shape()) and ubu::element_exists(tensor_, coordinate_modulo(coord, ubu::shape(tensor_)));
     }
 
   private:

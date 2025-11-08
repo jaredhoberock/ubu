@@ -2,7 +2,6 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinates/comparisons/is_below.hpp"
 #include "../concepts/tensor.hpp"
 #include "../shapes/shape.hpp"
 #include "../traits/tensor_coordinate.hpp"

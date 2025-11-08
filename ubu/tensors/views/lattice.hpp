@@ -2,7 +2,7 @@
 
 #include "../../detail/prologue.hpp"
 
-#include "../coordinates/comparisons/is_below.hpp"
+#include "../coordinates/comparisons/is_inside.hpp"
 #include "../coordinates/concepts/coordinate.hpp"
 #include "../coordinates/coordinate_sum.hpp"
 #include "../coordinates/iterators/colexicographical_iterator.hpp"
@@ -67,8 +67,8 @@ class lattice : public view_base
     // returns whether or not coord is the value of a lattice point
     constexpr bool contains(const C& coord) const
     {
-      return is_below_or_equal(origin(), coord) and
-             is_below(coord, coordinate_sum(origin(), shape()));
+      return is_inside(origin(), coord) and
+             is_strictly_inside(coord, coordinate_sum(origin(), shape()));
     }
 
     // returns the number of lattice points

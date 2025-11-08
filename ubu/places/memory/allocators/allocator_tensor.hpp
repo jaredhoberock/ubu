@@ -3,7 +3,7 @@
 #include "../../../detail/prologue.hpp"
 
 #include "../../../tensors/concepts/tensor.hpp"
-#include "../../../tensors/coordinates/comparisons/is_below.hpp"
+#include "../../../tensors/coordinates/comparisons/is_inside.hpp"
 #include "../../../tensors/coordinates/concepts/bounded_coordinate.hpp"
 #include "../../../tensors/coordinates/concepts/congruent.hpp"
 #include "../../../tensors/coordinates/concepts/congruent.hpp"
@@ -93,7 +93,7 @@ class allocator_tensor
       auto [inner_shape, outer_shape] = coshape(layout);
 
       // make sure that the request is not too large
-      if(not is_below_or_equal(outer_shape, ubu::shape(allocs_)))
+      if(not is_inside(outer_shape, ubu::shape(allocs_)))
       {
         throw std::bad_alloc();
       }
